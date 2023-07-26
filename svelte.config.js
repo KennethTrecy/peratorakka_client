@@ -12,6 +12,14 @@ const configuration = {
 			"@/*": resolve("./src"),
 			"~/*": resolve("./t")
 		}
+	},
+
+	"onwarn": (warning, handler) => {
+		const { code, frame } = warning;
+		if (code === "css-unused-selector")
+			return;
+
+		handler(warning);
 	}
 }
 
