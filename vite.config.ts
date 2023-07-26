@@ -7,11 +7,12 @@ export default defineConfig({
 		sveltekit()
 	],
 	"server": {
-		"host": true,
-		"port": 8000,
-		"open": false,
-		"watch": {
-			"usePolling": true
+		"port": Number(process.env.PORT || "6014"),
+		"hmr": {
+			"clientPort": 6014,
+			"port": 6014,
+			"host": "localhost",
+			"protocol": "ws"
 		}
 	},
 	"test": {
