@@ -1,8 +1,8 @@
-import { defineConfig } from "vite"
+import type { UserConfig } from "vite"
 
 import { sveltekit } from "@sveltejs/kit/vite"
 
-export default defineConfig({
+const configuration: UserConfig = {
 	"plugins": [
 		sveltekit()
 	],
@@ -18,4 +18,6 @@ export default defineConfig({
 	"test": {
 		"include": [ "src/**/*.spec.ts" ]
 	}
-});
+}
+
+export default configuration
