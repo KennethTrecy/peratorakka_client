@@ -42,6 +42,8 @@
 		"vitest": "^0.33.0"
 	},
 	"dependencies": {
+		"beercss": "^3.2.13",
+		"material-dynamic-colors": "^1.0.1",
 		"svelte": "^4.1.1"
 	}
 }
