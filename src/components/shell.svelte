@@ -5,6 +5,18 @@
 		// @ts-ignore
 		window.ui("theme", "/logo.png")
 	})
+
+	let isMenuShown = false
+	const basicDialogClasses = [ "left", "secondary-container" ]
+	$: resolvedDialogClasses = (
+		isMenuShown
+			? [ ...basicDialogClasses, "active" ]
+			: [ ...basicDialogClasses ]
+	).join(" ")
+
+	function toggleMenu() {
+		isMenuShown = !isMenuShown
+	}
 </script>
 
 <svelte:head>
@@ -21,7 +33,7 @@
 <div class="shell">
 	<header class="primary-container">
 		<nav>
-			<button class="circle transparent">
+			<button class="circle transparent" on:click={toggleMenu}>
 				<i>menu</i>
 			</button>
 			<p class="max center-align">Peratorakka</p>
@@ -30,6 +42,22 @@
 			</button>
 		</nav>
 	</header>
+	<dialog class={resolvedDialogClasses}>
+		<header class="fixed">
+			<nav>
+				<button class="transparent circle large" on:click={toggleMenu}>
+					<i>close</i>
+				</button>
+				<p class="max">Peratorakka</p>
+			</nav>
+		</header>
+		<a href="" class="row round">
+			<i>cloud_off</i>
+			<span>Server</span>
+			<div class="max"></div>
+			<i>priority_high</i>
+		</a>
+	</dialog>
 	<main>
 		<slot name="main"></slot>
 	</main>
