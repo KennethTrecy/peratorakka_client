@@ -11,7 +11,7 @@ export const themeName = derived(
 		return LIGHT_MODE
 	}
 )
-themeName.subscribe(newTheme => {
+export const unsbscribeThemeName = themeName.subscribe(newTheme => {
 	if (typeof window !== "undefined") {
 		window.ui("mode", newTheme)
 	}

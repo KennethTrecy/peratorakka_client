@@ -1,7 +1,7 @@
 <script lang="ts">
-	import { onMount } from "svelte"
+	import { onMount, onDestroy } from "svelte"
 
-	import { DARK_MODE, mustBeInDarkMode } from "@/components/shell/state"
+	import { DARK_MODE, mustBeInDarkMode, unsbscribeThemeName } from "@/components/shell/state"
 
 	import AppName from "@/components/shell/app_name.svelte"
 	import InnerShell from "@/components/shell/inner_shell.svelte"
@@ -26,6 +26,10 @@
 	function toggleMode() {
 		isInDarkMode = !isInDarkMode
 	}
+
+	onDestroy(() => {
+		unsbscribeThemeName()
+	})
 </script>
 
 <svelte:head>
