@@ -10,7 +10,10 @@ const configuration = {
 		"adapter": adapter(),
 		"alias": {
 			"@/*": resolve("./src"),
-			"~/*": resolve("./t")
+			"~/*": resolve("./t"),
+			"material-symbols-outlined.woff2": resolve("./node_modules/beercss/dist/cdn/material-symbols-outlined.woff2"),
+			"material-symbols-rounded.woff2": resolve("./node_modules/beercss/dist/cdn/material-symbols-rounded.woff2"),
+			"material-symbols-sharp.woff2": resolve("./node_modules/beercss/dist/cdn/material-symbols-sharp.woff2")
 		}
 	},
 
