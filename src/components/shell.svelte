@@ -19,7 +19,7 @@
 <footer class="">
 	Copyright © 2023 by Kenneth Trecy Tobias.
 </footer>
-<!-- svelte-ignore css-unused-selector -->
+
 <style lang="scss">
 	@use "@/components/third-party/index";
 </style>

@@ -8,5 +8,5 @@
 </Shell>
 
 <style lang="scss">
-	@import "@/components/third-party/index";
+	@use "@/components/third-party/index";
 </style>
