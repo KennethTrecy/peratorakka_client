@@ -5,9 +5,15 @@
 	<link rel="icon" href="%sveltekit.assets%/favicon.png"/>
 	<meta name="viewport" content="width=device-width"/>
 	%sveltekit.head%
+	<style>
+		body > .app_container:first-child {
+			width: 100vw;
+			height: 100vh;
+		}
+	</style>
 </head>
 <body data-sveltekit-preload-data="hover" class="light">
-	<div>
+	<div class="app_container">
 		%sveltekit.body%
 	</div>
 </body>
