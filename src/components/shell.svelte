@@ -1,21 +1,32 @@
 <script lang="ts">
 	import { onMount } from "svelte"
+	import { DARK_MODE, mustBeInDarkMode } from "@/components/shell/state"
+
+	let isMenuShown = false
+	let isInDarkMode = true
 
 	onMount(() => {
 		// @ts-ignore
 		window.ui("theme", "/logo.png")
+		// @ts-ignore
+		isInDarkMode = window.ui("mode") === DARK_MODE
 	})
 
-	let isMenuShown = false
 	const basicDialogClasses = [ "left", "secondary-container" ]
 	$: resolvedDialogClasses = (
 		isMenuShown
 			? [ ...basicDialogClasses, "active" ]
 			: [ ...basicDialogClasses ]
 	).join(" ")
+	$: mustBeInDarkMode.set(isInDarkMode)
+	$: modeIcon = isInDarkMode ? "dark_mode" : "light_mode"
 
 	function toggleMenu() {
 		isMenuShown = !isMenuShown
+	}
+
+	function toggleMode() {
+		isInDarkMode = !isInDarkMode
 	}
 </script>
 
@@ -37,8 +48,8 @@
 				<i>menu</i>
 			</button>
 			<p data-app-name class="max center-align">Peratorakka</p>
-			<button class="circle transparent">
-				<img class="responsive" src="logo.png" alt="Peratorakka logo"/>
+			<button class="circle transparent" on:click={toggleMode}>
+				<i>{modeIcon}</i>
 			</button>
 		</nav>
 	</header>
