@@ -1,8 +1,9 @@
 <script lang="ts">
 	import { createEventDispatcher } from "svelte"
 
+	import { menuItemInfos } from "@/components/shell/state"
+
 	import AppName from "@/components/shell/app_name.svelte"
-	import MenuItem from "@/components/shell/menu_item.svelte"
 
 	export let isMenuShown: boolean
 	const dispatch = createEventDispatcher<{
@@ -32,19 +33,23 @@
 			</p>
 		</nav>
 	</header>
-	<a href="" class="row round">
-		<i>cloud_off</i>
-		<span>Server</span>
-	</a>
+	{#each $menuItemInfos as info, index(info.link)}
+		<a href={info.link}>
+			<i>{info.icon}</i>
+			<span>{info.label}</span>
+		</a>
+	{/each}
 </dialog>
 <nav class="m l left">
 	<a href="/">
 		<img class="responsive" src="logo.png" alt="Peratorakka logo"/>
 	</a>
-	<a href="">
-		<i>cloud_off</i>
-		<span>Server</span>
-	</a>
+	{#each $menuItemInfos as info(info.link)}
+		<a href={info.link}>
+			<i>{info.icon}</i>
+			<span>{info.label}</span>
+		</a>
+	{/each}
 </nav>
 <main class="responsive">
 	<slot></slot>

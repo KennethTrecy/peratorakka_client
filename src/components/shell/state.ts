@@ -1,3 +1,5 @@
+import type { MenuItemInfo } from "@/components/shell/types"
+
 import { derived, writable } from "svelte/store"
 
 export const DARK_MODE = "dark"
@@ -16,3 +18,11 @@ export const unsbscribeThemeName = themeName.subscribe(newTheme => {
 		window.ui("mode", newTheme)
 	}
 })
+
+export const menuItemInfos = writable<MenuItemInfo[]>([
+	{
+		"link": "/",
+		"icon": "cloud_off",
+		"label": "Server"
+	}
+])
