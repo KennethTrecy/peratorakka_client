@@ -1,5 +1,10 @@
 <script lang="ts">
+	import { onMount } from "svelte"
 
+	onMount(() => {
+		// @ts-ignore
+		window.ui("theme", "/logo.png")
+	})
 </script>
 
 <svelte:head>
