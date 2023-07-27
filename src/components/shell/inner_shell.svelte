@@ -58,7 +58,7 @@
 <style lang="scss">
 	@use "@/components/third-party/index";
 
-	header {
-		padding-top: 1em;
+	header.fixed {
+		padding: 0.5em 0em 0em;
 	}
 </style>
