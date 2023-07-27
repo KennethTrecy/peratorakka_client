@@ -14,8 +14,8 @@
 		"prepare": "husky install",
 		"dev": "npm run development",
 		"development": "npx vite",
-		"prod": "npm run production",
-		"production": "npx vite build",
+		"build": "npx vite build",
+		"preview": "npx vite preview",
 		"test:unit": "npx vitest"
 	},
 	"devDependencies": {
