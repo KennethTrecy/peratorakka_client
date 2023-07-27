@@ -13,11 +13,6 @@ export const themeName = derived(
 		return LIGHT_MODE
 	}
 )
-export const unsbscribeThemeName = themeName.subscribe(newTheme => {
-	if (typeof window !== "undefined") {
-		window.ui("mode", newTheme)
-	}
-})
 
 export const menuItemInfos = writable<MenuItemInfo[]>([
 	{
@@ -26,3 +21,13 @@ export const menuItemInfos = writable<MenuItemInfo[]>([
 		"label": "Server"
 	}
 ])
+
+const unsbscribeThemeName = themeName.subscribe(newTheme => {
+	if (typeof window !== "undefined") {
+		window.ui("mode", newTheme)
+	}
+})
+
+export function unsubscribeWatchedStates() {
+	unsbscribeThemeName()
+}
