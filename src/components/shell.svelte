@@ -43,7 +43,7 @@
 				<i>menu</i>
 			</button>
 			<span class="m l circle transparent"></span>
-			<p class="m l max center-align middle-align">
+			<p class="max center-align middle-align">
 				<span class="circle">
 					<img class="small" src="logo.png" alt="Peratorakka logo"/>
 				</span>
