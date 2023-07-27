@@ -2,6 +2,17 @@
 
 </script>
 
+<svelte:head>
+	<style>
+		* {
+			box-sizing: border-box;
+			padding: 0em;
+			border: 0em;
+			margin: 0em;
+		}
+	</style>
+</svelte:head>
+
 <header class="primary-container">
 	<nav>
 		<button class="circle transparent">
