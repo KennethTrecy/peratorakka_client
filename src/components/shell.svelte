@@ -1,6 +1,9 @@
 <script lang="ts">
 	import { onMount } from "svelte"
+
 	import { DARK_MODE, mustBeInDarkMode } from "@/components/shell/state"
+
+	import AppName from "@/components/shell/app_name.svelte"
 	import InnerShell from "@/components/shell/inner_shell.svelte"
 
 	let isMenuShown = false
@@ -43,13 +46,8 @@
 				<i>menu</i>
 			</button>
 			<span class="m l circle transparent"></span>
-			<p class="max center-align middle-align">
-				<span class="circle">
-					<img class="small" src="logo.png" alt="Peratorakka logo"/>
-				</span>
-				<span data-app-name>
-					Peratorakka
-				</span>
+			<p class="max center-align">
+				<AppName/>
 			</p>
 			<button class="circle transparent" on:click={toggleMode}>
 				<i>{modeIcon}</i>

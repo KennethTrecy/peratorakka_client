@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { createEventDispatcher } from "svelte"
 
+	import AppName from "@/components/shell/app_name.svelte"
 	import MenuItem from "@/components/shell/menu_item.svelte"
 
 	export let isMenuShown: boolean
@@ -26,7 +27,9 @@
 			<button class="transparent circle large" on:click={toggleMenu}>
 				<i>close</i>
 			</button>
-			<p data-app-name class="max">Peratorakka</p>
+			<p class="max">
+				<AppName shouldCenterAlign={false}/>
+			</p>
 		</nav>
 	</header>
 	<a href="" class="row round">
@@ -55,7 +58,7 @@
 <style lang="scss">
 	@use "@/components/third-party/index";
 
-	p[data-app-name] {
-		@extend h5;
+	header {
+		padding-top: 1em;
 	}
 </style>
