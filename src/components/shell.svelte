@@ -21,7 +21,7 @@
 			</button>
 			<p class="max center-align">Peratorakka</p>
 			<button class="circle transparent">
-				<img class="responsive" src="" alt="Peratorakka logo"/>
+				<img class="responsive" src="logo.png" alt="Peratorakka logo"/>
 			</button>
 		</nav>
 	</header>
