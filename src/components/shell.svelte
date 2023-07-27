@@ -31,9 +31,9 @@
 </svelte:head>
 
 <div class="shell">
-	<header class="primary-container">
+	<header class="responsive primary-container">
 		<nav>
-			<button class="circle transparent" on:click={toggleMenu}>
+			<button class="s circle transparent" on:click={toggleMenu}>
 				<i>menu</i>
 			</button>
 			<p data-app-name class="max center-align">Peratorakka</p>
@@ -58,7 +58,16 @@
 			<i>priority_high</i>
 		</a>
 	</dialog>
-	<main>
+	<nav class="m l left">
+		<a href="/">
+			<img class="responsive" src="logo.png" alt="Peratorakka logo"/>
+		</a>
+		<a href="">
+			<i>cloud_off</i>
+			<span>Server</span>
+		</a>
+	</nav>
+	<main class="responsive">
 		<slot name="main"></slot>
 	</main>
 	<footer class="responsive max primary medium-line">
