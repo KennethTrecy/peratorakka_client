@@ -36,7 +36,7 @@
 			<button class="circle transparent" on:click={toggleMenu}>
 				<i>menu</i>
 			</button>
-			<p class="max center-align">Peratorakka</p>
+			<p data-app-name class="max center-align">Peratorakka</p>
 			<button class="circle transparent">
 				<img class="responsive" src="logo.png" alt="Peratorakka logo"/>
 			</button>
@@ -48,7 +48,7 @@
 				<button class="transparent circle large" on:click={toggleMenu}>
 					<i>close</i>
 				</button>
-				<p class="max">Peratorakka</p>
+				<p data-app-name class="max">Peratorakka</p>
 			</nav>
 		</header>
 		<a href="" class="row round">
@@ -83,7 +83,7 @@
 		}
 	}
 
-	p {
+	p[data-app-name] {
 		@extend h5
 	}
 
