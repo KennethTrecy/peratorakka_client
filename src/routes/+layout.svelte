@@ -4,7 +4,7 @@
 </script>
 
 <Shell>
-	<slot name="main"></slot>
+	<slot slot="main"></slot>
 </Shell>
 
 <style lang="scss">
