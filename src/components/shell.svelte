@@ -33,4 +33,8 @@
 
 <style lang="scss">
 	@use "@/components/third-party/index";
+
+	p {
+		@extend h5
+	}
 </style>
