@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { onMount } from "svelte"
 	import { DARK_MODE, mustBeInDarkMode } from "@/components/shell/state"
+	import InnerShell from "@/components/shell/inner_shell.svelte"
 
 	let isMenuShown = false
 	let isInDarkMode = true
@@ -12,12 +13,6 @@
 		isInDarkMode = window.ui("mode") === DARK_MODE
 	})
 
-	const basicDialogClasses = [ "left", "secondary-container" ]
-	$: resolvedDialogClasses = (
-		isMenuShown
-			? [ ...basicDialogClasses, "active" ]
-			: [ ...basicDialogClasses ]
-	).join(" ")
 	$: mustBeInDarkMode.set(isInDarkMode)
 	$: modeIcon = isInDarkMode ? "dark_mode" : "light_mode"
 
@@ -42,50 +37,28 @@
 </svelte:head>
 
 <div class="shell">
-	<header class="responsive primary-container">
+	<header class="primary-container">
 		<nav>
 			<button class="s circle transparent" on:click={toggleMenu}>
 				<i>menu</i>
 			</button>
-			<p data-app-name class="max center-align">Peratorakka</p>
+			<span class="m l circle transparent"></span>
+			<p class="m l max center-align middle-align">
+				<span class="circle">
+					<img class="small" src="logo.png" alt="Peratorakka logo"/>
+				</span>
+				<span data-app-name>
+					Peratorakka
+				</span>
+			</p>
 			<button class="circle transparent" on:click={toggleMode}>
 				<i>{modeIcon}</i>
 			</button>
 		</nav>
 	</header>
-	<dialog class={resolvedDialogClasses}>
-		<header class="fixed">
-			<nav>
-				<button class="transparent circle large" on:click={toggleMenu}>
-					<i>close</i>
-				</button>
-				<p data-app-name class="max">Peratorakka</p>
-			</nav>
-		</header>
-		<a href="" class="row round">
-			<i>cloud_off</i>
-			<span>Server</span>
-			<div class="max"></div>
-			<i>priority_high</i>
-		</a>
-	</dialog>
-	<nav class="m l left">
-		<a href="/">
-			<img class="responsive" src="logo.png" alt="Peratorakka logo"/>
-		</a>
-		<a href="">
-			<i>cloud_off</i>
-			<span>Server</span>
-		</a>
-	</nav>
-	<main class="responsive">
+	<InnerShell {isMenuShown} on:toggleMenu={toggleMenu}>
 		<slot name="main"></slot>
-	</main>
-	<footer class="responsive max primary medium-line">
-		<p class="small-text">
-			Copyright © 2023 by Kenneth Trecy Tobias.
-		</p>
-	</footer>
+	</InnerShell>
 </div>
 
 <style lang="scss">
@@ -103,8 +76,10 @@
 		}
 	}
 
-	p[data-app-name] {
-		@extend h5
+	[data-app-name] {
+		@extend h5;
+
+		margin-left: 0.25em;
 	}
 
 	footer {
