@@ -18,8 +18,12 @@
 		? customServer
 		: selectedServer
 
+	let isConnecting = false
+	let didFail = false
 	function connect(event: SubmitEvent) {
 		event.preventDefault()
+		isConnecting = true
+		didFail = false
 		serverURL.set(resolvedSelectedServer)
 	}
 </script>
@@ -36,7 +40,7 @@
 					<p><strong>Note</strong>: Doing so may log out any current account</p>
 				{:else if $hasServer}
 					<h1>The client is trying to connect to the server</h1>
-					<p>Please wait for a moment...</p>
+					<p>Please wait for a moment</p>
 				{:else}
 					<h1>You are not yet connected to any server</h1>
 					<p>Choose or specify a server you want to connect</p>
@@ -44,7 +48,11 @@
 				<div class="space"></div>
 				<fieldset class="no-space center-align">
 					<div class="field label suffix small">
-						<select id="server_choices" class="active" bind:value={selectedServer}>
+						<select
+							id="server_choices"
+							class="active"
+							disabled={isConnecting}
+							bind:value={selectedServer}>
 							{#each serverChoices as { URL, name }(URL)}
 								<option value={URL}>
 									{name}
@@ -60,13 +68,13 @@
 					<div class="space"></div>
 					<div class="no-space center-align">
 						<div class="field border">
-							<input type="text" bind:value={customServer}>
+							<input type="text" bind:value={customServer} disabled={isConnecting}>
 							<span class="helper">Example: http://peratorakka.example.com</span>
 						</div>
 					</div>
 				{/if}
 				<div class="space"></div>
-				<button type="submit">Connect</button>
+				<button type="submit" disabled={isConnecting}>Connect</button>
 			</div>
 		</div>
 	</div>
