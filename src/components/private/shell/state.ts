@@ -6,7 +6,7 @@ export const DARK_MODE = "dark"
 export const LIGHT_MODE = "light"
 
 export const mustBeInDarkMode = writable<boolean>(false)
-export const themeName = derived(
+export const themeMode = derived(
 	mustBeInDarkMode,
 	isInDarkMode => {
 		if (isInDarkMode) return DARK_MODE
@@ -22,12 +22,12 @@ export const menuItemInfos = writable<MenuItemInfo[]>([
 	}
 ])
 
-const unsbscribeThemeName = themeName.subscribe(newTheme => {
+const unsbscribethemeMode = themeMode.subscribe(newTheme => {
 	if (typeof window !== "undefined") {
 		window.ui("mode", newTheme)
 	}
 })
 
 export function unsubscribeWatchedStates() {
-	unsbscribeThemeName()
+	unsbscribethemeMode()
 }
