@@ -1,4 +1,4 @@
-import type { MenuItemInfo } from "@/components/shell/types"
+import type { MenuItemInfo } from "%/shell/types"
 
 import { derived, writable } from "svelte/store"
 

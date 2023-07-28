@@ -1,6 +1,6 @@
 <script lang="ts">
 	import "@/components/third-party"
-	import Shell from "@/components/shell.svelte"
+	import Shell from "%/shell.svelte"
 </script>
 
 <Shell>
