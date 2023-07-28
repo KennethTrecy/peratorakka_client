@@ -1,5 +1,6 @@
 import type { MenuItemInfo } from "%/shell/types"
 
+import { THEME_MODE_KEY } from "#/storage_keys"
 import { derived, writable } from "svelte/store"
 
 export const DARK_MODE = "dark"
@@ -22,12 +23,13 @@ export const menuItemInfos = writable<MenuItemInfo[]>([
 	}
 ])
 
-const unsbscribethemeMode = themeMode.subscribe(newTheme => {
+const unsbscribeThemeMode = themeMode.subscribe(newTheme => {
 	if (typeof window !== "undefined") {
 		window.ui("mode", newTheme)
+		window.localStorage.setItem(THEME_MODE_KEY, newTheme)
 	}
 })
 
 export function unsubscribeWatchedStates() {
-	unsbscribethemeMode()
+	unsbscribeThemeMode()
 }
