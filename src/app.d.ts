@@ -7,7 +7,7 @@ declare namespace App {
 	// interface PageData {}
 	interface Platform {
 		env: {
-			// Public environment variables here...
+			PUBLIC_PRODUCTION_SERVER_CHOICES: string
 		}
 		context: {
 			waitUntil(promise: Promise<any>): void;
