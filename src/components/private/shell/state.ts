@@ -1,8 +1,10 @@
 import type { MenuItemInfo } from "%/shell/types"
 
-import { THEME_MODE_KEY } from "#/storage_keys"
-import { serverIcon } from "$/global_state"
 import { derived, writable } from "svelte/store"
+import { beercss } from "@/components/third-party/index"
+
+import { serverIcon } from "$/global_state"
+import { THEME_MODE_KEY } from "#/storage_keys"
 
 export const DARK_MODE = "dark"
 export const LIGHT_MODE = "light"
@@ -31,7 +33,7 @@ export const menuItemInfos = derived<MenuItemInfo[]>(
 
 const unsbscribeThemeMode = themeMode.subscribe(newTheme => {
 	if (typeof window !== "undefined") {
-		window.ui("mode", newTheme)
+		beercss("mode", newTheme)
 		window.localStorage.setItem(THEME_MODE_KEY, newTheme)
 	}
 })
