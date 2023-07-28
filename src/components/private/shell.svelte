@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { onMount, onDestroy } from "svelte"
 
-	import { THEME_MODE_KEY } from "#/storage_keys"
 	import { initializeGlobalStates } from "$/global_state"
 	import { initializeShellState, mustBeInDarkMode, unsubscribeWatchedStates } from "%/shell/state"
 

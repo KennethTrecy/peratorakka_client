@@ -1,5 +1,8 @@
 <script lang="ts">
+	import { derived } from "svelte/store"
 	import { PUBLIC_PRODUCTION_SERVER_CHOICES } from "$env/static/public"
+
+	import { serverURL, hasServer, hasToken, serverIcon } from "$/global_state"
 
 	const CUSTOM_KEY = "custom"
 
@@ -17,9 +20,17 @@
 	<div class="s10 m8 l6">
 		<div class="fill medium-height middle-align center-align">
 			<div class="center-align medium-padding">
-				<i class="extra">cloud_off</i>
-				<h1>You are not yet connected to any server</h1>
-				<p>Choose or enter a server you want to connect</p>
+				<i class="extra">{$serverIcon}</i>
+				{#if $hasToken}
+					<h1>You currenly connected to <code>{$serverURL}</code></h1>
+					<p>Please wait for a moment...</p>
+				{:else if $hasServer}
+					<h1>The client is trying to connect to the server</h1>
+					<p>Please wait for a moment...</p>
+				{:else}
+					<h1>You are not yet connected to any server</h1>
+					<p>Choose or specify a server you want to connect</p>
+				{/if}
 				<div class="space"></div>
 				<form class="no-space center-align">
 					<div class="field label suffix small">

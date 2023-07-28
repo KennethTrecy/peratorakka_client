@@ -1,7 +1,7 @@
 import type { MenuItemInfo } from "%/shell/types"
 
 import { THEME_MODE_KEY } from "#/storage_keys"
-import { serverURL, CSRFToken } from "$/global_state"
+import { serverIcon } from "$/global_state"
 import { derived, writable } from "svelte/store"
 
 export const DARK_MODE = "dark"
@@ -17,20 +17,12 @@ export const themeMode = derived(
 )
 
 export const menuItemInfos = derived<MenuItemInfo[]>(
-	[ serverURL, CSRFToken ],
-	([ currentServerURL, currentCSRFToken ]) => {
-		const hasServer = currentServerURL === ""
-		const hasCSRFToken = currentCSRFToken === ""
-		// const isConnected = hasServer && hasCSRFToken
-
+	[ serverIcon ],
+	([ currentServerIcon ]) => {
 		return [
 			{
 				"link": "/",
-				"icon": hasServer
-					? "cloud_off"
-					: hasCSRFToken
-						? "pending"
-						: "cloud",
+				"icon": currentServerIcon,
 				"label": "Server"
 			}
 		].filter(Boolean)
