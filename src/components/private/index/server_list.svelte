@@ -56,17 +56,17 @@
 			<div class="center-align large-padding">
 				<i class="extra">{$serverIcon}</i>
 				{#if $hasToken}
-					<p>You are currently connected to <code>{$serverURL}</code></p>
+					<h1 class="connected">You are currently connected to <code>{$serverURL}</code></h1>
 					<p>You may change your current server</p>
 					<p><strong>Note</strong>: Doing so may log out any current account</p>
 				{:else if $hasServer}
-					<h1>The client is trying to connect to the server</h1>
+					<h1 class="disconnected">The client is trying to connect to the server</h1>
 					<p>Please wait for a moment</p>
 				{:else if didConnectionFail}
-					<h1>The client cannot connect to the server</h1>
+					<h1 class="disconnected">The client cannot connect to the server</h1>
 					<p>Please look for another compatible server</p>
 				{:else}
-					<h1>You are not yet connected to any server</h1>
+					<h1 class="disconnected">You are not yet connected to any server</h1>
 					<p>Choose or specify a server you want to connect</p>
 				{/if}
 				<div class="space"></div>
@@ -119,7 +119,15 @@
 	}
 
 	h1 {
-		@extend h5;
+		&.disconnected {
+			@extend h5;
+		}
+
+		&.connected {
+			@extend p;
+			@extend .medium-text;
+			display: block;
+		}
 	}
 
 	fieldset {
