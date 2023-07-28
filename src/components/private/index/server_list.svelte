@@ -11,9 +11,10 @@
 		"URL": rawServer,
 		"name": (domainNameRegex.exec(rawServer) ?? [ null, rawServer ])[1]
 	}))
-	let selectedServer = ""
+	let selectedServer = serverChoices[0].URL ?? CUSTOM_KEY
 	let customServer = ""
-	$: resolvedSelectedServer = selectedServer === CUSTOM_KEY
+	$: mustBeCustomServer = selectedServer === CUSTOM_KEY
+	$: resolvedSelectedServer = mustBeCustomServer
 		? customServer
 		: selectedServer
 
@@ -23,11 +24,11 @@
 	}
 </script>
 
-<div class="list middle-align center-align grid">
+<form class="list middle-align center-align grid" on:submit={connect}>
 	<div class="s1 m2 l3"></div>
 	<div class="s10 m8 l6">
-		<div class="fill medium-height middle-align center-align">
-			<div class="center-align medium-padding">
+		<div class="fill middle-align center-align">
+			<div class="center-align large-padding">
 				<i class="extra">{$serverIcon}</i>
 				{#if $hasToken}
 					<h1>You currently connected to <code>{$serverURL}</code></h1>
@@ -41,7 +42,7 @@
 					<p>Choose or specify a server you want to connect</p>
 				{/if}
 				<div class="space"></div>
-				<form class="no-space center-align" on:submit={connect}>
+				<fieldset class="no-space center-align">
 					<div class="field label suffix small">
 						<select id="server_choices" class="active" bind:value={selectedServer}>
 							{#each serverChoices as { URL, name }(URL)}
@@ -54,17 +55,27 @@
 						<label for="server_choices" class="active">Servers</label>
 						<i>arrow_drop_down</i>
 					</div>
-					<button type="submit">Connect</button>
-				</form>
+				</fieldset>
+				{#if mustBeCustomServer}
+					<div class="space"></div>
+					<div class="no-space center-align">
+						<div class="field border">
+							<input type="text" bind:value={customServer}>
+							<span class="helper">Example: http://peratorakka.example.com</span>
+						</div>
+					</div>
+				{/if}
+				<div class="space"></div>
+				<button type="submit">Connect</button>
 			</div>
 		</div>
 	</div>
-</div>
+</form>
 
 <style lang="scss">
 	@use "@/components/third-party/index";
 
-	div.list {
+	.list {
 		width: 100%;
 		height: 100%;
 	}
@@ -73,7 +84,12 @@
 		@extend h5;
 	}
 
-	form {
+	fieldset {
 		@extend nav;
+	}
+
+	.fill {
+		height: max-content;
+		transition: height 250ms ease-in;
 	}
 </style>
