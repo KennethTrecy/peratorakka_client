@@ -1,5 +1,5 @@
-import type { MenuItemInfo } from "%/shell/types"
 import type { Unsubscriber } from "svelte/store"
+import type { MenuItemInfo } from "%/shell/types"
 
 import { derived, writable } from "svelte/store"
 import { setMode } from "@/components/third-party/index"

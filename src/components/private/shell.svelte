@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { onMount, onDestroy } from "svelte"
 
-	import { initializeGlobalStates } from "$/global_state"
+	import { initializeGlobalStates, unsubscribeWatchedGlobalStates } from "$/global_state"
 	import { setTheme } from "@/components/third-party/index"
 	import {
 		initializeShellState,
@@ -29,6 +29,7 @@
 	}
 
 	onDestroy(unsubscribeWatchedStates)
+	onDestroy(unsubscribeWatchedGlobalStates)
 </script>
 
 <svelte:head>
