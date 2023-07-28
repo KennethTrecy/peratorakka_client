@@ -5,7 +5,7 @@ import { derived, writable } from "svelte/store"
 export const DARK_MODE = "dark"
 export const LIGHT_MODE = "light"
 
-export const mustBeInDarkMode = writable<boolean>(true)
+export const mustBeInDarkMode = writable<boolean>(false)
 export const themeName = derived(
 	mustBeInDarkMode,
 	isInDarkMode => {

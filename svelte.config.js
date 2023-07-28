@@ -9,6 +9,9 @@ const configuration = {
 	"kit": {
 		"adapter": adapter(),
 		"alias": {
+			"+/*": resolve("./src/types"),
+			"#/*": resolve("./src/constants"),
+			"%/*": resolve("./src/components/general"),
 			"@/*": resolve("./src"),
 			"~/*": resolve("./t"),
 			"material-symbols-outlined.woff2": resolve("./node_modules/beercss/dist/cdn/material-symbols-outlined.woff2"),
