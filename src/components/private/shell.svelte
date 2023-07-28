@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { onMount, onDestroy } from "svelte"
 
+	import { initializeGlobalStates } from "$/global_state"
 	import { DARK_MODE, mustBeInDarkMode, unsubscribeWatchedStates } from "%/shell/state"
 
 	import AppName from "%/shell/app_name.svelte"
@@ -14,6 +15,8 @@
 		window.ui("theme", "/logo.png")
 		// @ts-ignore
 		isInDarkMode = window.ui("mode") === DARK_MODE
+
+		initializeGlobalStates()
 	})
 
 	$: mustBeInDarkMode.set(isInDarkMode)
