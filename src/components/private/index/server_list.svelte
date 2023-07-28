@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { PUBLIC_PRODUCTION_SERVER_CHOICES } from "$env/static/public"
 
-	import { serverURL, hasServer, hasToken, serverIcon } from "$/global_state"
+	import { serverURL, CSRFToken, hasServer, hasToken, serverIcon } from "$/global_state"
 
 	const CUSTOM_KEY = "custom"
 
@@ -35,6 +35,8 @@
 
 			if (response.status === 200) {
 				didConnectionFail = false
+				const responseDocument = await response.json()
+				CSRFToken.set(responseDocument.data.csrf_token)
 			} else {
 				throw new Error()
 			}
