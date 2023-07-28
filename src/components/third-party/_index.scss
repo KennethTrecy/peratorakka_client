@@ -1,4 +1,4 @@
-// Reuse of component styles without the inclusion of fonts
+// Reuse of component styles using linked fonts rather than inclusion of fonts
 // Check the original CSS file in case that there are changes in file structure
 // Link: https://github.com/beercss/beercss/blob/main/src/cdn/beer.css
 
@@ -50,3 +50,10 @@
 @use "../../../node_modules/beercss/src/cdn/elements/tooltips.css";
 @use "../../../node_modules/beercss/src/cdn/helpers/blurs.css";
 @use "../../../node_modules/beercss/src/cdn/helpers/shadows.css";
+
+@import url("https://fonts.googleapis.com/css2?family=Roboto&family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap");
+
+:root {
+	--font: "Roboto";
+	--font-icon: "Material Symbols Rounded";
+}
