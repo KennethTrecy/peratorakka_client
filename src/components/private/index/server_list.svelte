@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { derived } from "svelte/store"
 	import { PUBLIC_PRODUCTION_SERVER_CHOICES } from "$env/static/public"
 
 	import { serverURL, hasServer, hasToken, serverIcon } from "$/global_state"
@@ -13,6 +12,15 @@
 		"name": (domainNameRegex.exec(rawServer) ?? [ null, rawServer ])[1]
 	}))
 	let selectedServer = ""
+	let customServer = ""
+	$: resolvedSelectedServer = selectedServer === CUSTOM_KEY
+		? customServer
+		: selectedServer
+
+	function connect(event: SubmitEvent) {
+		event.preventDefault()
+		serverURL.set(resolvedSelectedServer)
+	}
 </script>
 
 <div class="list middle-align center-align grid">
@@ -22,8 +30,9 @@
 			<div class="center-align medium-padding">
 				<i class="extra">{$serverIcon}</i>
 				{#if $hasToken}
-					<h1>You currenly connected to <code>{$serverURL}</code></h1>
-					<p>Please wait for a moment...</p>
+					<h1>You currently connected to <code>{$serverURL}</code></h1>
+					<p>You may change your current server</p>
+					<p><strong>Note</strong>: Doing so may log out any current account</p>
 				{:else if $hasServer}
 					<h1>The client is trying to connect to the server</h1>
 					<p>Please wait for a moment...</p>
@@ -32,7 +41,7 @@
 					<p>Choose or specify a server you want to connect</p>
 				{/if}
 				<div class="space"></div>
-				<form class="no-space center-align">
+				<form class="no-space center-align" on:submit={connect}>
 					<div class="field label suffix small">
 						<select id="server_choices" class="active" bind:value={selectedServer}>
 							{#each serverChoices as { URL, name }(URL)}
@@ -45,6 +54,7 @@
 						<label for="server_choices" class="active">Servers</label>
 						<i>arrow_drop_down</i>
 					</div>
+					<button type="submit">Connect</button>
 				</form>
 			</div>
 		</div>
