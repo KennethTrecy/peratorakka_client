@@ -11,7 +11,8 @@ const configuration = {
 		"alias": {
 			"+/*": resolve("./src/types"),
 			"#/*": resolve("./src/constants"),
-			"%/*": resolve("./src/components/general"),
+			"$/*": resolve("./src/components/public"),
+			"%/*": resolve("./src/components/private"),
 			"@/*": resolve("./src"),
 			"~/*": resolve("./t"),
 			"material-symbols-outlined.woff2": resolve("./node_modules/beercss/dist/cdn/material-symbols-outlined.woff2"),
