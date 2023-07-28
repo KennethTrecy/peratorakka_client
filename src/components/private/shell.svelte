@@ -3,7 +3,7 @@
 
 	import { initializeGlobalStates } from "$/global_state"
 	import { initializeShellState, mustBeInDarkMode, unsubscribeWatchedStates } from "%/shell/state"
-	import { beercss } from "@/components/third-party/index"
+	import { setTheme } from "@/components/third-party/index"
 
 	import AppName from "%/shell/app_name.svelte"
 	import InnerShell from "%/shell/inner_shell.svelte"
@@ -11,7 +11,7 @@
 	let isMenuShown = false
 
 	onMount(() => {
-		beercss("theme", "/logo.png")
+		setTheme("/logo.png")
 		initializeShellState()
 		initializeGlobalStates()
 	})
