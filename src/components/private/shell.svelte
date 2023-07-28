@@ -2,8 +2,12 @@
 	import { onMount, onDestroy } from "svelte"
 
 	import { initializeGlobalStates } from "$/global_state"
-	import { initializeShellState, mustBeInDarkMode, unsubscribeWatchedStates } from "%/shell/state"
 	import { setTheme } from "@/components/third-party/index"
+	import {
+		initializeShellState,
+		mustBeInDarkMode,
+		unsubscribeWatchedStates
+	} from "%/shell/state"
 
 	import AppName from "%/shell/app_name.svelte"
 	import InnerShell from "%/shell/inner_shell.svelte"
