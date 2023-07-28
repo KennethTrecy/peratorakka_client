@@ -4,7 +4,7 @@ import type { MenuItemInfo } from "%/shell/types"
 import { derived, writable } from "svelte/store"
 import { setMode } from "@/components/third-party/index"
 
-import { serverIcon } from "$/global_state"
+import { serverIcon, hasToken } from "$/global_state"
 import { THEME_MODE_KEY } from "#/storage_keys"
 
 export const DARK_MODE = "dark"
@@ -25,14 +25,24 @@ export const themeMode = derived(
 )
 
 export const menuItemInfos = derived<MenuItemInfo[]>(
-	[ serverIcon ],
-	([ currentServerIcon ]) => {
+	[ serverIcon, hasToken ],
+	([ currentServerIcon, hasTokenCurrently ]) => {
 		return [
 			{
 				"link": "/",
 				"icon": currentServerIcon,
 				"label": "Server"
-			}
+			},
+			hasTokenCurrently ? {
+				"link": "/log_in",
+				"icon": "login",
+				"label": "Log in"
+			} : null,
+			hasTokenCurrently ? {
+				"link": "/register",
+				"icon": "add_circle",
+				"label": "Register"
+			} : null
 		].filter(Boolean)
 	}
 )
