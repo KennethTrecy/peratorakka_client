@@ -3,35 +3,26 @@
 
 	import { THEME_MODE_KEY } from "#/storage_keys"
 	import { initializeGlobalStates } from "$/global_state"
-	import { DARK_MODE, mustBeInDarkMode, unsubscribeWatchedStates } from "%/shell/state"
+	import { initializeShellState, mustBeInDarkMode, unsubscribeWatchedStates } from "%/shell/state"
 
 	import AppName from "%/shell/app_name.svelte"
 	import InnerShell from "%/shell/inner_shell.svelte"
 
 	let isMenuShown = false
-	let isInDarkMode = true
 
 	onMount(() => {
 		// @ts-ignore
 		window.ui("theme", "/logo.png")
-		// @ts-ignore
-		isInDarkMode = (
-			window.localStorage.getItem(THEME_MODE_KEY)
-			?? DARK_MODE
-		) === DARK_MODE
-
+		initializeShellState()
 		initializeGlobalStates()
 	})
-
-	$: mustBeInDarkMode.set(isInDarkMode)
-	$: modeIcon = isInDarkMode ? "dark_mode" : "light_mode"
 
 	function toggleMenu() {
 		isMenuShown = !isMenuShown
 	}
 
 	function toggleMode() {
-		isInDarkMode = !isInDarkMode
+		mustBeInDarkMode.update(isInDarkMode => !isInDarkMode)
 	}
 
 	onDestroy(unsubscribeWatchedStates)
@@ -59,7 +50,7 @@
 				<AppName/>
 			</p>
 			<button class="circle transparent" on:click={toggleMode}>
-				<i>{modeIcon}</i>
+				<i>{$mustBeInDarkMode ? "dark_mode" : "light_mode"}</i>
 			</button>
 		</nav>
 	</header>

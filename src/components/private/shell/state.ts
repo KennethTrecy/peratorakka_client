@@ -30,6 +30,16 @@ const unsbscribeThemeMode = themeMode.subscribe(newTheme => {
 	}
 })
 
+export function initializeShellState() {
+	// @ts-ignore
+	mustBeInDarkMode.set(
+		(
+			window.localStorage.getItem(THEME_MODE_KEY)
+			?? DARK_MODE
+		) === DARK_MODE
+	)
+}
+
 export function unsubscribeWatchedStates() {
 	unsbscribeThemeMode()
 }
