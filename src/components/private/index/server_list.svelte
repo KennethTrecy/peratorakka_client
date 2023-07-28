@@ -56,7 +56,7 @@
 			<div class="center-align large-padding">
 				<i class="extra">{$serverIcon}</i>
 				{#if $hasToken}
-					<h1>You currently connected to <code>{$serverURL}</code></h1>
+					<p>You are currently connected to <code>{$serverURL}</code></p>
 					<p>You may change your current server</p>
 					<p><strong>Note</strong>: Doing so may log out any current account</p>
 				{:else if $hasServer}
@@ -98,7 +98,13 @@
 					</div>
 				{/if}
 				<div class="space"></div>
-				<button type="submit" disabled={isConnecting}>Connect</button>
+				<button type="submit" disabled={isConnecting}>
+					{#if $hasToken}
+						Reconnect
+					{:else}
+						Connect
+					{/if}
+				</button>
 			</div>
 		</div>
 	</div>
