@@ -38,6 +38,7 @@ export function initializeGlobalStates() {
 	stopStoringServerURL = serverURL.subscribe(newServerURL => {
 		if (typeof window !== "undefined") {
 			window.localStorage.setItem(SERVER_URL_KEY, newServerURL)
+			if (newServerURL === "") CSRFToken.set("")
 		}
 	})
 	stopStoringCSRFToken = CSRFToken.subscribe(newCSRFToken => {
