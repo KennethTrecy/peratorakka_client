@@ -19,12 +19,31 @@
 		: selectedServer
 
 	let isConnecting = false
-	let didFail = false
-	function connect(event: SubmitEvent) {
+	let didConnectionFail = false
+	async function connect(event: SubmitEvent) {
 		event.preventDefault()
 		isConnecting = true
-		didFail = false
+		didConnectionFail = false
 		serverURL.set(resolvedSelectedServer)
+
+		try {
+			const response = await fetch(`${resolvedSelectedServer}/`, {
+				"method": "GET",
+				"mode": "cors",
+				"credentials": "include"
+			})
+
+			if (response.status === 200) {
+				didConnectionFail = false
+			} else {
+				throw new Error()
+			}
+		} catch (error) {
+			didConnectionFail = true
+			serverURL.set("")
+		}
+
+		isConnecting = false
 	}
 </script>
 
@@ -41,6 +60,9 @@
 				{:else if $hasServer}
 					<h1>The client is trying to connect to the server</h1>
 					<p>Please wait for a moment</p>
+				{:else if didConnectionFail}
+					<h1>The client cannot connect to the server</h1>
+					<p>Please look for another compatible server</p>
 				{:else}
 					<h1>You are not yet connected to any server</h1>
 					<p>Choose or specify a server you want to connect</p>
