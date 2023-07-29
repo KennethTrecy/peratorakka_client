@@ -3,13 +3,20 @@
 	import { get } from "svelte/store"
 	import { goto } from "$app/navigation"
 
-	import { serverURL, hasRequirements, mustHaveToken, redirectPath } from "$/global_state"
+	import {
+		serverURL,
+		hasRequirements,
+		mustHaveToken,
+		mustBeGuest,
+		redirectPath
+	} from "$/global_state"
 
 	import PasswordField from "$/form/password_field.svelte"
 	import TextField from "$/form/text_field.svelte"
 
 	hasRequirements.set(true)
 	mustHaveToken.set(true)
+	mustBeGuest.set(true)
 	const forgetPossibleRedirection = redirectPath.subscribe(path => {
 		if (path !== "") goto(path as string)
 	})
