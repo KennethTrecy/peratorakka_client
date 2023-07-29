@@ -5,6 +5,7 @@
 
 	import { serverURL, hasRequirements, mustHaveToken, redirectPath } from "$/global_state"
 
+	import PasswordField from "$/form/password_field.svelte"
 	import TextField from "$/form/text_field.svelte"
 
 	hasRequirements.set(true)
@@ -98,22 +99,14 @@
 						fieldName="Email"
 						disabled={isConnecting}
 						bind:value={email}/>
-					<div class="field label border">
-						<input
-							type="password"
-							id="password"
-							disabled={isConnecting}
-							bind:value={password}/>
-						<label for="password">Password</label>
-					</div>
-					<div class="field label border">
-						<input
-							type="password"
-							id="password_confirmation"
-							disabled={isConnecting}
-							bind:value={passwordConfirmation}/>
-						<label for="password_confirmation"><span>Confirm Password</span></label>
-					</div>
+					<PasswordField
+						fieldName="Password"
+						disabled={isConnecting}
+						bind:value={password}/>
+					<PasswordField
+						fieldName="Confirm Password"
+						disabled={isConnecting}
+						bind:value={passwordConfirmation}/>
 				</fieldset>
 				<div class="space"></div>
 				<button type="submit" disabled={isConnecting}>

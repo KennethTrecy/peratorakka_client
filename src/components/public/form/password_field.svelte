@@ -11,7 +11,7 @@
 <div class="field label border">
 	<input
 		class={activeClass}
-		type="text"
+		type="password"
 		bind:value={value}
 		id={fieldID}
 		disabled={disabled}>
