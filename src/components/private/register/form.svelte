@@ -12,7 +12,7 @@
 	})
 	onDestroy(forgetPossibleRedirection)
 
-	let name = ""
+	let username = ""
 	let email = ""
 	let password = ""
 	let passwordConfirmation = ""
@@ -30,10 +30,10 @@
 				"credentials": "include",
 				"referrer": currentServerURL,
 				"body": JSON.stringify({
-					name,
+					username,
 					email,
 					password,
-					passwordConfirmation
+					"password_confirm": passwordConfirmation
 				}),
 				"headers": {
 					"Content-Type": "application/json",
@@ -87,8 +87,8 @@
 				<div class="space"></div>
 				<fieldset class="center-align">
 					<div class="field label border">
-						<input type="text" bind:value={name} id="name" disabled={isConnecting}>
-						<label for="name">Name</label>
+						<input type="text" bind:value={username} id="username" disabled={isConnecting}>
+						<label for="username">Userame</label>
 					</div>
 					<div class="field label border">
 						<input type="text" bind:value={email} id="email" disabled={isConnecting}>
