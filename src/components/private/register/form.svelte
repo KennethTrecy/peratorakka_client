@@ -5,6 +5,8 @@
 
 	import { serverURL, hasRequirements, mustHaveToken, redirectPath } from "$/global_state"
 
+	import TextField from "$/forms/text_field.svelte"
+
 	hasRequirements.set(true)
 	mustHaveToken.set(true)
 	const forgetPossibleRedirection = redirectPath.subscribe(path => {
@@ -17,7 +19,9 @@
 	let password = ""
 	let passwordConfirmation = ""
 	let isConnecting = false
-	let errors = []
+	let errors: { "field"?: string, "message": string }[] = []
+
+	$: usernameErrors = errors.filter(error => error.field === "username")
 
 	async function register() {
 		const currentServerURL = get(serverURL)
