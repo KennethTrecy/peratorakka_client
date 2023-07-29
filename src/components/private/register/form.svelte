@@ -5,6 +5,7 @@
 
 	import {
 		serverURL,
+		userEmail,
 		hasRequirements,
 		mustHaveToken,
 		mustBeGuest,
@@ -57,6 +58,7 @@
 				case 201: {
 					errors = []
 					const responseDocument = await response.json()
+					userEmail.set(email)
 					break;
 				}
 
