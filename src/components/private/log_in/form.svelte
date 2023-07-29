@@ -1,8 +1,12 @@
 <script lang="ts">
 	import { onDestroy } from "svelte"
+	import { get } from "svelte/store"
 	import { goto } from "$app/navigation"
 
 	import { serverURL, hasRequirements, mustHaveToken, redirectPath } from "$/global_state"
+
+	import PasswordField from "$/form/password_field.svelte"
+	import TextField from "$/form/text_field.svelte"
 
 	hasRequirements.set(true)
 	mustHaveToken.set(true)
@@ -14,9 +18,58 @@
 	let email = ""
 	let password = ""
 	let isConnecting = false
+	let errors = []
 
 	async function logIn() {
+		const currentServerURL = get(serverURL)
+		isConnecting = true
 
+		try {
+			const response = await fetch(`${currentServerURL}/login`, {
+				"method": "POST",
+				"mode": "cors",
+				"credentials": "include",
+				"referrer": currentServerURL,
+				"body": JSON.stringify({
+					email,
+					password
+				}),
+				"headers": {
+					"Content-Type": "application/json",
+					"Accept": "application/json"
+				}
+			})
+
+			switch (response.status) {
+				case 200: {
+					errors = []
+					const responseDocument = await response.json()
+					break;
+				}
+
+				case 401: {
+					errors = (await response.json()).errors
+					break;
+				}
+
+				default:
+					throw new Error(
+						`Unexpected status code was returned by the server: ${response.status}.`
+					)
+			}
+		} catch (receivedErrors) {
+			if (Array.isArray(receivedErrors)) {
+				errors = receivedErrors
+			} else {
+				errors = [
+					{
+						"message": (receivedErrors as Error).message
+					}
+				]
+			}
+		}
+
+		isConnecting = false
 	}
 </script>
 
