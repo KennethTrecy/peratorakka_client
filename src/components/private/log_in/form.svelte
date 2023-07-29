@@ -1,12 +1,24 @@
 <script lang="ts">
-	import { onMount, onDestroy } from "svelte"
-	import { get } from "svelte/store"
+	import { onDestroy } from "svelte"
+	import { derived } from "svelte/store"
 
-	import { serverURL, hasServer, hasToken } from "$/global_state"
+	import { serverURL, hasLoadedGlobalStates, hasToken } from "$/global_state"
+	import { goto } from "$app/navigation"
 
 	let email = ""
 	let password = ""
 	let isConnecting = false
+
+	const mustRedirectToHome = derived(
+		[ hasLoadedGlobalStates, hasToken ],
+		([ hasLoadedStates, isConnected ]) => {
+			return hasLoadedStates && !isConnected
+		}
+	)
+	const cancelPossibleRedirection = mustRedirectToHome.subscribe(requiresRedirection => {
+		if (requiresRedirection) goto("/")
+	})
+	onDestroy(cancelPossibleRedirection)
 
 	async function logIn() {
 

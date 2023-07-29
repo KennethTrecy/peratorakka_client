@@ -4,6 +4,7 @@ import { derived, writable } from "svelte/store"
 
 import { SERVER_URL_KEY, CSRF_TOKEN_KEY } from "#/storage_keys"
 
+export const hasLoadedGlobalStates = writable<boolean>(false)
 export const serverURL = writable<string>("")
 export const CSRFToken = writable<string>("")
 
@@ -33,6 +34,7 @@ export function initializeGlobalStates() {
 	setTimeout(() => {
 		serverURL.set(storedServerURL)
 		CSRFToken.set(storedCSRFToken)
+		hasLoadedGlobalStates.set(true)
 	}, 250)
 
 	stopStoringServerURL = serverURL.subscribe(newServerURL => {
