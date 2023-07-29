@@ -11,7 +11,8 @@ export const userEmail = writable<string>("")
 
 export const hasRequirements = writable<boolean>(false)
 export const mustHaveToken = writable<boolean>(false)
-export const mustHaveUser = writable<boolean>(false)
+export const mustBeGuest = writable<boolean>(false)
+export const mustBeAuthenticatedUser = writable<boolean>(false)
 
 export const hasServer = derived(serverURL, currentServerURL => currentServerURL !== "")
 export const hasToken = derived(
@@ -44,7 +45,8 @@ export const redirectPath = derived<string>(
 		hasRequirements,
 		mustHaveToken,
 		hasToken,
-		mustHaveUser
+		mustBeGuest,
+		mustBeAuthenticatedUser,
 		hasUser
 	],
 	([
@@ -52,8 +54,9 @@ export const redirectPath = derived<string>(
 		doesHaveRequirements,
 		doesRequireToken,
 		isTokenPresent
-		doesRequireUser,
-		isUserPresent
+		doesRequireGuest,
+		doesRequireAuthenticatedUser,
+		isAuthenticatedUserPresent
 	]) => {
 		if (wereGlobalStatesLoaded) {
 			if (doesHaveRequirements) {
@@ -61,7 +64,11 @@ export const redirectPath = derived<string>(
 					return "/"
 				}
 
-				if (doesRequireUser && !isUserPresent) {
+				if (doesRequireGuest && isAuthenticatedUserPresent) {
+					return "/"
+				}
+
+				if (doesRequireAuthenticatedUser && !isAuthenticatedUserPresent) {
 					return "/log_in"
 				}
 			}
