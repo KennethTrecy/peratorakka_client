@@ -17,11 +17,42 @@
 	let password = ""
 	let passwordConfirmation = ""
 	let isConnecting = false
+	let errors = []
 
 	async function register() {
 		const currentServerURL = get(serverURL)
 		isConnecting = true
-		console.log(currentServerURL)
+
+		try {
+			const response = await fetch(`${currentServerURL}/register`, {
+				"method": "POST",
+				"mode": "cors",
+				"credentials": "include",
+				"referrer": currentServerURL,
+				"body": JSON.stringify({
+					name,
+					email,
+					password,
+					passwordConfirmation
+				}),
+				"headers": {
+					"Content-Type": "application/json",
+					"Accept": "application/json"
+				}
+			})
+
+			if (response.status === 201) {
+				errors = []
+				const responseDocument = await response.json()
+				console.log(responseDocument)
+			} else {
+				console.log("status", response.status)
+				throw new Error()
+			}
+		} catch (error) {
+			errors = []
+		}
+
 		isConnecting = false
 	}
 </script>
