@@ -5,7 +5,7 @@
 
 	import { serverURL, hasRequirements, mustHaveToken, redirectPath } from "$/global_state"
 
-	import TextField from "$/forms/text_field.svelte"
+	import TextField from "$/form/text_field.svelte"
 
 	hasRequirements.set(true)
 	mustHaveToken.set(true)
@@ -90,14 +90,14 @@
 				</p>
 				<div class="space"></div>
 				<fieldset class="center-align">
-					<div class="field label border">
-						<input type="text" bind:value={username} id="username" disabled={isConnecting}>
-						<label for="username">Userame</label>
-					</div>
-					<div class="field label border">
-						<input type="text" bind:value={email} id="email" disabled={isConnecting}>
-						<label for="email">Email</label>
-					</div>
+					<TextField
+						fieldName="Username"
+						disabled={isConnecting}
+						bind:value={username}/>
+					<TextField
+						fieldName="Email"
+						disabled={isConnecting}
+						bind:value={email}/>
 					<div class="field label border">
 						<input
 							type="password"
