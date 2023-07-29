@@ -8,11 +8,15 @@ export const hasLoadedGlobalStates = writable<boolean>(false)
 export const serverURL = writable<string>("")
 export const CSRFToken = writable<string>("")
 
+export const hasRequirements = writable<boolean>(false)
+export const mustHaveToken = writable<boolean>(false)
+
 export const hasServer = derived(serverURL, currentServerURL => currentServerURL !== "")
 export const hasToken = derived(
 	[ hasServer, CSRFToken ],
 	([ hasServerCurrently,currentCSRFToken ]) => hasServerCurrently && currentCSRFToken !== ""
 )
+
 export const serverIcon = derived<MenuItemInfo[]>(
 	[ hasServer, hasToken ],
 	([ hasServerCurrently, hasTokenCurrently ]) => (
@@ -26,6 +30,31 @@ export const serverIcon = derived<MenuItemInfo[]>(
 
 let stopStoringServerURL: Unsubscriber = () => null as void
 let stopStoringCSRFToken: Unsubscriber = () => null as void
+
+export const redirectPath = derived<string|null>(
+	[
+		hasLoadedGlobalStates,
+		hasRequirements,
+		mustHaveToken,
+		hasToken
+	],
+	([
+		wereGlobalStatesLoaded,
+		doesHaveRequirements,
+		doesRequireToken,
+		isTokenPresent
+	]) => {
+		if (wereGlobalStatesLoaded) {
+			if (doesHaveRequirements) {
+				if (doesRequireToken && !isTokenPresent) {
+					return "/"
+				}
+			}
+		}
+
+		return null
+	}
+)
 
 export function initializeGlobalStates() {
 	const storedServerURL = window.localStorage.getItem(SERVER_URL_KEY) ?? ""
