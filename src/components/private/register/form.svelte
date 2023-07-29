@@ -54,7 +54,7 @@
 				}
 
 				case 401: {
-					errors = await response.json()
+					errors = (await response.json()).errors
 					break;
 				}
 
