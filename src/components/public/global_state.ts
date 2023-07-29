@@ -35,10 +35,6 @@ export const serverIcon = derived<string>(
 	)
 )
 
-let stopStoringServerURL: Unsubscriber = () => null as void
-let stopStoringCSRFToken: Unsubscriber = () => null as void
-let stopStoringUserEmail: Unsubscriber = () => null as void
-
 export const redirectPath = derived<string>(
 	[
 		hasLoadedGlobalStates,
@@ -77,6 +73,10 @@ export const redirectPath = derived<string>(
 		return ""
 	}
 )
+
+let stopStoringServerURL: Unsubscriber = () => null as void
+let stopStoringCSRFToken: Unsubscriber = () => null as void
+let stopStoringUserEmail: Unsubscriber = () => null as void
 
 export function initializeGlobalStates() {
 	const storedServerURL = window.localStorage.getItem(SERVER_URL_KEY) ?? ""

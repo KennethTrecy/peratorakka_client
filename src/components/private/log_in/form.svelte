@@ -48,23 +48,16 @@
 				}
 			})
 
-			switch (response.status) {
-				case 200: {
-					errors = []
-					const responseDocument = await response.json()
-					userEmail.set(email)
-					break;
-				}
-
-				case 401: {
-					errors = (await response.json()).errors
-					break;
-				}
-
-				default:
-					throw new Error(
-						`Unexpected status code was returned by the server: ${response.status}.`
-					)
+			const statusCode = response.status
+			if (statusCode === 200) {
+				errors = []
+				userEmail.set(email)
+			} else if (statusCode === 401) {
+				errors = (await response.json()).errors
+			} else {
+				throw new Error(
+					`Unexpected status code was returned by the server: ${response.status}.`
+				)
 			}
 		} catch (receivedErrors) {
 			if (Array.isArray(receivedErrors)) {
