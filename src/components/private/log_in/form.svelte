@@ -2,7 +2,7 @@
 	import { onMount, onDestroy } from "svelte"
 	import { get } from "svelte/store"
 
-	import { hasServer, hasToken } from "$/global_state"
+	import { serverURL, hasServer, hasToken } from "$/global_state"
 
 	let email = ""
 	let password = ""
@@ -19,9 +19,11 @@
 		<div class="fill middle-align center-align">
 			<div class="center-align large-padding">
 				<img class="small extra" src="logo.png" alt="Peratorakka logo"/>
-				<h1 class="center-align">Log in</h1>
 				<div class="space"></div>
-				<div class="no-space center-align">
+				<p class="center-align">
+					Enter the credentials you have on <code>{$serverURL}</code> to log in.
+				</p>
+				<fieldset class="center-align">
 					<div class="field label border">
 						<input type="text" bind:value={email} id="email" disabled={isConnecting}>
 						<label for="email">Email</label>
@@ -34,7 +36,7 @@
 							bind:value={password}/>
 						<label for="password">Password</label>
 					</div>
-				</div>
+				</fieldset>
 				<div class="space"></div>
 				<button type="submit" disabled={isConnecting}>
 					Access
@@ -52,7 +54,8 @@
 		height: 80%;
 	}
 
-	h1 {
-		@extend h5;
+	fieldset {
+		@extend nav;
+		flex-direction: column;
 	}
 </style>
