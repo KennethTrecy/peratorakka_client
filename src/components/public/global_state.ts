@@ -11,14 +11,14 @@ export const userEmail = writable<string>("")
 
 export const hasRequirements = writable<boolean>(false)
 export const mustHaveToken = writable<boolean>(false)
-export const mustHaveEmail = writable<boolean>(false)
+export const mustHaveUser = writable<boolean>(false)
 
 export const hasServer = derived(serverURL, currentServerURL => currentServerURL !== "")
 export const hasToken = derived(
 	[ hasServer, CSRFToken ],
 	([ hasServerCurrently,currentCSRFToken ]) => hasServerCurrently && currentCSRFToken !== ""
 )
-export const hasEmail = derived(
+export const hasUser = derived(
 	[ hasToken, userEmail ],
 	([ hasTokenCurrently, currentUserEmail ]) => hasTokenCurrently && currentUserEmail !== ""
 )
@@ -43,18 +43,26 @@ export const redirectPath = derived<string>(
 		hasLoadedGlobalStates,
 		hasRequirements,
 		mustHaveToken,
-		hasToken
+		hasToken,
+		mustHaveUser
+		hasUser
 	],
 	([
 		wereGlobalStatesLoaded,
 		doesHaveRequirements,
 		doesRequireToken,
 		isTokenPresent
+		doesRequireUser,
+		isUserPresent
 	]) => {
 		if (wereGlobalStatesLoaded) {
 			if (doesHaveRequirements) {
 				if (doesRequireToken && !isTokenPresent) {
 					return "/"
+				}
+
+				if (doesRequireUser && !isUserPresent) {
+					return "/log_in"
 				}
 			}
 		}
