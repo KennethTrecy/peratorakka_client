@@ -41,16 +41,33 @@
 				}
 			})
 
-			if (response.status === 201) {
-				errors = []
-				const responseDocument = await response.json()
-				console.log(responseDocument)
-			} else {
-				console.log("status", response.status)
-				throw new Error()
+			switch (response.status) {
+				case 201: {
+					errors = []
+					const responseDocument = await response.json()
+					break;
+				}
+
+				case 401: {
+					errors = await response.json()
+					break;
+				}
+
+				default:
+					throw new Error(
+						`Unexpected status code was returned by the server: ${response.status}.`
+					)
 			}
-		} catch (error) {
-			errors = []
+		} catch (receivedErrors) {
+			if (Array.isArray(receivedErrors)) {
+				errors = receivedErrors
+			} else {
+				errors = [
+					{
+						"message": (receivedErrors as Error).message
+					}
+				]
+			}
 		}
 
 		isConnecting = false
