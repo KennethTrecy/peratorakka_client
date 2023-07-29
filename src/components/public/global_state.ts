@@ -53,7 +53,7 @@ export const redirectPath = derived<string>(
 		wereGlobalStatesLoaded,
 		doesHaveRequirements,
 		doesRequireToken,
-		isTokenPresent
+		isTokenPresent,
 		doesRequireGuest,
 		doesRequireAuthenticatedUser,
 		isAuthenticatedUserPresent
