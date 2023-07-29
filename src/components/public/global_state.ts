@@ -17,7 +17,7 @@ export const hasToken = derived(
 	([ hasServerCurrently,currentCSRFToken ]) => hasServerCurrently && currentCSRFToken !== ""
 )
 
-export const serverIcon = derived<MenuItemInfo[]>(
+export const serverIcon = derived<string>(
 	[ hasServer, hasToken ],
 	([ hasServerCurrently, hasTokenCurrently ]) => (
 		hasTokenCurrently
@@ -31,7 +31,7 @@ export const serverIcon = derived<MenuItemInfo[]>(
 let stopStoringServerURL: Unsubscriber = () => null as void
 let stopStoringCSRFToken: Unsubscriber = () => null as void
 
-export const redirectPath = derived<string|null>(
+export const redirectPath = derived<string>(
 	[
 		hasLoadedGlobalStates,
 		hasRequirements,
@@ -52,7 +52,7 @@ export const redirectPath = derived<string|null>(
 			}
 		}
 
-		return null
+		return ""
 	}
 )
 

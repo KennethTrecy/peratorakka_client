@@ -7,7 +7,7 @@
 	hasRequirements.set(true)
 	mustHaveToken.set(true)
 	const forgetPossibleRedirection = redirectPath.subscribe(path => {
-		if (path !== null) goto(path)
+		if (path !== "") goto(path as string)
 	})
 	onDestroy(forgetPossibleRedirection)
 
