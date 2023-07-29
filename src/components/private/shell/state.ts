@@ -4,7 +4,7 @@ import type { MenuItemInfo } from "%/shell/types"
 import { derived, writable } from "svelte/store"
 import { setMode } from "@/components/third-party/index"
 
-import { serverIcon, hasToken } from "$/global_state"
+import { serverIcon, hasToken, hasUser } from "$/global_state"
 import { THEME_MODE_KEY } from "#/storage_keys"
 
 export const DARK_MODE = "dark"
@@ -25,23 +25,48 @@ export const themeMode = derived(
 )
 
 export const menuItemInfos = derived<MenuItemInfo[]>(
-	[ serverIcon, hasToken ],
-	([ currentServerIcon, hasTokenCurrently ]) => {
+	[ serverIcon, hasToken, hasUser ],
+	([ currentServerIcon, hasTokenCurrently, hasUserCurrently ]) => {
 		return [
 			{
 				"link": "/",
 				"icon": currentServerIcon,
 				"label": "Server"
 			},
-			hasTokenCurrently ? {
+			hasTokenCurrently && !hasUserCurrently ? {
 				"link": "/log_in",
 				"icon": "login",
 				"label": "Log in"
 			} : null,
-			hasTokenCurrently ? {
+			hasTokenCurrently && !hasUserCurrently ? {
 				"link": "/register",
 				"icon": "add_circle",
 				"label": "Register"
+			} : null,
+			hasTokenCurrently && hasUserCurrently ? {
+				"link": "/currencies",
+				"icon": "universal_currency_alt",
+				"label": "Currencies"
+			} : null,
+			hasTokenCurrently && hasUserCurrently ? {
+				"link": "/accounts",
+				"icon": "category",
+				"label": "Accounts"
+			} : null,
+			hasTokenCurrently && hasUserCurrently ? {
+				"link": "/modifiers",
+				"icon": "component_exchange",
+				"label": "Modifiers"
+			} : null,
+			hasTokenCurrently && hasUserCurrently ? {
+				"link": "/financial_entries",
+				"icon": "receipt_long",
+				"label": "Financial Entries"
+			} : null,
+			hasTokenCurrently && hasUserCurrently ? {
+				"link": "/log_out",
+				"icon": "logout",
+				"label": "Log out"
 			} : null
 		].filter(Boolean)
 	}
