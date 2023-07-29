@@ -4,11 +4,18 @@
 	export let value: string
 
 	$: fieldID = fieldName.toLocaleLowerCase()
+	$: isActive = Boolean(value)
+	$: activeClass = isActive ? "active" : ""
 </script>
 
 <div class="field label border">
-	<input type="text" bind:value={value} id={fieldID} disabled={disabled}>
-	<label for={fieldID}>{fieldName}</label>
+	<input
+		class={activeClass}
+		type="text"
+		bind:value={value}
+		id={fieldID}
+		disabled={disabled}>
+	<label class={activeClass} for={fieldID}>{fieldName}</label>
 </div>
 
 <style lang="scss">
