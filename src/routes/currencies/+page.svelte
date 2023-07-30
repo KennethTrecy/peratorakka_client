@@ -1,5 +1,6 @@
 <script lang="ts">
 	import Collection from "%/currencies/collection.svelte"
+	import AddForm from "%/currencies/add_form.svelte"
 </script>
 
 <svelte:head>
@@ -8,6 +9,7 @@
 
 <article>
 	<h1>Your Currencies</h1>
+	<AddForm/>
 	<Collection data={[]}/>
 </article>
 
