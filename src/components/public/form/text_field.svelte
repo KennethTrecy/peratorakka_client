@@ -2,8 +2,13 @@
 	export let fieldName: string
 	export let disabled: boolean
 	export let value: string
+	export let IDPrefix: string = ""
 
-	$: fieldID = fieldName.replace(" ", "_").toLocaleLowerCase()
+	$: fieldID = (
+		IDPrefix === ""
+			? ""
+			: `${IDPrefix}_`
+	) + fieldName.replace(" ", "_").toLocaleLowerCase()
 	$: isActive = Boolean(value)
 	$: activeClass = isActive ? "active" : ""
 </script>
