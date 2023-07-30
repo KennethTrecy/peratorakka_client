@@ -22,7 +22,13 @@
 	function toggleMenu() {
 		dispatch("toggleMenu", null as never)
 	}
+
+	function close() {
+		if (isMenuShown) toggleMenu()
+	}
 </script>
+
+<svelte:window on:resize={close}/>
 
 <dialog class={resolvedDialogClasses}>
 	<header class="fixed">
