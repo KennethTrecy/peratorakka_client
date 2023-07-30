@@ -1,6 +1,8 @@
 <script lang="ts">
 	import { createEventDispatcher } from "svelte"
 
+	import type { MenuItemInfo } from "%/shell/types"
+
 	import { menuItemInfos } from "%/shell/state"
 
 	import AppName from "%/shell/app_name.svelte"
@@ -33,8 +35,8 @@
 			</p>
 		</nav>
 	</header>
-	{#each $menuItemInfos as info, index(info.link)}
-		<a href={info.link}>
+	{#each $menuItemInfos as info(info.link)}
+		<a href={info.link} class="row round">
 			<i>{info.icon}</i>
 			<span>{info.label}</span>
 		</a>
