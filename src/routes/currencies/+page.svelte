@@ -8,7 +8,7 @@
 </svelte:head>
 
 <article>
-	<h1>Your Currencies</h1>
+	<h1>Currencies</h1>
 	<AddForm/>
 	<Collection data={[]}/>
 </article>
