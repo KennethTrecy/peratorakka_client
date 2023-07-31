@@ -1,7 +1,7 @@
 // @vitest-environment jsdom
 
 import { describe, it, expect } from "vitest"
-import { sreen, render, cleanup } from "@testing-library/svelte"
+import { render, cleanup } from "@testing-library/svelte"
 
 import type { Entity } from "%/currencies/types"
 
