@@ -1,9 +1,68 @@
 <script lang="ts">
+	import type { GeneralError } from "+/rest"
+
+	import { get } from "svelte/store"
+
+	import { serverURL } from "$/global_state"
+
 	import TextField from "$/form/text_field.svelte"
 
-	let isConnecting = false
+	const IDPrefix = "new_"
 	let code = ""
 	let name = ""
+	let isConnecting = false
+	let errors: GeneralError[] = []
+
+	async function createCurrency() {
+		const currentServerURL = get(serverURL)
+		isConnecting = true
+
+		try {
+			const response = await fetch(`${currentServerURL}/api/v1/currencies`, {
+				"method": "POST",
+				"mode": "cors",
+				"credentials": "include",
+				"referrer": currentServerURL,
+				"body": JSON.stringify({
+					"currency": {
+						code,
+						name
+					}
+				}),
+				"headers": {
+					"Content-Type": "application/json",
+					"Accept": "application/json"
+				}
+			})
+
+			const statusCode = response.status
+			if (statusCode === 201) {
+				let newCurrency = await response.json()
+
+				errors = []
+				code = ""
+				name = ""
+			} else if (statusCode === 401) {
+				errors = (await response.json()).errors
+			} else {
+				throw new Error(
+					`Unexpected status code was returned by the server: ${response.status}.`
+				)
+			}
+		} catch (receivedErrors) {
+			if (Array.isArray(receivedErrors)) {
+				errors = receivedErrors
+			} else {
+				errors = [
+					{
+						"message": (receivedErrors as Error).message
+					}
+				]
+			}
+		}
+
+		isConnecting = false
+	}
 </script>
 
 <section>
@@ -18,16 +77,20 @@
 		financial entries. Therefore, there is no network usage to check for current conversions which
 		is a beneficial effect.
 	</p>
-	<form on:submit>
+	<form on:submit={createCurrency}>
 		<fieldset>
 			<TextField
-				fieldName="Code of New Currency"
+				fieldName="Code"
 				disabled={isConnecting}
-				bind:value={code}/>
+				bind:value={code}
+				{IDPrefix}
+				{errors}/>
 			<TextField
-				fieldName="Name of New Currency"
+				fieldName="Name"
 				disabled={isConnecting}
-				bind:value={name}/>
+				bind:value={name}
+				{IDPrefix}
+				{errors}/>
 			<div class="row">
 				<button type="submit" disabled={isConnecting}>
 					Add
