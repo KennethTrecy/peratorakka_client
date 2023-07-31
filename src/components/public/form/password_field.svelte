@@ -23,7 +23,7 @@
 	}
 </script>
 
-<div class="field label border">
+<div class="field label border no-margin">
 	<input
 		role="textbox"
 		class={activeClass}
@@ -33,7 +33,7 @@
 		disabled={disabled}>
 	<label class={activeClass} for={fieldID}>{fieldName}</label>
 	{#if message !== ""}
-		<p class="error">{message}</p>
+		<p class="error no-margin">{message}</p>
 	{/if}
 </div>
 
@@ -42,7 +42,5 @@
 
 	p {
 		@extend span;
-
-		margin: 0em;
 	}
 </style>

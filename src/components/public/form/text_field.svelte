@@ -24,7 +24,7 @@
 	}
 </script>
 
-<fieldset class="field label border">
+<div class="field label border no-margin">
 	{#if variant === "text"}
 		<input
 			class={activeClass}
@@ -42,16 +42,14 @@
 	{/if}
 	<label class={activeClass} for={fieldID}>{fieldName}</label>
 	{#if message !== ""}
-		<p class="error">{message}</p>
+		<p class="error no-margin">{message}</p>
 	{/if}
-</fieldset>
+</div>
 
 <style lang="scss">
 	@use "@/components/third-party/index";
 
 	p {
 		@extend span;
-
-		margin: 0em;
 	}
 </style>
