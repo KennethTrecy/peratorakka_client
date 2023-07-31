@@ -5,3 +5,7 @@ export interface GeneralError {
 export interface FieldError extends GeneralError {
 	field: string
 }
+
+export type ErrorVariant =
+	| GeneralError
+	| FieldError
