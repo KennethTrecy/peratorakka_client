@@ -7,7 +7,7 @@ import { act, render, cleanup } from "@testing-library/svelte"
 import Component from "./text_field.svelte"
 
 describe("Text field behavior", () => {
-	it("can be activated with new value", async () => {
+	it("can render with no value", async () => {
 		const user = userEvent.setup()
 		const props = {
 			"fieldName": "",
@@ -24,7 +24,7 @@ describe("Text field behavior", () => {
 		cleanup()
 	})
 
-	it("can be activated with new value", async () => {
+	it("can render with new value", async () => {
 		const user = userEvent.setup()
 		const props = {
 			"fieldName": "",
@@ -38,6 +38,49 @@ describe("Text field behavior", () => {
 		await user.type(textBox, "Hello world")
 
 		expect(textBox.classList.contains("active")).toBeTruthy()
+
+		cleanup()
+	})
+
+	it("can render with no error", async () => {
+		const user = userEvent.setup()
+		const props = {
+			"fieldName": "hello",
+			"disabled": false,
+			"value": "",
+			"errors": [
+				{
+					"message": "world"
+				}
+			]
+		}
+		const { container } = render(Component, props)
+
+		const paragraph = container.querySelector("p")
+
+		expect(paragraph).toBeNull()
+
+		cleanup()
+	})
+
+	it("can render with error", async () => {
+		const user = userEvent.setup()
+		const props = {
+			"fieldName": "hello",
+			"disabled": false,
+			"value": "",
+			"errors": [
+				{
+					"field": "hello",
+					"message": "world"
+				}
+			]
+		}
+		const { container } = render(Component, props)
+
+		const paragraph = container.querySelector("p")
+
+		expect(paragraph).not.toBeNull()
 
 		cleanup()
 	})
