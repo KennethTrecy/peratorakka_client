@@ -1,4 +1,6 @@
 <script lang="ts">
+	import type { GeneralError } from "+/rest"
+
 	import { onDestroy } from "svelte"
 	import { get } from "svelte/store"
 	import { goto } from "$app/navigation"
@@ -26,7 +28,7 @@
 	let email = ""
 	let password = ""
 	let isConnecting = false
-	let errors = []
+	let errors: GeneralError[] = []
 
 	async function logIn() {
 		const currentServerURL = get(serverURL)
@@ -86,18 +88,17 @@
 					Enter the credentials you have on <code>{$serverURL}</code> to log in.
 				</p>
 				<fieldset class="center-align">
-					<div class="field label border">
-						<input type="text" bind:value={email} id="email" disabled={isConnecting}>
-						<label for="email">Email</label>
-					</div>
-					<div class="field label border">
-						<input
-							type="password"
-							id="password"
-							disabled={isConnecting}
-							bind:value={password}/>
-						<label for="password">Password</label>
-					</div>
+					<TextField
+						variant="email"
+						fieldName="Email"
+						disabled={isConnecting}
+						bind:value={email}
+						{errors}/>
+					<PasswordField
+						fieldName="Password"
+						disabled={isConnecting}
+						bind:value={password}
+						{errors}/>
 				</fieldset>
 				<div class="space"></div>
 				<button type="submit" disabled={isConnecting}>
