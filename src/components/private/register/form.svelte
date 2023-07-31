@@ -15,6 +15,7 @@
 	} from "$/global_state"
 
 	import PasswordField from "$/form/password_field.svelte"
+	import SingleForm from "$/form/single_form.svelte"
 	import TextField from "$/form/text_field.svelte"
 
 	hasRequirements.set(true)
@@ -81,59 +82,43 @@
 	}
 </script>
 
-<form class="single_form middle-align center-align grid" on:submit={register}>
-	<div class="s1 m2 l3"></div>
-	<div class="s10 m8 l6">
-		<div class="fill middle-align center-align">
-			<div class="center-align large-padding">
-				<img class="small extra" src="logo.png" alt="Peratorakka logo"/>
-				<div class="space"></div>
-				<p class="center-align">
-					Enter the credentials to be sent to <code>{$serverURL}</code> to register.
-				</p>
-				<div class="space"></div>
-				<fieldset class="center-align">
-					<TextField
-						fieldName="Username"
-						disabled={isConnecting}
-						bind:value={username}
-						{errors}/>
-					<TextField
-						variant="email"
-						fieldName="Email"
-						disabled={isConnecting}
-						bind:value={email}
-						{errors}/>
-					<PasswordField
-						fieldName="Password"
-						disabled={isConnecting}
-						bind:value={password}
-						{errors}/>
-					<PasswordField
-						fieldName="Confirm Password"
-						disabled={isConnecting}
-						bind:value={passwordConfirmation}
-						{errors}/>
-				</fieldset>
-				<div class="space"></div>
-				<button type="submit" disabled={isConnecting}>
-					Register
-				</button>
-			</div>
-		</div>
-	</div>
-</form>
+<SingleForm on:submit={register}>
+	<p class="center-align" slot="description_layer">
+		Enter the credentials to be sent to <code>{$serverURL}</code> to register.
+	</p>
+	<fieldset slot="field_layer">
+		<TextField
+			fieldName="Username"
+			disabled={isConnecting}
+			bind:value={username}
+			{errors}/>
+		<TextField
+			variant="email"
+			fieldName="Email"
+			disabled={isConnecting}
+			bind:value={email}
+			{errors}/>
+		<PasswordField
+			fieldName="Password"
+			disabled={isConnecting}
+			bind:value={password}
+			{errors}/>
+		<PasswordField
+			fieldName="Confirm Password"
+			disabled={isConnecting}
+			bind:value={passwordConfirmation}
+			{errors}/>
+	</fieldset>
+	<button type="submit" disabled={isConnecting} slot="action_layer">
+		Register
+	</button>
+</SingleForm>
 
 <style lang="scss">
 	@use "@/components/third-party/index";
 
-	.single_form {
-		width: 100%;
-		height: 80%;
-	}
-
 	fieldset {
-		margin: 0% 10%;
-		width: 80%;
+		@extend nav;
+		flex-direction: column;
 	}
 </style>
