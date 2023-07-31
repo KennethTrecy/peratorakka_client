@@ -6,6 +6,7 @@
 	export let value: string
 	export let IDPrefix: string = ""
 	export let errors: GeneralError[]
+	export let variant: "email"|"text" = "text"
 
 	$: fieldID = (
 		IDPrefix === ""
@@ -24,12 +25,21 @@
 </script>
 
 <fieldset class="field label border">
-	<input
-		class={activeClass}
-		type="text"
-		bind:value={value}
-		id={fieldID}
-		disabled={disabled}>
+	{#if variant === "text"}
+		<input
+			class={activeClass}
+			type="text"
+			bind:value={value}
+			id={fieldID}
+			disabled={disabled}>
+	{:else}
+		<input
+			class={activeClass}
+			type="email"
+			bind:value={value}
+			id={fieldID}
+			disabled={disabled}>
+	{/if}
 	<label class={activeClass} for={fieldID}>{fieldName}</label>
 	{#if message !== ""}
 		<p class="error">{message}</p>
