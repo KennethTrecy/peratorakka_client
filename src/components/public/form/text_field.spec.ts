@@ -84,4 +84,22 @@ describe("Text field behavior", () => {
 
 		cleanup()
 	})
+
+	it("can render as email", async () => {
+		const user = userEvent.setup()
+		const props = {
+			"fieldName": "",
+			"disabled": false,
+			"value": "",
+			"errors": [],
+			"variant": "email"
+		}
+		const { container, getByRole } = render(Component, props)
+
+		const textBox = getByRole("textbox")
+
+		expect(textBox.type).toBe("email")
+
+		cleanup()
+	})
 })
