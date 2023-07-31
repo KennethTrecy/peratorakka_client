@@ -1,11 +1,11 @@
-export interface GeneralError {
+export interface SimpleError {
 	message: string
 }
 
-export interface FieldError extends GeneralError {
+export interface FieldError extends SimpleError {
 	field: string
 }
 
-export type ErrorVariant =
-	| GeneralError
+export type GeneralError =
+	| SimpleError
 	| FieldError
