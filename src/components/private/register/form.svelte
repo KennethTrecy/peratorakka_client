@@ -1,4 +1,6 @@
 <script lang="ts">
+	import type { GeneralError } from "+/rest"
+
 	import { onDestroy } from "svelte"
 	import { get } from "svelte/store"
 	import { goto } from "$app/navigation"
@@ -28,9 +30,7 @@
 	let password = ""
 	let passwordConfirmation = ""
 	let isConnecting = false
-	let errors: { "field"?: string, "message": string }[] = []
-
-	$: usernameErrors = errors.filter(error => error.field === "username")
+	let errors: GeneralError[] = []
 
 	async function register() {
 		const currentServerURL = get(serverURL)
@@ -96,19 +96,24 @@
 					<TextField
 						fieldName="Username"
 						disabled={isConnecting}
-						bind:value={username}/>
+						bind:value={username}
+						{errors}/>
 					<TextField
+						variant="email"
 						fieldName="Email"
 						disabled={isConnecting}
-						bind:value={email}/>
+						bind:value={email}
+						{errors}/>
 					<PasswordField
 						fieldName="Password"
 						disabled={isConnecting}
-						bind:value={password}/>
+						bind:value={password}
+						{errors}/>
 					<PasswordField
 						fieldName="Confirm Password"
 						disabled={isConnecting}
-						bind:value={passwordConfirmation}/>
+						bind:value={passwordConfirmation}
+						{errors}/>
 				</fieldset>
 				<div class="space"></div>
 				<button type="submit" disabled={isConnecting}>
