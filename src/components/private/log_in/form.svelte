@@ -15,6 +15,7 @@
 	} from "$/global_state"
 
 	import PasswordField from "$/form/password_field.svelte"
+	import SingleForm from "$/form/single_form.svelte"
 	import TextField from "$/form/text_field.svelte"
 
 	hasRequirements.set(true)
@@ -77,45 +78,30 @@
 	}
 </script>
 
-<form class="list middle-align center-align grid" on:submit={logIn}>
-	<div class="s1 m2 l3"></div>
-	<div class="s10 m8 l6">
-		<div class="fill middle-align center-align">
-			<div class="center-align large-padding">
-				<img class="small extra" src="logo.png" alt="Peratorakka logo"/>
-				<div class="space"></div>
-				<p class="center-align">
-					Enter the credentials you have on <code>{$serverURL}</code> to log in.
-				</p>
-				<fieldset class="center-align">
-					<TextField
-						variant="email"
-						fieldName="Email"
-						disabled={isConnecting}
-						bind:value={email}
-						{errors}/>
-					<PasswordField
-						fieldName="Password"
-						disabled={isConnecting}
-						bind:value={password}
-						{errors}/>
-				</fieldset>
-				<div class="space"></div>
-				<button type="submit" disabled={isConnecting}>
-					Access
-				</button>
-			</div>
-		</div>
-	</div>
-</form>
+<SingleForm on:submit={logIn}>
+	<p class="center-align" slot="description_layer">
+		Enter the credentials you have on <code>{$serverURL}</code> to log in.
+	</p>
+	<fieldset slot="field_layer">
+		<TextField
+			variant="email"
+			fieldName="Email"
+			disabled={isConnecting}
+			bind:value={email}
+			{errors}/>
+		<PasswordField
+			fieldName="Password"
+			disabled={isConnecting}
+			bind:value={password}
+			{errors}/>
+	</fieldset>
+	<button type="submit" disabled={isConnecting} slot="action_layer">
+		Access
+	</button>
+</SingleForm>
 
 <style lang="scss">
 	@use "@/components/third-party/index";
-
-	.list {
-		width: 100%;
-		height: 80%;
-	}
 
 	fieldset {
 		@extend nav;
