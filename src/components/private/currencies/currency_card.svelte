@@ -1,5 +1,6 @@
 <script lang="ts">
 	import type { GeneralError } from "+/rest"
+	import type { CardStatus } from "+/component"
 	import type { Entity } from "%/currencies/types"
 
 	import { writable } from "svelte/store"
@@ -10,19 +11,23 @@
 
 	export let data: Entity
 
-	let edit = false
+	let status: CardStatus = "reading"
 	let code = data.code
 	let name = data.name
 
 	$: IDPrefix = `old_currency_${data.id}`
 	$: formID = `${IDPrefix}_form`
+	$: isReading = status === "reading"
 	$: cardClasses = [
-		...(edit ? [ "s12", "m12", "l6" ] : [ "s6", "m6", "l3" ]),
+		...(!isReading ? [ "s12", "m12", "l6" ] : [ "s6", "m6", "l3" ]),
 		"secondary-container"
 	].join(" ")
-	let isConnecting = writable<boolean>(false)
-	let errors = writable<GeneralError[]>([])
-	let send = (request: Partial<RequestInit>) => Promise.resolve()
+	let isConnectingToUpdate = writable<boolean>(false)
+	let updateErrors = writable<GeneralError[]>([])
+	let requestUpdate = (request: Partial<RequestInit>) => Promise.resolve()
+	let isConnectingToDelete = writable<boolean>(false)
+	let deleteErrors = writable<GeneralError[]>([])
+	let requestDelete = (request: Partial<RequestInit>) => Promise.resolve()
 
 	$: {
 		const requesterInfo = makeJSONRequester({
@@ -39,31 +44,31 @@
 							code,
 							name
 						}
-						errors.set([])
-						stopEditing()
+						updateErrors.set([])
+						startReading()
 					}
 				}
 			],
 			"expectedErrorStatusCodes": [ 400 ]
 		})
 
-		isConnecting = requesterInfo.isConnecting
-		errors = requesterInfo.errors
-		send = requesterInfo.send
+		isConnectingToUpdate = requesterInfo.isConnecting
+		updateErrors = requesterInfo.errors
+		requestUpdate = requesterInfo.send
 	}
 
 	function startEditing() {
-		edit = true
+		status = "editing"
 	}
 
-	function stopEditing() {
-		edit = false
+	function startReading() {
+		status = "reading"
 	}
 
 	async function confirmEdit(event: SubmitEvent) {
 		event.preventDefault()
 
-		await send({
+		await requestUpdate({
 			"body": JSON.stringify({
 				"currency": {
 					code,
@@ -74,45 +79,29 @@
 	}
 
 	function cancelEdit() {
-		stopEditing()
+		startReading()
 		code = data.code
 		name = data.name
 	}
 </script>
 
 <article class={cardClasses}>
-	{#if edit}
+	{#if isReading}
+		<h3>{data.code}</h3>
+		<p>{data.name}</p>
+	{:else}
 		<BasicForm
 			id={formID}
 			bind:code={code}
 			bind:name={name}
-			isConnecting={$isConnecting}
+			isConnecting={$isConnectingToUpdate}
 			{IDPrefix}
-			errors={$errors}
+			errors={$updateErrors}
 			on:submit={confirmEdit}/>
-	{:else}
-		<h3>{data.code}</h3>
-		<p>{data.name}</p>
 	{/if}
 
 	<div>
-		{#if edit}
-			<button
-				class="no-margin square round"
-				type="submit"
-				form={formID}
-				disabled={$isConnecting}>
-				<i>save</i>
-			</button>
-			<button
-				class="no-margin square round"
-				on:click={cancelEdit}
-				type="button"
-				form={formID}
-				disabled={$isConnecting}>
-				<i>cancel</i>
-			</button>
-		{:else}
+		{#if isReading}
 			<button
 				class="no-margin square round"
 				on:click={startEditing}>
@@ -122,6 +111,22 @@
 				class="no-margin square round"
 				disabled={false}>
 				<i>delete</i>
+			</button>
+		{:else}
+			<button
+				class="no-margin square round"
+				type="submit"
+				form={formID}
+				disabled={$isConnectingToUpdate}>
+				<i>save</i>
+			</button>
+			<button
+				class="no-margin square round"
+				on:click={cancelEdit}
+				type="button"
+				form={formID}
+				disabled={$isConnectingToUpdate}>
+				<i>cancel</i>
 			</button>
 		{/if}
 	</div>
