@@ -1,5 +1,6 @@
 <script lang="ts">
 	import type { Entity } from "%/currencies/types"
+	import CurrencyCard from "%/currencies/currency_card.svelte";
 
 	export let data: Entity[]
 
@@ -14,18 +15,7 @@
 			They can be used to be associated to financial accounts.
 		</p>
 		{#each data as entity(entity.id)}
-			<article class="secondary-container">
-				<h3>{entity.code}</h3>
-				<p>{entity.name}</p>
-				<div class="nav">
-					<button>
-						<i>edit</i>
-					</button>
-					<button>
-						<i>delete</i>
-					</button>
-				</div>
-			</article>
+			<CurrencyCard bind:data={entity}/>
 		{/each}
 	{:else}
 		<p>
@@ -37,12 +27,4 @@
 
 <style lang="scss">
 	@use "@/components/third-party/index";
-
-	h3 {
-		@extend h5;
-	}
-
-	div.nav {
-		@extend nav;
-	}
 </style>
