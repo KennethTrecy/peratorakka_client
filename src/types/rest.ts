@@ -20,7 +20,7 @@ interface RequesterCase {
 
 export interface RequesterConstraints {
 	path: string,
-	defaultRequestConfiguration: Partial<Request>,
+	defaultRequestConfiguration: Partial<RequestInit>,
 	manualResponseHandlers: RequesterCase[],
 	expectedErrorStatusCodes: number[]
 }
@@ -31,5 +31,5 @@ export interface RequesterDependencies {
 }
 
 export interface RequesterInfo extends RequesterDependencies {
-	send: (requestInfo: Partial<Request>) => void
+	send: (requestInfo: Partial<RequestInit>) => Promise<void>
 }
