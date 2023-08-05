@@ -20,6 +20,7 @@ interface RequesterCase {
 
 export interface RequesterConstraints {
 	path: string,
+	defaultRequestConfiguration: Partial<Request>,
 	manualResponseHandlers: RequesterCase[],
 	expectedErrorStatusCodes: number[]
 }

@@ -28,6 +28,9 @@
 	let currencies: Entity[] = []
 	let { isConnecting, errors, send } = makeJSONRequester({
 		"path": "/api/v1/currencies",
+		"defaultRequestConfiguration": {
+			"method": "GET"
+		},
 		"manualResponseHandlers": [
 			{
 				"statusCode": 200,
