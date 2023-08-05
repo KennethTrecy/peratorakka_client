@@ -2,6 +2,10 @@
 	import type { GeneralError } from "+/rest"
 	import type { Entity } from "%/currencies/types"
 
+	import { get } from "svelte/store"
+
+	import { serverURL } from "$/global_state"
+
 	import TextField from "$/form/text_field.svelte"
 
 	export let data: Entity
@@ -12,7 +16,8 @@
 	let isConnecting = false
 	let errors: GeneralError[] = []
 
-	$: IDPrefix = `old_currency_${data.id}`
+	$: entityID = data.id
+	$: IDPrefix = `old_currency_${entityID}`
 	$: formID = `${IDPrefix}_form`
 
 	function startEditing() {
@@ -23,9 +28,59 @@
 		edit = false
 	}
 
-	function confirmEdit(event: SubmitEvent) {
+	async function confirmEdit(event: SubmitEvent) {
 		event.preventDefault()
-		stopEditing()
+
+		const currentServerURL = get(serverURL)
+		isConnecting = true
+
+		try {
+			const response = await fetch(`${currentServerURL}/api/v1/currencies/${entityID}`, {
+				"method": "PUT",
+				"mode": "cors",
+				"credentials": "include",
+				"referrer": currentServerURL,
+				"body": JSON.stringify({
+					"currency": {
+						code,
+						name
+					}
+				}),
+				"headers": {
+					"Content-Type": "application/json",
+					"Accept": "application/json"
+				}
+			})
+
+			const statusCode = response.status
+			if (statusCode === 204) {
+				errors = []
+				data = {
+					...data,
+					code,
+					name
+				}
+				stopEditing()
+			} else if (statusCode === 401) {
+				errors = (await response.json()).errors
+			} else {
+				throw new Error(
+					`Unexpected status code was returned by the server: ${response.status}.`
+				)
+			}
+		} catch (receivedErrors) {
+			if (Array.isArray(receivedErrors)) {
+				errors = receivedErrors
+			} else {
+				errors = [
+					{
+						"message": (receivedErrors as Error).message
+					}
+				]
+			}
+		}
+
+		isConnecting = false
 	}
 
 	function cancelEdit() {
