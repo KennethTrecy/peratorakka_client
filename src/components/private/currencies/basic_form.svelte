@@ -11,25 +11,23 @@
 	export let id = ""
 </script>
 
-<form class="grid large-space" {id} on:submit>
-	<fieldset class="s12 m12 l12 grid">
-		<div class="s12 m9 l6 grid large-space">
-			<div class="s12 m12 l12">
-				<TextField
-					fieldName="Code"
-					disabled={isConnecting}
-					bind:value={code}
-					{IDPrefix}
-					{errors}/>
-			</div>
-			<div class="s12 m12 l12">
-				<TextField
-					fieldName="Name"
-					disabled={isConnecting}
-					bind:value={name}
-					{IDPrefix}
-					{errors}/>
-			</div>
+<form class="s12 m12 l12 grid large-space" {id} on:submit>
+	<fieldset class="s12 m12 l12 grid large-space">
+		<div class="s12 m12 l12">
+			<TextField
+				fieldName="Code"
+				disabled={isConnecting}
+				bind:value={code}
+				{IDPrefix}
+				{errors}/>
+		</div>
+		<div class="s12 m12 l12">
+			<TextField
+				fieldName="Name"
+				disabled={isConnecting}
+				bind:value={name}
+				{IDPrefix}
+				{errors}/>
 		</div>
 	</fieldset>
 	<div class="s12 m12 l12">

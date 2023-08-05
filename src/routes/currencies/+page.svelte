@@ -62,18 +62,12 @@
 	<title>Currencies</title>
 </svelte:head>
 
-<article>
-	<h1>Currencies</h1>
+<article class="grid large-space large-margin large-padding">
+	<h1 class="s12 m12 l12 center-align">Currencies</h1>
 	<AddForm/>
 	<Collection data={currencies}/>
 </article>
 
 <style lang="scss">
 	@use "@/components/third-party/index";
-
-	article {
-		@extend .medium-margin;
-		margin-left: 0em;
-		margin-right: 0em;
-	}
 </style>

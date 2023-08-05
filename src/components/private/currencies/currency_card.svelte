@@ -16,6 +16,10 @@
 
 	$: IDPrefix = `old_currency_${data.id}`
 	$: formID = `${IDPrefix}_form`
+	$: cardClasses = [
+		...(edit ? [ "s12", "m12", "l6" ] : [ "s6", "m6", "l3" ]),
+		"secondary-container"
+	].join(" ")
 	let isConnecting = writable<boolean>(false)
 	let errors = writable<GeneralError[]>([])
 	let send = (request: Partial<RequestInit>) => Promise.resolve()
@@ -76,7 +80,7 @@
 	}
 </script>
 
-<article class="secondary-container">
+<article class={cardClasses}>
 	{#if edit}
 		<BasicForm
 			id={formID}
@@ -91,19 +95,32 @@
 		<p>{data.name}</p>
 	{/if}
 
-	<div class="nav">
+	<div>
 		{#if edit}
-			<button type="submit" form={formID} disabled={$isConnecting}>
+			<button
+				class="no-margin square round"
+				type="submit"
+				form={formID}
+				disabled={$isConnecting}>
 				<i>save</i>
 			</button>
-			<button on:click={cancelEdit} type="button" form={formID} disabled={true}>
+			<button
+				class="no-margin square round"
+				on:click={cancelEdit}
+				type="button"
+				form={formID}
+				disabled={$isConnecting}>
 				<i>cancel</i>
 			</button>
 		{:else}
-			<button on:click={startEditing}>
+			<button
+				class="no-margin square round"
+				on:click={startEditing}>
 				<i>edit</i>
 			</button>
-			<button>
+			<button
+				class="no-margin square round"
+				disabled={false}>
 				<i>delete</i>
 			</button>
 		{/if}
@@ -116,9 +133,5 @@
 
 	h3 {
 		@extend h5;
-	}
-
-	div.nav {
-		@extend nav;
 	}
 </style>

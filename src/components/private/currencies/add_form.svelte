@@ -38,9 +38,9 @@
 	}
 </script>
 
-<section class="grid small-space">
+<section class="s12 m12 l12 grid small-space">
 	<h2 class="s12 m12 l12 center-align">Add Currency</h2>
-	<div class="s12 m6 l6 grid small-space">
+	<div class="s12 m12 l6 grid small-space">
 		<p class="s12 m12 l12 medium-line">
 			Currencies are used as symbols for different financial entries and other parts of the
 			application. You have a freedom to add currencies, regardless whether they are physical or
@@ -52,7 +52,7 @@
 			is a beneficial effect.
 		</p>
 	</div>
-	<div class="s12 m6 l6 grid large-space small-padding">
+	<div class="s12 m12 l6 grid large-space">
 		<BasicForm
 			bind:code={code}
 			bind:name={name}
