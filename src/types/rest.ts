@@ -24,8 +24,11 @@ export interface RequesterConstraints {
 	expectedErrorStatusCodes: number[]
 }
 
-export interface RequesterInfo {
+export interface RequesterDependencies {
 	isConnecting: Writable<boolean>,
-	errors: Writable<GeneralError[]>,
+	errors: Writable<GeneralError[]>
+}
+
+export interface RequesterInfo extends RequesterDependencies {
 	send: (requestInfo: Partial<Request>) => void
 }
