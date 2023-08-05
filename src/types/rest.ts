@@ -14,13 +14,12 @@ export type GeneralError =
 	| FieldError
 
 interface RequesterCase {
-	status: number,
+	statusCode: number,
 	action: () => void
 }
 
 export interface RequesterConstraints {
 	path: string,
-	defaultRequestConfiguration: Partial<Request>,
 	manualResponseHandlers: RequesterCase[],
 	expectedErrorStatusCodes: number[]
 }
