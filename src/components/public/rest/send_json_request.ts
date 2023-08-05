@@ -37,7 +37,7 @@ export default async function sendJSONRequest(
 		if (caseIndex > -1) {
 			const caseInfo = constraints.manualResponseHandlers[caseIndex]
 			await caseInfo.action(response)
-		} else if (expectedErrorStatusCodes.includes(statusCode)) {
+		} else if (constraints.expectedErrorStatusCodes.includes(statusCode)) {
 			dependencies.errors.set((await response.json()).errors)
 		} else {
 			throw new Error(
