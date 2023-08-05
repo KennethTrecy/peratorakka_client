@@ -40,7 +40,7 @@
 					}
 				}
 			],
-			"expectedErrorStatusCodes": [ 401 ]
+			"expectedErrorStatusCodes": [ 400 ]
 		})
 
 		isConnecting = requesterInfo.isConnecting

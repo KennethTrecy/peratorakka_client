@@ -23,7 +23,7 @@
 				}
 			}
 		],
-		"expectedErrorStatusCodes": [ 401 ]
+		"expectedErrorStatusCodes": [ 400 ]
 	})
 
 	async function createCurrency() {
