@@ -15,7 +15,7 @@ export type GeneralError =
 
 interface RequesterCase {
 	statusCode: number,
-	action: () => void
+	action: (response: Response) => Promise<void>
 }
 
 export interface RequesterConstraints {

@@ -18,15 +18,14 @@ export default async function sendJSONRequest(
 	dependencies.isConnecting.set(true)
 
 	try {
-		const response = await fetch(constraints.path, {
+		const response = await fetch(`${currentServerURL}${constraints.path}`, {
 			"mode": "cors",
 			"credentials": "include",
-			"referrer": currentServerURL,
 			"headers": {
 				"Content-Type": "application/json",
 				"Accept": "application/json"
 			},
-			...constraints.defaultRequestConfiguration
+			...constraints.defaultRequestConfiguration,
 			...specialRequestInfo
 		})
 
@@ -36,8 +35,8 @@ export default async function sendJSONRequest(
 		})
 
 		if (caseIndex > -1) {
-			const case = constraints.manualResponseHandlers[caseIndex]
-			case.action()
+			const caseInfo = constraints.manualResponseHandlers[caseIndex]
+			await caseInfo.action(response)
 		} else if (expectedErrorStatusCodes.includes(statusCode)) {
 			dependencies.errors.set((await response.json()).errors)
 		} else {
