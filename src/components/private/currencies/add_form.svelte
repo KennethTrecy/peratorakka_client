@@ -1,67 +1,40 @@
 <script lang="ts">
-	import type { GeneralError } from "+/rest"
-
-	import { get } from "svelte/store"
-
-	import { serverURL } from "$/global_state"
+	import makeJSONRequester from "$/rest/make_json_requester"
 
 	import TextField from "$/form/text_field.svelte"
 
 	const IDPrefix = "new_"
 	let code = ""
 	let name = ""
-	let isConnecting = false
-	let errors: GeneralError[] = []
+	let { isConnecting, errors, send } = makeJSONRequester({
+		"path": "/api/v1/currencies",
+		"defaultRequestConfiguration": {
+			"method": "POST"
+		},
+		"manualResponseHandlers": [
+			{
+				"statusCode": 201,
+				"action": async (response: Response) => {
+					let newCurrency = await response.json()
+
+					code = ""
+					name = ""
+					errors.set([])
+				}
+			}
+		],
+		"expectedErrorStatusCodes": [ 401 ]
+	})
 
 	async function createCurrency() {
-		const currentServerURL = get(serverURL)
-		isConnecting = true
-
-		try {
-			const response = await fetch(`${currentServerURL}/api/v1/currencies`, {
-				"method": "POST",
-				"mode": "cors",
-				"credentials": "include",
-				"referrer": currentServerURL,
-				"body": JSON.stringify({
-					"currency": {
-						code,
-						name
-					}
-				}),
-				"headers": {
-					"Content-Type": "application/json",
-					"Accept": "application/json"
+		await send({
+			"body": JSON.stringify({
+				"currency": {
+					code,
+					name
 				}
 			})
-
-			const statusCode = response.status
-			if (statusCode === 201) {
-				let newCurrency = await response.json()
-
-				errors = []
-				code = ""
-				name = ""
-			} else if (statusCode === 401) {
-				errors = (await response.json()).errors
-			} else {
-				throw new Error(
-					`Unexpected status code was returned by the server: ${response.status}.`
-				)
-			}
-		} catch (receivedErrors) {
-			if (Array.isArray(receivedErrors)) {
-				errors = receivedErrors
-			} else {
-				errors = [
-					{
-						"message": (receivedErrors as Error).message
-					}
-				]
-			}
-		}
-
-		isConnecting = false
+		})
 	}
 </script>
 
@@ -81,18 +54,18 @@
 		<fieldset>
 			<TextField
 				fieldName="Code"
-				disabled={isConnecting}
+				disabled={$isConnecting}
 				bind:value={code}
 				{IDPrefix}
-				{errors}/>
+				errors={$errors}/>
 			<TextField
 				fieldName="Name"
-				disabled={isConnecting}
+				disabled={$isConnecting}
 				bind:value={name}
 				{IDPrefix}
-				{errors}/>
+				errors={$errors}/>
 			<div class="row">
-				<button type="submit" disabled={isConnecting}>
+				<button type="submit" disabled={$isConnecting}>
 					Add
 				</button>
 			</div>
