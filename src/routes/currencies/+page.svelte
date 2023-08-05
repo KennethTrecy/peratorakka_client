@@ -1,5 +1,4 @@
 <script lang="ts">
-	import type { GeneralError } from "+/rest"
 	import type { Entity } from "%/currencies/types"
 
 	import { get } from "svelte/store"
@@ -13,6 +12,7 @@
 		mustBeAuthenticatedUser,
 		redirectPath
 	} from "$/global_state"
+	import makeJSONRequester from "$/rest/make_json_requester"
 
 	import Collection from "%/currencies/collection.svelte"
 	import AddForm from "%/currencies/add_form.svelte"
@@ -26,56 +26,30 @@
 	onDestroy(forgetPossibleRedirection)
 
 	let currencies: Entity[] = []
-	let isConnecting = false
-	let errors: GeneralError[] = []
+	let { isConnecting, errors, send } = makeJSONRequester({
+		"path": "/api/v1/currencies",
+		"manualResponseHandlers": [
+			{
+				"statusCode": 200,
+				"action": async (response: Response) => {
+					let responseDocument = await response.json()
+					errors.set([])
+					currencies = responseDocument.currencies
+				}
+			}
+		],
+		"expectedErrorStatusCodes": [ 401 ]
+	})
 
 	async function loadList() {
 		const currentServerURL = get(serverURL)
 
 		if (currentServerURL === "") {
-			setTimeout(1000, loadList)
+			setTimeout(loadList, 1000)
 			return
 		}
 
-		isConnecting = true
-
-		try {
-			const response = await fetch(`${currentServerURL}/api/v1/currencies`, {
-				"method": "GET",
-				"mode": "cors",
-				"credentials": "include",
-				"headers": {
-					"Content-Type": "application/json",
-					"Accept": "application/json"
-				}
-			})
-
-			const statusCode = response.status
-			if (statusCode === 200) {
-				let responseDocument = await response.json()
-
-				errors = []
-				currencies = responseDocument.currencies
-			} else if (statusCode === 401) {
-				errors = (await response.json()).errors
-			} else {
-				throw new Error(
-					`Unexpected status code was returned by the server: ${response.status}.`
-				)
-			}
-		} catch (receivedErrors) {
-			if (Array.isArray(receivedErrors)) {
-				errors = receivedErrors
-			} else {
-				errors = [
-					{
-						"message": (receivedErrors as Error).message
-					}
-				]
-			}
-		}
-
-		isConnecting = false
+		await send({})
 	}
 
 	onMount(loadList)
