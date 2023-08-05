@@ -1,7 +1,7 @@
 <script lang="ts">
 	import makeJSONRequester from "$/rest/make_json_requester"
 
-	import TextField from "$/form/text_field.svelte"
+	import BasicForm from "%/currencies/basic_form.svelte"
 
 	const IDPrefix = "new_"
 	let code = ""
@@ -38,39 +38,35 @@
 	}
 </script>
 
-<section>
-	<h2>Add Currency</h2>
-	<p class="medium-line">
-		Currencies are used as symbols for different financial entries and other parts of the
-		application. You have a freedom to add currencies, regardless whether they are physical or
-		crypto.
-	</p>
-	<p class="medium-line">
-		The limitation is that the application tracks the currency conversions through previous
-		financial entries. Therefore, there is no network usage to check for current conversions which
-		is a beneficial effect.
-	</p>
-	<form on:submit={createCurrency}>
-		<fieldset>
-			<TextField
-				fieldName="Code"
-				disabled={$isConnecting}
-				bind:value={code}
-				{IDPrefix}
-				errors={$errors}/>
-			<TextField
-				fieldName="Name"
-				disabled={$isConnecting}
-				bind:value={name}
-				{IDPrefix}
-				errors={$errors}/>
-			<div class="row">
+<section class="grid small-space">
+	<h2 class="s12 m12 l12 center-align">Add Currency</h2>
+	<div class="s12 m6 l6 grid small-space">
+		<p class="s12 m12 l12 medium-line">
+			Currencies are used as symbols for different financial entries and other parts of the
+			application. You have a freedom to add currencies, regardless whether they are physical or
+			crypto.
+		</p>
+		<p class="s12 m12 l12 medium-line">
+			The limitation is that the application tracks the currency conversions through previous
+			financial entries. Therefore, there is no network usage to check for current conversions which
+			is a beneficial effect.
+		</p>
+	</div>
+	<div class="s12 m6 l6 grid large-space small-padding">
+		<BasicForm
+			bind:code={code}
+			bind:name={name}
+			isConnecting={$isConnecting}
+			{IDPrefix}
+			errors={$errors}
+			on:submit={createCurrency}>
+			<svelte:fragment slot="buttonGroup">
 				<button type="submit" disabled={$isConnecting}>
 					Add
 				</button>
-			</div>
-		</fieldset>
-	</form>
+			</svelte:fragment>
+		</BasicForm>
+	</div>
 </section>
 
 <style lang="scss">
@@ -78,5 +74,9 @@
 
 	p {
 		text-align: justify;
+	}
+
+	button {
+		margin: 0em;
 	}
 </style>

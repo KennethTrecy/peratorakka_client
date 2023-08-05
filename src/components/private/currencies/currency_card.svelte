@@ -6,7 +6,7 @@
 
 	import makeJSONRequester from "$/rest/make_json_requester"
 
-	import TextField from "$/form/text_field.svelte"
+	import BasicForm from "%/currencies/basic_form.svelte"
 
 	export let data: Entity
 
@@ -78,22 +78,14 @@
 
 <article class="secondary-container">
 	{#if edit}
-		<form id={formID} on:submit={confirmEdit}>
-			<fieldset>
-				<TextField
-					fieldName="Code"
-					disabled={$isConnecting}
-					bind:value={code}
-					{IDPrefix}
-					errors={$errors}/>
-				<TextField
-					fieldName="Name"
-					disabled={$isConnecting}
-					bind:value={name}
-					{IDPrefix}
-					errors={$errors}/>
-			</fieldset>
-		</form>
+		<BasicForm
+			id={formID}
+			bind:code={code}
+			bind:name={name}
+			isConnecting={$isConnecting}
+			{IDPrefix}
+			errors={$errors}
+			on:submit={confirmEdit}/>
 	{:else}
 		<h3>{data.code}</h3>
 		<p>{data.name}</p>
