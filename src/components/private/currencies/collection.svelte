@@ -14,14 +14,22 @@
 			They can be used to be associated to financial accounts.
 		</p>
 		{#each data as entity(entity.id)}
-			<article class="primary-container">
+			<article class="secondary-container">
 				<h3>{entity.code}</h3>
 				<p>{entity.name}</p>
+				<div class="nav">
+					<button>
+						<i>edit</i>
+					</button>
+					<button>
+						<i>delete</i>
+					</button>
+				</div>
 			</article>
 		{/each}
 	{:else}
 		<p>
-			There are no available currencies at the momenet.
+			There are no available currencies at the moment.
 			Create a currency to start.
 		</p>
 	{/if}
@@ -32,5 +40,9 @@
 
 	h3 {
 		@extend h5;
+	}
+
+	div.nav {
+		@extend nav;
 	}
 </style>
