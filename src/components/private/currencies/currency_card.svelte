@@ -2,9 +2,9 @@
 	import type { GeneralError } from "+/rest"
 	import type { Entity } from "%/currencies/types"
 
-	import { get } from "svelte/store"
+	import { writable } from "svelte/store"
 
-	import { serverURL } from "$/global_state"
+	import makeJSONRequester from "$/rest/make_json_requester"
 
 	import TextField from "$/form/text_field.svelte"
 
@@ -13,12 +13,40 @@
 	let edit = false
 	let code = data.code
 	let name = data.name
-	let isConnecting = false
-	let errors: GeneralError[] = []
 
-	$: entityID = data.id
-	$: IDPrefix = `old_currency_${entityID}`
+	$: IDPrefix = `old_currency_${data.id}`
 	$: formID = `${IDPrefix}_form`
+	let isConnecting = writable<boolean>(false)
+	let errors = writable<GeneralError[]>([])
+	let send = (request: Partial<RequestInit>) => Promise.resolve()
+
+	$: {
+		const requesterInfo = makeJSONRequester({
+			"path": `/api/v1/currencies/${data.id}`,
+			"defaultRequestConfiguration": {
+				"method": "PUT",
+			},
+			"manualResponseHandlers": [
+				{
+					"statusCode": 204,
+					"action": async (response: Response) => {
+						data = {
+							...data,
+							code,
+							name
+						}
+						errors.set([])
+						stopEditing()
+					}
+				}
+			],
+			"expectedErrorStatusCodes": [ 401 ]
+		})
+
+		isConnecting = requesterInfo.isConnecting
+		errors = requesterInfo.errors
+		send = requesterInfo.send
+	}
 
 	function startEditing() {
 		edit = true
@@ -31,56 +59,14 @@
 	async function confirmEdit(event: SubmitEvent) {
 		event.preventDefault()
 
-		const currentServerURL = get(serverURL)
-		isConnecting = true
-
-		try {
-			const response = await fetch(`${currentServerURL}/api/v1/currencies/${entityID}`, {
-				"method": "PUT",
-				"mode": "cors",
-				"credentials": "include",
-				"referrer": currentServerURL,
-				"body": JSON.stringify({
-					"currency": {
-						code,
-						name
-					}
-				}),
-				"headers": {
-					"Content-Type": "application/json",
-					"Accept": "application/json"
-				}
-			})
-
-			const statusCode = response.status
-			if (statusCode === 204) {
-				errors = []
-				data = {
-					...data,
+		await send({
+			"body": JSON.stringify({
+				"currency": {
 					code,
 					name
 				}
-				stopEditing()
-			} else if (statusCode === 401) {
-				errors = (await response.json()).errors
-			} else {
-				throw new Error(
-					`Unexpected status code was returned by the server: ${response.status}.`
-				)
-			}
-		} catch (receivedErrors) {
-			if (Array.isArray(receivedErrors)) {
-				errors = receivedErrors
-			} else {
-				errors = [
-					{
-						"message": (receivedErrors as Error).message
-					}
-				]
-			}
-		}
-
-		isConnecting = false
+			})
+		})
 	}
 
 	function cancelEdit() {
@@ -96,16 +82,16 @@
 			<fieldset>
 				<TextField
 					fieldName="Code"
-					disabled={isConnecting}
+					disabled={$isConnecting}
 					bind:value={code}
 					{IDPrefix}
-					{errors}/>
+					errors={$errors}/>
 				<TextField
 					fieldName="Name"
-					disabled={isConnecting}
+					disabled={$isConnecting}
 					bind:value={name}
 					{IDPrefix}
-					{errors}/>
+					errors={$errors}/>
 			</fieldset>
 		</form>
 	{:else}
@@ -115,10 +101,10 @@
 
 	<div class="nav">
 		{#if edit}
-			<button type="submit" form={formID} disabled={isConnecting}>
+			<button type="submit" form={formID} disabled={$isConnecting}>
 				<i>save</i>
 			</button>
-			<button on:click={cancelEdit} type="button" form={formID}  disabled={isConnecting}>
+			<button on:click={cancelEdit} type="button" form={formID} disabled={true}>
 				<i>cancel</i>
 			</button>
 		{:else}
