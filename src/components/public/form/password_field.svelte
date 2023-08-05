@@ -7,16 +7,17 @@
 	export let IDPrefix: string = ""
 	export let errors: GeneralError[]
 
+	$: normalizedFieldName = fieldName.replace(" ", "_").toLocaleLowerCase()
 	$: fieldID = (
 		IDPrefix === ""
 			? ""
 			: `${IDPrefix}_`
-	) + fieldName.replace(" ", "_").toLocaleLowerCase()
+	) + normalizedFieldName
 	$: isActive = Boolean(value)
 	$: activeClass = isActive ? "active" : ""
 	$: message = errors.filter(
-		error => isFieldError(error) && error.field === fieldName
-	).join(" ")
+		error => isFieldError(error) && error.field.endsWith(normalizedFieldName)
+	).map(error => error.message).join(" ")
 
 	function isFieldError(error: any): error is FieldError {
 		return Object.keys(error).includes("field")
