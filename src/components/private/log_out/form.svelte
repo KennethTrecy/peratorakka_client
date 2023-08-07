@@ -27,7 +27,7 @@
 	let { isConnecting, errors, send } = makeJSONRequester({
 		"path": "/logout",
 		"defaultRequestConfiguration": {
-			"method": "POST"
+			"method": "GET"
 		},
 		"manualResponseHandlers": [
 			{
