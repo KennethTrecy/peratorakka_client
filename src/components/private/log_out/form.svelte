@@ -12,9 +12,7 @@
 		redirectPath
 	} from "$/global_state"
 
-	import PasswordField from "$/form/password_field.svelte"
 	import SingleForm from "$/form/single_form.svelte"
-	import TextField from "$/form/text_field.svelte"
 
 	hasRequirements.set(true)
 	mustHaveToken.set(true)
