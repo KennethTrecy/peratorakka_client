@@ -1,9 +1,7 @@
 <script lang="ts">
-	import type { GeneralError } from "+/rest"
-
-	import { get } from "svelte/store"
 	import { afterNavigate, beforeNavigate, goto } from "$app/navigation"
 
+	import makeJSONRequester from "$/rest/make_json_requester"
 	import applyRequirements from "$/utility/apply_requirements"
 	import {
 		serverURL,
@@ -29,55 +27,32 @@
 	let email = ""
 	let password = ""
 	let passwordConfirmation = ""
-	let isConnecting = false
-	let errors: GeneralError[] = []
+	let { isConnecting, errors, send } = makeJSONRequester({
+		"path": "/register",
+		"defaultRequestConfiguration": {
+			"method": "POST"
+		},
+		"manualResponseHandlers": [
+			{
+				"statusCode": 200,
+				"action": async (response: Response) => {
+					errors.set([])
+					userEmail.set(email)
+				}
+			}
+		],
+		"expectedErrorStatusCodes": [ 401 ]
+	})
 
 	async function register() {
-		const currentServerURL = get(serverURL)
-		isConnecting = true
-
-		try {
-			const response = await fetch(`${currentServerURL}/register`, {
-				"method": "POST",
-				"mode": "cors",
-				"credentials": "include",
-				"referrer": currentServerURL,
-				"body": JSON.stringify({
-					username,
-					email,
-					password,
-					"password_confirm": passwordConfirmation
-				}),
-				"headers": {
-					"Content-Type": "application/json",
-					"Accept": "application/json"
-				}
+		await send({
+			"body": JSON.stringify({
+				username,
+				email,
+				password,
+				"password_confirm": passwordConfirmation
 			})
-
-			const statusCode = response.status
-			if (statusCode === 201) {
-				errors = []
-				userEmail.set(email)
-			} else if (statusCode === 401) {
-				errors = (await response.json()).errors
-			} else {
-				throw new Error(
-					`Unexpected status code was returned by the server: ${response.status}.`
-				)
-			}
-		} catch (receivedErrors) {
-			if (Array.isArray(receivedErrors)) {
-				errors = receivedErrors
-			} else {
-				errors = [
-					{
-						"message": (receivedErrors as Error).message
-					}
-				]
-			}
-		}
-
-		isConnecting = false
+		})
 	}
 </script>
 
@@ -88,27 +63,27 @@
 	<fieldset slot="field_layer">
 		<TextField
 			fieldName="Username"
-			disabled={isConnecting}
+			disabled={$isConnecting}
 			bind:value={username}
-			{errors}/>
+			errors={$errors}/>
 		<TextField
 			variant="email"
 			fieldName="Email"
-			disabled={isConnecting}
+			disabled={$isConnecting}
 			bind:value={email}
-			{errors}/>
+			errors={$errors}/>
 		<PasswordField
 			fieldName="Password"
-			disabled={isConnecting}
+			disabled={$isConnecting}
 			bind:value={password}
-			{errors}/>
+			errors={$errors}/>
 		<PasswordField
 			fieldName="Confirm Password"
-			disabled={isConnecting}
+			disabled={$isConnecting}
 			bind:value={passwordConfirmation}
-			{errors}/>
+			errors={$errors}/>
 	</fieldset>
-	<button type="submit" disabled={isConnecting} slot="action_layer">
+	<button type="submit" disabled={$isConnecting} slot="action_layer">
 		Register
 	</button>
 </SingleForm>
