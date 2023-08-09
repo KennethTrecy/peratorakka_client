@@ -1,26 +1,25 @@
 <script lang="ts">
-	import { onDestroy } from "svelte"
-	import { goto } from "$app/navigation"
+	import { afterNavigate, beforeNavigate, goto } from "$app/navigation"
 
 	import makeJSONRequester from "$/rest/make_json_requester"
+	import applyRequirements from "$/utility/apply_requirements"
 	import {
 		serverURL,
 		userEmail,
-		hasRequirements,
 		mustHaveToken,
-		mustBeAuthenticatedUser,
-		redirectPath
+		mustBeAuthenticatedUser
 	} from "$/global_state"
 
 	import SingleForm from "$/form/single_form.svelte"
 
-	hasRequirements.set(true)
-	mustHaveToken.set(true)
-	mustBeAuthenticatedUser.set(true)
-	const forgetPossibleRedirection = redirectPath.subscribe(path => {
-		if (path !== "") goto(path as string)
+	applyRequirements([
+		mustHaveToken,
+		mustBeAuthenticatedUser
+	], {
+		afterNavigate,
+		beforeNavigate,
+		goto
 	})
-	onDestroy(forgetPossibleRedirection)
 
 	let { isConnecting, errors, send } = makeJSONRequester({
 		"path": "/logout",

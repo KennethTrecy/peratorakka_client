@@ -2,28 +2,28 @@
 	import type { Entity } from "%/currencies/types"
 
 	import { get } from "svelte/store"
-	import { goto } from "$app/navigation"
-	import { onMount, onDestroy } from "svelte"
+	import { onMount } from "svelte"
+	import { afterNavigate, beforeNavigate, goto } from "$app/navigation"
 
+	import makeJSONRequester from "$/rest/make_json_requester"
+	import applyRequirements from "$/utility/apply_requirements"
 	import {
 		serverURL,
-		hasRequirements,
 		mustHaveToken,
-		mustBeAuthenticatedUser,
-		redirectPath
+		mustBeAuthenticatedUser
 	} from "$/global_state"
-	import makeJSONRequester from "$/rest/make_json_requester"
 
 	import Collection from "%/currencies/collection.svelte"
 	import AddForm from "%/currencies/add_form.svelte"
 
-	hasRequirements.set(true)
-	mustHaveToken.set(true)
-	mustBeAuthenticatedUser.set(true)
-	const forgetPossibleRedirection = redirectPath.subscribe(path => {
-		if (path !== "") goto(path as string)
+	applyRequirements([
+		mustHaveToken,
+		mustBeAuthenticatedUser
+	], {
+		afterNavigate,
+		beforeNavigate,
+		goto
 	})
-	onDestroy(forgetPossibleRedirection)
 
 	let currencies: Entity[] = []
 	let { isConnecting, errors, send } = makeJSONRequester({

@@ -1,30 +1,29 @@
 <script lang="ts">
 	import type { GeneralError } from "+/rest"
 
-	import { onDestroy } from "svelte"
 	import { get } from "svelte/store"
-	import { goto } from "$app/navigation"
+	import { afterNavigate, beforeNavigate, goto } from "$app/navigation"
 
+	import applyRequirements from "$/utility/apply_requirements"
 	import {
 		serverURL,
 		userEmail,
-		hasRequirements,
 		mustHaveToken,
-		mustBeGuest,
-		redirectPath
+		mustBeGuest
 	} from "$/global_state"
 
 	import PasswordField from "$/form/password_field.svelte"
 	import SingleForm from "$/form/single_form.svelte"
 	import TextField from "$/form/text_field.svelte"
 
-	hasRequirements.set(true)
-	mustHaveToken.set(true)
-	mustBeGuest.set(true)
-	const forgetPossibleRedirection = redirectPath.subscribe(path => {
-		if (path !== "") goto(path as string)
+	applyRequirements([
+		mustHaveToken,
+		mustBeGuest
+	], {
+		afterNavigate,
+		beforeNavigate,
+		goto
 	})
-	onDestroy(forgetPossibleRedirection)
 
 	let username = ""
 	let email = ""

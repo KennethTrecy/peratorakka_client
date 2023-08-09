@@ -1,28 +1,27 @@
 <script lang="ts">
-	import { onDestroy } from "svelte"
-	import { goto } from "$app/navigation"
+	import { afterNavigate, beforeNavigate, goto } from "$app/navigation"
 
 	import makeJSONRequester from "$/rest/make_json_requester"
+	import applyRequirements from "$/utility/apply_requirements"
 	import {
 		serverURL,
 		userEmail,
-		hasRequirements,
 		mustHaveToken,
-		mustBeGuest,
-		redirectPath
+		mustBeGuest
 	} from "$/global_state"
 
 	import PasswordField from "$/form/password_field.svelte"
 	import SingleForm from "$/form/single_form.svelte"
 	import TextField from "$/form/text_field.svelte"
 
-	hasRequirements.set(true)
-	mustHaveToken.set(true)
-	mustBeGuest.set(true)
-	const forgetPossibleRedirection = redirectPath.subscribe(path => {
-		if (path !== "") goto(path as string)
+	applyRequirements([
+		mustHaveToken,
+		mustBeGuest
+	], {
+		afterNavigate,
+		beforeNavigate,
+		goto
 	})
-	onDestroy(forgetPossibleRedirection)
 
 	let email = ""
 	let password = ""
