@@ -65,7 +65,9 @@
 <article class="grid large-space large-margin large-padding">
 	<h1 class="s12 m12 l12 center-align">Currencies</h1>
 	<AddForm/>
-	<Collection data={currencies}/>
+	<Collection
+		data={currencies}
+		isConnecting={$isConnecting}/>
 </article>
 
 <style lang="scss">

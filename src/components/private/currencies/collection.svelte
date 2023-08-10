@@ -2,6 +2,7 @@
 	import type { Currency } from "+/entity"
 	import CurrencyCard from "%/currencies/currency_card.svelte";
 
+	export let isConnecting: boolean
 	export let data: Currency[]
 
 	$: hasEntries = data.length > 0
@@ -9,7 +10,11 @@
 
 <section class="s12 m12 l12 grid small-space">
 	<h2 class="s12 m12 l12 center-align">Available Currencies</h2>
-	{#if hasEntries}
+	{#if isConnecting}
+		<p class="s12 m12 l12">
+			Please wait while the client request the list from the server.
+		</p>
+	{:else if hasEntries}
 		<p class="s12 m12 l12">
 			Below are the currencies that you have added on to your account.
 			They can be used to be associated to financial accounts.
