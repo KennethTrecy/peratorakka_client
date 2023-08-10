@@ -56,6 +56,14 @@
 	}
 
 	onMount(loadList)
+
+	function addCurrency(event: CustomEvent<Currency>) {
+		const newCurrency = event.detail
+		currencies = [
+			...currencies,
+			newCurrency
+		]
+	}
 </script>
 
 <svelte:head>
@@ -64,7 +72,7 @@
 
 <article class="grid large-space large-margin large-padding">
 	<h1 class="s12 m12 l12 center-align">Currencies</h1>
-	<AddForm/>
+	<AddForm on:create={addCurrency}/>
 	<Collection
 		data={currencies}
 		isConnecting={$isConnecting}/>

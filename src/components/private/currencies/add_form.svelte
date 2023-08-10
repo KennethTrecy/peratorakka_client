@@ -1,8 +1,15 @@
 <script lang="ts">
+	import type { Currency } from "+/entity"
+
+	import { createEventDispatcher } from "svelte"
+
 	import makeJSONRequester from "$/rest/make_json_requester"
 
 	import BasicForm from "%/currencies/basic_form.svelte"
 
+	const dispatch = createEventDispatcher<{
+		"create": Currency
+	}>()
 	const IDPrefix = "new_"
 	let code = ""
 	let name = ""
@@ -15,11 +22,13 @@
 			{
 				"statusCode": 201,
 				"action": async (response: Response) => {
-					let newCurrency = await response.json()
+					const document = await response.json()
+					const { currency } = document
 
 					code = ""
 					name = ""
 					errors.set([])
+					dispatch("create", currency)
 				}
 			}
 		],
