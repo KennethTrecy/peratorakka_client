@@ -64,6 +64,11 @@
 			newCurrency
 		]
 	}
+
+	function removeCurrency(event: CustomEvent<Currency>) {
+		const oldCurrency = event.detail
+		currencies = currencies.filter(currency => currency.id !== oldCurrency.id)
+	}
 </script>
 
 <svelte:head>
@@ -75,7 +80,8 @@
 	<AddForm on:create={addCurrency}/>
 	<Collection
 		data={currencies}
-		isConnecting={$isConnecting}/>
+		isConnecting={$isConnecting}
+		on:delete={removeCurrency}/>
 </article>
 
 <style lang="scss">

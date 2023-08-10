@@ -20,7 +20,7 @@
 			They can be used to be associated to financial accounts.
 		</p>
 		{#each data as entity(entity.id)}
-			<CurrencyCard bind:data={entity}/>
+			<CurrencyCard bind:data={entity} on:delete/>
 		{/each}
 	{:else}
 		<p class="s12 m12 l12">

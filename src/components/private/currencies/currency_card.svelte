@@ -12,7 +12,7 @@
 
 	export let data: Currency
 
-	let dispatch = createEventDispatcher<{
+	const dispatch = createEventDispatcher<{
 		"delete": Currency
 	}>()
 	let status: CardStatus = "reading"
@@ -78,7 +78,6 @@
 					"action": async (response: Response) => {
 						deleteErrors.set([])
 						dispatch("delete", data)
-						startReading()
 					}
 				}
 			],
