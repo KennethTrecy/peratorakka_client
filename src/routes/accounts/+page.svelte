@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { Entity } from "%/currencies/types"
+	import type { Currency } from "+/entity"
 
 	import { get } from "svelte/store"
 	import { onMount } from "svelte"
@@ -25,7 +25,7 @@
 		goto
 	})
 
-	let currencies: Entity[] = []
+	let currencies: Currency[] = []
 	let { isConnecting, errors, send } = makeJSONRequester({
 		"path": "/api/v1/currencies",
 		"defaultRequestConfiguration": {

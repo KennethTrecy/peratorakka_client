@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { GeneralError } from "+/rest"
 	import type { CardStatus } from "+/component"
-	import type { Entity } from "%/currencies/types"
+	import type { Currency } from "+/entity"
 
 	import { createEventDispatcher } from "svelte"
 	import { writable } from "svelte/store"
@@ -10,10 +10,10 @@
 
 	import BasicForm from "%/currencies/basic_form.svelte"
 
-	export let data: Entity
+	export let data: Currency
 
 	let dispatch = createEventDispatcher<{
-		"delete": Entity
+		"delete": Currency
 	}>()
 	let status: CardStatus = "reading"
 	let code = data.code

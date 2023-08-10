@@ -1,8 +1,8 @@
 <script lang="ts">
-	import type { Entity } from "%/currencies/types"
+	import type { Currency } from "+/entity"
 	import CurrencyCard from "%/currencies/currency_card.svelte";
 
-	export let data: Entity[]
+	export let data: Currency[]
 
 	$: hasEntries = data.length > 0
 </script>
