@@ -1,28 +1,37 @@
 <script lang="ts">
 	import type { GeneralError } from "+/rest"
 	import type { CardStatus } from "+/component"
-	import type { Currency } from "+/entity"
+	import type { Currency, Account, AcceptableAccountKind } from "+/entity"
 
 	import { createEventDispatcher } from "svelte"
 	import { writable } from "svelte/store"
 
+	import { acceptableAccountKinds } from "#/entity"
+
 	import makeJSONRequester from "$/rest/make_json_requester"
 
-	import BasicForm from "%/currencies/basic_form.svelte"
+	import BasicForm from "%/accounts/basic_form.svelte"
 
-	export let data: Currency
+	export let currencies: Currency[]
+	export let data: Account
 
-	let dispatch = createEventDispatcher<{
-		"delete": Currency
+	const dispatch = createEventDispatcher<{
+		"delete": Account
 	}>()
 	let status: CardStatus = "reading"
-	let code = data.code
+	let currencyID = `${data.currency_id}`
 	let name = data.name
+	let description = data.description
+	let kind = fallbackToAceptableKind(data.kind)
 
-	$: IDPrefix = `old_currency_${data.id}`
+	$: IDPrefix = `old_account_${data.id}`
 	$: formID = `${IDPrefix}_update_form`
 	$: isEditing = status === "editing"
 	$: isConfirmingDeletion = status === "confirming_deletion"
+	$: associatedCurrency = currencies.find(
+		currency => currency.id === parseInt(currencyID)
+	) as Currency
+
 	$: cardClasses = [
 		...(
 			(isEditing || isConfirmingDeletion)
@@ -40,7 +49,7 @@
 
 	$: {
 		const requesterInfo = makeJSONRequester({
-			"path": `/api/v1/currencies/${data.id}`,
+			"path": `/api/v1/accounts/${data.id}`,
 			"defaultRequestConfiguration": {
 				"method": "PUT",
 			},
@@ -50,8 +59,10 @@
 					"action": async (response: Response) => {
 						data = {
 							...data,
-							code,
-							name
+							"currency_id": parseInt(currencyID),
+							name,
+							description,
+							kind
 						}
 						updateErrors.set([])
 						startReading()
@@ -68,7 +79,7 @@
 
 	$: {
 		const requesterInfo = makeJSONRequester({
-			"path": `/api/v1/currencies/${data.id}`,
+			"path": `/api/v1/accounts/${data.id}`,
 			"defaultRequestConfiguration": {
 				"method": "DELETE",
 			},
@@ -78,7 +89,6 @@
 					"action": async (response: Response) => {
 						deleteErrors.set([])
 						dispatch("delete", data)
-						startReading()
 					}
 				}
 			],
@@ -107,9 +117,11 @@
 
 		await requestUpdate({
 			"body": JSON.stringify({
-				"currency": {
-					code,
-					name
+				"account": {
+					"currency_id": parseInt(currencyID),
+					name,
+					description,
+					kind
 				}
 			})
 		})
@@ -121,8 +133,18 @@
 
 	function cancelEdit() {
 		startReading()
-		code = data.code
+		currencyID = `${data.currency_id}`
 		name = data.name
+		description = data.description
+		kind = fallbackToAceptableKind(data.kind)
+	}
+
+	function fallbackToAceptableKind(kind: string): AcceptableAccountKind {
+		return isAcceptable(kind) ? kind : acceptableAccountKinds[0]
+	}
+
+	function isAcceptable(kind: string): kind is AcceptableAccountKind {
+		return (<string[]>[ ...acceptableAccountKinds ]).indexOf(kind) > -1
 	}
 </script>
 
@@ -130,18 +152,21 @@
 	{#if isEditing}
 		<BasicForm
 			id={formID}
-			bind:code={code}
+			bind:currencyID={currencyID}
 			bind:name={name}
+			bind:description={description}
+			bind:kind={kind}
 			isConnecting={$isConnectingToUpdate}
 			{IDPrefix}
+			{currencies}
 			errors={$updateErrors}
 			on:submit={confirmEdit}/>
 	{:else if isConfirmingDeletion}
-		<h3>Delete {data.code}?</h3>
+		<h3>Delete {data.name} ({associatedCurrency.code})?</h3>
 		<p>Deleting this currency may prevent other data from showing.</p>
 	{:else}
-		<h3>{data.code}</h3>
-		<p>{data.name}</p>
+		<h3>{data.name} ({associatedCurrency.code})</h3>
+		<p>{data.description}</p>
 	{/if}
 
 	<div>
