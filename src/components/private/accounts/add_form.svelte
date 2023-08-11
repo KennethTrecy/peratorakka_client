@@ -1,13 +1,29 @@
 <script lang="ts">
+	import type { Currency, Account, AcceptableAccountKind } from "+/entity"
+
+	import { createEventDispatcher } from "svelte"
+
+	import { acceptableAccountKinds } from "#/entity"
+
 	import makeJSONRequester from "$/rest/make_json_requester"
 
-	import BasicForm from "%/currencies/basic_form.svelte"
+	import BasicForm from "%/accounts/basic_form.svelte"
 
+	const dispatch = createEventDispatcher<{
+		"create": Account
+	}>()
 	const IDPrefix = "new_"
-	let code = ""
-	let name = ""
+
+	export let currencies: Currency[]
+	export let currencyID: string = ""
+	export let name: string = ""
+	export let description: string =""
+	export let kind: AcceptableAccountKind = acceptableAccountKinds[0]
+
+	$: if (currencies.length > 0) currencyID = `${currencies[0].id}`
+
 	let { isConnecting, errors, send } = makeJSONRequester({
-		"path": "/api/v1/currencies",
+		"path": "/api/v1/accounts",
 		"defaultRequestConfiguration": {
 			"method": "POST"
 		},
@@ -15,23 +31,28 @@
 			{
 				"statusCode": 201,
 				"action": async (response: Response) => {
-					let newCurrency = await response.json()
+					const document = await response.json()
+					const { account } = document
 
-					code = ""
 					name = ""
+					description = ""
+					kind = acceptableAccountKinds[0]
 					errors.set([])
+					dispatch("create", account)
 				}
 			}
 		],
 		"expectedErrorStatusCodes": [ 400 ]
 	})
 
-	async function createCurrency() {
+	async function createAccount() {
 		await send({
 			"body": JSON.stringify({
-				"currency": {
-					code,
-					name
+				"account": {
+					"currency_id": parseInt(currencyID),
+					name,
+					description,
+					kind
 				}
 			})
 		})
@@ -39,27 +60,30 @@
 </script>
 
 <section class="s12 m12 l12 grid small-space">
-	<h2 class="s12 m12 l12 center-align">Add Currency</h2>
+	<h2 class="s12 m12 l12 center-align">Add Account</h2>
 	<div class="s12 m12 l6 grid small-space">
 		<p class="s12 m12 l12 medium-line">
 			Currencies are used as symbols for different financial entries and other parts of the
-			application. You have a freedom to add currencies, regardless whether they are physical or
+			application. You have a freedom to add accounts, regardless whether they are physical or
 			crypto.
 		</p>
 		<p class="s12 m12 l12 medium-line">
-			The limitation is that the application tracks the currency conversions through previous
+			The limitation is that the application tracks the account conversions through previous
 			financial entries. Therefore, there is no network usage to check for current conversions which
 			is a beneficial effect.
 		</p>
 	</div>
 	<div class="s12 m12 l6 grid large-space">
 		<BasicForm
-			bind:code={code}
+			bind:currencies={currencies}
+			bind:currencyID={currencyID}
 			bind:name={name}
+			bind:description={description}
+			bind:kind={kind}
 			isConnecting={$isConnecting}
 			{IDPrefix}
 			errors={$errors}
-			on:submit={createCurrency}>
+			on:submit={createAccount}>
 			<svelte:fragment slot="buttonGroup">
 				<button type="submit" disabled={$isConnecting}>
 					Add
