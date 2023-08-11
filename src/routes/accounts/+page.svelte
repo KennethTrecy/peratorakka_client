@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { Currency } from "+/entity"
+	import type { Account, Currency } from "+/entity"
 
 	import { get } from "svelte/store"
 	import { onMount } from "svelte"
@@ -13,8 +13,8 @@
 		mustBeAuthenticatedUser
 	} from "$/global_state"
 
-	import Collection from "%/currencies/collection.svelte"
-	import AddForm from "%/currencies/add_form.svelte"
+	import Collection from "%/accounts/collection.svelte"
+	import AddForm from "%/accounts/add_form.svelte"
 
 	applyRequirements([
 		mustHaveToken,
@@ -26,8 +26,9 @@
 	})
 
 	let currencies: Currency[] = []
+	let accounts: Account[] = []
 	let { isConnecting, errors, send } = makeJSONRequester({
-		"path": "/api/v1/currencies",
+		"path": "/api/v1/accounts",
 		"defaultRequestConfiguration": {
 			"method": "GET"
 		},
@@ -37,6 +38,7 @@
 				"action": async (response: Response) => {
 					let responseDocument = await response.json()
 					errors.set([])
+					accounts = responseDocument.accounts
 					currencies = responseDocument.currencies
 				}
 			}
@@ -56,16 +58,33 @@
 	}
 
 	onMount(loadList)
+
+	function addAccount(event: CustomEvent<Account>) {
+		const newAccount = event.detail
+		accounts = [
+			...accounts,
+			newAccount
+		]
+	}
+
+	function removeAccount(event: CustomEvent<Account>) {
+		const oldAccount = event.detail
+		accounts = accounts.filter(account => account.id !== oldAccount.id)
+	}
 </script>
 
 <svelte:head>
-	<title>Currencies</title>
+	<title>Accounts</title>
 </svelte:head>
 
 <article class="grid large-space large-margin large-padding">
-	<h1 class="s12 m12 l12 center-align">Currencies</h1>
-	<AddForm/>
-	<Collection data={currencies}/>
+	<h1 class="s12 m12 l12 center-align">Accounts</h1>
+	<AddForm {currencies} on:create={addAccount}/>
+	<Collection
+		{currencies}
+		data={accounts}
+		isConnecting={$isConnecting}
+		on:delete={removeAccount}/>
 </article>
 
 <style lang="scss">
