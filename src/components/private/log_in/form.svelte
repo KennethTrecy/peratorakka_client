@@ -32,7 +32,7 @@
 		},
 		"manualResponseHandlers": [
 			{
-				"statusCode": 200,
+				"statusCode": 204,
 				"action": async (response: Response) => {
 					errors.set([])
 					userEmail.set(email)
