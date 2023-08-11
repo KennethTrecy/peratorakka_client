@@ -1,11 +1,19 @@
 <script lang="ts">
 	import type { GeneralError } from "+/rest"
+	import type { Currency, AcceptableAccountKind } from "+/entity"
+
+	import { acceptableAccountKinds } from "#/entity"
 
 	import TextField from "$/form/text_field.svelte"
 
 	export let IDPrefix: string
-	export let code: string
+	export let currencies: Currency[]
+
+	export let currencyID: string
 	export let name: string
+	export let description: string
+	export let kind: AcceptableAccountKind
+
 	export let isConnecting: boolean
 	export let errors: GeneralError[]
 	export let id = ""
@@ -15,9 +23,25 @@
 	<fieldset class="s12 m12 l12 grid large-space">
 		<div class="s12 m12 l12">
 			<TextField
+				fieldName="Currency"
+				disabled={isConnecting}
+				bind:value={currencyID}
+				{IDPrefix}
+				{errors}/>
+		</div>
+		<div class="s12 m12 l12">
+			<TextField
+				fieldName="Kind"
+				disabled={isConnecting}
+				bind:value={kind}
+				{IDPrefix}
+				{errors}/>
+		</div>
+		<div class="s12 m12 l12">
+			<TextField
 				fieldName="Code"
 				disabled={isConnecting}
-				bind:value={code}
+				bind:value={description}
 				{IDPrefix}
 				{errors}/>
 		</div>
