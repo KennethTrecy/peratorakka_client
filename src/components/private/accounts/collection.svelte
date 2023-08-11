@@ -1,43 +1,29 @@
 <script lang="ts">
 	import type { Currency, Account } from "+/entity"
+
+	import Collection from "$/catalog/collection.svelte"
 	import AccountCard from "%/accounts/account_card.svelte";
 
 	export let isConnecting: boolean
 	export let currencies: Currency[]
 	export let data: Account[]
-
-	$: hasEntries = data.length > 0
 </script>
 
-<section class="s12 m12 l12 grid small-space">
-	<h2 class="s12 m12 l12 center-align">Available Currencies</h2>
-	{#if isConnecting}
-		<p class="s12 m12 l12">
-			Please wait while the client request the list from the server.
-		</p>
-	{:else if hasEntries}
-		<p class="s12 m12 l12">
-			Below are the accounts that you have added on to your account.
-			They can be used to be associated to financial accounts.
-		</p>
+<Collection collectiveName="Financial Accounts" {isConnecting} {data}>
+	<svelte:fragment slot="filled_collection_description">
+		Below are the financial accounts that you have added on to your profile.
+		They can be associated to modifiers.
+	</svelte:fragment>
+	<svelte:fragment slot="cards">
 		{#each data as entity(entity.id)}
 			<AccountCard
 				bind:data={entity}
 				{currencies}
 				on:delete/>
 		{/each}
-	{:else}
-		<p class="s12 m12 l12">
-			There are no available accounts at the moment.
-			Create a currency to start.
-		</p>
-	{/if}
-</section>
-
-<style lang="scss">
-	@use "@/components/third-party/index";
-
-	section.grid {
-		align-items: start;
-	}
-</style>
+	</svelte:fragment>
+	<svelte:fragment slot="empty_collection_description">
+		There are no available financial accounts at the moment.
+		Create a financial account to view.
+	</svelte:fragment>
+</Collection>
