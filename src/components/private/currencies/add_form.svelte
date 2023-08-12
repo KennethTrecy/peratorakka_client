@@ -6,6 +6,9 @@
 	import makeJSONRequester from "$/rest/make_json_requester"
 
 	import BasicForm from "%/currencies/basic_form.svelte"
+	import DescriptiveForm from "$/form/descriptive_form.svelte"
+	import MarginlessButton from "$/utility/marginless_button.svelte"
+	import JustifiedParagraph from "$/utility/justified_paragraph.svelte"
 
 	const dispatch = createEventDispatcher<{
 		"create": Currency
@@ -47,45 +50,31 @@
 	}
 </script>
 
-<section class="s12 m12 l12 grid small-space">
-	<h2 class="s12 m12 l12 center-align">Add Currency</h2>
-	<div class="s12 m12 l6 grid small-space">
-		<p class="s12 m12 l12 medium-line">
+<DescriptiveForm individualName="Currency" mayShowForm>
+	<svelte:fragment slot="description">
+		<JustifiedParagraph>
 			Currencies are used as symbols for different financial entries and other parts of the
 			application. You have a freedom to add currencies, regardless whether they are physical or
 			crypto.
-		</p>
-		<p class="s12 m12 l12 medium-line">
+		</JustifiedParagraph>
+		<JustifiedParagraph>
 			The limitation is that the application tracks the currency conversions through previous
-			financial entries. Therefore, there is no network usage to check for current conversions which
-			is a beneficial effect.
-		</p>
-	</div>
-	<div class="s12 m12 l6 grid large-space">
-		<BasicForm
-			bind:code={code}
-			bind:name={name}
-			isConnecting={$isConnecting}
-			{IDPrefix}
-			errors={$errors}
-			on:submit={createCurrency}>
-			<svelte:fragment slot="buttonGroup">
-				<button type="submit" disabled={$isConnecting}>
-					Add
-				</button>
-			</svelte:fragment>
-		</BasicForm>
-	</div>
-</section>
-
-<style lang="scss">
-	@use "@/components/third-party/index";
-
-	p {
-		text-align: justify;
-	}
-
-	button {
-		margin: 0em;
-	}
-</style>
+			financial entries. Therefore, there is no network usage to check for current conversions
+			which is a beneficial effect.
+		</JustifiedParagraph>
+	</svelte:fragment>
+	<BasicForm
+		slot="form"
+		bind:code={code}
+		bind:name={name}
+		isConnecting={$isConnecting}
+		{IDPrefix}
+		errors={$errors}
+		on:submit={createCurrency}>
+		<svelte:fragment slot="buttonGroup">
+			<MarginlessButton kind="submit" disabled={$isConnecting}>
+				Add
+			</MarginlessButton>
+		</svelte:fragment>
+	</BasicForm>
+</DescriptiveForm>
