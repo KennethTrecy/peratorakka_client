@@ -9,6 +9,7 @@
 
 	import BasicForm from "%/accounts/basic_form.svelte"
 	import DescriptiveForm from "$/form/descriptive_form.svelte"
+	import MarginlessButton from "$/utility/marginless_button.svelte"
 	import JustifiedParagraph from "$/utility/justified_paragraph.svelte"
 
 	const dispatch = createEventDispatcher<{
@@ -84,17 +85,9 @@
 		errors={$errors}
 		on:submit={createAccount}>
 		<svelte:fragment slot="buttonGroup">
-			<button type="submit" disabled={$isConnecting}>
+			<MarginlessButton kind="submit" disabled={$isConnecting}>
 				Add
-			</button>
+			</MarginlessButton>
 		</svelte:fragment>
 	</BasicForm>
 </DescriptiveForm>
-
-<style lang="scss">
-	@use "@/components/third-party/index";
-
-	button {
-		margin: 0em;
-	}
-</style>
