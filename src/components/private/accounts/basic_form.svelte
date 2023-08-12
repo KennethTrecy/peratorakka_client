@@ -49,17 +49,17 @@
 		</div>
 		<div class="s12 m12 l12">
 			<TextField
-				fieldName="Code"
+				fieldName="Name"
 				disabled={isConnecting}
-				bind:value={description}
+				bind:value={name}
 				{IDPrefix}
 				{errors}/>
 		</div>
 		<div class="s12 m12 l12">
 			<TextField
-				fieldName="Name"
+				fieldName="Description"
 				disabled={isConnecting}
-				bind:value={name}
+				bind:value={description}
 				{IDPrefix}
 				{errors}/>
 		</div>
