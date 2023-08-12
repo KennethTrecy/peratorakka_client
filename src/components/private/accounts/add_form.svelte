@@ -63,14 +63,14 @@
 <DescriptiveForm individualName="Financial Account">
 	<svelte:fragment slot="description">
 		<JustifiedParagraph>
-			Currencies are used as symbols for different financial entries and other parts of the
-			application. You have a freedom to add accounts, regardless whether they are physical or
-			crypto.
+			Accounts are some kind of label for the numerical values in a financial entry. Some
+			examples of these are capital, cash, or debt. They may be credited or debited depending on
+			their kind. They may be asset, liability, or equity to name a few.
 		</JustifiedParagraph>
 		<JustifiedParagraph>
-			The limitation is that the application tracks the account conversions through previous
-			financial entries. Therefore, there is no network usage to check for current conversions
-			which is a beneficial effect.
+			To create an account to be used in the system, choose a currency and kind in order for the
+			system to calculate properly the associated numerical values. After that, fill out other
+			required info. Finally, press "Add" button.
 		</JustifiedParagraph>
 	</svelte:fragment>
 	<BasicForm
