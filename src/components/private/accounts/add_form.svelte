@@ -58,8 +58,8 @@
 </script>
 
 <section class="s12 m12 l12 grid small-space">
-	<h2 class="s12 m12 l12 center-align">Add Account</h2>
-	<div class="s12 m12 l6 grid small-space">
+	<h2 class="s12 m12 l12 center-align">Add financial Account</h2>
+	<div class="s12 m12 l6 grid small-space description">
 		<p class="s12 m12 l12 medium-line">
 			Currencies are used as symbols for different financial entries and other parts of the
 			application. You have a freedom to add accounts, regardless whether they are physical or
@@ -100,5 +100,9 @@
 
 	button {
 		margin: 0em;
+	}
+
+	.description {
+		align-content: flex-start;
 	}
 </style>
