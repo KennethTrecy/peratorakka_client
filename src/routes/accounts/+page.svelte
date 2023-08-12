@@ -27,7 +27,12 @@
 
 	let currencies: Currency[] = []
 	let accounts: Account[] = []
-	let { isConnecting, errors, send } = makeJSONRequester({
+
+	let {
+		"isConnecting": isConnectingForAccount,
+		"errors": errorsForAccount,
+		"send": requestForAccount
+	} = makeJSONRequester({
 		"path": "/api/v1/accounts",
 		"defaultRequestConfiguration": {
 			"method": "GET"
@@ -37,8 +42,29 @@
 				"statusCode": 200,
 				"action": async (response: Response) => {
 					let responseDocument = await response.json()
-					errors.set([])
+					errorsForAccount.set([])
 					accounts = responseDocument.accounts
+				}
+			}
+		],
+		"expectedErrorStatusCodes": [ 401 ]
+	})
+
+	let {
+		"isConnecting": isConnectingForCurrency,
+		"errors": errorsForCurrency,
+		"send": requestForCurrencies
+	} = makeJSONRequester({
+		"path": "/api/v1/currencies",
+		"defaultRequestConfiguration": {
+			"method": "GET"
+		},
+		"manualResponseHandlers": [
+			{
+				"statusCode": 200,
+				"action": async (response: Response) => {
+					let responseDocument = await response.json()
+					errorsForAccount.set([])
 					currencies = responseDocument.currencies
 				}
 			}
@@ -54,7 +80,8 @@
 			return
 		}
 
-		await send({})
+		await requestForCurrencies({})
+		await requestForAccount({})
 	}
 
 	onMount(loadList)
@@ -83,7 +110,7 @@
 	<Collection
 		{currencies}
 		data={accounts}
-		isConnecting={$isConnecting}
+		isConnecting={$isConnectingForAccount}
 		on:delete={removeAccount}/>
 </article>
 

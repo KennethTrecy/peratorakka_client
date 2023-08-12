@@ -4,7 +4,10 @@
 
 	import { acceptableAccountKinds } from "#/entity"
 
+	import transformCurrency from "$/form/choice_info_transformer/transform_currency"
+
 	import TextField from "$/form/text_field.svelte"
+	import ChoiceListField from "$/form/choice_list_field.svelte"
 
 	export let IDPrefix: string
 	export let currencies: Currency[]
@@ -22,10 +25,12 @@
 <form class="s12 m12 l12 grid large-space" {id} on:submit>
 	<fieldset class="s12 m12 l12 grid large-space">
 		<div class="s12 m12 l12">
-			<TextField
+			<ChoiceListField
 				fieldName="Currency"
 				disabled={isConnecting}
 				bind:value={currencyID}
+				rawChoices={currencies}
+				choiceConverter={transformCurrency}
 				{IDPrefix}
 				{errors}/>
 		</div>
