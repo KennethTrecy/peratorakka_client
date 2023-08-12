@@ -74,9 +74,4 @@
 	header.fixed {
 		padding: 0.5em 0em 0em;
 	}
-
-	main.responsive {
-		overflow: visible;
-		min-height: auto;
-	}
 </style>
