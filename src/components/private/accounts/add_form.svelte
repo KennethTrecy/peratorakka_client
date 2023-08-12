@@ -9,6 +9,7 @@
 
 	import BasicForm from "%/accounts/basic_form.svelte"
 	import DescriptiveForm from "$/form/descriptive_form.svelte"
+	import JustifiedParagraph from "$/utility/justified_paragraph.svelte"
 
 	const dispatch = createEventDispatcher<{
 		"create": Account
@@ -60,16 +61,16 @@
 
 <DescriptiveForm individualName="Financial Account">
 	<svelte:fragment slot="description">
-		<p class="s12 m12 l12 medium-line">
+		<JustifiedParagraph>
 			Currencies are used as symbols for different financial entries and other parts of the
 			application. You have a freedom to add accounts, regardless whether they are physical or
 			crypto.
-		</p>
-		<p class="s12 m12 l12 medium-line">
+		</JustifiedParagraph>
+		<JustifiedParagraph>
 			The limitation is that the application tracks the account conversions through previous
 			financial entries. Therefore, there is no network usage to check for current conversions
 			which is a beneficial effect.
-		</p>
+		</JustifiedParagraph>
 	</svelte:fragment>
 	<BasicForm
 		slot="form"
@@ -92,10 +93,6 @@
 
 <style lang="scss">
 	@use "@/components/third-party/index";
-
-	p {
-		text-align: justify;
-	}
 
 	button {
 		margin: 0em;
