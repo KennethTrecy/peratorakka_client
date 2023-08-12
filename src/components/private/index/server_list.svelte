@@ -49,7 +49,9 @@
 	}
 </script>
 
-<form class="list middle-align center-align grid" on:submit={connect}>
+<form
+	class="sever_list_form middle-align center-align grid large-margin"
+	on:submit={connect}>
 	<div class="s1 m2 l3"></div>
 	<div class="s10 m8 l6">
 		<div class="fill middle-align center-align">
@@ -113,7 +115,7 @@
 <style lang="scss">
 	@use "@/components/third-party/index";
 
-	.list {
+	.sever_list_form {
 		width: 100%;
 		height: 100%;
 	}

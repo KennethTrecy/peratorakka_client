@@ -2,7 +2,7 @@
 
 </script>
 
-<form class="middle-align center-align grid" on:submit|preventDefault>
+<form class="middle-align center-align grid large-margin" on:submit|preventDefault>
 	<div class="s1 m2 l3"></div>
 	<div class="s10 m8 l6">
 		<div class="fill middle-align center-align">
