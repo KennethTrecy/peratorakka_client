@@ -58,9 +58,11 @@
 			})
 		})
 	}
+
+	$: mayShowForm = currencies.length > 0
 </script>
 
-<DescriptiveForm individualName="Financial Account">
+<DescriptiveForm individualName="Financial Account" {mayShowForm}>
 	<svelte:fragment slot="description">
 		<JustifiedParagraph>
 			Accounts are some kind of label for the numerical values in a financial entry. Some
@@ -71,6 +73,12 @@
 			To create an account to be used in the system, choose a currency and kind in order for the
 			system to calculate properly the associated numerical values. After that, fill out other
 			required info. Finally, press "Add" button.
+		</JustifiedParagraph>
+	</svelte:fragment>
+	<svelte:fragment slot="requirement">
+		<JustifiedParagraph>
+			At least one currency must exist in the profile to show the form for creating financial
+			accounts.
 		</JustifiedParagraph>
 	</svelte:fragment>
 	<BasicForm
