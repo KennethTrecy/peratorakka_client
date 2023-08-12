@@ -5,6 +5,7 @@
 	import { isFieldError } from "+/rest"
 
 	export let fieldName: string
+	export let errorFieldName: string|null = null
 	export let disabled: boolean
 	export let value: string
 	export let IDPrefix: string = ""
@@ -12,7 +13,9 @@
 	export let rawChoices: unknown[]
 	export let choiceConverter: (choice: any) => ChoiceInfo
 
-	$: normalizedFieldName = fieldName.replace(" ", "_").toLocaleLowerCase()
+	$: normalizedFieldName = errorFieldName === null
+		? fieldName.replace(" ", "_").toLocaleLowerCase()
+		: errorFieldName
 	$: fieldID = (
 		IDPrefix === ""
 			? ""
@@ -42,6 +45,7 @@
 		{/each}
 	</select>
 	<label class="active" for={fieldID}>{fieldName}</label>
+	<i>arrow_drop_down</i>
 	{#if message !== ""}
 		<p class="error no-margin">{message}</p>
 	{/if}

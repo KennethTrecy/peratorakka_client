@@ -30,6 +30,7 @@
 		<div class="s12 m12 l12">
 			<ChoiceListField
 				fieldName="Currency"
+				errorFieldName="currency_id"
 				disabled={isConnecting}
 				bind:value={currencyID}
 				rawChoices={currencies}
