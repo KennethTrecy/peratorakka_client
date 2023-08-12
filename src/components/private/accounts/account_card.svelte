@@ -9,6 +9,7 @@
 	import { acceptableAccountKinds } from "#/entity"
 
 	import makeJSONRequester from "$/rest/make_json_requester"
+	import convertSnakeCaseToProperCase from "$/utility/convert_snake_case_to_proper_case"
 
 	import BasicForm from "%/accounts/basic_form.svelte"
 
@@ -47,6 +48,7 @@
 	let deleteErrors = writable<GeneralError[]>([])
 	let requestDelete = (request: Partial<RequestInit>) => Promise.resolve()
 
+	$: friendlyKind = convertSnakeCaseToProperCase(data.kind)
 	$: {
 		const requesterInfo = makeJSONRequester({
 			"path": `/api/v1/accounts/${data.id}`,
@@ -76,7 +78,6 @@
 		updateErrors = requesterInfo.errors
 		requestUpdate = requesterInfo.send
 	}
-
 	$: {
 		const requesterInfo = makeJSONRequester({
 			"path": `/api/v1/accounts/${data.id}`,
@@ -166,14 +167,14 @@
 			Delete
 			{data.name}
 			({associatedCurrency.code})
-			<span class="badge primary">{data.kind}</span>?
+			<span class="badge primary">{friendlyKind}</span>?
 		</h3>
 		<p>Deleting this account may prevent other data from showing.</p>
 	{:else}
 		<h3>
 			{data.name}
 			({associatedCurrency.code})
-			<span class="badge primary">{data.kind}</span>
+			<span class="badge primary">{friendlyKind}</span>
 		</h3>
 		<p>{data.description}</p>
 	{/if}
