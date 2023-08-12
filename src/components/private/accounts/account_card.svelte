@@ -162,10 +162,19 @@
 			errors={$updateErrors}
 			on:submit={confirmEdit}/>
 	{:else if isConfirmingDeletion}
-		<h3>Delete {data.name} ({associatedCurrency.code})?</h3>
-		<p>Deleting this currency may prevent other data from showing.</p>
+		<h3>
+			Delete
+			{data.name}
+			({associatedCurrency.code})
+			<span class="badge primary">{data.kind}</span>?
+		</h3>
+		<p>Deleting this account may prevent other data from showing.</p>
 	{:else}
-		<h3>{data.name} ({associatedCurrency.code})</h3>
+		<h3>
+			{data.name}
+			({associatedCurrency.code})
+			<span class="badge primary">{data.kind}</span>
+		</h3>
 		<p>{data.description}</p>
 	{/if}
 
