@@ -1,6 +1,8 @@
 <script lang="ts">
 	import type { ChoiceInfo } from "+/component"
-	import type { FieldError, GeneralError } from "+/rest"
+	import type { GeneralError } from "+/rest"
+
+	import { isFieldError } from "+/rest"
 
 	export let fieldName: string
 	export let disabled: boolean
@@ -21,9 +23,6 @@
 	).map(error => error.message).join(" ")
 	$: choices = rawChoices.map(choiceConverter)
 
-	function isFieldError(error: any): error is FieldError {
-		return Object.keys(error).includes("field")
-	}
 </script>
 
 <div class="field label border no-margin">

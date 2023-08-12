@@ -9,6 +9,10 @@ export interface FieldError extends SimpleError {
 	field: string
 }
 
+export function isFieldError(error: any): error is FieldError {
+	return Object.keys(error).includes("field")
+}
+
 export type GeneralError =
 	| SimpleError
 	| FieldError
