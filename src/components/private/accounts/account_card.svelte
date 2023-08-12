@@ -37,7 +37,7 @@
 		...(
 			(isEditing || isConfirmingDeletion)
 				? [ "s12", "m12", "l6" ]
-				: [ "s6", "m6", "l3" ]
+				: [ "s6", "m6", "l4" ]
 		),
 		"secondary-container"
 	].join(" ")
@@ -163,19 +163,18 @@
 			errors={$updateErrors}
 			on:submit={confirmEdit}/>
 	{:else if isConfirmingDeletion}
-		<h3>
-			Delete
-			{data.name}
-			({associatedCurrency.code})
-			<span class="badge primary">{friendlyKind}</span>?
-		</h3>
+		<h3>Delete {data.name}?</h3>
+		<ul>
+			<li class="chip small no-margin primary">{friendlyKind}</li>
+			<li class="chip small no-margin secondary">{associatedCurrency.code}</li>
+		</ul>
 		<p>Deleting this account may prevent other data from showing.</p>
 	{:else}
-		<h3>
-			{data.name}
-			({associatedCurrency.code})
-			<span class="badge primary">{friendlyKind}</span>
-		</h3>
+		<h3>{data.name}</h3>
+		<ul>
+			<li class="chip small no-margin primary">{friendlyKind}</li>
+			<li class="chip small no-margin secondary">{associatedCurrency.code}</li>
+		</ul>
 		<p>{data.description}</p>
 	{/if}
 
