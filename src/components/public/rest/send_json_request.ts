@@ -16,6 +16,7 @@ export default async function sendJSONRequest(
 ): Promise<void> {
 	const currentServerURL = get(serverURL)
 	dependencies.isConnecting.set(true)
+	dependencies.errors.set([])
 
 	try {
 		const response = await fetch(`${currentServerURL}${constraints.path}`, {

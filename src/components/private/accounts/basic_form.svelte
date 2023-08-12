@@ -70,7 +70,6 @@
 	</div>
 </form>
 
-
 <style lang="scss">
 	@use "@/components/third-party/index";
 </style>
