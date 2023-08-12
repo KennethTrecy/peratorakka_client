@@ -20,8 +20,6 @@
 	export let description: string =""
 	export let kind: AcceptableAccountKind = acceptableAccountKinds[0]
 
-	$: if (currencies.length > 0) currencyID = `${currencies[0].id}`
-
 	let { isConnecting, errors, send } = makeJSONRequester({
 		"path": "/api/v1/accounts",
 		"defaultRequestConfiguration": {
@@ -69,8 +67,8 @@
 		</p>
 		<p class="s12 m12 l12 medium-line">
 			The limitation is that the application tracks the account conversions through previous
-			financial entries. Therefore, there is no network usage to check for current conversions which
-			is a beneficial effect.
+			financial entries. Therefore, there is no network usage to check for current conversions
+			which is a beneficial effect.
 		</p>
 	</div>
 	<div class="s12 m12 l6 grid large-space">
