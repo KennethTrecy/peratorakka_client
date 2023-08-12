@@ -5,9 +5,12 @@
 	import { acceptableAccountKinds } from "#/entity"
 
 	import transformCurrency from "$/form/choice_info_transformer/transform_currency"
+	import transformString from "$/form/choice_info_transformer/transform_string"
 
 	import TextField from "$/form/text_field.svelte"
 	import ChoiceListField from "$/form/choice_list_field.svelte"
+
+	export const ACCEPTABLE_ACCOUNT_KINDS = [ ...acceptableAccountKinds ]
 
 	export let IDPrefix: string
 	export let currencies: Currency[]
@@ -35,10 +38,12 @@
 				{errors}/>
 		</div>
 		<div class="s12 m12 l12">
-			<TextField
+			<ChoiceListField
 				fieldName="Kind"
 				disabled={isConnecting}
 				bind:value={kind}
+				rawChoices={ACCEPTABLE_ACCOUNT_KINDS}
+				choiceConverter={transformString}
 				{IDPrefix}
 				{errors}/>
 		</div>
