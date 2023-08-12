@@ -10,7 +10,7 @@
 	export let IDPrefix: string = ""
 	export let errors: GeneralError[]
 	export let rawChoices: unknown[]
-	export let choiceConverter: (choice: unknown) => ChoiceInfo
+	export let choiceConverter: (choice: any) => ChoiceInfo
 
 	$: normalizedFieldName = fieldName.replace(" ", "_").toLocaleLowerCase()
 	$: fieldID = (
@@ -22,7 +22,6 @@
 		error => isFieldError(error) && error.field.endsWith(normalizedFieldName)
 	).map(error => error.message).join(" ")
 	$: choices = rawChoices.map(choiceConverter)
-
 </script>
 
 <div class="field label border no-margin">
@@ -31,6 +30,11 @@
 		class="active"
 		{disabled}
 		bind:value={value}>
+		{#if value === ""}
+			<option {value}>
+				Please select one of the choices...
+			</option>
+		{/if}
 		{#each choices as { label, data }(data)}
 			<option value={data}>
 				{label}
