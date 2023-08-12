@@ -65,14 +65,14 @@
 <DescriptiveForm individualName="Financial Account" {mayShowForm}>
 	<svelte:fragment slot="description">
 		<JustifiedParagraph>
-			Accounts are some kind of label for the numerical values in a financial entry. Some
-			examples of these are capital, cash, or debt. They may be credited or debited depending on
-			their kind. They may be asset, liability, or equity to name a few.
+			Financial accounts are some kind of label for the numerical values in a financial entry.
+			Some examples of these are capital, cash, or debt. They may be credited or debited
+			depending on their kind. They may be asset, liability, or equity to name a few.
 		</JustifiedParagraph>
 		<JustifiedParagraph>
-			To create an account to be used in the system, choose a currency and kind in order for the
-			system to calculate properly the associated numerical values. After that, fill out other
-			required info. Finally, press "Add" button.
+			To create a financial account to be used in the system, choose a currency and kind in order
+			for the system to calculate properly the associated numerical values. After that, fill out
+			other required info. Finally, press "Add" button.
 		</JustifiedParagraph>
 	</svelte:fragment>
 	<svelte:fragment slot="requirement">
