@@ -11,7 +11,7 @@ describe("Collection behavior", () => {
 	it("can show loading state", async () => {
 		const collectiveName = "Currencies"
 		const isConnecting = true
-		const data: Entry[] = []
+		const data: Entity[] = []
 		const { container, getAllByRole } = render(Component, {
 			collectiveName,
 			isConnecting,
@@ -28,7 +28,7 @@ describe("Collection behavior", () => {
 	it("can hide loading state", async () => {
 		const collectiveName = "Currencies"
 		const isConnecting = false
-		const data: Entry[] = []
+		const data: Entity[] = []
 		const { container } = render(Component, {
 			collectiveName,
 			isConnecting,
