@@ -1,24 +1,25 @@
 <script lang="ts">
 	import type { GeneralError } from "+/rest"
-	import type { Currency, AcceptableAccountKind } from "+/entity"
+	import type { AcceptableModifierKind, Account } from "+/entity"
 
-	import { acceptableAccountKinds } from "#/entity"
+	import { acceptableModifierKinds } from "#/entity"
 
-	import transformCurrency from "$/form/choice_info_transformer/transform_currency"
+	import transformAccount from "$/form/choice_info_transformer/transform_account"
 	import transformString from "$/form/choice_info_transformer/transform_string"
 
 	import TextField from "$/form/text_field.svelte"
 	import ChoiceListField from "$/form/choice_list_field.svelte"
 
-	export const ACCEPTABLE_ACCOUNT_KINDS = [ ...acceptableAccountKinds ]
+	export const ACCEPTABLE_MODIFIER_KINDS = [ ...acceptableModifierKinds ]
 
 	export let IDPrefix: string
-	export let currencies: Currency[]
+	export let accounts: Account[]
 
-	export let currencyID: string
+	export let debitAccountID: string
+	export let creditAccountID: string
 	export let name: string
 	export let description: string
-	export let kind: AcceptableAccountKind
+	export let kind: AcceptableModifierKind
 
 	export let isConnecting: boolean
 	export let errors: GeneralError[]
@@ -29,12 +30,23 @@
 	<fieldset class="s12 m12 l12 grid large-space">
 		<div class="s12 m12 l12">
 			<ChoiceListField
-				fieldName="Currency"
-				errorFieldName="currency_id"
+				fieldName="Debit Account"
+				errorFieldName="debit_account_id"
 				disabled={isConnecting}
-				bind:value={currencyID}
-				rawChoices={currencies}
-				choiceConverter={transformCurrency}
+				bind:value={debitAccountID}
+				rawChoices={accounts}
+				choiceConverter={transformAccount}
+				{IDPrefix}
+				{errors}/>
+		</div>
+		<div class="s12 m12 l12">
+			<ChoiceListField
+				fieldName="Credit Account"
+				errorFieldName="credit_account_id"
+				disabled={isConnecting}
+				bind:value={creditAccountID}
+				rawChoices={accounts}
+				choiceConverter={transformAccount}
 				{IDPrefix}
 				{errors}/>
 		</div>
@@ -43,7 +55,7 @@
 				fieldName="Kind"
 				disabled={isConnecting}
 				bind:value={kind}
-				rawChoices={ACCEPTABLE_ACCOUNT_KINDS}
+				rawChoices={ACCEPTABLE_MODIFIER_KINDS}
 				choiceConverter={transformString}
 				{IDPrefix}
 				{errors}/>
