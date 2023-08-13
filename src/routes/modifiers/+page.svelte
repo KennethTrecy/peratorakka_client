@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { Account, Currency } from "+/entity"
+	import type { Account, Currency, Modifier } from "+/entity"
 
 	import { get } from "svelte/store"
 	import { onMount } from "svelte"
@@ -27,11 +27,34 @@
 
 	let currencies: Currency[] = []
 	let accounts: Account[] = []
+	let modifiers: Modifier[] = []
 
 	let {
-		"isConnecting": isConnectingForAccount,
-		"errors": errorsForAccount,
-		"send": requestForAccount
+		"isConnecting": isConnectingForModifiers,
+		"errors": errorsForModifiers,
+		"send": requestForModifiers
+	} = makeJSONRequester({
+		"path": "/api/v1/modifiers",
+		"defaultRequestConfiguration": {
+			"method": "GET"
+		},
+		"manualResponseHandlers": [
+			{
+				"statusCode": 200,
+				"action": async (response: Response) => {
+					let responseDocument = await response.json()
+					errorsForModifiers.set([])
+					modifiers = responseDocument.modifiers
+				}
+			}
+		],
+		"expectedErrorStatusCodes": [ 401 ]
+	})
+
+	let {
+		"isConnecting": isConnectingForAccounts,
+		"errors": errorsForAccounts,
+		"send": requestForAccounts
 	} = makeJSONRequester({
 		"path": "/api/v1/accounts",
 		"defaultRequestConfiguration": {
@@ -42,29 +65,8 @@
 				"statusCode": 200,
 				"action": async (response: Response) => {
 					let responseDocument = await response.json()
-					errorsForAccount.set([])
+					errorsForAccounts.set([])
 					accounts = responseDocument.accounts
-				}
-			}
-		],
-		"expectedErrorStatusCodes": [ 401 ]
-	})
-
-	let {
-		"isConnecting": isConnectingForCurrency,
-		"errors": errorsForCurrency,
-		"send": requestForCurrencies
-	} = makeJSONRequester({
-		"path": "/api/v1/currencies",
-		"defaultRequestConfiguration": {
-			"method": "GET"
-		},
-		"manualResponseHandlers": [
-			{
-				"statusCode": 200,
-				"action": async (response: Response) => {
-					let responseDocument = await response.json()
-					errorsForAccount.set([])
 					currencies = responseDocument.currencies
 				}
 			}
@@ -80,8 +82,8 @@
 			return
 		}
 
-		await requestForCurrencies({})
-		await requestForAccount({})
+		await requestForModifiers({})
+		await requestForAccounts({})
 	}
 
 	onMount(loadList)
@@ -110,7 +112,7 @@
 	<Collection
 		{currencies}
 		data={accounts}
-		isConnecting={$isConnectingForAccount}
+		isConnecting={$isConnectingForAccounts}
 		on:delete={removeAccount}/>
 </article>
 
