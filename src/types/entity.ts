@@ -1,4 +1,9 @@
-import { acceptableAccountKinds, accountKinds } from "#/entity"
+import {
+	acceptableAccountKinds,
+	accountKinds,
+	acceptableModifierKinds,
+	modifierKinds
+} from "#/entity"
 
 interface Entity {
 	id: number
@@ -20,4 +25,16 @@ export interface Account extends Entity{
 	name: string
 	description: string
 	kind: AccountKind
+}
+
+type ModifierKind = typeof modifierKinds[number]
+
+export type AcceptableModifierKind = typeof acceptableModifierKinds[number]
+
+export interface Modifier extends Entity {
+	debit_account_id: number
+	credit_account_id: number
+	name: string
+	description: string
+	kind: ModifierKind
 }

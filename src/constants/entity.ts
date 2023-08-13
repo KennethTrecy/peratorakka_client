@@ -12,10 +12,10 @@ export const accountKinds = [
 ] as const
 
 export const acceptableModifierKinds = [
+	"manual",
 	// Below are the kinds not yet supported
 	// "reactive",
 	// "dependent",
-	"manual"
 ] as const
 
 export const modifierKinds = [
