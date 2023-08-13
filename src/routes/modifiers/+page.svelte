@@ -88,11 +88,11 @@
 
 	onMount(loadList)
 
-	function addAccount(event: CustomEvent<Account>) {
-		const newAccount = event.detail
-		accounts = [
-			...accounts,
-			newAccount
+	function addModifier(event: CustomEvent<Modifier>) {
+		const newModifier = event.detail
+		modifiers = [
+			...modifiers,
+			newModifier
 		]
 	}
 
@@ -103,12 +103,12 @@
 </script>
 
 <svelte:head>
-	<title>Accounts</title>
+	<title>Modifiers</title>
 </svelte:head>
 
 <article class="grid large-space large-margin large-padding">
-	<h1 class="s12 m12 l12 center-align">Accounts</h1>
-	<AddForm {currencies} on:create={addAccount}/>
+	<h1 class="s12 m12 l12 center-align">Modifiers</h1>
+	<AddForm {accounts} on:create={addModifier}/>
 	<Collection
 		{currencies}
 		data={accounts}
