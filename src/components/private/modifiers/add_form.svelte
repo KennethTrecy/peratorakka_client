@@ -1,9 +1,9 @@
 <script lang="ts">
-	import type { Currency, Account, AcceptableAccountKind } from "+/entity"
+	import type { Account, Modifier, AcceptableModifierKind } from "+/entity"
 
 	import { createEventDispatcher } from "svelte"
 
-	import { acceptableAccountKinds } from "#/entity"
+	import { acceptableModifierKinds } from "#/entity"
 
 	import makeJSONRequester from "$/rest/make_json_requester"
 
@@ -13,18 +13,19 @@
 	import JustifiedParagraph from "$/utility/justified_paragraph.svelte"
 
 	const dispatch = createEventDispatcher<{
-		"create": Account
+		"create": Modifier
 	}>()
 	const IDPrefix = "new_"
 
-	export let currencies: Currency[]
-	export let currencyID: string = ""
+	export let accounts: Account[]
+	export let debitAccountID: string = ""
+	export let creditAccountID: string = ""
 	export let name: string = ""
 	export let description: string =""
-	export let kind: AcceptableAccountKind = acceptableAccountKinds[0]
+	export let kind: AcceptableModifierKind = acceptableModifierKinds[0]
 
 	let { isConnecting, errors, send } = makeJSONRequester({
-		"path": "/api/v1/accounts",
+		"path": "/api/v1/modifiers",
 		"defaultRequestConfiguration": {
 			"method": "POST"
 		},
@@ -33,24 +34,27 @@
 				"statusCode": 201,
 				"action": async (response: Response) => {
 					const document = await response.json()
-					const { account } = document
+					const { modifier } = document
 
+					debitAccountID = ""
+					creditAccountID = ""
 					name = ""
 					description = ""
-					kind = acceptableAccountKinds[0]
+					kind = acceptableModifierKinds[0]
 					errors.set([])
-					dispatch("create", account)
+					dispatch("create", modifier)
 				}
 			}
 		],
 		"expectedErrorStatusCodes": [ 400 ]
 	})
 
-	async function createAccount() {
+	async function createModifier() {
 		await send({
 			"body": JSON.stringify({
-				"account": {
-					"currency_id": parseInt(currencyID),
+				"modifier": {
+					"debit_account_id": parseInt(debitAccountID),
+					"credit_account_id": parseInt(creditAccountID),
 					name,
 					description,
 					kind
@@ -59,7 +63,7 @@
 		})
 	}
 
-	$: mayShowForm = currencies.length > 0
+	$: mayShowForm = accounts.length >= 2
 </script>
 
 <DescriptiveForm individualName="Financial Account" {mayShowForm}>
@@ -83,15 +87,16 @@
 	</svelte:fragment>
 	<BasicForm
 		slot="form"
-		bind:currencies={currencies}
-		bind:currencyID={currencyID}
+		bind:accounts={accounts}
+		bind:debitAccountID={debitAccountID}
+		bind:creditAccountID={creditAccountID}
 		bind:name={name}
 		bind:description={description}
 		bind:kind={kind}
 		isConnecting={$isConnecting}
 		{IDPrefix}
 		errors={$errors}
-		on:submit={createAccount}>
+		on:submit={createModifier}>
 		<svelte:fragment slot="buttonGroup">
 			<MarginlessButton kind="submit" disabled={$isConnecting}>
 				Add
