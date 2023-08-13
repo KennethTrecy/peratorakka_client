@@ -11,7 +11,7 @@
 	import makeJSONRequester from "$/rest/make_json_requester"
 	import convertSnakeCaseToProperCase from "$/utility/convert_snake_case_to_proper_case"
 
-	import BasicForm from "%/modifiers/basic_form.svelte"
+	import BasicForm from "%/accounts/basic_form.svelte"
 
 	export let currencies: Currency[]
 	export let data: Account
