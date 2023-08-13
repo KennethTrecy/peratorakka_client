@@ -3,6 +3,7 @@
 
 	import { createEventDispatcher } from "svelte"
 
+	import { UNKNOWN_OPTION } from "#/component"
 	import { acceptableModifierKinds } from "#/entity"
 
 	import makeJSONRequester from "$/rest/make_json_requester"
@@ -18,8 +19,8 @@
 	const IDPrefix = "new_"
 
 	export let accounts: Account[]
-	export let debitAccountID: string = ""
-	export let creditAccountID: string = ""
+	export let debitAccountID: string = UNKNOWN_OPTION
+	export let creditAccountID: string = UNKNOWN_OPTION
 	export let name: string = ""
 	export let description: string =""
 	export let kind: AcceptableModifierKind = acceptableModifierKinds[0]
@@ -36,8 +37,8 @@
 					const document = await response.json()
 					const { modifier } = document
 
-					debitAccountID = ""
-					creditAccountID = ""
+					debitAccountID = UNKNOWN_OPTION
+					creditAccountID = UNKNOWN_OPTION
 					name = ""
 					description = ""
 					kind = acceptableModifierKinds[0]

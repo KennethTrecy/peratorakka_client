@@ -2,6 +2,8 @@
 	import type { ChoiceInfo } from "+/component"
 	import type { GeneralError } from "+/rest"
 
+	import { UNKNOWN_OPTION } from "#/component"
+
 	import { isFieldError } from "+/rest"
 
 	export let fieldName: string
@@ -33,7 +35,7 @@
 		class="active"
 		{disabled}
 		bind:value={value}>
-		{#if value === ""}
+		{#if value === UNKNOWN_OPTION}
 			<option {value}>
 				Please select one of the choices...
 			</option>

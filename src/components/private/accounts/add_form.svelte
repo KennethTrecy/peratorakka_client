@@ -3,6 +3,7 @@
 
 	import { createEventDispatcher } from "svelte"
 
+	import { UNKNOWN_OPTION } from "#/component"
 	import { acceptableAccountKinds } from "#/entity"
 
 	import makeJSONRequester from "$/rest/make_json_requester"
@@ -18,7 +19,7 @@
 	const IDPrefix = "new_"
 
 	export let currencies: Currency[]
-	export let currencyID: string = ""
+	export let currencyID: string = UNKNOWN_OPTION
 	export let name: string = ""
 	export let description: string =""
 	export let kind: AcceptableAccountKind = acceptableAccountKinds[0]
@@ -35,6 +36,7 @@
 					const document = await response.json()
 					const { account } = document
 
+					currencyID = UNKNOWN_OPTION
 					name = ""
 					description = ""
 					kind = acceptableAccountKinds[0]
