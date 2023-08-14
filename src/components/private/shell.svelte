@@ -30,6 +30,12 @@
 
 	onDestroy(unsubscribeWatchedStates)
 	onDestroy(unsubscribeWatchedGlobalStates)
+
+	/**
+	 * Previous main
+	 * <InnerShell {isMenuShown} on:toggleMenu={toggleMenu}>
+	 * </InnerShell>
+	 */
 </script>
 
 <svelte:head>
@@ -44,27 +50,37 @@
 </svelte:head>
 
 <div class="shell">
-	<header class="primary-container">
-		<nav>
-			<button class="s circle transparent" on:click={toggleMenu}>
-				<i>menu</i>
-			</button>
-			<span class="m l circle transparent"></span>
-			<p class="max center-align">
+	<header class="mdc-top-app-bar">
+		<div class="mdc-top-app-bar__row">
+			<section class="mdc-top-app-bar__section mdc-top-app-bar__section--align-start">
+				<button
+					class="mdc-top-app-bar__navigation-icon mdc-icon-button"
+					aria-label="Open navigation menu"
+					on:click={toggleMenu}>
+					<i>menu</i>
+				</button>
 				<AppName/>
-			</p>
-			<button class="circle transparent" on:click={toggleMode}>
-				<i>{$mustBeInDarkMode ? "dark_mode" : "light_mode"}</i>
-			</button>
-		</nav>
+		  </section>
+		  <section
+		  	class="mdc-top-app-bar__section mdc-top-app-bar__section--align-end"
+			role="toolbar">
+				<button
+					class="mdc-top-app-bar__action-item mdc-icon-button"
+					aria-label="Toggle theme mode"
+					on:click={toggleMode}>
+					<i>{$mustBeInDarkMode ? "dark_mode" : "light_mode"}</i>
+				</button>
+			</section>
+		</div>
 	</header>
-	<InnerShell {isMenuShown} on:toggleMenu={toggleMenu}>
+	<main class="mdc-top-app-bar--fixed-adjust">
 		<slot name="main"></slot>
-	</InnerShell>
+	</main>
 </div>
 
 <style lang="scss">
-	@use "@/components/third-party/index";
+	@use "@material/icon-button";
+	@use "@material/top-app-bar/mdc-top-app-bar";
 
 	.shell {
 		width: 100%;
@@ -76,12 +92,6 @@
 		> main {
 			flex: 1;
 		}
-	}
-
-	[data-app-name] {
-		@extend h5;
-
-		margin-left: 0.25em;
 	}
 
 	footer {
