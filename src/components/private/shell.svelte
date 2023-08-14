@@ -65,10 +65,10 @@
 					<i>menu</i>
 				</button>
 				<AppName/>
-		  </section>
-		  <section
-		  	class="mdc-top-app-bar__section mdc-top-app-bar__section--align-end"
-			role="toolbar">
+			</section>
+			<section
+				class="mdc-top-app-bar__section mdc-top-app-bar__section--align-end"
+				role="toolbar">
 				<button
 					class="mdc-top-app-bar__action-item mdc-icon-button"
 					aria-label="Toggle theme mode"
@@ -86,7 +86,7 @@
 <style lang="scss">
 	@use "@/components/third-party/new_index";
 
-	@use "@material/icon-button";
+	@use "@material/icon-button/styles";
 	@use "@material/top-app-bar/mdc-top-app-bar";
 
 	.shell {
