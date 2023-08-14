@@ -7,7 +7,7 @@
 @use "../../../node_modules/beercss/src/cdn/settings/dark.css";
 // @use "../../../node_modules/beercss/src/cdn/settings/fonts.css";
 @use "../../../node_modules/beercss/src/cdn/helpers/reset.css";
-@use "../../../node_modules/beercss/src/cdn/helpers/theme.css";
+@use "../../../node_modules/beercss/src/cdn/helpers/theme.css" as oldTheme;
 @use "../../../node_modules/beercss/src/cdn/helpers/alignments.css";
 @use "../../../node_modules/beercss/src/cdn/helpers/colors.css";
 @use "../../../node_modules/beercss/src/cdn/helpers/directions.css";
@@ -50,6 +50,8 @@
 @use "../../../node_modules/beercss/src/cdn/elements/tooltips.css";
 @use "../../../node_modules/beercss/src/cdn/helpers/blurs.css";
 @use "../../../node_modules/beercss/src/cdn/helpers/shadows.css";
+
+@use "@material/theme";
 
 @import url("https://fonts.googleapis.com/css2?family=Roboto&family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap");
 
