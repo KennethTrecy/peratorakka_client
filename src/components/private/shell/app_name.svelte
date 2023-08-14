@@ -10,9 +10,7 @@
 </script>
 
 <span class={resolvedClasses}>
-	<span>
-		<img src="logo.png" alt="Peratorakka logo"/>
-	</span>
+	<img src="logo.png" alt="Peratorakka logo"/>
 	<span data-app-name>
 		Peratorakka
 	</span>
@@ -22,9 +20,20 @@
 	@use "@/components/third-party/new_index";
 	@use "@material/top-app-bar/mdc-top-app-bar";
 
-	[data-app-name] {
-		margin-top: 0em;
-		margin-bottom: 0em;
-		margin-left: 0.25em;
+	.mdc-top-app-bar__title {
+		display: flex;
+		flex-flow: row wrap;
+		align-items: center;
+		justify-content: center;
+		gap: 1rem;
+
+		> img {
+			height: 3rem;
+			width: auto;
+		}
+
+		> [data-app-name] {
+			font-size: 2rem;
+		}
 	}
 </style>
