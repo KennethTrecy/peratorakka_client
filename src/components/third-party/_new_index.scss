@@ -1,0 +1,24 @@
+@use "@material/theme";
+
+@import url("https://fonts.googleapis.com/css2?family=Roboto&family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap");
+
+:root, html, body {
+	font-family: "Roboto";
+}
+
+:root {
+	font-size: 16px;
+}
+
+* {
+	font-size: 1rem;
+
+	padding: 0em;
+	border: 0em;
+	margin: 0em;
+	box-sizing: border-box;
+}
+
+i {
+	font-family: "Material Symbols Rounded";
+}

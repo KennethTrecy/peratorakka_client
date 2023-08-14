@@ -19,6 +19,7 @@
 </span>
 
 <style lang="scss">
+	@use "@/components/third-party/new_index";
 	@use "@material/top-app-bar/mdc-top-app-bar";
 
 	[data-app-name] {
