@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { onMount, onDestroy } from "svelte"
+	import { MDCTopAppBar } from "@material/top-app-bar";
 
 	import { initializeGlobalStates, unsubscribeWatchedGlobalStates } from "$/global_state"
 	import { setTheme } from "@/components/third-party/index"
@@ -10,8 +11,9 @@
 	} from "%/shell/state"
 
 	import AppName from "%/shell/app_name.svelte"
-	import InnerShell from "%/shell/inner_shell.svelte"
 
+	let topAppBar: HTMLElement|null = null
+	let topAppBarInstance: MDCTopAppBar
 	let isMenuShown = false
 
 	onMount(() => {
@@ -28,6 +30,9 @@
 		mustBeInDarkMode.update(isInDarkMode => !isInDarkMode)
 	}
 
+	onMount(() => {
+		topAppBarInstance = new MDCTopAppBar(topAppBar as HTMLElement)
+	})
 	onDestroy(unsubscribeWatchedStates)
 	onDestroy(unsubscribeWatchedGlobalStates)
 
@@ -50,7 +55,7 @@
 </svelte:head>
 
 <div class="shell">
-	<header class="mdc-top-app-bar">
+	<header class="mdc-top-app-bar" bind:this={topAppBar}>
 		<div class="mdc-top-app-bar__row">
 			<section class="mdc-top-app-bar__section mdc-top-app-bar__section--align-start">
 				<button
