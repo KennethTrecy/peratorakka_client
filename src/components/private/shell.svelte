@@ -1,22 +1,11 @@
 <script lang="ts">
 	import { onMount, onDestroy } from "svelte"
-	import { MDCTopAppBar } from "@material/top-app-bar";
 
 	import { initializeGlobalStates, unsubscribeWatchedGlobalStates } from "$/global_state"
 	import { setTheme } from "@/components/third-party/index"
-	import {
-		initializeShellState,
-		mustBeInDarkMode,
-		unsubscribeWatchedStates
-	} from "%/shell/state"
+	import { initializeShellState, unsubscribeWatchedStates } from "%/shell/state"
 
-	import AppName from "%/shell/app_name.svelte"
-	import NavigationButton from "%/shell/top_app_bar/navigation.svelte"
-	import ActionItemButton from "%/shell/top_app_bar/action_item.svelte"
-
-	let topAppBar: HTMLElement|null = null
-	let topAppBarInstance: MDCTopAppBar
-	let isMenuShown = false
+	import TopAppBar from "%/shell/top_app_bar.svelte"
 
 	onMount(() => {
 		setTheme("/logo.png")
@@ -24,19 +13,8 @@
 		initializeGlobalStates()
 	})
 
-	function toggleMenu() {
-		isMenuShown = !isMenuShown
-	}
-
-	function toggleMode() {
-		mustBeInDarkMode.update(isInDarkMode => !isInDarkMode)
-	}
-
-	onMount(() => {
-		topAppBarInstance = new MDCTopAppBar(topAppBar as HTMLElement)
-	})
-	onDestroy(unsubscribeWatchedStates)
 	onDestroy(unsubscribeWatchedGlobalStates)
+	onDestroy(unsubscribeWatchedStates)
 
 	/**
 	 * Previous main
@@ -57,25 +35,7 @@
 </svelte:head>
 
 <div class="shell">
-	<header class="mdc-top-app-bar" bind:this={topAppBar}>
-		<div class="mdc-top-app-bar__row">
-			<section class="mdc-top-app-bar__section mdc-top-app-bar__section--align-start">
-				<NavigationButton
-					label="Open navigation menu"
-					icon="menu"
-					on:click={toggleMenu}/>
-				<AppName/>
-			</section>
-			<section
-				class="mdc-top-app-bar__section mdc-top-app-bar__section--align-end"
-				role="toolbar">
-				<ActionItemButton
-					label="Toggle theme mode"
-					icon={$mustBeInDarkMode ? "dark_mode" : "light_mode"}
-					on:click={toggleMode}/>
-			</section>
-		</div>
-	</header>
+	<TopAppBar/>
 	<main class="mdc-top-app-bar--fixed-adjust">
 		<slot name="main"></slot>
 	</main>
@@ -83,9 +43,6 @@
 
 <style lang="scss">
 	@use "@/components/third-party/new_index";
-
-	@use "@material/icon-button/styles";
-	@use "@material/top-app-bar/mdc-top-app-bar";
 
 	.shell {
 		width: 100%;
