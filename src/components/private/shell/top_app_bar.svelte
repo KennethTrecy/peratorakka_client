@@ -10,7 +10,7 @@
 
 	let topAppBar: HTMLElement|null = null
 	let topAppBarInstance: MDCTopAppBar
-	let isMenuShown = false
+	export let isMenuShown: boolean
 
 	function toggleMenu() {
 		isMenuShown = !isMenuShown

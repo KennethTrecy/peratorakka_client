@@ -6,6 +6,9 @@
 	import { initializeShellState, unsubscribeWatchedStates } from "%/shell/state"
 
 	import TopAppBar from "%/shell/top_app_bar.svelte"
+	import NavigationDrawer from "%/shell/navigation_drawer.svelte"
+
+	export let isMenuShown = false
 
 	onMount(() => {
 		setTheme("/logo.png")
@@ -35,7 +38,8 @@
 </svelte:head>
 
 <div class="shell">
-	<TopAppBar/>
+	<TopAppBar bind:isMenuShown={isMenuShown}/>
+	<NavigationDrawer {isMenuShown}/>
 	<main class="mdc-top-app-bar--fixed-adjust">
 		<slot name="main"></slot>
 	</main>
@@ -43,6 +47,8 @@
 
 <style lang="scss">
 	@use "@/components/third-party/new_index";
+
+	@use "@material/top-app-bar/mdc-top-app-bar";
 
 	.shell {
 		width: 100%;
