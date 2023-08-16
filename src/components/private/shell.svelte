@@ -11,6 +11,7 @@
 	} from "%/shell/state"
 
 	import AppName from "%/shell/app_name.svelte"
+	import NavigationButton from "$/utility/navigation_button.svelte"
 
 	let topAppBar: HTMLElement|null = null
 	let topAppBarInstance: MDCTopAppBar
@@ -58,12 +59,10 @@
 	<header class="mdc-top-app-bar" bind:this={topAppBar}>
 		<div class="mdc-top-app-bar__row">
 			<section class="mdc-top-app-bar__section mdc-top-app-bar__section--align-start">
-				<button
-					class="mdc-top-app-bar__navigation-icon mdc-icon-button"
-					aria-label="Open navigation menu"
-					on:click={toggleMenu}>
-					<i>menu</i>
-				</button>
+				<NavigationButton
+					label="Open navigation menu"
+					icon="menu"
+					on:click={toggleMenu}/>
 				<AppName/>
 			</section>
 			<section
