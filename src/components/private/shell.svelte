@@ -11,7 +11,7 @@
 	} from "%/shell/state"
 
 	import AppName from "%/shell/app_name.svelte"
-	import NavigationButton from "$/utility/navigation_button.svelte"
+	import NavigationButton from "$/utility/button/navigation.svelte"
 
 	let topAppBar: HTMLElement|null = null
 	let topAppBarInstance: MDCTopAppBar
