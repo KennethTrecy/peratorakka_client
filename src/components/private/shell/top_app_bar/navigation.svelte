@@ -1,12 +1,12 @@
 <script lang="ts">
-	import IconButton from "$/utility/button/icon.svelte"
+	import IconButton from "$/button/icon.svelte"
 
 	export let label: string
 	export let icon: string
 </script>
 
 <IconButton
-	class="mdc-top-app-bar__action-item"
+	class="mdc-top-app-bar__navigation-icon"
 	{label}
 	{icon}
 	on:click/>
