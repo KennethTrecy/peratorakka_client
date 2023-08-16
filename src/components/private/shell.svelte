@@ -12,6 +12,7 @@
 
 	import AppName from "%/shell/app_name.svelte"
 	import NavigationButton from "$/utility/button/navigation.svelte"
+	import ActionItemButton from "$/utility/button/action_item.svelte"
 
 	let topAppBar: HTMLElement|null = null
 	let topAppBarInstance: MDCTopAppBar
@@ -68,12 +69,10 @@
 			<section
 				class="mdc-top-app-bar__section mdc-top-app-bar__section--align-end"
 				role="toolbar">
-				<button
-					class="mdc-top-app-bar__action-item mdc-icon-button"
-					aria-label="Toggle theme mode"
-					on:click={toggleMode}>
-					<i>{$mustBeInDarkMode ? "dark_mode" : "light_mode"}</i>
-				</button>
+				<ActionItemButton
+					label="Toggle theme mode"
+					icon={$mustBeInDarkMode ? "dark_mode" : "light_mode"}
+					on:click={toggleMode}/>
 			</section>
 		</div>
 	</header>
