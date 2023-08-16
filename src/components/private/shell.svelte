@@ -39,7 +39,7 @@
 
 <div class="shell">
 	<TopAppBar bind:isMenuShown={isMenuShown}/>
-	<NavigationDrawer {isMenuShown}/>
+	<NavigationDrawer bind:isMenuShown={isMenuShown}/>
 	<main class="mdc-top-app-bar--fixed-adjust">
 		<slot name="main"></slot>
 	</main>

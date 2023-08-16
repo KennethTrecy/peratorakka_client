@@ -8,9 +8,10 @@
 	import NavigationButton from "%/shell/top_app_bar/navigation.svelte"
 	import ActionItemButton from "%/shell/top_app_bar/action_item.svelte"
 
+	export let isMenuShown: boolean
+
 	let topAppBar: HTMLElement|null = null
 	let topAppBarInstance: MDCTopAppBar
-	export let isMenuShown: boolean
 
 	function toggleMenu() {
 		isMenuShown = !isMenuShown

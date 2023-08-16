@@ -25,9 +25,12 @@
 		)
 	].join(" ")
 
+	function close() {
+		isMenuShown = false
+	}
+
 	onMount(() => {
 		drawerInstance = MDCDrawer.attachTo(drawer as HTMLElement)
-		drawerInstance.initialize()
 	})
 </script>
 
@@ -37,7 +40,7 @@
 		</nav>
 	</div>
  </aside>
- <div class="mdc-drawer-scrim"></div>
+ <div class="mdc-drawer-scrim" on:click={close}></div>
 
 <style lang="scss">
 	@use "@/components/third-party/new_index";
