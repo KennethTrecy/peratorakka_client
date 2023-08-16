@@ -5,7 +5,7 @@
 
 	import { menuItemInfos } from "%/shell/state"
 
-	import AppName from "%/shell/app_name.svelte"
+	import AppName from "%/shell/top_app_bar/app_name.svelte"
 
 	export let isMenuShown: boolean
 	const dispatch = createEventDispatcher<{

@@ -4,7 +4,7 @@
 
 	import { mustBeInDarkMode } from "%/shell/state"
 
-	import AppName from "%/shell/app_name.svelte"
+	import AppName from "%/shell/top_app_bar/app_name.svelte"
 	import NavigationButton from "%/shell/top_app_bar/navigation.svelte"
 	import ActionItemButton from "%/shell/top_app_bar/action_item.svelte"
 
