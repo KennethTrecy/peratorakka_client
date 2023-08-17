@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { derived } from "svelte/store"
 	import { afterNavigate, beforeNavigate, goto } from "$app/navigation"
 
 	import makeJSONRequester from "$/rest/make_json_requester"
@@ -41,6 +42,9 @@
 		],
 		"expectedErrorStatusCodes": [ 401 ]
 	})
+	const URLParts = derived(serverURL, currentURL => {
+		return currentURL.split(".")
+	})
 
 	async function logIn() {
 		await send({
@@ -53,9 +57,15 @@
 </script>
 
 <SingleForm on:submit={logIn}>
-	<p class="center-align" slot="description_layer">
-		Enter the credentials you have on <code>{$serverURL}</code> to log in.
-	</p>
+	<div class="mdc-typography" slot="description_layer">
+		<p class="mdc-typography--body2">
+			Enter the credentials you have on <code>
+				{#each $URLParts as part, i}
+					{#if i > 0}<wbr/>.{part}{:else}{part}{/if}
+				{/each}
+			</code> to log in.
+		</p>
+	</div>
 	<fieldset slot="field_layer">
 		<TextField
 			variant="email"
@@ -69,16 +79,29 @@
 			bind:value={password}
 			errors={$errors}/>
 	</fieldset>
-	<button type="submit" disabled={$isConnecting} slot="action_layer">
-		Access
-	</button>
+	<div class="mdc-card__actions" slot="action_layer">
+		<div class="mdc-card__action-buttons">
+			<button
+				type="submit"
+				disabled={$isConnecting}
+				class="mdc-button mdc-card__action mdc-card__action--button">
+				<div class="mdc-button__ripple"></div>
+				<span class="mdc-button__label">Access</span>
+			</button>
+		</div>
+	</div>
 </SingleForm>
 
 <style lang="scss">
-	@use "@/components/third-party/index";
+	@use "@/components/third-party/new_index";
 
-	fieldset {
-		@extend nav;
-		flex-direction: column;
+	@use "@material/card";
+	@use "@material/button/styles";
+	@use "@material/typography/mdc-typography";
+
+	@include card.core-styles;
+
+	.mdc-typography {
+		margin-top: 1rem;
 	}
 </style>

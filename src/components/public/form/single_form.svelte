@@ -33,7 +33,7 @@
 		text-align: center;
 		padding: 1rem;
 
-		&:nth-child(2) {
+		& + & {
 			padding-top: 0rem;
 		}
 	}
