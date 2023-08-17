@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { derived } from "svelte/store"
 	import { afterNavigate, beforeNavigate, goto } from "$app/navigation"
 
 	import makeJSONRequester from "$/rest/make_json_requester"
@@ -12,6 +11,7 @@
 	} from "$/global_state"
 
 	import PasswordField from "$/form/password_field.svelte"
+	import ServerDisplay from "$/utility/server_display.svelte"
 	import SingleForm from "$/form/single_form.svelte"
 	import TextCardButton from "$/button/card/text.svelte"
 	import TextField from "$/form/text_field.svelte"
@@ -43,9 +43,6 @@
 		],
 		"expectedErrorStatusCodes": [ 401 ]
 	})
-	const URLParts = derived(serverURL, currentURL => {
-		return currentURL.split(".")
-	})
 
 	async function logIn() {
 		await send({
@@ -60,11 +57,7 @@
 <SingleForm on:submit={logIn}>
 	<div class="mdc-typography" slot="description_layer">
 		<p class="mdc-typography--body2">
-			Enter the credentials you have on <code>
-				{#each $URLParts as part, i}
-					{#if i > 0}<wbr/>.{part}{:else}{part}{/if}
-				{/each}
-			</code> to log in.
+			Enter the credentials you have on <ServerDisplay address={$serverURL}/> to log in.
 		</p>
 	</div>
 	<fieldset slot="field_layer">
