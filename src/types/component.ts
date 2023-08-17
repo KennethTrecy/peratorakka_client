@@ -7,3 +7,7 @@ export interface ChoiceInfo {
 	label: string,
 	data: string
 }
+
+export type ButtonKind =
+	| "button"
+	| "submit"
