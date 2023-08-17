@@ -2,6 +2,10 @@
 	import { onMount } from "svelte"
 	import { MDCDrawer } from "@material/drawer"
 
+	import { menuItemInfos } from "%/shell/state"
+
+	import Item from "%/shell/navigation_drawer/item.svelte"
+
 	export let isMenuShown: boolean
 	let drawer: HTMLElement|null = null
 	let drawerInstance: MDCDrawer
@@ -37,10 +41,18 @@
 <aside class={drawerClasses} bind:this={drawer}>
 	<div class="mdc-drawer__content">
 		<nav class="mdc-deprecated-list">
+			{#each $menuItemInfos as info(info.link)}
+				<Item
+					address={info.link}
+					icon={info.icon}
+					label={info.label}/>
+			{/each}
 		</nav>
 	</div>
  </aside>
- <div class="mdc-drawer-scrim" on:click={close}></div>
+ <button
+ 	class="mdc-drawer-scrim"
+	on:click={close}></button>
 
 <style lang="scss">
 	@use "@/components/third-party/new_index";
