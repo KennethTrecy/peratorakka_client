@@ -2,28 +2,39 @@
 
 </script>
 
-<form class="middle-align center-align grid large-margin" on:submit|preventDefault>
-	<div class="s1 m2 l3"></div>
-	<div class="s10 m8 l6">
-		<div class="fill middle-align center-align">
-			<div class="center-align large-padding">
-				<img class="small extra" src="logo.png" alt="Peratorakka logo"/>
-				<div class="space"></div>
-				<slot name="description_layer"/>
-				<div class="space"></div>
-				<slot name="field_layer"/>
-				<div class="space"></div>
+<div class="mdc-layout-grid">
+	<div class="mdc-layout-grid__inner">
+		<div class="mdc-layout-grid__cell" role="presentation"></div>
+		<div class="mdc-layout-grid__cell">
+			<form class="mdc-card" on:submit|preventDefault>
+				<div class="mdc-card__content">
+					<img src="logo.png" alt="Peratorakka logo"/>
+					<slot name="description_layer"/>
+				</div>
+				<div class="mdc-card__content">
+					<slot name="field_layer"/>
+				</div>
 				<slot name="action_layer"/>
-			</div>
+			</form>
 		</div>
+		<div class="mdc-layout-grid__cell" role="presentation"></div>
 	</div>
-</form>
+</div>
 
 <style lang="scss">
-	@use "@/components/third-party/index";
+	@use "@/components/third-party/new_index";
 
-	form {
-		width: 100%;
-		height: 80%;
+	@use "@material/card";
+	@use "@material/layout-grid/mdc-layout-grid";
+
+	@include card.core-styles;
+
+	.mdc-card__content {
+		text-align: center;
+		padding: 1rem;
+
+		&:nth-child(2) {
+			padding-top: 0rem;
+		}
 	}
 </style>
