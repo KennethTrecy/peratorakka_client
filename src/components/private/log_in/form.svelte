@@ -13,6 +13,7 @@
 
 	import PasswordField from "$/form/password_field.svelte"
 	import SingleForm from "$/form/single_form.svelte"
+	import TextCardButton from "$/button/card/text.svelte"
 	import TextField from "$/form/text_field.svelte"
 
 	applyRequirements([
@@ -81,13 +82,10 @@
 	</fieldset>
 	<div class="mdc-card__actions" slot="action_layer">
 		<div class="mdc-card__action-buttons">
-			<button
-				type="submit"
+			<TextCardButton
+				kind="submit"
 				disabled={$isConnecting}
-				class="mdc-button mdc-card__action mdc-card__action--button">
-				<div class="mdc-button__ripple"></div>
-				<span class="mdc-button__label">Access</span>
-			</button>
+				label="Access"/>
 		</div>
 	</div>
 </SingleForm>
@@ -96,7 +94,6 @@
 	@use "@/components/third-party/new_index";
 
 	@use "@material/card";
-	@use "@material/button/styles";
 	@use "@material/typography/mdc-typography";
 
 	@include card.core-styles;
