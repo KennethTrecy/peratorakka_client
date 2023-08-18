@@ -16,39 +16,59 @@
 			? ""
 			: `${IDPrefix}_`
 	) + normalizedFieldName
+	$: helperID = `${fieldID}_helper`
 	$: isActive = Boolean(value)
 	$: activeClass = isActive ? "active" : ""
 	$: message = errors.filter(
 		error => isFieldError(error) && error.field.endsWith(normalizedFieldName)
 	).map(error => error.message).join(" ")
+	$: textfieldClass = [
+		"mdc-text-field",
+		"mdc-text-field--outlined",
+		disabled ? "mdc-text-field--disabled" : false
+	].filter(Boolean).join(" ")
 </script>
 
-<div class="field label border no-margin">
+<label class={textfieldClass}>
+	<span class="mdc-notched-outline">
+		<span class="mdc-notched-outline__leading"></span>
+		<span class="mdc-notched-outline__notch">
+			<span class="mdc-floating-label" id={fieldID}>{fieldName}</span>
+		</span>
+		<span class="mdc-notched-outline__trailing"></span>
+	</span>
 	{#if variant === "text"}
 		<input
-			class={activeClass}
+			class="mdc-text-field__input"
 			type="text"
 			bind:value={value}
 			id={fieldID}
-			disabled={disabled}>
+			disabled={disabled}
+			aria-controls={helperID}
+			aria-describedby={helperID}>
 	{:else}
 		<input
-			class={activeClass}
+			class="mdc-text-field__input"
 			type="email"
 			bind:value={value}
 			id={fieldID}
-			disabled={disabled}>
+			disabled={disabled}
+			aria-controls={helperID}
+			aria-describedby={helperID}>
 	{/if}
-	<label class={activeClass} for={fieldID}>{fieldName}</label>
-	{#if message !== ""}
-		<p class="error no-margin">{message}</p>
-	{/if}
-</div>
+</label>
+{#if message !== ""}
+	<div class="mdc-text-field-helper-line">
+		<p class="mdc-text-field-helper-text" id={helperID}>{message}</p>
+	</div>
+{/if}
 
 <style lang="scss">
-	@use "@/components/third-party/index";
+	@use "@/components/third-party/new_index";
 
-	p {
-		@extend span;
-	}
+	@use "@material/floating-label/mdc-floating-label";
+	@use "@material/notched-outline/mdc-notched-outline";
+	@use "@material/textfield";
+
+	@include textfield.core-styles;
 </style>
