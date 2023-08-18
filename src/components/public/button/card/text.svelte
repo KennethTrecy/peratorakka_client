@@ -11,7 +11,7 @@
 	export { otherClasses as class }
 
 	$: buttonClasses = [
-		"dc-card__action",
+		"mdc-card__action",
 		"mdc-card__action--button",
 		...otherClasses.split(" ")
 	].filter(Boolean).join(" ")
