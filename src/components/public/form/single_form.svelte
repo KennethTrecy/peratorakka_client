@@ -4,8 +4,8 @@
 
 <div class="mdc-layout-grid">
 	<div class="mdc-layout-grid__inner">
-		<div class="mdc-layout-grid__cell" role="presentation"></div>
-		<div class="mdc-layout-grid__cell">
+		<div class="mdc-layout-grid__cell mdc-layout-grid__cell--padder" role="presentation"></div>
+		<div class="mdc-layout-grid__cell mdc-layout-grid__cell--wide">
 			<form class="mdc-card" on:submit|preventDefault>
 				<div class="mdc-card__content">
 					<img src="logo.png" alt="Peratorakka logo"/>
@@ -17,7 +17,7 @@
 				<slot name="action_layer"/>
 			</form>
 		</div>
-		<div class="mdc-layout-grid__cell" role="presentation"></div>
+		<div class="mdc-layout-grid__cell mdc-layout-grid__cell--padder" role="presentation"></div>
 	</div>
 </div>
 
@@ -36,5 +36,17 @@
 		& + & {
 			padding-top: 0rem;
 		}
+	}
+
+	.mdc-layout-grid__cell--wide {
+		@extend .mdc-layout-grid__cell--span-4-phone;
+		@extend .mdc-layout-grid__cell--span-6-tablet;
+		@extend .mdc-layout-grid__cell--span-6-desktop;
+	}
+
+	.mdc-layout-grid__cell--padder {
+		@extend .mdc-layout-grid__cell--span-1-phone;
+		@extend .mdc-layout-grid__cell--span-1-tablet;
+		@extend .mdc-layout-grid__cell--span-3-desktop;
 	}
 </style>
