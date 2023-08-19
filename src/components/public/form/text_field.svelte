@@ -1,6 +1,9 @@
 <script lang="ts">
 	import type { GeneralError } from "+/rest"
 
+	import { onMount } from "svelte"
+	import { MDCTextField } from "@material/textfield"
+
 	import { isFieldError } from "+/rest"
 
 	export let fieldName: string
@@ -24,16 +27,29 @@
 	).map(error => error.message).join(" ")
 	$: textfieldClass = [
 		"mdc-text-field",
-		"mdc-text-field--outlined",
+		"mdc-text-field--filled",
 		disabled ? "mdc-text-field--disabled" : false
 	].filter(Boolean).join(" ")
+	$: floatingLabelClass = [
+		"mdc-floating-label",
+		isActive ? "mdc-floating-label--float-above" : false
+	].filter(Boolean).join(" ")
+
+	let fieldElement: any
+	onMount(() => {
+		const field = new MDCTextField(fieldElement)
+	})
 </script>
 
-<label class={textfieldClass}>
+<label class={textfieldClass} bind:this={fieldElement}>
 	<span class="mdc-notched-outline">
 		<span class="mdc-notched-outline__leading"></span>
 		<span class="mdc-notched-outline__notch">
-			<span class="mdc-floating-label" id={fieldID}>{fieldName}</span>
+			<span
+				class={floatingLabelClass}
+				id={fieldID}>
+				{fieldName}
+			</span>
 		</span>
 		<span class="mdc-notched-outline__trailing"></span>
 	</span>
@@ -42,8 +58,8 @@
 			class="mdc-text-field__input"
 			type="text"
 			bind:value={value}
-			id={fieldID}
 			disabled={disabled}
+			aria-labelledby={fieldID}
 			aria-controls={helperID}
 			aria-describedby={helperID}>
 	{:else}
@@ -51,8 +67,8 @@
 			class="mdc-text-field__input"
 			type="email"
 			bind:value={value}
-			id={fieldID}
 			disabled={disabled}
+			aria-labelledby={fieldID}
 			aria-controls={helperID}
 			aria-describedby={helperID}>
 	{/if}
