@@ -3,6 +3,7 @@
 
 	import { onMount } from "svelte"
 	import { MDCTextField } from "@material/textfield"
+	import { MDCLineRipple } from "@material/line-ripple"
 
 	import { isFieldError } from "+/rest"
 
@@ -34,14 +35,18 @@
 		isActive ? "mdc-floating-label--float-above" : false
 	].filter(Boolean).join(" ")
 
-	let fieldElement: any
+	let fieldElement: any = null
+	let topLineRippleElement: any = null
+	let bottomLineRippleElement: any = null
 	onMount(() => {
 		const field = new MDCTextField(fieldElement)
+		const topLineRipple = new MDCLineRipple(topLineRippleElement)
+		const bottomLineRipple = new MDCLineRipple(bottomLineRippleElement)
 	})
 </script>
 
 <label class={textfieldClass} bind:this={fieldElement}>
-	<span class="mdc-text-field__ripple"></span>
+	<span class="mdc-text-field__ripple" bind:this={topLineRippleElement}></span>
 	<span
 		class={floatingLabelClass}
 		id={fieldID}>
@@ -66,7 +71,7 @@
 			aria-controls={helperID}
 			aria-describedby={helperID}/>
 	{/if}
-	<span class="mdc-line-ripple"></span>
+	<span class="mdc-line-ripple" bind:this={bottomLineRippleElement}></span>
 </label>
 {#if message !== ""}
 	<div class="mdc-text-field-helper-line">
