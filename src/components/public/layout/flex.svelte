@@ -17,6 +17,7 @@
 
 		display: flex;
 		flex-flow: row wrap;
+		align-items: center;
 		gap: 1rem;
 
 		@each $screen in map.keys(variables.$breakpoints) {

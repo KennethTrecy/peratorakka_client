@@ -9,6 +9,11 @@
 	import makeJSONRequester from "$/rest/make_json_requester"
 
 	import BasicForm from "%/currencies/basic_form.svelte"
+	import Flex from "$/layout/flex.svelte"
+	import GridCell from "$/layout/grid_cell.svelte"
+	import ShortParagraph from "$/typography/short_paragraph.svelte"
+	import TextCardButton from "$/button/card/text.svelte"
+	import WeakenedTertiaryHeading from "$/typography/weakened_tertiary_heading.svelte"
 
 	export let data: Currency
 
@@ -23,14 +28,6 @@
 	$: formID = `${IDPrefix}_update_form`
 	$: isEditing = status === "editing"
 	$: isConfirmingDeletion = status === "confirming_deletion"
-	$: cardClasses = [
-		...(
-			(isEditing || isConfirmingDeletion)
-				? [ "s12", "m12", "l6" ]
-				: [ "s6", "m6", "l3" ]
-		),
-		"secondary-container"
-	].join(" ")
 	let isConnectingToUpdate = writable<boolean>(false)
 	let updateErrors = writable<GeneralError[]>([])
 	let requestUpdate = (request: Partial<RequestInit>) => Promise.resolve()
@@ -125,7 +122,7 @@
 	}
 </script>
 
-<article class={cardClasses}>
+<GridCell kind="normal">
 	{#if isEditing}
 		<BasicForm
 			id={formID}
@@ -134,66 +131,73 @@
 			isConnecting={$isConnectingToUpdate}
 			{IDPrefix}
 			errors={$updateErrors}
-			on:submit={confirmEdit}/>
-	{:else if isConfirmingDeletion}
-		<h3>Delete {data.code}?</h3>
-		<p>Deleting this currency may prevent other data from showing.</p>
+			on:submit={confirmEdit}>
+			<svelte:fragment slot="button_group">
+				<TextCardButton
+					kind="submit"
+					disabled={$isConnectingToUpdate}
+					label="Save"/>
+				<TextCardButton
+					kind="button"
+					disabled={$isConnectingToUpdate}
+					label="Cancel"
+					on:click={cancelEdit}/>
+			</svelte:fragment>
+		</BasicForm>
 	{:else}
-		<h3>{data.code}</h3>
-		<p>{data.name}</p>
+		<article class="mdc-card">
+			<div class="mdc-card__content">
+				<Flex>
+					{#if isConfirmingDeletion}
+						<WeakenedTertiaryHeading>
+							Delete {data.code}?
+						</WeakenedTertiaryHeading>
+						<ShortParagraph>
+							Deleting this currency may prevent other data from showing.
+						</ShortParagraph>
+					{:else}
+						<WeakenedTertiaryHeading>
+							{data.code}
+						</WeakenedTertiaryHeading>
+						<ShortParagraph>
+							{data.name}
+						</ShortParagraph>
+					{/if}
+				</Flex>
+			</div>
+			<div class="mdc-card__actions">
+				<div class="mdc-card__action-buttons">
+					{#if isConfirmingDeletion}
+						<TextCardButton
+							kind="submit"
+							disabled={$isConnectingToDelete}
+							label="Confirm"
+							on:click={confirmDelete}/>
+						<TextCardButton
+							kind="button"
+							disabled={$isConnectingToDelete}
+							label="Cancel"
+							on:click={startReading}/>
+					{:else}
+						<TextCardButton
+							kind="submit"
+							label="Edit"
+							on:click={startEditing}/>
+						<TextCardButton
+							kind="button"
+							label="Delete"
+							on:click={confirmDeletion}/>
+					{/if}
+				</div>
+			</div>
+		</article>
 	{/if}
-
-	<div>
-		{#if isEditing}
-			<button
-				class="no-margin square round"
-				type="submit"
-				form={formID}
-				disabled={$isConnectingToUpdate}>
-				<i>save</i>
-			</button>
-			<button
-				class="no-margin square round"
-				on:click={cancelEdit}
-				type="button"
-				form={formID}
-				disabled={$isConnectingToUpdate}>
-				<i>cancel</i>
-			</button>
-		{:else if isConfirmingDeletion}
-			<button
-				class="no-margin square round"
-				on:click={confirmDelete}
-				disabled={$isConnectingToDelete}>
-				<i>check</i>
-			</button>
-			<button
-				class="no-margin square round"
-				on:click={startReading}
-				type="button"
-				disabled={$isConnectingToDelete}>
-				<i>cancel</i>
-			</button>
-		{:else}
-			<button
-				class="no-margin square round"
-				on:click={startEditing}>
-				<i>edit</i>
-			</button>
-			<button
-				class="no-margin square round"
-				on:click={confirmDeletion}>
-				<i>delete</i>
-			</button>
-		{/if}
-	</div>
-</article>
-
+</GridCell>
 
 <style lang="scss">
-	@use "@/components/third-party/index";
+	@use "@/components/third-party/new_index";
 
-	h3 {
-		@extend h5;
-	}
+	@use "@material/card";
+
+	@include card.core-styles;
 </style>
