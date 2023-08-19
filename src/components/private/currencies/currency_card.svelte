@@ -9,6 +9,7 @@
 	import makeJSONRequester from "$/rest/make_json_requester"
 
 	import BasicForm from "%/currencies/basic_form.svelte"
+	import EditActionCardButtonPair from "$/button/card/edit_action_pair.svelte"
 	import Flex from "$/layout/flex.svelte"
 	import GridCell from "$/layout/grid_cell.svelte"
 	import ShortParagraph from "$/typography/short_paragraph.svelte"
@@ -132,17 +133,10 @@
 			{IDPrefix}
 			errors={$updateErrors}
 			on:submit={confirmEdit}>
-			<svelte:fragment slot="button_group">
-				<TextCardButton
-					kind="submit"
-					disabled={$isConnectingToUpdate}
-					label="Save"/>
-				<TextCardButton
-					kind="button"
-					disabled={$isConnectingToUpdate}
-					label="Cancel"
-					on:click={cancelEdit}/>
-			</svelte:fragment>
+			<EditActionCardButtonPair
+				slot="button_group"
+				disabled={$isConnectingToUpdate}
+				on:cancelEdit={cancelEdit}/>
 		</BasicForm>
 	{:else}
 		<article class="mdc-card">
