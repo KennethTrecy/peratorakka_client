@@ -15,12 +15,10 @@
 </script>
 
 <GridCell kind="full">
-	<SecondaryHeading>Available {collectiveName}</SecondaryHeading>
-</GridCell>
-<GridCell kind="full">
 	<IndeterminateProgressBar
 		isLoading={isConnecting}
 		{progressBarLabel}/>
+	<SecondaryHeading>Available {collectiveName}</SecondaryHeading>
 </GridCell>
 
 {#if isConnecting}
