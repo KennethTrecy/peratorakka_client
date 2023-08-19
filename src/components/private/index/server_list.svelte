@@ -1,4 +1,5 @@
 <script lang="ts">
+	import type { GeneralError } from "+/rest"
 	import type { ChoiceInfo } from "+/component"
 
 	import { PUBLIC_PRODUCTION_SERVER_CHOICES } from "$env/static/public"
@@ -18,7 +19,7 @@
 	let customServer = ""
 	$: mustBeCustomServer = selectedServer === CUSTOM_KEY
 	$: resolvedSelectedServer = mustBeCustomServer
-	? customServer
+		? customServer
 		: selectedServer
 	$: serverChoices = [
 		...rawServerChoices,
@@ -35,6 +36,13 @@
 
 		return { label, data }
 	}
+	const CUSTOM_SERVER_FIELD_NAME = "Custom Server URL"
+	const errors: GeneralError[] = [
+		{
+			"field": "custom_server_url",
+			"message": "Example: http://peratorakka.example.com"
+		}
+	]
 
 	let isConnecting = false
 	let didConnectionFail = false
@@ -105,16 +113,16 @@
 					bind:value={selectedServer}
 					rawChoices={serverChoices}
 					choiceConverter={transformServer}
-					IDPrefix="server_"
-					errors={[]}/>
+					IDPrefix="list_"
+					errors={errors}/>
 			</div>
 			{#if mustBeCustomServer}
 				<div class="mdc-layout-grid__cell mdc-layout-grid__cell--full">
 					<TextField
-						fieldName="Example: http://peratorakka.example.com"
+						fieldName={CUSTOM_SERVER_FIELD_NAME}
 						disabled={isConnecting}
 						bind:value={customServer}
-						errors={[]}/>
+						errors={errors}/>
 				</div>
 			{/if}
 		</div>
