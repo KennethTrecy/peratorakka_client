@@ -43,7 +43,6 @@
 		disabled ? "mdc-select--disabled" : false
 	].filter(Boolean).join(" ")
 
-	$: console.log("select", { value })
 	let selectElement: any = null
 	let menuElement: any = null
 	onMount(() => {
