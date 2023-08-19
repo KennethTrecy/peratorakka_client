@@ -60,18 +60,24 @@
 			Enter the credentials you have on <ServerDisplay address={$serverURL}/> to log in.
 		</p>
 	</div>
-	<fieldset slot="field_layer">
-		<TextField
-			variant="email"
-			fieldName="Email"
-			disabled={$isConnecting}
-			bind:value={email}
-			errors={$errors}/>
-		<PasswordField
-			fieldName="Password"
-			disabled={$isConnecting}
-			bind:value={password}
-			errors={$errors}/>
+	<fieldset class="mdc-layout-grid" slot="field_layer">
+		<div class="mdc-layout-grid__inner">
+			<div class="mdc-layout-grid__cell mdc-layout-grid__cell--full">
+				<TextField
+					variant="email"
+					fieldName="Email"
+					disabled={$isConnecting}
+					bind:value={email}
+					errors={$errors}/>
+			</div>
+			<div class="mdc-layout-grid__cell mdc-layout-grid__cell--full">
+				<PasswordField
+					fieldName="Password"
+					disabled={$isConnecting}
+					bind:value={password}
+					errors={$errors}/>
+			</div>
+		</div>
 	</fieldset>
 	<div class="mdc-card__actions" slot="action_layer">
 		<div class="mdc-card__action-buttons">
@@ -88,10 +94,21 @@
 
 	@use "@material/card";
 	@use "@material/typography/mdc-typography";
+	@use "@material/layout-grid/mdc-layout-grid";
 
 	@include card.core-styles;
 
 	.mdc-typography {
 		margin-top: 1rem;
+	}
+
+	.mdc-layout-grid__inner {
+		gap: 1em;
+	}
+
+	.mdc-layout-grid__cell--full {
+		@extend .mdc-layout-grid__cell--span-4-phone;
+		@extend .mdc-layout-grid__cell--span-8-tablet;
+		@extend .mdc-layout-grid__cell--span-12-desktop;
 	}
 </style>
