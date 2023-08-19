@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { GeneralError } from "+/rest"
 
-	import Flex from "$/layout/flex.svelte"
+	import BasicForm from "$/form/basic_form.svelte"
 	import TextField from "$/form/text_field.svelte"
 
 	export let IDPrefix: string
@@ -12,34 +12,20 @@
 	export let id: string|null = null
 </script>
 
-<form class="mdc-card" {id} on:submit>
-	<div class="mdc-card__content">
-		<Flex>
-			<TextField
-				fieldName="Code"
-				disabled={isConnecting}
-				bind:value={code}
-				{IDPrefix}
-				{errors}/>
-			<TextField
-				fieldName="Name"
-				disabled={isConnecting}
-				bind:value={name}
-				{IDPrefix}
-				{errors}/>
-		</Flex>
-	</div>
-	<div class="mdc-card__actions">
-		<div class="mdc-card__action-buttons">
-			<slot name="button_group"/>
-		</div>
-	</div>
-</form>
-
-<style lang="scss">
-	@use "@/components/third-party/new_index";
-
-	@use "@material/card";
-
-	@include card.core-styles;
-</style>
+<BasicForm {id} on:submit>
+	<svelte:fragment slot="fields">
+		<TextField
+			fieldName="Code"
+			disabled={isConnecting}
+			bind:value={code}
+			{IDPrefix}
+			{errors}/>
+		<TextField
+			fieldName="Name"
+			disabled={isConnecting}
+			bind:value={name}
+			{IDPrefix}
+			{errors}/>
+	</svelte:fragment>
+	<slot slot="button_group" name="button_group"/>
+</BasicForm>
