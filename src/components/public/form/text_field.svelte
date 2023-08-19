@@ -21,7 +21,6 @@
 	) + normalizedFieldName
 	$: helperID = `${fieldID}_helper`
 	$: isActive = Boolean(value)
-	$: activeClass = isActive ? "active" : ""
 	$: message = errors.filter(
 		error => isFieldError(error) && error.field.endsWith(normalizedFieldName)
 	).map(error => error.message).join(" ")
