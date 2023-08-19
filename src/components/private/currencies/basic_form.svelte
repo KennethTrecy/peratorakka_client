@@ -12,7 +12,7 @@
 	export let id: string|null = null
 </script>
 
-<BasicForm {id} on:submit>
+<BasicForm {id} {isConnecting} {errors} on:submit>
 	<svelte:fragment slot="fields">
 		<TextField
 			fieldName="Code"

@@ -1,10 +1,26 @@
 <script lang="ts">
-	import Flex from "$/layout/flex.svelte"
+	import type { GeneralError } from "+/rest"
 
+	import Flex from "$/layout/flex.svelte"
+	import IndeterminateProgressBar from "$/utility/indeterminate_progress_bar.svelte"
+
+	export let errors: GeneralError[]
 	export let id: string|null
+	export let isConnecting: boolean
+
+	$: progressBarLabel = isConnecting
+		? "Waiting for server's response..."
+		: (
+			errors.length > 0
+			? "Failed to submit the details. Please check the errors."
+			: "Enter valid details only and submit the form."
+		)
 </script>
 
 <form class="mdc-card" {id} on:submit>
+	<IndeterminateProgressBar
+		isLoading={isConnecting}
+		{progressBarLabel}/>
 	<div class="mdc-card__content">
 		<Flex>
 			<slot name="fields"/>
