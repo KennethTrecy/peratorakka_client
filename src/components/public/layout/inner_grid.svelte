@@ -2,13 +2,8 @@
 	<slot/>
 </div>
 
-
 <style lang="scss">
 	@use "@/components/third-party/new_index";
 
 	@use "@material/layout-grid/mdc-layout-grid";
-
-	.mdc-layout-grid__inner {
-		row-gap: 1em;
-	}
 </style>

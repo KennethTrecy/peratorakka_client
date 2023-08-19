@@ -1,5 +1,8 @@
 <script lang="ts">
-	import CurrencyCard from "%/currencies/currency_card.svelte";
+	import CurrencyCard from "%/currencies/currency_card.svelte"
+	import ElementalParagraph from "$/typography/elemental_paragraph.svelte"
+	import GridCell from "$/layout/grid_cell.svelte"
+	import SecondaryHeading from "$/typography/secondary_heading.svelte"
 
 	export let isConnecting: boolean
 	export let collectiveName: string
@@ -8,33 +11,31 @@
 	$: hasData = data.length > 0
 </script>
 
-<section class="s12 m12 l12 grid small-space">
-	<h2 class="s12 m12 l12 center-align">Available {collectiveName}</h2>
-	{#if isConnecting}
-		<div class="s12 m12 l12 grid large-space center-align">
-			<div class="s12 m12 l12 center-align">
-				<span class="loader large margin" role="progressbar"></span>
-			</div>
-			<p class="s12 m12 l12">
-				Please wait while the client request the list from the server.
-			</p>
-		</div>
-	{:else if hasData}
-		<p class="s12 m12 l12">
+<GridCell kind="full">
+	<SecondaryHeading>Available {collectiveName}</SecondaryHeading>
+</GridCell>
+
+{#if isConnecting}
+	<GridCell kind="full">
+		<span class="loader large margin" role="progressbar"></span>
+		<ElementalParagraph>
+			Please wait while the client request the list from the server.
+		</ElementalParagraph>
+	</GridCell>
+{:else if hasData}
+	<GridCell kind="full">
+		<ElementalParagraph>
 			<slot name="filled_collection_description"></slot>
-		</p>
-		<slot name="cards"></slot>
-	{:else}
-		<p class="s12 m12 l12">
+		</ElementalParagraph>
+	</GridCell>
+	<slot name="cards"></slot>
+{:else}
+	<GridCell kind="full">
+		<ElementalParagraph>
 			<slot name="empty_collection_description"></slot>
-		</p>
-	{/if}
-</section>
+		</ElementalParagraph>
+	</GridCell>
+{/if}
 
 <style lang="scss">
-	@use "@/components/third-party/index";
-
-	section.grid {
-		align-items: start;
-	}
 </style>

@@ -7,18 +7,16 @@
 	export let mayShowForm: boolean
 </script>
 
-<InnerGrid>
-	<GridCell kind="full">
-		<SecondaryHeading>Add {individualName}</SecondaryHeading>
-	</GridCell>
-	<GridCell kind="majority">
-		<slot name="description"></slot>
-	</GridCell>
-	<GridCell kind="minority">
-		{#if mayShowForm}
-			<slot name="form"></slot>
-		{:else}
-			<slot name="requirement"></slot>
-		{/if}
-	</GridCell>
-</InnerGrid>
+<GridCell kind="full">
+	<SecondaryHeading>Add {individualName}</SecondaryHeading>
+</GridCell>
+<GridCell kind="majority">
+	<slot name="description"></slot>
+</GridCell>
+<GridCell kind="minority">
+	{#if mayShowForm}
+		<slot name="form"></slot>
+	{:else}
+		<slot name="requirement"></slot>
+	{/if}
+</GridCell>

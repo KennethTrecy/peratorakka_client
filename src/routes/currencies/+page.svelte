@@ -84,18 +84,10 @@
 		<GridCell kind="full">
 			<PrimaryHeading>Currencies</PrimaryHeading>
 		</GridCell>
-	</InnerGrid>
-	<InnerGrid>
-		<GridCell kind="full">
-			<AddForm on:create={addCurrency}/>
-		</GridCell>
-	</InnerGrid>
-	<InnerGrid>
-		<GridCell kind="full">
-			<Collection
-				data={currencies}
-				isConnecting={$isConnecting}
-				on:delete={removeCurrency}/>
-		</GridCell>
+		<AddForm on:create={addCurrency}/>
+		<Collection
+			data={currencies}
+			isConnecting={$isConnecting}
+			on:delete={removeCurrency}/>
 	</InnerGrid>
 </ArticleGrid>
