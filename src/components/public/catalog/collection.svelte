@@ -1,9 +1,7 @@
 <script lang="ts">
-	import { onMount } from "svelte"
-	import { MDCLinearProgress } from "@material/linear-progress"
-
 	import ElementalParagraph from "$/typography/elemental_paragraph.svelte"
 	import GridCell from "$/layout/grid_cell.svelte"
+	import IndeterminateProgressBar from "$/utility/indeterminate_progress_bar.svelte"
 	import SecondaryHeading from "$/typography/secondary_heading.svelte"
 
 	export let isConnecting: boolean
@@ -14,33 +12,15 @@
 	$: progressBarLabel = isConnecting
 		? `Loading ${collectiveName.toLocaleLowerCase()}...`
 		: `Finished attempt on loading ${collectiveName.toLocaleLowerCase()}.`
-	$: progressBarClasses = [
-		"mdc-linear-progress",
-		isConnecting ? "mdc-linear-progress--indeterminate" : "mdc-linear-progress--closed"
-	].join(" ")
-
-	let progressBar: MDCLinearProgress|null = null
-	let progressBarElement: any
-	onMount(() => {
-		progressBar = new MDCLinearProgress(progressBarElement)
-	})
 </script>
 
 <GridCell kind="full">
 	<SecondaryHeading>Available {collectiveName}</SecondaryHeading>
 </GridCell>
 <GridCell kind="full">
-	<div
-		role="progressbar"
-		class={progressBarClasses}
-		aria-label={progressBarLabel}
-		aria-valuemin={0}
-		aria-valuemax={1}
-		bind:this={progressBarElement}>
-		<div class="mdc-linear-progress__bar mdc-linear-progress__primary-bar">
-			<span class="mdc-linear-progress__bar-inner"></span>
-		</div>
-	</div>
+	<IndeterminateProgressBar
+		isLoading={isConnecting}
+		{progressBarLabel}/>
 </GridCell>
 
 {#if isConnecting}
