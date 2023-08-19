@@ -5,8 +5,10 @@
 	import TextField from "$/form/text_field.svelte"
 
 	export let IDPrefix: string
+
 	export let code: string
 	export let name: string
+
 	export let isConnecting: boolean
 	export let errors: GeneralError[]
 	export let id: string|null = null
