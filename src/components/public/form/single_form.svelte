@@ -1,31 +1,36 @@
 <script lang="ts">
-
+	import Grid from "$/layout/grid.svelte"
+	import GridCell from "$/layout/grid_cell.svelte"
+	import InnerGrid from "$/layout/inner_grid.svelte"
 </script>
 
-<div class="mdc-layout-grid">
-	<div class="mdc-layout-grid__inner">
-		<div class="mdc-layout-grid__cell mdc-layout-grid__cell--padder" role="presentation"></div>
-		<div class="mdc-layout-grid__cell mdc-layout-grid__cell--wide">
+<Grid>
+	<InnerGrid>
+		<GridCell kind="padder"/>
+		<GridCell kind="wide">
 			<form class="mdc-card" on:submit|preventDefault>
 				<div class="mdc-card__content">
 					<img src="logo.png" alt="Peratorakka logo"/>
 					<slot name="description_layer"/>
 				</div>
 				<div class="mdc-card__content">
-					<slot name="field_layer"/>
+					<Grid slot="field_layer">
+						<InnerGrid>
+							<slot name="field_layer"/>
+						</InnerGrid>
+					</Grid>
 				</div>
 				<slot name="action_layer"/>
 			</form>
-		</div>
-		<div class="mdc-layout-grid__cell mdc-layout-grid__cell--padder" role="presentation"></div>
-	</div>
-</div>
+		</GridCell>
+		<GridCell kind="padder"/>
+	</InnerGrid>
+</Grid>
 
 <style lang="scss">
 	@use "@/components/third-party/new_index";
 
 	@use "@material/card";
-	@use "@material/layout-grid/mdc-layout-grid";
 
 	@include card.core-styles;
 
@@ -36,17 +41,5 @@
 		& + & {
 			padding-top: 0rem;
 		}
-	}
-
-	.mdc-layout-grid__cell--wide {
-		@extend .mdc-layout-grid__cell--span-4-phone;
-		@extend .mdc-layout-grid__cell--span-6-tablet;
-		@extend .mdc-layout-grid__cell--span-6-desktop;
-	}
-
-	.mdc-layout-grid__cell--padder {
-		@extend .mdc-layout-grid__cell--span-1-phone;
-		@extend .mdc-layout-grid__cell--span-1-tablet;
-		@extend .mdc-layout-grid__cell--span-3-desktop;
 	}
 </style>

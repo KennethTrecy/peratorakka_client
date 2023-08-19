@@ -11,3 +11,9 @@ export interface ChoiceInfo {
 export type ButtonKind =
 	| "button"
 	| "submit"
+
+export type GridCellKind =
+	| "normal"
+	| "wide"
+	| "padder"
+	| "full"

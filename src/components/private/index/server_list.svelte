@@ -6,11 +6,12 @@
 
 	import { serverURL, CSRFToken, hasServer, hasToken, serverIcon } from "$/global_state"
 
+	import ChoiceListField from "$/form/choice_list_field.svelte"
+	import GridCell from "$/layout/grid_cell.svelte"
 	import ServerDisplay from "$/utility/server_display.svelte"
 	import SingleForm from "$/form/single_form.svelte"
 	import TextCardButton from "$/button/card/text.svelte"
 	import TextField from "$/form/text_field.svelte"
-	import ChoiceListField from "$/form/choice_list_field.svelte"
 
 	const CUSTOM_KEY = "custom"
 
@@ -104,29 +105,27 @@
 			</p>
 		{/if}
 	</div>
-	<fieldset class="mdc-layout-grid" slot="field_layer">
-		<div class="mdc-layout-grid__inner">
-			<div class="mdc-layout-grid__cell mdc-layout-grid__cell--full">
-				<ChoiceListField
-					fieldName="Servers"
+	<svelte:fragment slot="field_layer">
+		<GridCell kind="full">
+			<ChoiceListField
+				fieldName="Servers"
+				disabled={isConnecting}
+				bind:value={selectedServer}
+				rawChoices={serverChoices}
+				choiceConverter={transformServer}
+				IDPrefix="list_"
+				errors={errors}/>
+		</GridCell>
+		{#if mustBeCustomServer}
+			<GridCell kind="full">
+				<TextField
+					fieldName={CUSTOM_SERVER_FIELD_NAME}
 					disabled={isConnecting}
-					bind:value={selectedServer}
-					rawChoices={serverChoices}
-					choiceConverter={transformServer}
-					IDPrefix="list_"
+					bind:value={customServer}
 					errors={errors}/>
-			</div>
-			{#if mustBeCustomServer}
-				<div class="mdc-layout-grid__cell mdc-layout-grid__cell--full">
-					<TextField
-						fieldName={CUSTOM_SERVER_FIELD_NAME}
-						disabled={isConnecting}
-						bind:value={customServer}
-						errors={errors}/>
-				</div>
-			{/if}
-		</div>
-	</fieldset>
+			</GridCell>
+		{/if}
+	</svelte:fragment>
 	<div class="mdc-card__actions" slot="action_layer">
 		<div class="mdc-card__action-buttons">
 			<TextCardButton
@@ -142,7 +141,6 @@
 
 	@use "@material/card";
 	@use "@material/typography/mdc-typography";
-	@use "@material/layout-grid/mdc-layout-grid";
 
 	@include card.core-styles;
 
@@ -152,15 +150,5 @@
 		> * {
 			margin-top: 1rem;
 		}
-	}
-
-	.mdc-layout-grid__inner {
-		gap: 1em;
-	}
-
-	.mdc-layout-grid__cell--full {
-		@extend .mdc-layout-grid__cell--span-4-phone;
-		@extend .mdc-layout-grid__cell--span-8-tablet;
-		@extend .mdc-layout-grid__cell--span-12-desktop;
 	}
 </style>
