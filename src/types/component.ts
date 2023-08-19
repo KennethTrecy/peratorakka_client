@@ -19,3 +19,4 @@ export type GridCellKind =
 	| "full"
 	| "majority"
 	| "minority"
+	| "narrow"

@@ -122,7 +122,7 @@
 	}
 </script>
 
-<GridCell kind="normal">
+<GridCell kind="narrow">
 	{#if isEditing}
 		<BasicForm
 			id={formID}

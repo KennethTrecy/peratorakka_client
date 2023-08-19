@@ -26,6 +26,12 @@
 		@extend .mdc-layout-grid__cell--span-6-desktop;
 	}
 
+	.mdc-layout-grid__cell--narrow {
+		@extend .mdc-layout-grid__cell--span-2-phone;
+		@extend .mdc-layout-grid__cell--span-4-tablet;
+		@extend .mdc-layout-grid__cell--span-3-desktop;
+	}
+
 	.mdc-layout-grid__cell--padder {
 		@extend .mdc-layout-grid__cell--span-1-phone;
 		@extend .mdc-layout-grid__cell--span-1-tablet;
