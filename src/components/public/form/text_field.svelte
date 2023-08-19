@@ -42,16 +42,11 @@
 </script>
 
 <label class={textfieldClass} bind:this={fieldElement}>
-	<span class="mdc-notched-outline">
-		<span class="mdc-notched-outline__leading"></span>
-		<span class="mdc-notched-outline__notch">
-			<span
-				class={floatingLabelClass}
-				id={fieldID}>
-				{fieldName}
-			</span>
-		</span>
-		<span class="mdc-notched-outline__trailing"></span>
+	<span class="mdc-text-field__ripple"></span>
+	<span
+		class={floatingLabelClass}
+		id={fieldID}>
+		{fieldName}
 	</span>
 	{#if variant === "text"}
 		<input
@@ -61,7 +56,7 @@
 			disabled={disabled}
 			aria-labelledby={fieldID}
 			aria-controls={helperID}
-			aria-describedby={helperID}>
+			aria-describedby={helperID}/>
 	{:else}
 		<input
 			class="mdc-text-field__input"
@@ -70,8 +65,9 @@
 			disabled={disabled}
 			aria-labelledby={fieldID}
 			aria-controls={helperID}
-			aria-describedby={helperID}>
+			aria-describedby={helperID}/>
 	{/if}
+	<span class="mdc-line-ripple"></span>
 </label>
 {#if message !== ""}
 	<div class="mdc-text-field-helper-line">
@@ -83,7 +79,7 @@
 	@use "@/components/third-party/new_index";
 
 	@use "@material/floating-label/mdc-floating-label";
-	@use "@material/notched-outline/mdc-notched-outline";
+	@use "@material/line-ripple/mdc-line-ripple";
 	@use "@material/textfield";
 
 	@include textfield.core-styles;
