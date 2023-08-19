@@ -14,7 +14,7 @@
 	import TextCardButton from "$/button/card/text.svelte"
 	import TextContainer from "$/typography/text_container.svelte"
 	import TextField from "$/form/text_field.svelte"
-	import WeakenedLeadHeading from "$/typography/weakened_lead_heading.svelte"
+	import WeakenedLeadHeading from "$/typography/weakened_primary_heading.svelte"
 
 	const CUSTOM_KEY = "custom"
 
