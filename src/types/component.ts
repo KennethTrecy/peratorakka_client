@@ -17,3 +17,5 @@ export type GridCellKind =
 	| "wide"
 	| "padder"
 	| "full"
+	| "majority"
+	| "minority"

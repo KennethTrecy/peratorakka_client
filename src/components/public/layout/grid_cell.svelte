@@ -7,7 +7,7 @@
 		"mdc-layout-grid__cell",
 		kind === "normal" ? false : `mdc-layout-grid__cell--${kind}`
 	].filter(Boolean).join(" ")
-	$: role = kind === "padder" ? "presentation" : false
+	$: role = kind === "padder" ? "presentation" : null
 </script>
 
 <div class={cellClasses} {role}>
@@ -36,5 +36,17 @@
 		@extend .mdc-layout-grid__cell--span-4-phone;
 		@extend .mdc-layout-grid__cell--span-8-tablet;
 		@extend .mdc-layout-grid__cell--span-12-desktop;
+	}
+
+	.mdc-layout-grid__cell--majority {
+		@extend .mdc-layout-grid__cell--span-4-phone;
+		@extend .mdc-layout-grid__cell--span-5-tablet;
+		@extend .mdc-layout-grid__cell--span-8-desktop;
+	}
+
+	.mdc-layout-grid__cell--minority {
+		@extend .mdc-layout-grid__cell--span-4-phone;
+		@extend .mdc-layout-grid__cell--span-3-tablet;
+		@extend .mdc-layout-grid__cell--span-4-desktop;
 	}
 </style>
