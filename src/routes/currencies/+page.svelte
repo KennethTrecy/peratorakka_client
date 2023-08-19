@@ -13,8 +13,12 @@
 		mustBeAuthenticatedUser
 	} from "$/global_state"
 
-	import Collection from "%/currencies/collection.svelte"
 	import AddForm from "%/currencies/add_form.svelte"
+	import ArticleGrid from "$/layout/article_grid.svelte"
+	import Collection from "%/currencies/collection.svelte"
+	import GridCell from "$/layout/grid_cell.svelte"
+	import InnerGrid from "$/layout/inner_grid.svelte"
+	import PrimaryHeading from "$/typography/primary_heading.svelte"
 
 	applyRequirements([
 		mustHaveToken,
@@ -75,15 +79,23 @@
 	<title>Currencies</title>
 </svelte:head>
 
-<article class="grid large-space large-margin large-padding">
-	<h1 class="s12 m12 l12 center-align">Currencies</h1>
-	<AddForm on:create={addCurrency}/>
-	<Collection
-		data={currencies}
-		isConnecting={$isConnecting}
-		on:delete={removeCurrency}/>
-</article>
-
-<style lang="scss">
-	@use "@/components/third-party/index";
-</style>
+<ArticleGrid>
+	<InnerGrid>
+		<GridCell kind="full">
+			<PrimaryHeading>Currencies</PrimaryHeading>
+		</GridCell>
+	</InnerGrid>
+	<InnerGrid>
+		<GridCell kind="full">
+			<AddForm on:create={addCurrency}/>
+		</GridCell>
+	</InnerGrid>
+	<InnerGrid>
+		<GridCell kind="full">
+			<Collection
+				data={currencies}
+				isConnecting={$isConnecting}
+				on:delete={removeCurrency}/>
+		</GridCell>
+	</InnerGrid>
+</ArticleGrid>
