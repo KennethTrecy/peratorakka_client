@@ -10,8 +10,11 @@
 		mustBeGuest
 	} from "$/global_state"
 
+	import GridCell from "$/layout/grid_cell.svelte"
 	import PasswordField from "$/form/password_field.svelte"
+	import ServerDisplay from "$/utility/server_display.svelte"
 	import SingleForm from "$/form/single_form.svelte"
+	import TextCardButton from "$/button/card/text.svelte"
 	import TextField from "$/form/text_field.svelte"
 
 	applyRequirements([
@@ -57,42 +60,56 @@
 </script>
 
 <SingleForm on:submit={register}>
-	<p class="center-align" slot="description_layer">
-		Enter the credentials to be sent to <code>{$serverURL}</code> to register.
-	</p>
-	<fieldset slot="field_layer">
-		<TextField
-			fieldName="Username"
+	<div class="mdc-typography" slot="description_layer">
+		<p class="mdc-typography--body2">
+			Enter the credentials to be sent to <ServerDisplay address={$serverURL}/> to register.
+		</p>
+	</div>
+	<svelte:fragment slot="field_layer">
+		<GridCell kind="full">
+			<TextField
+				fieldName="Username"
+				disabled={$isConnecting}
+				bind:value={username}
+				errors={$errors}/>
+		</GridCell>
+		<GridCell kind="full">
+			<TextField
+				variant="email"
+				fieldName="Email"
+				disabled={$isConnecting}
+				bind:value={email}
+				errors={$errors}/>
+		</GridCell>
+		<GridCell kind="full">
+			<PasswordField
+				fieldName="Password"
+				disabled={$isConnecting}
+				bind:value={password}
+				errors={$errors}/>
+		</GridCell>
+		<GridCell kind="full">
+			<PasswordField
+				fieldName="Confirm Password"
+				disabled={$isConnecting}
+				bind:value={passwordConfirmation}
+				errors={$errors}/>
+		</GridCell>
+	</svelte:fragment>
+	<svelte:fragment slot="action_layer">
+		<TextCardButton
+			kind="submit"
 			disabled={$isConnecting}
-			bind:value={username}
-			errors={$errors}/>
-		<TextField
-			variant="email"
-			fieldName="Email"
-			disabled={$isConnecting}
-			bind:value={email}
-			errors={$errors}/>
-		<PasswordField
-			fieldName="Password"
-			disabled={$isConnecting}
-			bind:value={password}
-			errors={$errors}/>
-		<PasswordField
-			fieldName="Confirm Password"
-			disabled={$isConnecting}
-			bind:value={passwordConfirmation}
-			errors={$errors}/>
-	</fieldset>
-	<button type="submit" disabled={$isConnecting} slot="action_layer">
-		Register
-	</button>
+			label="Register"/>
+	</svelte:fragment>
 </SingleForm>
 
 <style lang="scss">
-	@use "@/components/third-party/index";
+	@use "@/components/third-party/new_index";
 
-	fieldset {
-		@extend nav;
-		flex-direction: column;
+	@use "@material/typography/mdc-typography";
+
+	.mdc-typography {
+		margin-top: 1rem;
 	}
 </style>
