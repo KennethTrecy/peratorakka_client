@@ -14,7 +14,7 @@
 					<slot name="description_layer"/>
 				</div>
 				<div class="mdc-card__content">
-					<Grid slot="field_layer">
+					<Grid>
 						<InnerGrid>
 							<slot name="field_layer"/>
 						</InnerGrid>
@@ -41,6 +41,10 @@
 	.mdc-card__content {
 		text-align: center;
 		padding: 1rem;
+
+		&:first-child > img {
+			margin-bottom: 1rem;
+		}
 
 		& + & {
 			padding-top: 0rem;

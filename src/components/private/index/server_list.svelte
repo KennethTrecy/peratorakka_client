@@ -4,14 +4,17 @@
 
 	import { PUBLIC_PRODUCTION_SERVER_CHOICES } from "$env/static/public"
 
-	import { serverURL, CSRFToken, hasServer, hasToken, serverIcon } from "$/global_state"
+	import { serverURL, CSRFToken, hasServer, hasToken } from "$/global_state"
 
 	import ChoiceListField from "$/form/choice_list_field.svelte"
 	import GridCell from "$/layout/grid_cell.svelte"
+	import NormalParagraph from "$/typography/normal_paragraph.svelte"
 	import ServerDisplay from "$/utility/server_display.svelte"
 	import SingleForm from "$/form/single_form.svelte"
 	import TextCardButton from "$/button/card/text.svelte"
+	import TextContainer from "$/typography/text_container.svelte"
 	import TextField from "$/form/text_field.svelte"
+	import WeakenedLeadHeading from "$/typography/weakened_lead_heading.svelte"
 
 	const CUSTOM_KEY = "custom"
 
@@ -77,34 +80,40 @@
 </script>
 
 <SingleForm	on:submit={connect}>
-	<div class="mdc-typography" slot="description_layer">
+	<TextContainer slot="description_layer">
 		{#if $hasToken}
-			<h1 class="mdc-typography--body2">
-				You are currently connected to <ServerDisplay address={$serverURL}/>.
-			</h1>
-			<p class="mdc-typography--body2">
-				You may change your current server.
-			</p>
-			<p class="mdc-typography--body2">
+			<WeakenedLeadHeading>
+				You are currently connected
+			</WeakenedLeadHeading>
+			<NormalParagraph>
+				You may change your current server (<ServerDisplay address={$serverURL}/>).
+			</NormalParagraph>
+			<NormalParagraph>
 				<strong>Note</strong>: Doing so may log out any current account.
-			</p>
+			</NormalParagraph>
 		{:else if $hasServer}
-			<h1 class="mdc-typography--headline6">The client is trying to connect to the server</h1>
-			<p class="mdc-typography--body2">
+			<WeakenedLeadHeading>
+				The client is trying to connect to the server
+			</WeakenedLeadHeading>
+			<NormalParagraph>
 				Please wait for a moment.
-			</p>
+			</NormalParagraph>
 		{:else if didConnectionFail}
-			<h1 class="mdc-typography--headline6">The client cannot connect to the server</h1>
-			<p class="mdc-typography--body2">
+			<WeakenedLeadHeading>
+				The client cannot connect to the server
+			</WeakenedLeadHeading>
+			<NormalParagraph>
 				Please look for another compatible server.
-			</p>
+			</NormalParagraph>
 		{:else}
-			<h1 class="mdc-typography--headline6">You are not yet connected to any server</h1>
-			<p class="mdc-typography--body2">
+			<WeakenedLeadHeading>
+				You are not yet connected to any server
+			</WeakenedLeadHeading>
+			<NormalParagraph>
 				Choose or specify a server you want to connect.
-			</p>
+			</NormalParagraph>
 		{/if}
-	</div>
+	</TextContainer>
 	<svelte:fragment slot="field_layer">
 		<GridCell kind="full">
 			<ChoiceListField
@@ -139,11 +148,4 @@
 
 	@use "@material/typography/mdc-typography";
 
-	.mdc-typography {
-		margin-top: 1rem;
-
-		> * {
-			margin-top: 1rem;
-		}
-	}
 </style>

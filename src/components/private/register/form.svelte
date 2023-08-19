@@ -11,10 +11,12 @@
 	} from "$/global_state"
 
 	import GridCell from "$/layout/grid_cell.svelte"
+	import NormalParagraph from "$/typography/normal_paragraph.svelte"
 	import PasswordField from "$/form/password_field.svelte"
 	import ServerDisplay from "$/utility/server_display.svelte"
 	import SingleForm from "$/form/single_form.svelte"
 	import TextCardButton from "$/button/card/text.svelte"
+	import TextContainer from "$/typography/text_container.svelte"
 	import TextField from "$/form/text_field.svelte"
 
 	applyRequirements([
@@ -60,11 +62,11 @@
 </script>
 
 <SingleForm on:submit={register}>
-	<div class="mdc-typography" slot="description_layer">
-		<p class="mdc-typography--body2">
+	<TextContainer slot="description_layer">
+		<NormalParagraph>
 			Enter the credentials to be sent to <ServerDisplay address={$serverURL}/> to register.
-		</p>
-	</div>
+		</NormalParagraph>
+	</TextContainer>
 	<svelte:fragment slot="field_layer">
 		<GridCell kind="full">
 			<TextField

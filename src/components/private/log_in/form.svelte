@@ -11,10 +11,12 @@
 	} from "$/global_state"
 
 	import GridCell from "$/layout/grid_cell.svelte"
+	import NormalParagraph from "$/typography/normal_paragraph.svelte"
 	import PasswordField from "$/form/password_field.svelte"
 	import ServerDisplay from "$/utility/server_display.svelte"
 	import SingleForm from "$/form/single_form.svelte"
 	import TextCardButton from "$/button/card/text.svelte"
+	import TextContainer from "$/typography/text_container.svelte"
 	import TextField from "$/form/text_field.svelte"
 
 	applyRequirements([
@@ -56,11 +58,11 @@
 </script>
 
 <SingleForm on:submit={logIn}>
-	<div class="mdc-typography" slot="description_layer">
-		<p class="mdc-typography--body2">
+	<TextContainer slot="description_layer">
+		<NormalParagraph>
 			Enter the credentials you have on <ServerDisplay address={$serverURL}/> to log in.
-		</p>
-	</div>
+		</NormalParagraph>
+	</TextContainer>
 	<svelte:fragment slot="field_layer">
 		<GridCell kind="full">
 			<TextField
@@ -85,13 +87,3 @@
 			label="Access"/>
 	</svelte:fragment>
 </SingleForm>
-
-<style lang="scss">
-	@use "@/components/third-party/new_index";
-
-	@use "@material/typography/mdc-typography";
-
-	.mdc-typography {
-		margin-top: 1rem;
-	}
-</style>
