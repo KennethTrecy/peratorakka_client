@@ -11,8 +11,8 @@
 	export { otherClasses as class }
 
 	$: buttonClasses = [
-		"mdc-card__action",
-		"mdc-card__action--button",
+		"card_action",
+		"card_action--button",
 		...otherClasses.split(" ")
 	].filter(Boolean).join(" ")
 </script>
@@ -28,4 +28,14 @@
 	@use "@/components/third-party/new_index";
 
 	@use "@material/card";
+
+	@include card.core-styles;
+
+	:global(.card_action) {
+		@extend .mdc-card__action;
+	}
+
+	:global(.card_action--button) {
+		@extend .mdc-card__action--button;
+	}
 </style>
