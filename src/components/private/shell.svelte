@@ -43,11 +43,17 @@
 	<main class="mdc-top-app-bar--fixed-adjust">
 		<slot name="main"></slot>
 	</main>
+	<footer class="mdc-typography">
+		<p class="mdc-typography--body2">
+			Copyright © 2023 by Kenneth Trecy Tobias.
+		</p>
+	</footer>
 </div>
 
 <style lang="scss">
 	@use "@/components/third-party/new_index";
 
+	@use "@material/typography/mdc-typography";
 	@use "@material/top-app-bar/mdc-top-app-bar";
 
 	.shell {
@@ -64,5 +70,6 @@
 
 	footer {
 		padding: 1rem;
+		text-align: center;
 	}
 </style>
