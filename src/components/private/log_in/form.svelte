@@ -78,23 +78,18 @@
 				errors={$errors}/>
 		</GridCell>
 	</svelte:fragment>
-	<div class="mdc-card__actions" slot="action_layer">
-		<div class="mdc-card__action-buttons">
-			<TextCardButton
-				kind="submit"
-				disabled={$isConnecting}
-				label="Access"/>
-		</div>
-	</div>
+	<svelte:fragment slot="action_layer">
+		<TextCardButton
+			kind="submit"
+			disabled={$isConnecting}
+			label="Access"/>
+	</svelte:fragment>
 </SingleForm>
 
 <style lang="scss">
 	@use "@/components/third-party/new_index";
 
-	@use "@material/card";
 	@use "@material/typography/mdc-typography";
-
-	@include card.core-styles;
 
 	.mdc-typography {
 		margin-top: 1rem;

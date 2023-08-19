@@ -20,7 +20,11 @@
 						</InnerGrid>
 					</Grid>
 				</div>
-				<slot name="action_layer"/>
+				<div class="mdc-card__actions">
+					<div class="mdc-card__action-buttons">
+						<slot name="action_layer"/>
+					</div>
+				</div>
 			</form>
 		</GridCell>
 		<GridCell kind="padder"/>
@@ -41,5 +45,9 @@
 		& + & {
 			padding-top: 0rem;
 		}
+	}
+
+	.mdc-card__actions {
+		justify-content: center;
 	}
 </style>
