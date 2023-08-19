@@ -8,7 +8,7 @@
 
 	import ChoiceListField from "$/form/choice_list_field.svelte"
 	import GridCell from "$/layout/grid_cell.svelte"
-	import NormalParagraph from "$/typography/normal_paragraph.svelte"
+	import ShortParagraph from "$/typography/short_paragraph.svelte"
 	import ServerDisplay from "$/utility/server_display.svelte"
 	import SingleForm from "$/form/single_form.svelte"
 	import TextCardButton from "$/button/card/text.svelte"
@@ -85,33 +85,33 @@
 			<WeakenedLeadHeading>
 				You are currently connected
 			</WeakenedLeadHeading>
-			<NormalParagraph>
+			<ShortParagraph>
 				You may change your current server (<ServerDisplay address={$serverURL}/>).
-			</NormalParagraph>
-			<NormalParagraph>
+			</ShortParagraph>
+			<ShortParagraph>
 				<strong>Note</strong>: Doing so may log out any current account.
-			</NormalParagraph>
+			</ShortParagraph>
 		{:else if $hasServer}
 			<WeakenedLeadHeading>
 				The client is trying to connect to the server
 			</WeakenedLeadHeading>
-			<NormalParagraph>
+			<ShortParagraph>
 				Please wait for a moment.
-			</NormalParagraph>
+			</ShortParagraph>
 		{:else if didConnectionFail}
 			<WeakenedLeadHeading>
 				The client cannot connect to the server
 			</WeakenedLeadHeading>
-			<NormalParagraph>
+			<ShortParagraph>
 				Please look for another compatible server.
-			</NormalParagraph>
+			</ShortParagraph>
 		{:else}
 			<WeakenedLeadHeading>
 				You are not yet connected to any server
 			</WeakenedLeadHeading>
-			<NormalParagraph>
+			<ShortParagraph>
 				Choose or specify a server you want to connect.
-			</NormalParagraph>
+			</ShortParagraph>
 		{/if}
 	</TextContainer>
 	<svelte:fragment slot="field_layer">

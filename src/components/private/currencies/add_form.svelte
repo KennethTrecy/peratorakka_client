@@ -7,8 +7,9 @@
 
 	import BasicForm from "%/currencies/basic_form.svelte"
 	import DescriptiveForm from "$/form/descriptive_form.svelte"
-	import MarginlessButton from "$/utility/marginless_button.svelte"
-	import JustifiedParagraph from "$/utility/justified_paragraph.svelte"
+	import ElementalParagraph from "$/typography/elemental_paragraph.svelte"
+	import TextCardButton from "$/button/card/text.svelte"
+	import TextContainer from "$/typography/text_container.svelte"
 
 	const dispatch = createEventDispatcher<{
 		"create": Currency
@@ -51,18 +52,18 @@
 </script>
 
 <DescriptiveForm individualName="Currency" mayShowForm>
-	<svelte:fragment slot="description">
-		<JustifiedParagraph>
+	<TextContainer slot="description">
+		<ElementalParagraph>
 			Currencies are used as symbols for different financial entries and other parts of the
 			application. You have a freedom to add currencies, regardless whether they are physical or
 			crypto.
-		</JustifiedParagraph>
-		<JustifiedParagraph>
+		</ElementalParagraph>
+		<ElementalParagraph>
 			The limitation is that the application tracks the currency conversions through previous
 			financial entries. Therefore, there is no network usage to check for current conversions
 			which is a beneficial effect.
-		</JustifiedParagraph>
-	</svelte:fragment>
+		</ElementalParagraph>
+	</TextContainer>
 	<BasicForm
 		slot="form"
 		bind:code={code}
@@ -71,10 +72,11 @@
 		{IDPrefix}
 		errors={$errors}
 		on:submit={createCurrency}>
-		<svelte:fragment slot="buttonGroup">
-			<MarginlessButton kind="submit" disabled={$isConnecting}>
-				Add
-			</MarginlessButton>
+		<svelte:fragment slot="button_group">
+			<TextCardButton
+				kind="submit"
+				disabled={$isConnecting}
+				label="Add"/>
 		</svelte:fragment>
 	</BasicForm>
 </DescriptiveForm>

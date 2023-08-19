@@ -11,8 +11,6 @@
 	<GridCell kind="full">
 		<SecondaryHeading>Add {individualName}</SecondaryHeading>
 	</GridCell>
-</InnerGrid>
-<InnerGrid>
 	<GridCell kind="majority">
 		<slot name="description"></slot>
 	</GridCell>

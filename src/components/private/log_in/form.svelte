@@ -11,7 +11,7 @@
 	} from "$/global_state"
 
 	import GridCell from "$/layout/grid_cell.svelte"
-	import NormalParagraph from "$/typography/normal_paragraph.svelte"
+	import ShortParagraph from "$/typography/short_paragraph.svelte"
 	import PasswordField from "$/form/password_field.svelte"
 	import ServerDisplay from "$/utility/server_display.svelte"
 	import SingleForm from "$/form/single_form.svelte"
@@ -59,9 +59,9 @@
 
 <SingleForm on:submit={logIn}>
 	<TextContainer slot="description_layer">
-		<NormalParagraph>
+		<ShortParagraph>
 			Enter the credentials you have on <ServerDisplay address={$serverURL}/> to log in.
-		</NormalParagraph>
+		</ShortParagraph>
 	</TextContainer>
 	<svelte:fragment slot="field_layer">
 		<GridCell kind="full">
