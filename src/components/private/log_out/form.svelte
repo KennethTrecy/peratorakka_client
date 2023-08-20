@@ -10,7 +10,11 @@
 		mustBeAuthenticatedUser
 	} from "$/global_state"
 
+	import ShortParagraph from "$/typography/short_paragraph.svelte"
+	import ServerDisplay from "$/utility/server_display.svelte"
 	import SingleForm from "$/form/single_form.svelte"
+	import TextCardButton from "$/button/card/text.svelte"
+	import TextContainer from "$/typography/text_container.svelte"
 
 	applyRequirements([
 		mustHaveToken,
@@ -44,22 +48,16 @@
 </script>
 
 <SingleForm on:submit={logOut}>
-	<p class="center-align" slot="description_layer">
-		Please confirm the client would request on <code>{$serverURL}</code> to log out.
-	</p>
-	<fieldset slot="field_layer">
-
-	</fieldset>
-	<button type="submit" disabled={$isConnecting} slot="action_layer">
-		Confirm
-	</button>
+	<TextContainer slot="description_layer">
+		<ShortParagraph>
+			Please confirm the client would request on
+			<ServerDisplay address={$serverURL}/> to log out.
+		</ShortParagraph>
+	</TextContainer>
+	<svelte:fragment slot="action_layer">
+		<TextCardButton
+			kind="submit"
+			disabled={$isConnecting}
+			label="Confirm"/>
+	</svelte:fragment>
 </SingleForm>
-
-<style lang="scss">
-	@use "@/components/third-party/index";
-
-	fieldset {
-		@extend nav;
-		flex-direction: column;
-	}
-</style>
