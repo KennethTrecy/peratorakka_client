@@ -7,8 +7,9 @@
 	import transformCurrency from "$/form/choice_info_transformer/transform_currency"
 	import transformString from "$/form/choice_info_transformer/transform_string"
 
-	import TextField from "$/form/text_field.svelte"
+	import BasicForm from "$/form/basic_form.svelte"
 	import ChoiceListField from "$/form/choice_list_field.svelte"
+	import TextField from "$/form/text_field.svelte"
 
 	export const ACCEPTABLE_ACCOUNT_KINDS = [ ...acceptableAccountKinds ]
 
@@ -25,51 +26,37 @@
 	export let id = ""
 </script>
 
-<form class="s12 m12 l12 grid large-space" {id} on:submit>
-	<fieldset class="s12 m12 l12 grid large-space">
-		<div class="s12 m12 l12">
-			<ChoiceListField
-				fieldName="Currency"
-				errorFieldName="currency_id"
-				disabled={isConnecting}
-				bind:value={currencyID}
-				rawChoices={currencies}
-				choiceConverter={transformCurrency}
-				{IDPrefix}
-				{errors}/>
-		</div>
-		<div class="s12 m12 l12">
-			<ChoiceListField
-				fieldName="Kind"
-				disabled={isConnecting}
-				bind:value={kind}
-				rawChoices={ACCEPTABLE_ACCOUNT_KINDS}
-				choiceConverter={transformString}
-				{IDPrefix}
-				{errors}/>
-		</div>
-		<div class="s12 m12 l12">
-			<TextField
-				fieldName="Name"
-				disabled={isConnecting}
-				bind:value={name}
-				{IDPrefix}
-				{errors}/>
-		</div>
-		<div class="s12 m12 l12">
-			<TextField
-				fieldName="Description"
-				disabled={isConnecting}
-				bind:value={description}
-				{IDPrefix}
-				{errors}/>
-		</div>
-	</fieldset>
-	<div class="s12 m12 l12">
-		<slot name="buttonGroup"/>
-	</div>
-</form>
-
-<style lang="scss">
-	@use "@/components/third-party/index";
-</style>
+<BasicForm {id} {isConnecting} {errors} on:submit>
+	<svelte:fragment slot="fields">
+		<ChoiceListField
+			fieldName="Currency"
+			errorFieldName="currency_id"
+			disabled={isConnecting}
+			bind:value={currencyID}
+			rawChoices={currencies}
+			choiceConverter={transformCurrency}
+			{IDPrefix}
+			{errors}/>
+		<ChoiceListField
+			fieldName="Kind"
+			disabled={isConnecting}
+			bind:value={kind}
+			rawChoices={ACCEPTABLE_ACCOUNT_KINDS}
+			choiceConverter={transformString}
+			{IDPrefix}
+			{errors}/>
+		<TextField
+			fieldName="Name"
+			disabled={isConnecting}
+			bind:value={name}
+			{IDPrefix}
+			{errors}/>
+		<TextField
+			fieldName="Description"
+			disabled={isConnecting}
+			bind:value={description}
+			{IDPrefix}
+			{errors}/>
+		</svelte:fragment>
+		<slot slot="button_group" name="button_group"/>
+</BasicForm>
