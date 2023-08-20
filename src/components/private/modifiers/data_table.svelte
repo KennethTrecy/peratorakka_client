@@ -1,8 +1,10 @@
 <script lang="ts">
 	import type { Currency, Account, Modifier } from "+/entity"
 
-	import Collection from "$/catalog/collection.svelte"
-	import ModifierCard from "%/modifiers/modifier_card.svelte";
+	import DataTable from "$/catalog/data_table.svelte"
+	import DataTableCell from "$/catalog/data_table_cell.svelte"
+	import DataTableRecordHeader from "$/catalog/data_table_record_headers.svelte"
+	import ModifierRow from "%/modifiers/modifier_record.svelte"
 
 	export let isConnecting: boolean
 	export let currencies: Currency[]
@@ -10,14 +12,17 @@
 	export let data: Modifier[]
 </script>
 
-<Collection collectiveName="Modifiers" {isConnecting} {data}>
+<DataTable collectiveName="Modifiers" {isConnecting} {data}>
 	<svelte:fragment slot="filled_collection_description">
 		Below are the modifiers that you have added on to your profile.
 		They can be associated to account entries.
 	</svelte:fragment>
-	<svelte:fragment slot="cards">
+	<DataTableRecordHeader slot="table_headers">
+		<DataTableCell scope="column">Description</DataTableCell>
+	</DataTableRecordHeader>
+	<svelte:fragment slot="table_rows">
 		{#each data as entity(entity.id)}
-			<ModifierCard
+			<ModifierRow
 				bind:data={entity}
 				{currencies}
 				{accounts}
@@ -28,4 +33,4 @@
 		There are no available modifiers at the moment.
 		Create a modifier to view.
 	</svelte:fragment>
-</Collection>
+</DataTable>

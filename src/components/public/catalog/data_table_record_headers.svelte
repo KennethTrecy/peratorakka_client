@@ -5,5 +5,5 @@
 <DataTableCell scope="column">Name</DataTableCell>
 <DataTableCell scope="column">Debit Account</DataTableCell>
 <DataTableCell scope="column">Credit Account</DataTableCell>
-<slot name="special_cells"/>
+<slot/>
 <DataTableCell scope="column">Actions</DataTableCell>
