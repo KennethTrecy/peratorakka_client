@@ -15,7 +15,7 @@
 
 	import AddForm from "%/modifiers/add_form.svelte"
 	import ArticleGrid from "$/layout/article_grid.svelte"
-	import Collection from "%/currencies/collection.svelte"
+	import DataTable from "%/modifiers/data_table.svelte"
 	import GridCell from "$/layout/grid_cell.svelte"
 	import InnerGrid from "$/layout/inner_grid.svelte"
 	import PrimaryHeading from "$/typography/primary_heading.svelte"
@@ -49,6 +49,13 @@
 					let responseDocument = await response.json()
 					errorsForModifiers.set([])
 					modifiers = responseDocument.modifiers
+				}
+			},
+			{
+				"statusCode": 204,
+				"action": async (response: Response) => {
+					errorsForModifiers.set([])
+					modifiers = []
 				}
 			}
 		],
@@ -100,9 +107,9 @@
 		]
 	}
 
-	function removeAccount(event: CustomEvent<Account>) {
-		const oldAccount = event.detail
-		accounts = accounts.filter(account => account.id !== oldAccount.id)
+	function removeModifier(event: CustomEvent<Modifier>) {
+		const oldModifier = event.detail
+		modifiers = modifiers.filter(modifier => modifier.id !== oldModifier.id)
 	}
 </script>
 
@@ -115,6 +122,15 @@
 		<GridCell kind="full">
 			<PrimaryHeading>Modifiers</PrimaryHeading>
 		</GridCell>
-		<AddForm {currencies} {accounts} on:create={addModifier}/>
+		<AddForm
+			{currencies}
+			{accounts}
+			on:create={addModifier}/>
+		<DataTable
+			{currencies}
+			{accounts}
+			data={modifiers}
+			isConnecting={$isConnectingForModifiers}
+			on:delete={removeModifier}/>
 	</InnerGrid>
 </ArticleGrid>
