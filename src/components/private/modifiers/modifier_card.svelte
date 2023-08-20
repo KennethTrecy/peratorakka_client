@@ -14,6 +14,7 @@
 	import BasicForm from "%/accounts/basic_form.svelte"
 
 	export let currencies: Currency[]
+	export let accounts: Account[]
 	export let data: Account
 
 	const dispatch = createEventDispatcher<{

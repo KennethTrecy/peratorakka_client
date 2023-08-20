@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { Account, Modifier, AcceptableModifierKind } from "+/entity"
+	import type { Currency, Account, Modifier, AcceptableModifierKind } from "+/entity"
 
 	import { createEventDispatcher } from "svelte"
 
@@ -19,6 +19,7 @@
 	}>()
 	const IDPrefix = "new_"
 
+	export let currencies: Currency[]
 	export let accounts: Account[]
 	export let debitAccountID: string = UNKNOWN_OPTION
 	export let creditAccountID: string = UNKNOWN_OPTION
@@ -68,7 +69,7 @@
 	$: mayShowForm = accounts.length >= 2
 </script>
 
-<DescriptiveForm individualName="Financial Account" {mayShowForm}>
+<DescriptiveForm individualName="Modifier" {mayShowForm}>
 	<TextContainer slot="description">
 		<ElementalParagraph>
 			Modifiers are premade actions to create financial entries. Currently, manual input is the
@@ -85,15 +86,16 @@
 			press "Add" button.
 		</ElementalParagraph>
 	</TextContainer>
-	<svelte:fragment slot="requirement">
+	<TextContainer slot="requirement">
 		<ElementalParagraph>
 			At least two financial accounts must exist in the profile to show the form for creating
 			modifiers.
 		</ElementalParagraph>
-	</svelte:fragment>
+	</TextContainer>
 	<BasicForm
 		slot="form"
-		bind:accounts={accounts}
+		currencies={currencies}
+		accounts={accounts}
 		bind:debitAccountID={debitAccountID}
 		bind:creditAccountID={creditAccountID}
 		bind:name={name}

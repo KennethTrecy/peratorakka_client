@@ -1,10 +1,10 @@
 <script lang="ts">
 	import type { GeneralError } from "+/rest"
-	import type { AcceptableModifierKind, Account } from "+/entity"
+	import type { AcceptableModifierKind, Account, Currency } from "+/entity"
 
 	import { acceptableModifierKinds } from "#/entity"
 
-	import transformAccount from "$/form/choice_info_transformer/transform_account"
+	import makeAccountTransformer from "$/form/choice_info_transformer/make_account_transformer"
 	import transformString from "$/form/choice_info_transformer/transform_string"
 
 	import BasicForm from "$/form/basic_form.svelte"
@@ -14,6 +14,7 @@
 	export const ACCEPTABLE_MODIFIER_KINDS = [ ...acceptableModifierKinds ]
 
 	export let IDPrefix: string
+	export let currencies: Currency[]
 	export let accounts: Account[]
 
 	export let debitAccountID: string
@@ -25,6 +26,8 @@
 	export let isConnecting: boolean
 	export let errors: GeneralError[]
 	export let id: string|null = null
+
+	$: transformAccount = makeAccountTransformer(currencies)
 </script>
 
 <BasicForm {id} {isConnecting} {errors} on:submit>
