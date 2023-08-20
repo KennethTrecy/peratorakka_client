@@ -12,6 +12,9 @@
 	import convertSnakeCaseToProperCase from "$/utility/convert_snake_case_to_proper_case"
 
 	import BasicForm from "%/accounts/basic_form.svelte"
+	import CollectionItem from "$/catalog/collection_item.svelte"
+	import EditActionCardButtonPair from "$/button/card/edit_action_pair.svelte"
+	import ShortParagraph from "$/typography/short_paragraph.svelte"
 
 	export let currencies: Currency[]
 	export let data: Account
@@ -43,10 +46,10 @@
 	].join(" ")
 	let isConnectingToUpdate = writable<boolean>(false)
 	let updateErrors = writable<GeneralError[]>([])
-	let requestUpdate = (request: Partial<RequestInit>) => Promise.resolve()
+	let requestUpdate = () => Promise.resolve()
 	let isConnectingToDelete = writable<boolean>(false)
 	let deleteErrors = writable<GeneralError[]>([])
-	let requestDelete = (request: Partial<RequestInit>) => Promise.resolve()
+	let requestDelete = () => Promise.resolve()
 
 	$: friendlyKind = convertSnakeCaseToProperCase(data.kind)
 	$: {
@@ -66,8 +69,6 @@
 							description,
 							kind
 						}
-						updateErrors.set([])
-						startReading()
 					}
 				}
 			],
@@ -76,7 +77,18 @@
 
 		isConnectingToUpdate = requesterInfo.isConnecting
 		updateErrors = requesterInfo.errors
-		requestUpdate = requesterInfo.send
+		requestUpdate = async () => {
+			await requesterInfo.send({
+				"body": JSON.stringify({
+					"account": {
+						"currency_id": parseInt(currencyID),
+						name,
+						description,
+						kind
+					}
+				})
+			})
+		}
 	}
 	$: {
 		const requesterInfo = makeJSONRequester({
@@ -98,42 +110,10 @@
 
 		isConnectingToDelete = requesterInfo.isConnecting
 		deleteErrors = requesterInfo.errors
-		requestDelete = requesterInfo.send
+		requestDelete = async () => await requesterInfo.send({})
 	}
 
-	function startReading() {
-		status = "reading"
-	}
-
-	function startEditing() {
-		status = "editing"
-	}
-
-	function confirmDeletion() {
-		status = "confirming_deletion"
-	}
-
-	async function confirmEdit(event: SubmitEvent) {
-		event.preventDefault()
-
-		await requestUpdate({
-			"body": JSON.stringify({
-				"account": {
-					"currency_id": parseInt(currencyID),
-					name,
-					description,
-					kind
-				}
-			})
-		})
-	}
-
-	async function confirmDelete() {
-		await requestDelete({})
-	}
-
-	function cancelEdit() {
-		startReading()
+	function resetDraft() {
 		currencyID = `${data.currency_id}`
 		name = data.name
 		description = data.description
@@ -149,86 +129,47 @@
 	}
 </script>
 
-<article class={cardClasses}>
-	{#if isEditing}
-		<BasicForm
-			id={formID}
-			bind:currencyID={currencyID}
-			bind:name={name}
-			bind:description={description}
-			bind:kind={kind}
-			isConnecting={$isConnectingToUpdate}
-			{IDPrefix}
-			{currencies}
-			errors={$updateErrors}
-			on:submit={confirmEdit}/>
-	{:else if isConfirmingDeletion}
-		<h3>Delete {data.name}?</h3>
+<CollectionItem
+	label={data.name}
+	updateErrors={updateErrors}
+	{requestUpdate}
+	isConnectingToDelete={$isConnectingToDelete}
+	deleteErrors={deleteErrors}
+	{requestDelete}
+	on:resetDraft={resetDraft}>
+	<BasicForm
+		slot="edit_form"
+		let:confirmEdit
+		let:cancelEdit
+		id={formID}
+		bind:currencyID={currencyID}
+		bind:name={name}
+		bind:description={description}
+		bind:kind={kind}
+		isConnecting={$isConnectingToUpdate}
+		{IDPrefix}
+		{currencies}
+		errors={$updateErrors}
+		on:submit={confirmEdit}>
+		<EditActionCardButtonPair
+			slot="button_group"
+			disabled={$isConnectingToUpdate}
+			on:cancelEdit={cancelEdit}/>
+	</BasicForm>
+	<svelte:fragment slot="delete_confirmation_message">
 		<ul>
 			<li class="chip small no-margin primary">{friendlyKind}</li>
 			<li class="chip small no-margin secondary">{associatedCurrency.code}</li>
 		</ul>
-		<p>Deleting this account may prevent other data from showing.</p>
-	{:else}
-		<h3>{data.name}</h3>
+		<ShortParagraph>
+			Deleting this account may prevent other data from showing.
+		</ShortParagraph>
+	</svelte:fragment>
+	<svelte:fragment slot="resource_info">
 		<ul>
 			<li class="chip small no-margin primary">{friendlyKind}</li>
 			<li class="chip small no-margin secondary">{associatedCurrency.code}</li>
 		</ul>
-		<p>{data.description}</p>
-	{/if}
-
-	<div>
-		{#if isEditing}
-			<button
-				class="no-margin square round"
-				type="submit"
-				form={formID}
-				disabled={$isConnectingToUpdate}>
-				<i>save</i>
-			</button>
-			<button
-				class="no-margin square round"
-				on:click={cancelEdit}
-				type="button"
-				form={formID}
-				disabled={$isConnectingToUpdate}>
-				<i>cancel</i>
-			</button>
-		{:else if isConfirmingDeletion}
-			<button
-				class="no-margin square round"
-				on:click={confirmDelete}
-				disabled={$isConnectingToDelete}>
-				<i>check</i>
-			</button>
-			<button
-				class="no-margin square round"
-				on:click={startReading}
-				type="button"
-				disabled={$isConnectingToDelete}>
-				<i>cancel</i>
-			</button>
-		{:else}
-			<button
-				class="no-margin square round"
-				on:click={startEditing}>
-				<i>edit</i>
-			</button>
-			<button
-				class="no-margin square round"
-				on:click={confirmDeletion}>
-				<i>delete</i>
-			</button>
-		{/if}
-	</div>
-</article>
-
-
-<style lang="scss">
-	@use "@/components/third-party/index";
-
-	h3 {
-		@extend h5;
-	}
-</style>
+		<ShortParagraph>{data.description}</ShortParagraph>
+	</svelte:fragment>
+</CollectionItem>
