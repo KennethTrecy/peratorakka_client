@@ -6,8 +6,9 @@
 
 	import { createEventDispatcher } from "svelte"
 
-	import DataTableRow from "$/catalog/data_table_row.svelte"
+	import DataTableHeader from "$/catalog/data_table_header.svelte"
 	import DataTableCell from "$/catalog/data_table_cell.svelte"
+	import DataTableRow from "$/catalog/data_table_row.svelte"
 	import TextCardButton from "$/button/card/text.svelte"
 
 	export let label: string
@@ -27,6 +28,8 @@
 	let status: CardStatus = "reading"
 	$: isEditing = status === "editing"
 	$: isConfirmingDeletion = status === "confirming_deletion"
+	$: debitAccountName = debitAccount.name
+	$: creditAccountName = creditAccount.name
 
 	function startReading() {
 		status = "reading"
@@ -66,9 +69,9 @@
 			{confirmEdit}
 			{cancelEdit}/>
 	{:else}
-		<DataTableCell>{label}</DataTableCell>
-		<DataTableCell>{debitAccount.name}</DataTableCell>
-		<DataTableCell>{creditAccount.name}</DataTableCell>
+		<DataTableHeader>{label}</DataTableHeader>
+		<DataTableCell>{debitAccountName}</DataTableCell>
+		<DataTableCell>{creditAccountName}</DataTableCell>
 		<slot name="special_cells"/>
 		<DataTableCell>
 			{#if isConfirmingDeletion}

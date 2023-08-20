@@ -2,9 +2,9 @@
 	import type { Currency, Account, Modifier } from "+/entity"
 
 	import DataTable from "$/catalog/data_table.svelte"
-	import DataTableCell from "$/catalog/data_table_cell.svelte"
+	import DataTableHeader from "$/catalog/data_table_header.svelte"
 	import DataTableRecordHeader from "$/catalog/data_table_record_headers.svelte"
-	import ModifierRow from "%/modifiers/modifier_record.svelte"
+	import ModifierRecord from "%/modifiers/modifier_record.svelte"
 
 	export let isConnecting: boolean
 	export let currencies: Currency[]
@@ -18,11 +18,11 @@
 		They can be associated to account entries.
 	</svelte:fragment>
 	<DataTableRecordHeader slot="table_headers">
-		<DataTableCell scope="column">Description</DataTableCell>
+		<DataTableHeader>Description</DataTableHeader>
 	</DataTableRecordHeader>
 	<svelte:fragment slot="table_rows">
 		{#each data as entity(entity.id)}
-			<ModifierRow
+			<ModifierRecord
 				bind:data={entity}
 				{currencies}
 				{accounts}

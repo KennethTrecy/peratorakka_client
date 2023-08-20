@@ -7,13 +7,14 @@
 	import { writable } from "svelte/store"
 
 	import { acceptableModifierKinds } from "#/entity"
+	import { UNKNOWN_ACCOUNT } from "#/component"
 
 	import makeJSONRequester from "$/rest/make_json_requester"
-	import convertSnakeCaseToProperCase from "$/utility/convert_snake_case_to_proper_case"
 
 	import BasicForm from "%/modifiers/basic_form.svelte"
 	import DataTableCell from "$/catalog/data_table_cell.svelte"
 	import DataTableRecord from "$/catalog/data_table_record.svelte"
+	import EditActionCardButtonPair from "$/button/card/edit_action_pair.svelte"
 
 	export let currencies: Currency[]
 	export let accounts: Account[]
@@ -30,8 +31,13 @@
 
 	$: IDPrefix = `old_modifier_${data.id}`
 	$: formID = `${IDPrefix}_update_form`
-	$: debitAccount = accounts.find(account => account.id === data.debit_account_id) as Account
-	$: creditAccount = accounts.find(account => account.id === data.credit_account_id) as Account
+	$: debitAccount = accounts.find(
+		account => account.id === data.debit_account_id
+	) ?? UNKNOWN_ACCOUNT
+	$: creditAccount = accounts.find(
+		account => account.id === data.credit_account_id
+	) ?? UNKNOWN_ACCOUNT
+	$: resolveDescription = description || "None"
 
 	let isConnectingToUpdate = writable<boolean>(false)
 	let updateErrors = writable<GeneralError[]>([])
@@ -136,10 +142,15 @@
 		{currencies}
 		{accounts}
 		errors={$updateErrors}
-		on:submit={confirmEdit}/>
+		on:submit={confirmEdit}>
+		<EditActionCardButtonPair
+			slot="button_group"
+			disabled={$isConnectingToUpdate}
+			on:cancelEdit={cancelEdit}/>
+	</BasicForm>
 	<svelte:fragment slot="special_cells">
 		<DataTableCell>
-			{data.description}
+			{resolveDescription}
 		</DataTableCell>
 	</svelte:fragment>
 </DataTableRecord>
