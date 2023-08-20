@@ -2,6 +2,7 @@
 	import type { GeneralError } from "+/rest"
 	import type { CardStatus } from "+/component"
 	import type { Writable } from "svelte/store"
+	import type { Account } from "+/entity"
 
 	import { createEventDispatcher } from "svelte"
 
@@ -10,6 +11,8 @@
 	import TextCardButton from "$/button/card/text.svelte"
 
 	export let label: string
+	export let debitAccount: Account
+	export let creditAccount: Account
 	export let updateErrors: Writable<GeneralError[]>
 	export let requestUpdate: () => Promise<void>
 	export let isConnectingToDelete: boolean
@@ -64,6 +67,9 @@
 			{cancelEdit}/>
 	{:else}
 		<DataTableCell>{label}</DataTableCell>
+		<DataTableCell>{debitAccount.name}</DataTableCell>
+		<DataTableCell>{creditAccount.name}</DataTableCell>
+		<slot name="special_cells"/>
 		<DataTableCell>
 			{#if isConfirmingDeletion}
 				<TextCardButton
