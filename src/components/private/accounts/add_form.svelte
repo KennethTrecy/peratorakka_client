@@ -19,7 +19,9 @@
 	}>()
 	const IDPrefix = "new_"
 
+	export let isLoadingInitialData: boolean
 	export let currencies: Currency[]
+
 	export let currencyID: string = UNKNOWN_OPTION
 	export let name: string = ""
 	export let description: string =""
@@ -65,7 +67,7 @@
 	$: mayShowForm = currencies.length > 0
 </script>
 
-<DescriptiveForm individualName="Financial Account" {mayShowForm}>
+<DescriptiveForm individualName="Financial Account" {mayShowForm} {isLoadingInitialData}>
 	<TextContainer slot="description">
 		<ElementalParagraph>
 			Financial accounts are some kind of label for the numerical values in a financial entry.

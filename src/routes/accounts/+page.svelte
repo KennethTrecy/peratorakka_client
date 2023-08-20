@@ -113,7 +113,10 @@
 		<GridCell kind="full">
 			<PrimaryHeading>Financial Accounts</PrimaryHeading>
 		</GridCell>
-		<AddForm {currencies} on:create={addAccount}/>
+		<AddForm
+			{currencies}
+			isLoadingInitialData={$isConnectingForCurrencies}
+			on:create={addAccount}/>
 		<Collection
 			{currencies}
 			data={accounts}

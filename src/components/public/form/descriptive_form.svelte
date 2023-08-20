@@ -1,10 +1,13 @@
 <script lang="ts">
 	import GridCell from "$/layout/grid_cell.svelte"
-	import InnerGrid from "$/layout/inner_grid.svelte"
+	import IndeterminateProgressBar from "$/utility/indeterminate_progress_bar.svelte"
 	import SecondaryHeading from "$/typography/secondary_heading.svelte"
+	import ShortParagraph from "$/typography/short_paragraph.svelte"
+	import TextContainer from "$/typography/text_container.svelte"
 
 	export let individualName: string
 	export let mayShowForm: boolean
+	export let isLoadingInitialData: boolean = false
 </script>
 
 <GridCell kind="full">
@@ -14,7 +17,16 @@
 	<slot name="description"></slot>
 </GridCell>
 <GridCell kind="minority">
-	{#if mayShowForm}
+	<IndeterminateProgressBar
+		isLoading={isLoadingInitialData}
+		progressBarLabel="Waiting for server's response..."/>
+	{#if isLoadingInitialData}
+		<TextContainer>
+			<ShortParagraph>
+				Initial data for the form is loading...
+			</ShortParagraph>
+		</TextContainer>
+	{:else if mayShowForm}
 		<slot name="form"></slot>
 	{:else}
 		<slot name="requirement"></slot>

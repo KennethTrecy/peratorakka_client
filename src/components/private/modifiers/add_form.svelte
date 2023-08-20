@@ -19,6 +19,7 @@
 	}>()
 	const IDPrefix = "new_"
 
+	export let isLoadingInitialData: boolean
 	export let currencies: Currency[]
 	export let accounts: Account[]
 	export let debitAccountID: string = UNKNOWN_OPTION
@@ -69,7 +70,7 @@
 	$: mayShowForm = accounts.length >= 2
 </script>
 
-<DescriptiveForm individualName="Modifier" {mayShowForm}>
+<DescriptiveForm individualName="Modifier" {mayShowForm} {isLoadingInitialData}>
 	<TextContainer slot="description">
 		<ElementalParagraph>
 			Modifiers are premade actions to create financial entries. Currently, manual input is the

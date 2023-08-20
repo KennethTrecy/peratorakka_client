@@ -125,6 +125,7 @@
 		<AddForm
 			{currencies}
 			{accounts}
+			isLoadingInitialData={$isConnectingForAccounts}
 			on:create={addModifier}/>
 		<DataTable
 			{currencies}
