@@ -51,7 +51,7 @@
 	let deleteErrors = writable<GeneralError[]>([])
 	let requestDelete = () => Promise.resolve()
 
-	$: friendlyKind = convertSnakeCaseToProperCase(data.kind)
+	$: friendlyKind = convertSnakeCaseToProperCase(data.kind).toLocaleLowerCase()
 	$: {
 		const requesterInfo = makeJSONRequester({
 			"path": `/api/v1/accounts/${data.id}`,
@@ -156,19 +156,17 @@
 			on:cancelEdit={cancelEdit}/>
 	</BasicForm>
 	<svelte:fragment slot="delete_confirmation_message">
-		<ul>
-			<li class="chip small no-margin primary">{friendlyKind}</li>
-			<li class="chip small no-margin secondary">{associatedCurrency.code}</li>
-		</ul>
 		<ShortParagraph>
 			Deleting this account may prevent other data from showing.
 		</ShortParagraph>
+		<ShortParagraph>
+			This {friendlyKind} account uses {associatedCurrency.code} as its currency.
+		</ShortParagraph>
 	</svelte:fragment>
 	<svelte:fragment slot="resource_info">
-		<ul>
-			<li class="chip small no-margin primary">{friendlyKind}</li>
-			<li class="chip small no-margin secondary">{associatedCurrency.code}</li>
-		</ul>
 		<ShortParagraph>{data.description}</ShortParagraph>
+		<ShortParagraph>
+			This {friendlyKind} account uses {associatedCurrency.code} as its currency.
+		</ShortParagraph>
 	</svelte:fragment>
 </CollectionItem>
