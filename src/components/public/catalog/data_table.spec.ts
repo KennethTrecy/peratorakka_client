@@ -5,7 +5,7 @@ import { render, cleanup } from "@testing-library/svelte"
 
 import type { Entity } from "%/currencies/types"
 
-import Component from "./directory.svelte"
+import Component from "./data_table.svelte"
 
 describe("Directory behavior", () => {
 	it("can show loading state", async () => {
