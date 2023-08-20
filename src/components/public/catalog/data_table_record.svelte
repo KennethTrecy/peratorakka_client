@@ -9,7 +9,7 @@
 	import DataTableHeader from "$/catalog/data_table_header.svelte"
 	import DataTableCell from "$/catalog/data_table_cell.svelte"
 	import DataTableRow from "$/catalog/data_table_row.svelte"
-	import TextCardButton from "$/button/card/text.svelte"
+	import TextButton from "$/button/text.svelte"
 
 	export let label: string
 	export let debitAccount: Account
@@ -75,22 +75,26 @@
 		<slot name="special_cells"/>
 		<DataTableCell>
 			{#if isConfirmingDeletion}
-				<TextCardButton
+				<TextButton
+					class="mdc-button--raised"
 					kind="button"
 					disabled={isConnectingToDelete}
 					label="Confirm"
 					on:click={confirmDelete}/>
-				<TextCardButton
+				<TextButton
+					class="mdc-button--outlined"
 					kind="button"
 					disabled={isConnectingToDelete}
 					label="Cancel"
 					on:click={startReading}/>
 			{:else}
-				<TextCardButton
+				<TextButton
+					class="mdc-button--raised"
 					kind="submit"
 					label="Edit"
 					on:click={startEditing}/>
-				<TextCardButton
+				<TextButton
+					class="mdc-button--outlined"
 					kind="button"
 					label="Delete"
 					on:click={confirmDeletion}/>
