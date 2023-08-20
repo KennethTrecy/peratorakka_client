@@ -3,6 +3,10 @@ export type CardStatus =
 	| "editing"
 	| "confirming_deletion"
 
+export type DataTableCellKind =
+	| "normal"
+	| "numeric"
+
 export interface ChoiceInfo {
 	label: string,
 	data: string
