@@ -100,7 +100,6 @@
 				{
 					"statusCode": 204,
 					"action": async (response: Response) => {
-						deleteErrors.set([])
 						dispatch("delete", data)
 					}
 				}
