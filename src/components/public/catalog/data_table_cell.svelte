@@ -1,22 +1,36 @@
 <script lang="ts">
-	import type { DataTableCellKind } from "+/component"
+	import type { DataTableCellKind, DataTableCellScope } from "+/component"
 
 	export let kind: DataTableCellKind = "normal"
-	export let doesRepresentRow: boolean = false
+	export let scope: DataTableCellScope = "none"
 
-	$: rowClasses = [
-		"mdc-data-table__cell",
-		kind === "numeric" ? "mdc-data-table__cell--numeric" : false
-	].filter(Boolean).join(" ")
-	$: scope = doesRepresentRow ? "row" : null
+	$: rowClasses = (
+		scope === "none"
+			? [
+				"mdc-data-table__cell",
+				kind === "numeric" ? "mdc-data-table__cell--numeric" : false
+			]
+			: [
+				"mdc-data-table__header-cell",
+				kind === "numeric" ? "mdc-data-table__header-cell--numeric" : false
+			]
+	).filter(Boolean).join(" ")
+	$: resolvedScope = scope === "column" ? "col" : "row"
+	$: role = scope === "column" ? "columnheader" : null
 </script>
 
-<td
-	class={rowClasses}
-	{scope}>
-	<slot/>
-</td>
-
+{#if kind === "normal"}
+	<td class={rowClasses}>
+		<slot/>
+	</td>
+{:else}
+	<th
+		class={rowClasses}
+		{role}
+		scope={resolvedScope}>
+		<slot/>
+	</th>
+{/if}
 
 <style lang="scss">
 	@use "@/components/third-party/new_index";

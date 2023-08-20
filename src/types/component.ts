@@ -7,6 +7,11 @@ export type DataTableCellKind =
 	| "normal"
 	| "numeric"
 
+export type DataTableCellScope =
+	| "row"
+	| "column"
+	| "none"
+
 export interface ChoiceInfo {
 	label: string,
 	data: string
