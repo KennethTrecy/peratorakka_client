@@ -10,7 +10,6 @@ export type DataTableCellKind =
 export type DataTableCellScope =
 	| "row"
 	| "column"
-	| "none"
 
 export interface ChoiceInfo {
 	label: string,

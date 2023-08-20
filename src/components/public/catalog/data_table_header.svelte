@@ -2,16 +2,22 @@
 	import type { DataTableCellKind, DataTableCellScope } from "+/component"
 
 	export let kind: DataTableCellKind = "normal"
+	export let scope: DataTableCellScope = "row"
 
-	$: rowClasses = [
-		"mdc-data-table__cell",
-		kind === "numeric" ? "mdc-data-table__cell--numeric" : false
+	$: headerClasses = [
+		"mdc-data-table__header-cell",
+		kind === "numeric" ? "mdc-data-table__header-cell--numeric" : false
 	].filter(Boolean).join(" ")
+	$: resolvedScope = scope === "column" ? "col" : "row"
+	$: role = scope === "column" ? "columnheader" : null
 </script>
 
-<td class={rowClasses}>
+<th
+	class={headerClasses}
+	{role}
+	scope={resolvedScope}>
 	<slot/>
-</td>
+</th>
 
 <style lang="scss">
 	@use "@/components/third-party/new_index";

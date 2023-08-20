@@ -1,9 +1,9 @@
 <script lang="ts">
-	import DataTableCell from "$/catalog/data_table_cell.svelte"
+	import DataTableHeader from "$/catalog/data_table_header.svelte"
 </script>
 
-<DataTableCell scope="column">Name</DataTableCell>
-<DataTableCell scope="column">Debit Account</DataTableCell>
-<DataTableCell scope="column">Credit Account</DataTableCell>
+<DataTableHeader scope="column">Name</DataTableHeader>
+<DataTableHeader scope="column">Debit Account</DataTableHeader>
+<DataTableHeader scope="column">Credit Account</DataTableHeader>
 <slot/>
-<DataTableCell scope="column">Actions</DataTableCell>
+<DataTableHeader scope="column">Actions</DataTableHeader>
