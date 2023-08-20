@@ -10,8 +10,9 @@
 
 	import BasicForm from "%/accounts/basic_form.svelte"
 	import DescriptiveForm from "$/form/descriptive_form.svelte"
-	import MarginlessButton from "$/utility/marginless_button.svelte"
-	import JustifiedParagraph from "$/utility/justified_paragraph.svelte"
+	import ElementalParagraph from "$/typography/elemental_paragraph.svelte"
+	import TextCardButton from "$/button/card/text.svelte"
+	import TextContainer from "$/typography/text_container.svelte"
 
 	const dispatch = createEventDispatcher<{
 		"create": Account
@@ -65,23 +66,23 @@
 </script>
 
 <DescriptiveForm individualName="Financial Account" {mayShowForm}>
-	<svelte:fragment slot="description">
-		<JustifiedParagraph>
+	<TextContainer slot="description">
+		<ElementalParagraph>
 			Financial accounts are some kind of label for the numerical values in a financial entry.
 			Some examples of these are capital, cash, or debt. They may be credited or debited
 			depending on their kind. They may be asset, liability, or equity to name a few.
-		</JustifiedParagraph>
-		<JustifiedParagraph>
+		</ElementalParagraph>
+		<ElementalParagraph>
 			To create a financial account to be used in the system, choose a currency and kind in order
 			for the system to calculate properly the associated numerical values. After that, fill out
 			other required info. Finally, press "Add" button.
-		</JustifiedParagraph>
-	</svelte:fragment>
+		</ElementalParagraph>
+	</TextContainer>
 	<svelte:fragment slot="requirement">
-		<JustifiedParagraph>
+		<ElementalParagraph>
 			At least one currency must exist in the profile to show the form for creating financial
 			accounts.
-		</JustifiedParagraph>
+		</ElementalParagraph>
 	</svelte:fragment>
 	<BasicForm
 		slot="form"
@@ -94,10 +95,11 @@
 		{IDPrefix}
 		errors={$errors}
 		on:submit={createAccount}>
-		<svelte:fragment slot="buttonGroup">
-			<MarginlessButton kind="submit" disabled={$isConnecting}>
-				Add
-			</MarginlessButton>
+		<svelte:fragment slot="button_group">
+			<TextCardButton
+				kind="submit"
+				disabled={$isConnecting}
+				label="Add"/>
 		</svelte:fragment>
 	</BasicForm>
 </DescriptiveForm>
