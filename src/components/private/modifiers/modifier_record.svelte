@@ -1,12 +1,18 @@
 <script lang="ts">
 	import type { GeneralError } from "+/rest"
 	import type { CardStatus } from "+/component"
-	import type { Currency, Account, AcceptableModifierKind, Modifier } from "+/entity"
+	import type {
+		Currency,
+		Account,
+		AcceptableModifierKind,
+		AcceptableModifierAction,
+		Modifier
+	} from "+/entity"
 
 	import { createEventDispatcher } from "svelte"
 	import { writable } from "svelte/store"
 
-	import { acceptableModifierKinds } from "#/entity"
+	import { acceptableModifierKinds, acceptableModifierActions } from "#/entity"
 	import { UNKNOWN_ACCOUNT } from "#/component"
 
 	import makeJSONRequester from "$/rest/make_json_requester"
@@ -28,6 +34,7 @@
 	let name = data.name
 	let description = data.description
 	let kind = fallbackToAceptableKind(data.kind)
+	let action = fallbackToAceptableAction(data.action)
 
 	$: IDPrefix = `old_modifier_${data.id}`
 	$: formID = `${IDPrefix}_update_form`
@@ -109,11 +116,19 @@
 	}
 
 	function fallbackToAceptableKind(kind: string): AcceptableModifierKind {
-		return isAcceptable(kind) ? kind : acceptableModifierKinds[0]
+		return isAcceptableKind(kind) ? kind : acceptableModifierKinds[0]
 	}
 
-	function isAcceptable(kind: string): kind is AcceptableModifierKind {
+	function isAcceptableKind(kind: string): kind is AcceptableModifierKind {
 		return (<string[]>[ ...acceptableModifierKinds ]).indexOf(kind) > -1
+	}
+
+	function fallbackToAceptableAction(action: string): AcceptableModifierAction {
+		return isAcceptableAction(action) ? action : acceptableModifierActions[0]
+	}
+
+	function isAcceptableAction(action: string): action is AcceptableModifierAction {
+		return (<string[]>[ ...acceptableModifierActions ]).indexOf(action) > -1
 	}
 </script>
 
@@ -137,6 +152,7 @@
 		bind:name={name}
 		bind:description={description}
 		bind:kind={kind}
+		bind:action={action}
 		isConnecting={$isConnectingToUpdate}
 		{IDPrefix}
 		{currencies}

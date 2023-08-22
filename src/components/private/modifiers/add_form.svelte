@@ -1,10 +1,16 @@
 <script lang="ts">
-	import type { Currency, Account, Modifier, AcceptableModifierKind } from "+/entity"
+	import type {
+		Currency,
+		Account,
+		AcceptableModifierKind,
+		AcceptableModifierAction,
+		Modifier
+	} from "+/entity"
 
 	import { createEventDispatcher } from "svelte"
 
 	import { UNKNOWN_OPTION } from "#/component"
-	import { acceptableModifierKinds } from "#/entity"
+	import { acceptableModifierKinds, acceptableModifierActions } from "#/entity"
 
 	import makeJSONRequester from "$/rest/make_json_requester"
 
@@ -27,6 +33,7 @@
 	export let name: string = ""
 	export let description: string =""
 	export let kind: AcceptableModifierKind = acceptableModifierKinds[0]
+	export let action: AcceptableModifierAction = acceptableModifierActions[0]
 
 	let { isConnecting, errors, send } = makeJSONRequester({
 		"path": "/api/v1/modifiers",
@@ -45,6 +52,7 @@
 					name = ""
 					description = ""
 					kind = acceptableModifierKinds[0]
+					action = acceptableModifierActions[0]
 					errors.set([])
 					dispatch("create", modifier)
 				}
@@ -61,7 +69,8 @@
 					"credit_account_id": parseInt(creditAccountID),
 					name,
 					description,
-					kind
+					kind,
+					action
 				}
 			})
 		})
@@ -102,6 +111,7 @@
 		bind:name={name}
 		bind:description={description}
 		bind:kind={kind}
+		bind:action={action}
 		isConnecting={$isConnecting}
 		{IDPrefix}
 		errors={$errors}

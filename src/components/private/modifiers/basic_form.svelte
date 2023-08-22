@@ -1,8 +1,13 @@
 <script lang="ts">
 	import type { GeneralError } from "+/rest"
-	import type { AcceptableModifierKind, Account, Currency } from "+/entity"
+	import type {
+		AcceptableModifierKind,
+		AcceptableModifierAction,
+		Account,
+		Currency
+	} from "+/entity"
 
-	import { acceptableModifierKinds } from "#/entity"
+	import { acceptableModifierKinds, acceptableModifierActions } from "#/entity"
 
 	import makeAccountTransformer from "$/form/choice_info_transformer/make_account_transformer"
 	import transformString from "$/form/choice_info_transformer/transform_string"
@@ -12,6 +17,7 @@
 	import TextField from "$/form/text_field.svelte"
 
 	export const ACCEPTABLE_MODIFIER_KINDS = [ ...acceptableModifierKinds ]
+	export const ACCEPTABLE_MODIFIER_ACTIONS = [ ...acceptableModifierActions ]
 
 	export let IDPrefix: string
 	export let currencies: Currency[]
@@ -22,6 +28,7 @@
 	export let name: string
 	export let description: string
 	export let kind: AcceptableModifierKind
+	export let action: AcceptableModifierAction
 
 	export let isConnecting: boolean
 	export let errors: GeneralError[]
@@ -55,6 +62,14 @@
 			disabled={isConnecting}
 			bind:value={kind}
 			rawChoices={ACCEPTABLE_MODIFIER_KINDS}
+			choiceConverter={transformString}
+			{IDPrefix}
+			{errors}/>
+		<ChoiceListField
+			fieldName="Action"
+			disabled={isConnecting}
+			bind:value={action}
+			rawChoices={ACCEPTABLE_MODIFIER_ACTIONS}
 			choiceConverter={transformString}
 			{IDPrefix}
 			{errors}/>
