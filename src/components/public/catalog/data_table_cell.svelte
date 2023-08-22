@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { DataTableCellKind, DataTableCellScope } from "+/component"
+	import type { DataTableCellKind } from "+/component"
 
 	export let kind: DataTableCellKind = "normal"
 
