@@ -64,4 +64,9 @@
 
 	@include data-table.theme-baseline;
 	@include data-table.core-styles;
+
+	.mdc-data-table {
+		max-width: 100%;
+		overflow-x: scroll;
+	}
 </style>
