@@ -11,6 +11,16 @@ export const accountKinds = [
 	...acceptableAccountKinds
 ] as const
 
+export const acceptableModifierActions = [
+	"record",
+	"close"
+] as const
+
+export const modifierActions = [
+	"unknown",
+	...acceptableModifierActions
+] as const
+
 export const acceptableModifierKinds = [
 	"manual",
 	// Below are the kinds not yet supported
