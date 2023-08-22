@@ -4,8 +4,8 @@
 	import DataTableCell from "$/catalog/data_table_cell.svelte"
 
 	export let kind: DataTableCellKind = "normal"
-	export let rawDebit: any[] = []
-	export let rawCredit: any[] = []
+	export let rawDebit: any[]
+	export let rawCredit: any[]
 
 	$: debits = kind === "normal" ? (rawDebit as string[]) : (rawDebit as number[])
 	$: credits = kind === "normal" ? (rawCredit as string[]) : (rawCredit as number[])

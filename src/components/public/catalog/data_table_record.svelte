@@ -6,8 +6,9 @@
 
 	import { createEventDispatcher } from "svelte"
 
-	import DataTableHeader from "$/catalog/data_table_header.svelte"
+	import DataTableAccountCell from "$/catalog/data_table_account_cell.svelte"
 	import DataTableCell from "$/catalog/data_table_cell.svelte"
+	import DataTableHeader from "$/catalog/data_table_header.svelte"
 	import DataTableRow from "$/catalog/data_table_row.svelte"
 	import TextButton from "$/button/text.svelte"
 
@@ -70,8 +71,9 @@
 			{cancelEdit}/>
 	{:else}
 		<DataTableHeader>{label}</DataTableHeader>
-		<DataTableCell>{debitAccountName}</DataTableCell>
-		<DataTableCell>{creditAccountName}</DataTableCell>
+		<DataTableAccountCell
+			rawDebit={[ debitAccountName ]}
+			rawCredit={[ creditAccountName ]}/>
 		<slot name="special_cells"/>
 		<DataTableCell>
 			{#if isConfirmingDeletion}

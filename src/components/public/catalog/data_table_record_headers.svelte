@@ -3,7 +3,6 @@
 </script>
 
 <DataTableHeader scope="column">Name</DataTableHeader>
-<DataTableHeader scope="column">Debit Account</DataTableHeader>
-<DataTableHeader scope="column">Credit Account</DataTableHeader>
+<DataTableHeader scope="column">Debit/Credit</DataTableHeader>
 <slot/>
 <DataTableHeader scope="column">Actions</DataTableHeader>
