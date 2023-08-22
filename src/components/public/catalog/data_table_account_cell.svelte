@@ -12,24 +12,34 @@
 </script>
 
 <DataTableCell {kind}>
-	{#each debits as debit}
-		<div class="debit">
-			{debit}
-		</div>
-	{/each}
-	{#each credits as credit}
-		<div class="credit">
-			{credit}
-		</div>
-	{/each}
+	<ul class="debit">
+		{#each debits as debit}
+			<li>
+				{debit}
+			</li>
+		{/each}
+	</ul>
+	<ul class="credit">
+		{#each credits as credit}
+			<li>
+				{credit}
+			</li>
+		{/each}
+	</ul>
 </DataTableCell>
 
 <style lang="scss">
+	ul {
+		list-style: none;
+	}
+
 	.debit {
+		text-align: left;
 		margin-right: 1em;
 	}
 
 	.credit {
 		margin-left: 1em;
+		text-align: right;
 	}
 </style>
