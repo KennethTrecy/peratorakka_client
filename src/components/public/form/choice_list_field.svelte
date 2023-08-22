@@ -36,7 +36,10 @@
 		error => isFieldError(error) && error.field.endsWith(normalizedFieldName)
 	).map(error => error.message).join(" ")
 	$: choices = rawChoices.map(choiceConverter)
-	$: selectedLabel = choices.find(choice => choice.data === value)?.label ?? UNKNOWN_OPTION_LABEL
+	$: selectedLabelIndex = choices.findIndex(choice => choice.data === value)
+	$: selectedLabel = selectedLabelIndex === -1
+		? UNKNOWN_OPTION_LABEL
+		: choices[selectedLabelIndex].label
 	$: selectClasses = [
 		"mdc-select",
 		"mdc-select--outlined",
@@ -94,19 +97,6 @@
 		class="mdc-select__menu mdc-menu mdc-menu-surface mdc-menu-surface--fullwidth"
 		bind:this={menuElement}>
 		<ul class="mdc-deprecated-list" role="listbox" aria-label={fieldName}>
-			{#if value === UNKNOWN_OPTION}
-				<li
-					class="mdc-deprecated-list-item mdc-deprecated-list-item--selected"
-					aria-selected="true"
-					data-value={UNKNOWN_OPTION}
-					role="option"
-					title={UNKNOWN_OPTION_LABEL}>
-					<span class="mdc-deprecated-list-item__ripple"></span>
-					<span class="mdc-deprecated-list-item__text">
-						{UNKNOWN_OPTION_LABEL}
-					</span>
-				</li>
-			{/if}
 			{#each choices as { label, data }(data)}
 				<li
 					class="mdc-deprecated-list-item mdc-deprecated-list-item--selected"
@@ -120,6 +110,19 @@
 					</span>
 				</li>
 			{/each}
+			{#if value === UNKNOWN_OPTION}
+				<li
+					class="mdc-deprecated-list-item mdc-deprecated-list-item--selected"
+					aria-selected="true"
+					data-value={UNKNOWN_OPTION}
+					role="option"
+					title={UNKNOWN_OPTION_LABEL}>
+					<span class="mdc-deprecated-list-item__ripple"></span>
+					<span class="mdc-deprecated-list-item__text">
+						{UNKNOWN_OPTION_LABEL}
+					</span>
+				</li>
+			{/if}
 		</ul>
 	</div>
 </div>
