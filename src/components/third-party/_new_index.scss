@@ -1,13 +1,15 @@
-@use "@material/theme" with (
-	$primary: #f8adfb,
-	$secondary: #d8bfd5,
-	$on-primary: #51145a,
-	$on-secondary: #3b2b3b,
-	$background: #1e1a1d,
-	$surface: #1e1a1d,
-	$on-surface: #e9e0e4,
-	$error: #ffb4ab,
-	$on-error: #690005
+$primary: #e3dbe2;
+$secondary: #2b0011;
+$background: #ac93a7;
+$surface: #483745;
+$error: #ffb4ab;
+
+@use "@material/theme/theme-color" with (
+	$primary: $primary,
+	$secondary: $secondary,
+	$background: $background,
+	$surface: $surface,
+	$error: $error
 );
 
 @import url("https://fonts.googleapis.com/css2?family=Roboto&family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap");
