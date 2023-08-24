@@ -6,7 +6,3 @@
 <Shell>
 	<slot slot="main"></slot>
 </Shell>
-
-<style lang="scss">
-	@use "@/components/third-party/index";
-</style>
