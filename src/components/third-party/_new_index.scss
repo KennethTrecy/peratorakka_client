@@ -11,6 +11,7 @@ $error: #ffb4ab;
 	$surface: $surface,
 	$error: $error
 );
+@use "@material/theme/theme";
 
 @import url("https://fonts.googleapis.com/css2?family=Roboto&family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap");
 
@@ -36,4 +37,8 @@ html, body {
 .mdc-icon-button i, .mdc-deprecated-list-item i, .mdc-select__dropdown-icon i {
 	font-family: "Material Symbols Rounded";
 	font-style: normal;
+}
+
+.mdc-card {
+	@include theme.property(color, theme-color.$on-surface);
 }
