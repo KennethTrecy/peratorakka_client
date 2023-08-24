@@ -18,6 +18,8 @@
 		They can be associated to account entries.
 	</svelte:fragment>
 	<DataTableRecordHeader slot="table_headers">
+		<DataTableHeader>Action</DataTableHeader>
+		<DataTableHeader>Kind</DataTableHeader>
 		<DataTableHeader>Description</DataTableHeader>
 	</DataTableRecordHeader>
 	<svelte:fragment slot="table_rows">

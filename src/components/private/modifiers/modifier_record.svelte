@@ -16,6 +16,7 @@
 	import { UNKNOWN_ACCOUNT } from "#/component"
 
 	import makeJSONRequester from "$/rest/make_json_requester"
+	import convertSnakeCaseToProperCase from "$/utility/convert_snake_case_to_proper_case"
 
 	import BasicForm from "%/modifiers/basic_form.svelte"
 	import DataTableCell from "$/catalog/data_table_cell.svelte"
@@ -44,6 +45,8 @@
 	$: creditAccount = accounts.find(
 		account => account.id === data.credit_account_id
 	) ?? UNKNOWN_ACCOUNT
+	$: friendlyAction = convertSnakeCaseToProperCase(data.action)
+	$: friendlyKind = convertSnakeCaseToProperCase(data.kind)
 	$: resolveDescription = description || "None"
 
 	let isConnectingToUpdate = writable<boolean>(false)
@@ -165,6 +168,12 @@
 			on:cancelEdit={cancelEdit}/>
 	</BasicForm>
 	<svelte:fragment slot="special_cells">
+		<DataTableCell>
+			{friendlyAction}
+		</DataTableCell>
+		<DataTableCell>
+			{friendlyKind}
+		</DataTableCell>
 		<DataTableCell>
 			{resolveDescription}
 		</DataTableCell>
