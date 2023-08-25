@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { Account, Currency, Modifier } from "+/entity"
+	import type { Account, Currency, Modifier, FinancialEntry } from "+/entity"
 
 	import { get } from "svelte/store"
 	import { onMount } from "svelte"
@@ -32,6 +32,29 @@
 	let currencies: Currency[] = []
 	let accounts: Account[] = []
 	let modifiers: Modifier[] = []
+	let financialEntries: FinancialEntry[] = []
+
+	let {
+		"isConnecting": isConnectingForFinancialEntries,
+		"errors": errorsForFinancialEntries,
+		"send": requestForFinancialEntries
+	} = makeJSONRequester({
+		"path": "/api/v1/financial_entries",
+		"defaultRequestConfiguration": {
+			"method": "GET"
+		},
+		"manualResponseHandlers": [
+			{
+				"statusCode": 200,
+				"action": async (response: Response) => {
+					let responseDocument = await response.json()
+					errorsForFinancialEntries.set([])
+					financialEntries = responseDocument.financial_entries
+				}
+			}
+		],
+		"expectedErrorStatusCodes": [ 401 ]
+	})
 
 	let {
 		"isConnecting": isConnectingForModifiers,
@@ -48,6 +71,8 @@
 				"action": async (response: Response) => {
 					let responseDocument = await response.json()
 					errorsForModifiers.set([])
+					currencies = responseDocument.currencies
+					accounts = responseDocument.accounts
 					modifiers = responseDocument.modifiers
 				}
 			},
@@ -62,29 +87,6 @@
 		"expectedErrorStatusCodes": [ 401 ]
 	})
 
-	let {
-		"isConnecting": isConnectingForAccounts,
-		"errors": errorsForAccounts,
-		"send": requestForAccounts
-	} = makeJSONRequester({
-		"path": "/api/v1/accounts",
-		"defaultRequestConfiguration": {
-			"method": "GET"
-		},
-		"manualResponseHandlers": [
-			{
-				"statusCode": 200,
-				"action": async (response: Response) => {
-					let responseDocument = await response.json()
-					errorsForAccounts.set([])
-					accounts = responseDocument.accounts
-					currencies = responseDocument.currencies
-				}
-			}
-		],
-		"expectedErrorStatusCodes": [ 401 ]
-	})
-
 	async function loadList() {
 		const currentServerURL = get(serverURL)
 
@@ -93,8 +95,8 @@
 			return
 		}
 
+		await requestForFinancialEntries({})
 		await requestForModifiers({})
-		await requestForAccounts({})
 	}
 
 	onMount(loadList)
@@ -114,24 +116,13 @@
 </script>
 
 <svelte:head>
-	<title>Modifiers</title>
+	<title>Financial Entries</title>
 </svelte:head>
 
 <ArticleGrid>
 	<InnerGrid>
 		<GridCell kind="full">
-			<PrimaryHeading>Modifiers</PrimaryHeading>
+			<PrimaryHeading>Financial Entries</PrimaryHeading>
 		</GridCell>
-		<AddForm
-			{currencies}
-			{accounts}
-			isLoadingInitialData={$isConnectingForAccounts}
-			on:create={addModifier}/>
-		<DataTable
-			{currencies}
-			{accounts}
-			data={modifiers}
-			isConnecting={$isConnectingForModifiers}
-			on:delete={removeModifier}/>
 	</InnerGrid>
 </ArticleGrid>
