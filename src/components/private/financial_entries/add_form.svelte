@@ -68,7 +68,7 @@
 	async function createModifier() {
 		await send({
 			"body": JSON.stringify({
-				"modifier": {
+				"financial_entry": {
 					"modifier_id": parseInt(modifierID),
 					"transacted_at": new Date(transactedAt),
 					"debit_amount": debitAmount,
