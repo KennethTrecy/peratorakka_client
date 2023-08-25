@@ -13,7 +13,7 @@
 	export let errorFieldName = ""
 	export let IDPrefix: string = ""
 	export let errors: GeneralError[]
-	export let variant: "email"|"text" = "text"
+	export let variant: "email"|"text"|"date" = "text"
 
 	$: normalizedFieldName = fieldName.replace(" ", "_").toLocaleLowerCase()
 	$: fieldID = errorFieldName === ""
