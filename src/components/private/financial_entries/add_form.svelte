@@ -41,7 +41,7 @@
 	export let remarks: string = ""
 
 	let { isConnecting, errors, send } = makeJSONRequester({
-		"path": "/api/v1/modifiers",
+		"path": "/api/v1/financial_entries",
 		"defaultRequestConfiguration": {
 			"method": "POST"
 		},
