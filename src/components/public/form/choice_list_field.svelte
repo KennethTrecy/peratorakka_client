@@ -22,6 +22,12 @@
 	export let rawChoices: unknown[]
 	export let choiceConverter: (choice: any) => ChoiceInfo
 
+	$: {
+		if (value === UNKNOWN_OPTION && rawChoices.length > 0) {
+			value = choiceConverter(rawChoices[0]).data
+		}
+	}
+
 	$: normalizedFieldName = errorFieldName === null
 		? fieldName.replace(" ", "_").toLocaleLowerCase()
 		: errorFieldName
