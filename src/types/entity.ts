@@ -45,3 +45,11 @@ export interface Modifier extends Entity {
 	kind: ModifierKind
 	action: ModifierAction
 }
+
+export interface FinancialEntry extends Entity {
+	modifier_id: number
+	transacted_at: string
+	debit_amount: string
+	credit_amount: string
+	remarks: string
+}
