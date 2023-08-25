@@ -2,38 +2,43 @@
 	import type {
 		Currency,
 		Account,
-		AcceptableModifierKind,
-		AcceptableModifierAction,
-		Modifier
+		Modifier,
+		FinancialEntry
 	} from "+/entity"
 
 	import { createEventDispatcher } from "svelte"
 
 	import { UNKNOWN_OPTION } from "#/component"
-	import { acceptableModifierKinds, acceptableModifierActions } from "#/entity"
 
 	import makeJSONRequester from "$/rest/make_json_requester"
+	import convertSnakeCaseToProperCase from "$/utility/convert_snake_case_to_proper_case"
 
-	import BasicForm from "%/modifiers/basic_form.svelte"
+	import BasicForm from "%/financial_entries/basic_form.svelte"
 	import DescriptiveForm from "$/form/descriptive_form.svelte"
 	import ElementalParagraph from "$/typography/elemental_paragraph.svelte"
 	import TextCardButton from "$/button/card/text.svelte"
 	import TextContainer from "$/typography/text_container.svelte"
 
 	const dispatch = createEventDispatcher<{
-		"create": Modifier
+		"create": FinancialEntry
 	}>()
 	const IDPrefix = "new_"
+	const currentDate =  new Date()
+	const currentYear =  currentDate.getFullYear()
+	const currentMonth =  makeTwoDigits(currentDate.getMonth())
+	const currentDay =  makeTwoDigits(currentDate.getDate())
+	const defaultTransactedDate = `${currentYear}-${currentMonth}-${currentDay}`
 
 	export let isLoadingInitialData: boolean
 	export let currencies: Currency[]
 	export let accounts: Account[]
-	export let debitAccountID: string = UNKNOWN_OPTION
-	export let creditAccountID: string = UNKNOWN_OPTION
-	export let name: string = ""
-	export let description: string =""
-	export let kind: AcceptableModifierKind = acceptableModifierKinds[0]
-	export let action: AcceptableModifierAction = acceptableModifierActions[0]
+	export let modifiers: Modifier[]
+
+	export let modifierID: string = UNKNOWN_OPTION
+	export let transactedAt: string = defaultTransactedDate
+	export let debitAmount: string = "0"
+	export let creditAmount: string = "0"
+	export let remarks: string = ""
 
 	let { isConnecting, errors, send } = makeJSONRequester({
 		"path": "/api/v1/modifiers",
@@ -47,12 +52,11 @@
 					const document = await response.json()
 					const { modifier } = document
 
-					debitAccountID = UNKNOWN_OPTION
-					creditAccountID = UNKNOWN_OPTION
-					name = ""
-					description = ""
-					kind = acceptableModifierKinds[0]
-					action = acceptableModifierActions[0]
+					modifierID = UNKNOWN_OPTION
+					transactedAt = defaultTransactedDate
+					debitAmount = "0"
+					creditAmount = "0"
+					remarks = ""
 					errors.set([])
 					dispatch("create", modifier)
 				}
@@ -65,62 +69,61 @@
 		await send({
 			"body": JSON.stringify({
 				"modifier": {
-					"debit_account_id": parseInt(debitAccountID),
-					"credit_account_id": parseInt(creditAccountID),
-					name,
-					description,
-					kind,
-					action
+					"modifier_id": parseInt(modifierID),
+					"transacted_at": new Date(transactedAt),
+					"debit_amount": debitAmount,
+					"credit_amount": creditAmount,
+					remarks
 				}
 			})
 		})
 	}
 
-	$: mayShowForm = accounts.length >= 2
+	function makeTwoDigits(value: number): string {
+		return value <= 9 ? `0${value}` : `${value}`
+	}
+
+	$: manualModifiers = modifiers.filter(modifier => modifier.kind === "manual")
+	$: chosenModifier = modifiers.find(
+		modifier => `${modifier.id}` === modifierID
+	)
+	$: friendlyAction = convertSnakeCaseToProperCase(chosenModifier?.action ?? UNKNOWN_OPTION)
+	$: mayShowForm = manualModifiers.length >= 1
 </script>
 
 <DescriptiveForm individualName="Modifier" {mayShowForm} {isLoadingInitialData}>
 	<TextContainer slot="description">
 		<ElementalParagraph>
-			Modifiers are premade actions to create financial entries. Currently, manual input is the
-			only kind of modifier available. Other kinds may added in the future to allow automated
-			modifications on different accounts.
-		</ElementalParagraph>
-		<ElementalParagraph>
-			Modifiers can also serve as references for financial entries. Everyone reading the entries
-			would know if a financial entry was a result of manual input or automated calculations.
-		</ElementalParagraph>
-		<ElementalParagraph>
-			To create a modifier to be used by the system, choose a debit account and a credit account
-			that the modifier would be responsible. After that, fill out other required info. Finally,
-			press "Add" button.
+			Financial entries are the main data that is being processed by the system.
 		</ElementalParagraph>
 	</TextContainer>
 	<TextContainer slot="requirement">
 		<ElementalParagraph>
-			At least two financial accounts must exist in the profile to show the form for creating
-			modifiers.
+			At least one manual modifier must exist in the profile to show the form for creating
+			financial entries.
 		</ElementalParagraph>
 	</TextContainer>
 	<BasicForm
 		slot="form"
 		currencies={currencies}
 		accounts={accounts}
-		bind:debitAccountID={debitAccountID}
-		bind:creditAccountID={creditAccountID}
-		bind:name={name}
-		bind:description={description}
-		bind:kind={kind}
-		bind:action={action}
+		modifiers={modifiers}
+		bind:modifierID={modifierID}
+		bind:transactedAt={transactedAt}
+		bind:debitAmount={debitAmount}
+		bind:creditAmount={creditAmount}
+		bind:remarks={remarks}
 		isConnecting={$isConnecting}
 		{IDPrefix}
 		errors={$errors}
 		on:submit={createModifier}>
 		<svelte:fragment slot="button_group">
-			<TextCardButton
-				kind="submit"
-				disabled={$isConnecting}
-				label="Add"/>
+			{#if chosenModifier}
+				<TextCardButton
+					kind="submit"
+					disabled={$isConnecting}
+					label={friendlyAction}/>
+			{/if}
 		</svelte:fragment>
 	</BasicForm>
 </DescriptiveForm>
