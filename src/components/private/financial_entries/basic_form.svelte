@@ -93,7 +93,7 @@
 				{errors}/>
 		{/if}
 		<TextField
-			fieldName="remarks"
+			fieldName="Remarks"
 			disabled={isConnecting}
 			bind:value={remarks}
 			{IDPrefix}
