@@ -64,6 +64,15 @@
 			aria-labelledby={fieldID}
 			aria-controls={helperID}
 			aria-describedby={helperID}/>
+	{:else if variant === "date"}
+		<input
+			class="mdc-text-field__input"
+			type="date"
+			bind:value={value}
+			disabled={disabled}
+			aria-labelledby={fieldID}
+			aria-controls={helperID}
+			aria-describedby={helperID}/>
 	{:else}
 		<input
 			class="mdc-text-field__input"
