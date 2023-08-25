@@ -25,7 +25,7 @@
 	const IDPrefix = "new_"
 	const currentDate =  new Date()
 	const currentYear =  currentDate.getFullYear()
-	const currentMonth =  makeTwoDigits(currentDate.getMonth())
+	const currentMonth =  makeTwoDigits(currentDate.getMonth() + 1)
 	const currentDay =  makeTwoDigits(currentDate.getDate())
 	const defaultTransactedDate = `${currentYear}-${currentMonth}-${currentDay}`
 
@@ -36,8 +36,8 @@
 
 	export let modifierID: string = UNKNOWN_OPTION
 	export let transactedAt: string = defaultTransactedDate
-	export let debitAmount: string = "0"
-	export let creditAmount: string = "0"
+	export let debitAmount: string = "0.00"
+	export let creditAmount: string = "0.00"
 	export let remarks: string = ""
 
 	let { isConnecting, errors, send } = makeJSONRequester({
@@ -91,7 +91,7 @@
 	$: mayShowForm = manualModifiers.length >= 1
 </script>
 
-<DescriptiveForm individualName="Modifier" {mayShowForm} {isLoadingInitialData}>
+<DescriptiveForm individualName="Financial Entry" {mayShowForm} {isLoadingInitialData}>
 	<TextContainer slot="description">
 		<ElementalParagraph>
 			Financial entries are the main data that is being processed by the system.
@@ -107,7 +107,7 @@
 		slot="form"
 		currencies={currencies}
 		accounts={accounts}
-		modifiers={modifiers}
+		modifiers={manualModifiers}
 		bind:modifierID={modifierID}
 		bind:transactedAt={transactedAt}
 		bind:debitAmount={debitAmount}
