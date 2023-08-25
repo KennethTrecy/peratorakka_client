@@ -13,7 +13,7 @@
 		mustBeAuthenticatedUser
 	} from "$/global_state"
 
-	import AddForm from "%/modifiers/add_form.svelte"
+	import AddForm from "%/financial_entries/add_form.svelte"
 	import ArticleGrid from "$/layout/article_grid.svelte"
 	import DataTable from "%/modifiers/data_table.svelte"
 	import GridCell from "$/layout/grid_cell.svelte"
@@ -101,17 +101,19 @@
 
 	onMount(loadList)
 
-	function addModifier(event: CustomEvent<Modifier>) {
-		const newModifier = event.detail
-		modifiers = [
-			...modifiers,
-			newModifier
+	function addModifier(event: CustomEvent<FinancialEntry>) {
+		const newFinancialEntry = event.detail
+		financialEntries = [
+			...financialEntries,
+			newFinancialEntry
 		]
 	}
 
-	function removeModifier(event: CustomEvent<Modifier>) {
-		const oldModifier = event.detail
-		modifiers = modifiers.filter(modifier => modifier.id !== oldModifier.id)
+	function removeModifier(event: CustomEvent<FinancialEntry>) {
+		const oldFinancialEntry = event.detail
+		financialEntries = financialEntries.filter(
+			financialEntry => financialEntry.id !== oldFinancialEntry.id
+		)
 	}
 </script>
 
@@ -124,5 +126,11 @@
 		<GridCell kind="full">
 			<PrimaryHeading>Financial Entries</PrimaryHeading>
 		</GridCell>
+		<AddForm
+			{currencies}
+			{accounts}
+			{modifiers}
+			isLoadingInitialData={$isConnectingForModifiers}
+			on:create={addModifier}/>
 	</InnerGrid>
 </ArticleGrid>
