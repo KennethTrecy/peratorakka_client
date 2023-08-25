@@ -70,7 +70,7 @@
 			"body": JSON.stringify({
 				"financial_entry": {
 					"modifier_id": parseInt(modifierID),
-					"transacted_at": new Date(transactedAt),
+					"transacted_at": `${transactedAt} 00:00:00`,
 					"debit_amount": debitAmount,
 					"credit_amount": creditAmount,
 					remarks
