@@ -10,16 +10,19 @@
 	export let fieldName: string
 	export let disabled: boolean
 	export let value: string
+	export let errorFieldName = ""
 	export let IDPrefix: string = ""
 	export let errors: GeneralError[]
 	export let variant: "email"|"text" = "text"
 
 	$: normalizedFieldName = fieldName.replace(" ", "_").toLocaleLowerCase()
-	$: fieldID = (
-		IDPrefix === ""
-			? ""
-			: `${IDPrefix}_`
-	) + normalizedFieldName
+	$: fieldID = errorFieldName === ""
+		? (
+			IDPrefix === ""
+				? ""
+				: `${IDPrefix}_`
+		) + normalizedFieldName
+		: errorFieldName
 	$: helperID = `${fieldID}_helper`
 	$: isActive = Boolean(value)
 	$: message = errors.filter(
