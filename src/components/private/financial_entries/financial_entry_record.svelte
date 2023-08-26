@@ -1,53 +1,71 @@
 <script lang="ts">
 	import type { GeneralError } from "+/rest"
-	import type { CardStatus } from "+/component"
 	import type {
 		Currency,
 		Account,
-		AcceptableModifierKind,
-		AcceptableModifierAction,
-		Modifier
+		Modifier,
+		FinancialEntry
 	} from "+/entity"
 
 	import { createEventDispatcher } from "svelte"
 	import { writable } from "svelte/store"
 
 	import { acceptableModifierKinds, acceptableModifierActions } from "#/entity"
-	import { UNKNOWN_ACCOUNT } from "#/component"
+	import { UNKNOWN_OPTION, UNKNOWN_ACCOUNT } from "#/component"
 
 	import makeJSONRequester from "$/rest/make_json_requester"
 	import convertSnakeCaseToProperCase from "$/utility/convert_snake_case_to_proper_case"
 
-	import BasicForm from "%/modifiers/basic_form.svelte"
+	import BasicForm from "%/financial_entries/basic_form.svelte"
+	import DataTableAccountCell from "$/catalog/data_table_account_cell.svelte"
 	import DataTableCell from "$/catalog/data_table_cell.svelte"
 	import DataTableRecord from "$/catalog/data_table_record.svelte"
 	import EditActionCardButtonPair from "$/button/card/edit_action_pair.svelte"
 
+	const minimumFractionDigits = 2
+	const maximumFractionDigits = 8
+
 	export let currencies: Currency[]
 	export let accounts: Account[]
-	export let data: Modifier
+	export let modifiers: Modifier[]
+	export let data: FinancialEntry
 
 	const dispatch = createEventDispatcher<{
-		"delete": Modifier
+		"delete": FinancialEntry
 	}>()
-	let debitAccountID = `${data.debit_account_id}`
-	let creditAccountID = `${data.credit_account_id}`
-	let name = data.name
-	let description = data.description
-	let kind = fallbackToAceptableKind(data.kind)
-	let action = fallbackToAceptableAction(data.action)
+	let modifierID = `${data.modifier_id}`
+	let debitAmount = `${data.debit_amount}`
+	let creditAmount = `${data.credit_amount}`
+	let transactedAt = data.transacted_at.slice(0, "YYYY-MM-DD".length)
+	let remarks = data.remarks
 
 	$: IDPrefix = `old_modifier_${data.id}`
 	$: formID = `${IDPrefix}_update_form`
-	$: debitAccount = accounts.find(
-		account => account.id === data.debit_account_id
+	$: chosenModifier = modifiers.find(
+		modifier => `${modifier.id}` === modifierID
+	)
+	$: debitAccount = (
+		chosenModifier
+		&& accounts.find(
+			account => account.id === chosenModifier?.debit_account_id
+		)
 	) ?? UNKNOWN_ACCOUNT
-	$: creditAccount = accounts.find(
-		account => account.id === data.credit_account_id
+	$: creditAccount = (
+		chosenModifier
+		&& accounts.find(
+			account => account.id === chosenModifier?.credit_account_id
+		)
 	) ?? UNKNOWN_ACCOUNT
-	$: friendlyAction = convertSnakeCaseToProperCase(data.action)
-	$: friendlyKind = convertSnakeCaseToProperCase(data.kind)
-	$: resolveDescription = description || "None"
+	$: friendlyAction = convertSnakeCaseToProperCase(chosenModifier?.action ?? UNKNOWN_OPTION)
+	$: debitCurrency = debitAccount && currencies.find(
+		currency => currency.id === debitAccount?.currency_id
+	)
+	$: creditCurrency = creditAccount && currencies.find(
+		currency => currency.id === creditAccount?.currency_id
+	)
+	$: friendlyDebitAmount = formatAmount(debitCurrency, data.debit_amount)
+	$: friendlyCreditAmount = formatAmount(creditCurrency, data.credit_amount)
+	$: resolveRemarks = remarks || "None"
 
 	let isConnectingToUpdate = writable<boolean>(false)
 	let updateErrors = writable<GeneralError[]>([])
@@ -58,7 +76,7 @@
 
 	$: {
 		const requesterInfo = makeJSONRequester({
-			"path": `/api/v1/modifiers/${data.id}`,
+			"path": `/api/v1/financial_entries/${data.id}`,
 			"defaultRequestConfiguration": {
 				"method": "PUT",
 			},
@@ -68,8 +86,11 @@
 					"action": async (response: Response) => {
 						data = {
 							...data,
-							name,
-							description
+							"modifier_id": parseInt(modifierID),
+							"transacted_at": transactedAt,
+							"debit_amount": debitAmount,
+							"credit_amount": creditAmount,
+							remarks
 						}
 						updateErrors.set([])
 					}
@@ -83,9 +104,12 @@
 		requestUpdate = async () => {
 			await requesterInfo.send({
 				"body": JSON.stringify({
-					"modifier": {
-						name,
-						description
+					"financial_entry": {
+						"modifier_id": parseInt(modifierID),
+						"transacted_at": transactedAt,
+						"debit_amount": debitAmount,
+						"credit_amount": creditAmount,
+						remarks
 					}
 				})
 			})
@@ -93,7 +117,7 @@
 	}
 	$: {
 		const requesterInfo = makeJSONRequester({
-			"path": `/api/v1/modifiers/${data.id}`,
+			"path": `/api/v1/financial_entries/${data.id}`,
 			"defaultRequestConfiguration": {
 				"method": "DELETE",
 			},
@@ -114,29 +138,28 @@
 	}
 
 	function resetDraft() {
-		name = data.name
-		description = data.description
+		modifierID = `${data.modifier_id}`
+		debitAmount = `${data.debit_amount}`
+		creditAmount = `${data.credit_amount}`
+		transactedAt = data.transacted_at.slice(0, "YYYY-MM-DD".length)
+		remarks = data.remarks
 	}
 
-	function fallbackToAceptableKind(kind: string): AcceptableModifierKind {
-		return isAcceptableKind(kind) ? kind : acceptableModifierKinds[0]
-	}
+	function formatAmount(currency: Currency | undefined, amount: string) {
+		const parsedAmount = parseFloat(amount)
+		const formatter = new Intl.NumberFormat("en-IN", {
+			"style": "default",
+			minimumFractionDigits,
+			maximumFractionDigits
+		})
+		const formattedAmount = formatter.format(parsedAmount)
 
-	function isAcceptableKind(kind: string): kind is AcceptableModifierKind {
-		return (<string[]>[ ...acceptableModifierKinds ]).indexOf(kind) > -1
-	}
-
-	function fallbackToAceptableAction(action: string): AcceptableModifierAction {
-		return isAcceptableAction(action) ? action : acceptableModifierActions[0]
-	}
-
-	function isAcceptableAction(action: string): action is AcceptableModifierAction {
-		return (<string[]>[ ...acceptableModifierActions ]).indexOf(action) > -1
+		return `${currency?.code ?? "---"} ${formattedAmount}`
 	}
 </script>
 
 <DataTableRecord
-	label={data.name}
+	label={chosenModifier?.name ?? UNKNOWN_OPTION}
 	{debitAccount}
 	{creditAccount}
 	{updateErrors}
@@ -150,16 +173,16 @@
 		let:confirmEdit
 		let:cancelEdit
 		id={formID}
-		bind:debitAccountID={debitAccountID}
-		bind:creditAccountID={creditAccountID}
-		bind:name={name}
-		bind:description={description}
-		bind:kind={kind}
-		bind:action={action}
+		bind:modifierID={modifierID}
+		bind:transactedAt={transactedAt}
+		bind:debitAmount={debitAmount}
+		bind:creditAmount={creditAmount}
+		bind:remarks={remarks}
 		isConnecting={$isConnectingToUpdate}
 		{IDPrefix}
 		{currencies}
 		{accounts}
+		{modifiers}
 		errors={$updateErrors}
 		on:submit={confirmEdit}>
 		<EditActionCardButtonPair
@@ -168,14 +191,14 @@
 			on:cancelEdit={cancelEdit}/>
 	</BasicForm>
 	<svelte:fragment slot="special_cells">
+		<DataTableAccountCell
+			rawDebit={[ friendlyDebitAmount ]}
+			rawCredit={[ friendlyCreditAmount ]}/>
 		<DataTableCell>
 			{friendlyAction}
 		</DataTableCell>
 		<DataTableCell>
-			{friendlyKind}
-		</DataTableCell>
-		<DataTableCell>
-			{resolveDescription}
+			{resolveRemarks}
 		</DataTableCell>
 	</svelte:fragment>
 </DataTableRecord>
