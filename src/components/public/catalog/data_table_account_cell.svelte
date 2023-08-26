@@ -9,17 +9,25 @@
 
 	$: debits = kind === "normal" ? (rawDebit as string[]) : (rawDebit as number[])
 	$: credits = kind === "normal" ? (rawCredit as string[]) : (rawCredit as number[])
+	$: debitClasses = [
+		"debit",
+		kind
+	].join(" ")
+	$: creditClasses = [
+		"credit",
+		kind
+	].join(" ")
 </script>
 
 <DataTableCell {kind}>
-	<ul class="debit">
+	<ul class={debitClasses}>
 		{#each debits as debit}
 			<li>
 				{debit}
 			</li>
 		{/each}
 	</ul>
-	<ul class="credit">
+	<ul class={creditClasses}>
 		{#each credits as credit}
 			<li>
 				{credit}
@@ -35,11 +43,25 @@
 
 	.debit {
 		text-align: left;
-		margin-right: 1em;
 	}
 
 	.credit {
-		margin-left: 1em;
 		text-align: right;
+	}
+
+	.debit.normal {
+		margin-right: 1em;
+	}
+
+	.credit.normal {
+		margin-left: 1em;
+	}
+
+	.debit.numeric {
+		margin-right: 3em;
+	}
+
+	.credit.numeric {
+		margin-left: 3em;
 	}
 </style>
