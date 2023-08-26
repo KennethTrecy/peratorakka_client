@@ -15,7 +15,7 @@
 
 	import AddForm from "%/financial_entries/add_form.svelte"
 	import ArticleGrid from "$/layout/article_grid.svelte"
-	import DataTable from "%/modifiers/data_table.svelte"
+	import DataTable from "%/financial_entries/data_table.svelte"
 	import GridCell from "$/layout/grid_cell.svelte"
 	import InnerGrid from "$/layout/inner_grid.svelte"
 	import PrimaryHeading from "$/typography/primary_heading.svelte"
@@ -101,7 +101,7 @@
 
 	onMount(loadList)
 
-	function addModifier(event: CustomEvent<FinancialEntry>) {
+	function addFinancialEntry(event: CustomEvent<FinancialEntry>) {
 		const newFinancialEntry = event.detail
 		financialEntries = [
 			...financialEntries,
@@ -109,7 +109,7 @@
 		]
 	}
 
-	function removeModifier(event: CustomEvent<FinancialEntry>) {
+	function removeFinancialEntry(event: CustomEvent<FinancialEntry>) {
 		const oldFinancialEntry = event.detail
 		financialEntries = financialEntries.filter(
 			financialEntry => financialEntry.id !== oldFinancialEntry.id
@@ -131,6 +131,13 @@
 			{accounts}
 			{modifiers}
 			isLoadingInitialData={$isConnectingForModifiers}
-			on:create={addModifier}/>
+			on:create={addFinancialEntry}/>
+		<DataTable
+			{currencies}
+			{accounts}
+			{modifiers}
+			data={financialEntries}
+			isConnecting={$isConnectingForFinancialEntries}
+			on:delete={removeFinancialEntry}/>
 	</InnerGrid>
 </ArticleGrid>
