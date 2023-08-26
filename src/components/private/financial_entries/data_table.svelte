@@ -19,10 +19,11 @@
 		Entries should be frozen to prevent editing or deletion.
 	</svelte:fragment>
 	<DataTableRecordHeader slot="table_headers">
-		<DataTableHeader>Amounts</DataTableHeader>
-		<DataTableHeader>Action</DataTableHeader>
-		<DataTableHeader>Remarks</DataTableHeader>
-		<DataTableHeader>Transaction Date</DataTableHeader>
+		<DataTableHeader slot="leading_headers">Transaction Date</DataTableHeader>
+		<svelte:fragment slot="trailing_headers">
+			<DataTableHeader>Amounts</DataTableHeader>
+			<DataTableHeader>Remarks</DataTableHeader>
+		</svelte:fragment>
 	</DataTableRecordHeader>
 	<svelte:fragment slot="table_rows">
 		{#each data as entity(entity.id)}

@@ -18,9 +18,11 @@
 		They can be associated to account entries.
 	</svelte:fragment>
 	<DataTableRecordHeader slot="table_headers">
-		<DataTableHeader>Action</DataTableHeader>
-		<DataTableHeader>Kind</DataTableHeader>
-		<DataTableHeader>Description</DataTableHeader>
+		<svelte:fragment slot="trailing_headers">
+			<DataTableHeader>Kind</DataTableHeader>
+			<DataTableHeader>Financial Action</DataTableHeader>
+			<DataTableHeader>Description</DataTableHeader>
+		</svelte:fragment>
 	</DataTableRecordHeader>
 	<svelte:fragment slot="table_rows">
 		{#each data as entity(entity.id)}
