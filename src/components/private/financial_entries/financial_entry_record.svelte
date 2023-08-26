@@ -147,7 +147,7 @@
 	function formatAmount(currency: Currency | undefined, amount: string) {
 		const parsedAmount = parseFloat(amount)
 		const formatter = new Intl.NumberFormat("en-IN", {
-			"style": "default",
+			"style": "decimal",
 			minimumFractionDigits,
 			maximumFractionDigits
 		})
@@ -194,6 +194,7 @@
 	</DataTableCell>
 	<svelte:fragment slot="trailing_cells">
 		<DataTableAccountCell
+			kind="numeric"
 			rawDebit={[ friendlyDebitAmount ]}
 			rawCredit={[ friendlyCreditAmount ]}/>
 		<DataTableCell>
