@@ -13,7 +13,7 @@
 	export let data: FinancialEntry[]
 </script>
 
-<DataTable collectiveName="Modifiers" {isConnecting} {data}>
+<DataTable collectiveName="Financial Entries" {isConnecting} {data}>
 	<svelte:fragment slot="filled_collection_description">
 		Below are the financial entries that you have added on to your profile.
 		Entries should be frozen to prevent editing or deletion.
