@@ -10,7 +10,6 @@
 	import { createEventDispatcher } from "svelte"
 	import { writable } from "svelte/store"
 
-	import { acceptableModifierKinds, acceptableModifierActions } from "#/entity"
 	import { UNKNOWN_OPTION, UNKNOWN_ACCOUNT } from "#/component"
 
 	import makeJSONRequester from "$/rest/make_json_requester"
@@ -190,13 +189,13 @@
 			disabled={$isConnectingToUpdate}
 			on:cancelEdit={cancelEdit}/>
 	</BasicForm>
-	<svelte:fragment slot="special_cells">
+	<DataTableCell slot="leading_cells">
+		{transactedAt}
+	</DataTableCell>
+	<svelte:fragment slot="trailing_cells">
 		<DataTableAccountCell
 			rawDebit={[ friendlyDebitAmount ]}
 			rawCredit={[ friendlyCreditAmount ]}/>
-		<DataTableCell>
-			{friendlyAction}
-		</DataTableCell>
 		<DataTableCell>
 			{resolveRemarks}
 		</DataTableCell>

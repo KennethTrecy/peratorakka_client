@@ -70,11 +70,12 @@
 			{confirmEdit}
 			{cancelEdit}/>
 	{:else}
-		<DataTableHeader>{label}</DataTableHeader>
+		<slot name="leading_cells"/>
+		<DataTableHeader scope="row">{label}</DataTableHeader>
 		<DataTableAccountCell
 			rawDebit={[ debitAccountName ]}
 			rawCredit={[ creditAccountName ]}/>
-		<slot name="special_cells"/>
+		<slot name="trailing_cells"/>
 		<DataTableCell>
 			{#if isConfirmingDeletion}
 				<TextButton

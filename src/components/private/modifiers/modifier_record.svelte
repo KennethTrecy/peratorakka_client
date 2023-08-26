@@ -167,7 +167,7 @@
 			disabled={$isConnectingToUpdate}
 			on:cancelEdit={cancelEdit}/>
 	</BasicForm>
-	<svelte:fragment slot="special_cells">
+	<svelte:fragment slot="trailing_cells">
 		<DataTableCell>
 			{friendlyAction}
 		</DataTableCell>
