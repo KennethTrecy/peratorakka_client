@@ -1,38 +1,41 @@
 <script lang="ts">
-	import type { Currency, Account, Modifier } from "+/entity"
+	import type { Currency, Account, Modifier, FinancialEntry } from "+/entity"
 
 	import DataTable from "$/catalog/data_table.svelte"
 	import DataTableHeader from "$/catalog/data_table_header.svelte"
 	import DataTableRecordHeader from "$/catalog/data_table_record_headers.svelte"
-	import ModifierRecord from "%/modifiers/modifier_record.svelte"
+	import FinancialEntryRecord from "%/financial_entries/financial_entry_record.svelte"
 
 	export let isConnecting: boolean
 	export let currencies: Currency[]
 	export let accounts: Account[]
-	export let data: Modifier[]
+	export let modifiers: Modifier[]
+	export let data: FinancialEntry[]
 </script>
 
 <DataTable collectiveName="Modifiers" {isConnecting} {data}>
 	<svelte:fragment slot="filled_collection_description">
-		Below are the modifiers that you have added on to your profile.
-		They can be associated to account entries.
+		Below are the financial entries that you have added on to your profile.
+		Entries should be frozen to prevent editing or deletion.
 	</svelte:fragment>
 	<DataTableRecordHeader slot="table_headers">
+		<DataTableHeader>Amounts</DataTableHeader>
 		<DataTableHeader>Action</DataTableHeader>
-		<DataTableHeader>Kind</DataTableHeader>
-		<DataTableHeader>Description</DataTableHeader>
+		<DataTableHeader>Remarks</DataTableHeader>
+		<DataTableHeader>Transaction Date</DataTableHeader>
 	</DataTableRecordHeader>
 	<svelte:fragment slot="table_rows">
 		{#each data as entity(entity.id)}
-			<ModifierRecord
+			<FinancialEntryRecord
 				bind:data={entity}
 				{currencies}
 				{accounts}
+				{modifiers}
 				on:delete/>
 		{/each}
 	</svelte:fragment>
 	<svelte:fragment slot="empty_collection_description">
-		There are no available modifiers at the moment.
-		Create a modifier to view.
+		There are no available financial entries at the moment.
+		Create a financial entry to view.
 	</svelte:fragment>
 </DataTable>
