@@ -13,14 +13,25 @@ export function formatAmount(
 		.split("")
 
 	for (let i = untrimmedAmount.length - 1; i >= 0; ++i) {
-		if (untrimmedAmount[i] === "0") {
+		if (untrimmedAmount[i] === "0" && i > minimumFractionDigits) {
 			untrimmedAmount.pop()
 		} else {
 			break;
 		}
 	}
 
-	const formattedAmount = untrimmedAmount.join("")
+	const trimmedAmount = untrimmedAmount.join("").split(".")
+	const whole = trimmedAmount[0]
+	let rawFraction = trimmedAmount[1] ?? ""
+	rawFraction = `${rawFraction}${
+		Array(minimumFractionDigits - rawFraction.length).fill(0).join("")
+	}`
+	rawFraction = rawFraction.length === 0
+		? ""
+		: `.${rawFraction}`
+
+	const formattedAmount = `${whole}${rawFraction}`
+
 
 	return `${currency?.code ?? "---"} ${formattedAmount}`
 }
