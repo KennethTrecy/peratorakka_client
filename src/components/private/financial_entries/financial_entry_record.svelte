@@ -14,6 +14,7 @@
 
 	import makeJSONRequester from "$/rest/make_json_requester"
 	import convertSnakeCaseToProperCase from "$/utility/convert_snake_case_to_proper_case"
+	import { formatAmount } from "!/index"
 
 	import BasicForm from "%/financial_entries/basic_form.svelte"
 	import DataTableAccountCell from "$/catalog/data_table_account_cell.svelte"
@@ -62,8 +63,18 @@
 	$: creditCurrency = creditAccount && currencies.find(
 		currency => currency.id === creditAccount?.currency_id
 	)
-	$: friendlyDebitAmount = formatAmount(debitCurrency, data.debit_amount)
-	$: friendlyCreditAmount = formatAmount(creditCurrency, data.credit_amount)
+	$: friendlyDebitAmount = formatAmount(
+		debitCurrency,
+		data.debit_amount,
+		minimumFractionDigits,
+		maximumFractionDigits
+	)
+	$: friendlyCreditAmount = formatAmount(
+		creditCurrency,
+		data.credit_amount,
+		minimumFractionDigits,
+		maximumFractionDigits
+	)
 	$: resolveRemarks = remarks || "None"
 
 	let isConnectingToUpdate = writable<boolean>(false)
@@ -142,18 +153,6 @@
 		creditAmount = `${data.credit_amount}`
 		transactedAt = data.transacted_at.slice(0, "YYYY-MM-DD".length)
 		remarks = data.remarks
-	}
-
-	function formatAmount(currency: Currency | undefined, amount: string) {
-		const parsedAmount = parseFloat(amount)
-		const formatter = new Intl.NumberFormat("en-IN", {
-			"style": "decimal",
-			minimumFractionDigits,
-			maximumFractionDigits
-		})
-		const formattedAmount = formatter.format(parsedAmount)
-
-		return `${currency?.code ?? "---"} ${formattedAmount}`
 	}
 </script>
 
