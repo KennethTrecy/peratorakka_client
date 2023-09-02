@@ -14,10 +14,7 @@ const configuration = {
 			"$/*": resolve("./src/components/public"),
 			"%/*": resolve("./src/components/private"),
 			"@/*": resolve("./src"),
-			"~/*": resolve("./t"),
-			"material-symbols-outlined.woff2": resolve("./node_modules/beercss/dist/cdn/material-symbols-outlined.woff2"),
-			"material-symbols-rounded.woff2": resolve("./node_modules/beercss/dist/cdn/material-symbols-rounded.woff2"),
-			"material-symbols-sharp.woff2": resolve("./node_modules/beercss/dist/cdn/material-symbols-sharp.woff2")
+			"~/*": resolve("./t")
 		}
 	},
 
