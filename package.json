@@ -65,6 +65,7 @@
 		"@material/theme": "^14.0.0",
 		"@material/top-app-bar": "^14.0.0",
 		"@material/typography": "^14.0.0",
+		"fraction.js": "^4.3.6",
 		"svelte": "^4.1.1"
 	}
 }
