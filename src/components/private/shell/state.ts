@@ -64,6 +64,11 @@ export const menuItemInfos = derived<MenuItemInfo[]>(
 				"label": "Financial Entries"
 			} : null,
 			hasTokenCurrently && hasUserCurrently ? {
+				"link": "/frozen_periods",
+				"icon": "weather_snowy",
+				"label": "Frozen Periods"
+			} : null,
+			hasTokenCurrently && hasUserCurrently ? {
 				"link": "/log_out",
 				"icon": "logout",
 				"label": "Log out"
