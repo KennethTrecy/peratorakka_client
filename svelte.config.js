@@ -13,6 +13,7 @@ const configuration = {
 			"#/*": resolve("./src/constants"),
 			"$/*": resolve("./src/components/public"),
 			"%/*": resolve("./src/components/private"),
+			"!/*": resolve("./src/components/third-party"),
 			"@/*": resolve("./src"),
 			"~/*": resolve("./t")
 		}
