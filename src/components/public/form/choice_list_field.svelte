@@ -153,4 +153,8 @@
 	.mdc-select__dropdown-icon {
 		font-size: 1.5rem;
 	}
+
+	.mdc-select:not(.mdc-select--disabled) .mdc-select__selected-text {
+		color: inherit;
+	}
 </style>
