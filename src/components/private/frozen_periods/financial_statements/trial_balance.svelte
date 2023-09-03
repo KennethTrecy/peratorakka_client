@@ -33,27 +33,25 @@
 	)
 </script>
 
-<GridCell kind="normal">
-	<QuarternaryHeading>{headingAdjective} Trial Balance</QuarternaryHeading>
-	<UnitDataTable>
-		<svelte:fragment slot="table_headers">
-			<DataTableHeader>Account</DataTableHeader>
-			<DataTableHeader>Debit Amount</DataTableHeader>
-			<DataTableHeader>Credit Amount</DataTableHeader>
-		</svelte:fragment>
-		<svelte:fragment slot="table_rows">
-			{#each data as calculation(calculation.account_id)}
-				<TrialRow
-					{currency}
-					{accounts}
-					data={calculation}
-					kind="unadjusted"/>
-			{/each}
-		</svelte:fragment>
-		<svelte:fragment slot="table_footer_cells">
-			<DataTableHeader scope="row">Total</DataTableHeader>
-			<DataTableCell kind="numeric">{friendlyTotalDebitAmount}</DataTableCell>
-			<DataTableCell kind="numeric">{friendlyTotalCreditAmount}</DataTableCell>
-		</svelte:fragment>
-	</UnitDataTable>
-</GridCell>
+<QuarternaryHeading>{headingAdjective} Trial Balance</QuarternaryHeading>
+<UnitDataTable>
+	<svelte:fragment slot="table_headers">
+		<DataTableHeader>Account</DataTableHeader>
+		<DataTableHeader>Debit Amount</DataTableHeader>
+		<DataTableHeader>Credit Amount</DataTableHeader>
+	</svelte:fragment>
+	<svelte:fragment slot="table_rows">
+		{#each data as calculation(calculation.account_id)}
+			<TrialRow
+				{currency}
+				{accounts}
+				data={calculation}
+				kind="unadjusted"/>
+		{/each}
+	</svelte:fragment>
+	<svelte:fragment slot="table_footer_cells">
+		<DataTableHeader scope="row">Total</DataTableHeader>
+		<DataTableCell kind="numeric">{friendlyTotalDebitAmount}</DataTableCell>
+		<DataTableCell kind="numeric">{friendlyTotalCreditAmount}</DataTableCell>
+	</svelte:fragment>
+</UnitDataTable>

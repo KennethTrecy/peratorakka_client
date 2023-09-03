@@ -2,6 +2,7 @@
 	import type { FinancialStatementGroup } from "+/rest"
 	import type { Currency, Account, SummaryCalculation } from "+/entity"
 
+	import GridCell from "$/layout/grid_cell.svelte"
 	import TrialBalance from "%/frozen_periods/financial_statements/trial_balance.svelte"
 
 	export let statement: FinancialStatementGroup
@@ -17,15 +18,19 @@
 	)
 </script>
 
-<TrialBalance
-	kind="unadjusted"
-	{statement}
-	{currency}
-	accounts={allowedAccounts}
-	data={allowedCalculations}/>
-<TrialBalance
-	kind="adjusted"
-	{statement}
-	{currency}
-	accounts={allowedAccounts}
-	data={allowedCalculations}/>
+<GridCell kind="normal">
+	<TrialBalance
+		kind="unadjusted"
+		{statement}
+		{currency}
+		accounts={allowedAccounts}
+		data={allowedCalculations}/>
+</GridCell>
+<GridCell kind="normal">
+	<TrialBalance
+		kind="adjusted"
+		{statement}
+		{currency}
+		accounts={allowedAccounts}
+		data={allowedCalculations}/>
+</GridCell>
