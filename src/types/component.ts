@@ -28,3 +28,7 @@ export type GridCellKind =
 	| "majority"
 	| "minority"
 	| "narrow"
+
+export type TrialBalanceKind =
+	| "adjusted"
+	| "unadjusted"

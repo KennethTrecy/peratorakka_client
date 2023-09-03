@@ -1,5 +1,6 @@
 <script lang="ts">
 	import type { Currency, Account, SummaryCalculation } from "+/entity"
+	import type { TrialBalanceKind } from "+/component"
 
 	import { UNKNOWN_ACCOUNT } from "#/component"
 
@@ -12,7 +13,7 @@
 	export let currency: Currency|undefined
 	export let accounts: Account[]
 	export let data: Omit<SummaryCalculation, "frozen_period_id">
-	export let kind: "unadjusted"|"adjusted"
+	export let kind: TrialBalanceKind
 
 	$: account = accounts.find(
 		account => account.id === data.account_id
