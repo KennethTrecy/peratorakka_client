@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { Account, Currency, Modifier, FinancialEntry } from "+/entity"
+	import type { Account, Currency, FrozenPeriod, SummaryCalculation } from "+/entity"
 
 	import { get } from "svelte/store"
 	import { onMount } from "svelte"
@@ -31,15 +31,15 @@
 
 	let currencies: Currency[] = []
 	let accounts: Account[] = []
-	let modifiers: Modifier[] = []
-	let financialEntries: FinancialEntry[] = []
+	let frozenPeriods: FrozenPeriod[] = []
+	let summaryCalculations: SummaryCalculation[] = []
 
 	let {
-		"isConnecting": isConnectingForFinancialEntries,
-		"errors": errorsForFinancialEntries,
-		"send": requestForFinancialEntries
+		"isConnecting": isConnectingForFrozenPeriods,
+		"errors": errorsForFrozenPeriods,
+		"send": requestForFrozenPeriods
 	} = makeJSONRequester({
-		"path": "/api/v1/financial_entries",
+		"path": "/api/v1/frozen_periods",
 		"defaultRequestConfiguration": {
 			"method": "GET"
 		},
@@ -48,39 +48,11 @@
 				"statusCode": 200,
 				"action": async (response: Response) => {
 					let responseDocument = await response.json()
-					errorsForFinancialEntries.set([])
-					financialEntries = responseDocument.financial_entries
-				}
-			}
-		],
-		"expectedErrorStatusCodes": [ 401 ]
-	})
-
-	let {
-		"isConnecting": isConnectingForModifiers,
-		"errors": errorsForModifiers,
-		"send": requestForModifiers
-	} = makeJSONRequester({
-		"path": "/api/v1/modifiers",
-		"defaultRequestConfiguration": {
-			"method": "GET"
-		},
-		"manualResponseHandlers": [
-			{
-				"statusCode": 200,
-				"action": async (response: Response) => {
-					let responseDocument = await response.json()
-					errorsForModifiers.set([])
-					currencies = responseDocument.currencies
+					errorsForFrozenPeriods.set([])
+					frozenPeriods = responseDocument.frozen_periods
+					summaryCalculations = responseDocument.summary_calculations
 					accounts = responseDocument.accounts
-					modifiers = responseDocument.modifiers
-				}
-			},
-			{
-				"statusCode": 204,
-				"action": async (response: Response) => {
-					errorsForModifiers.set([])
-					modifiers = []
+					currencies = responseDocument.currencies
 				}
 			}
 		],
@@ -95,49 +67,35 @@
 			return
 		}
 
-		await requestForFinancialEntries({})
-		await requestForModifiers({})
+		await requestForFrozenPeriods({})
 	}
 
 	onMount(loadList)
 
-	function addFinancialEntry(event: CustomEvent<FinancialEntry>) {
-		const newFinancialEntry = event.detail
-		financialEntries = [
-			...financialEntries,
-			newFinancialEntry
+	function addFrozenPeriod(event: CustomEvent<FrozenPeriod>) {
+		const newFrozenPeriod = event.detail
+		frozenPeriods = [
+			...frozenPeriods,
+			newFrozenPeriod
 		]
 	}
 
-	function removeFinancialEntry(event: CustomEvent<FinancialEntry>) {
-		const oldFinancialEntry = event.detail
-		financialEntries = financialEntries.filter(
-			financialEntry => financialEntry.id !== oldFinancialEntry.id
+	function removeFrozenPeriod(event: CustomEvent<FrozenPeriod>) {
+		const oldFrozenPeriod = event.detail
+		frozenPeriods = frozenPeriods.filter(
+			frozenPeriod => frozenPeriod.id !== oldFrozenPeriod.id
 		)
 	}
 </script>
 
 <svelte:head>
-	<title>Financial Entries</title>
+	<title>Frozen Periods</title>
 </svelte:head>
 
 <ArticleGrid>
 	<InnerGrid>
 		<GridCell kind="full">
-			<PrimaryHeading>Financial Entries</PrimaryHeading>
+			<PrimaryHeading>Frozen Periods</PrimaryHeading>
 		</GridCell>
-		<AddForm
-			{currencies}
-			{accounts}
-			{modifiers}
-			isLoadingInitialData={$isConnectingForModifiers}
-			on:create={addFinancialEntry}/>
-		<DataTable
-			{currencies}
-			{accounts}
-			{modifiers}
-			data={financialEntries}
-			isConnecting={$isConnectingForFinancialEntries}
-			on:delete={removeFinancialEntry}/>
 	</InnerGrid>
 </ArticleGrid>
