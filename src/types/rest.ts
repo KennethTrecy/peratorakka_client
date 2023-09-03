@@ -37,3 +37,22 @@ export interface RequesterDependencies {
 export interface RequesterInfo extends RequesterDependencies {
 	send: (requestInfo: Partial<RequestInit>) => Promise<void>
 }
+
+export interface TrialBalance {
+	debit_total: string,
+	credit_total: string
+}
+
+export interface FinancialStatementGroup {
+	currency_id: number
+	unadjusted_trial_balance: TrialBalance,
+	income_statement: {
+		net_total: string
+	},
+	balance_sheet: {
+		total_assets: string,
+		total_liabilities: string,
+		total_equities: string
+	},
+	adjusted_trial_balance: TrialBalance
+}
