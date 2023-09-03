@@ -2,11 +2,17 @@
 	import type { FinancialStatementGroup } from "+/rest"
 	import type { Currency, Account, SummaryCalculation } from "+/entity"
 
+	import { formatAmount } from "!/index"
+
+	import DataTableCell from "$/catalog/data_table_cell.svelte"
 	import DataTableHeader from "$/catalog/data_table_header.svelte"
 	import GridCell from "$/layout/grid_cell.svelte"
 	import QuarternaryHeading from "$/typography/quarternary_heading.svelte"
 	import TrialRow from "%/frozen_periods/financial_statements/trial_row.svelte"
 	import UnitDataTable from "$/catalog/unit_data_table.svelte"
+
+	const minimumFractionDigits = 2
+	const maximumFractionDigits = 8
 
 	export let statement: FinancialStatementGroup
 	export let currencies: Currency[]
@@ -18,6 +24,18 @@
 	$: allowedAccountIDs = allowedAccounts.map(account => account.id)
 	$: allowedCalculations = data.filter(
 		calculation => allowedAccountIDs.indexOf(calculation.account_id) > -1
+	)
+	$: friendlyUnadjustedTotalDebitAmount = formatAmount(
+		currency,
+		statement.unadjusted_trial_balance.debit_total,
+		minimumFractionDigits,
+		maximumFractionDigits
+	)
+	$: friendlyUnadjustedTotalCreditAmount = formatAmount(
+		currency,
+		statement.unadjusted_trial_balance.credit_total,
+		minimumFractionDigits,
+		maximumFractionDigits
 	)
 </script>
 
@@ -37,6 +55,11 @@
 					data={calculation}
 					kind="unadjusted"/>
 			{/each}
+		</svelte:fragment>
+		<svelte:fragment slot="table_footer_cells">
+			<DataTableHeader scope="row">Total</DataTableHeader>
+			<DataTableCell kind="numeric">{friendlyUnadjustedTotalDebitAmount}</DataTableCell>
+			<DataTableCell kind="numeric">{friendlyUnadjustedTotalCreditAmount}</DataTableCell>
 		</svelte:fragment>
 	</UnitDataTable>
 </GridCell>

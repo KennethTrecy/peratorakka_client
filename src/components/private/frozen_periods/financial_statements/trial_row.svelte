@@ -49,7 +49,7 @@
 {#if hasFilled}
 	<DataTableRow>
 		<DataTableHeader scope="row">{account.name}</DataTableHeader>
-		<DataTableCell>{shownDebitAmount}</DataTableCell>
-		<DataTableCell>{shownCreditAmount}</DataTableCell>
+		<DataTableCell kind="numeric">{shownDebitAmount}</DataTableCell>
+		<DataTableCell kind="numeric">{shownCreditAmount}</DataTableCell>
 	</DataTableRow>
 {/if}
