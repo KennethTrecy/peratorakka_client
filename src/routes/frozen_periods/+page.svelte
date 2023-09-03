@@ -13,7 +13,7 @@
 		mustBeAuthenticatedUser
 	} from "$/global_state"
 
-	import AddForm from "%/frozen_period/add_form.svelte"
+	import AddForm from "%/frozen_periods/add_form.svelte"
 	import ArticleGrid from "$/layout/article_grid.svelte"
 	// import DataTable from "%/frozen_period/data_table.svelte"
 	import GridCell from "$/layout/grid_cell.svelte"

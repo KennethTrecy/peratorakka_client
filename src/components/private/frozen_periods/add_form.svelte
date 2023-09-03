@@ -1,15 +1,14 @@
 <script lang="ts">
-	import type { Account, Currency, FrozenPeriod, SummaryCalculation } from "+/entity"
+	import type { FrozenPeriod, SummaryCalculation } from "+/entity"
 
 	import { createEventDispatcher } from "svelte"
 
-	import { UNKNOWN_OPTION } from "#/component"
-
 	import makeJSONRequester from "$/rest/make_json_requester"
-	import convertSnakeCaseToProperCase from "$/utility/convert_snake_case_to_proper_case"
 
+	import BasicForm from "%/frozen_periods/basic_form.svelte"
 	import DescriptiveForm from "$/form/descriptive_form.svelte"
 	import ElementalParagraph from "$/typography/elemental_paragraph.svelte"
+	import TextCardButton from "$/button/card/text.svelte"
 	import TextContainer from "$/typography/text_container.svelte"
 
 	const dispatch = createEventDispatcher<{
@@ -32,8 +31,8 @@
 
 	export let isLoadingInitialData: boolean
 
-	export let startedAt: string = defaultStartedDate
-	export let finishedAt: string = defaultFinishedDate
+	let startedAt: string = defaultStartedDate
+	let finishedAt: string = defaultFinishedDate
 
 	let { isConnecting, errors, send } = makeJSONRequester({
 		"path": "/api/v1/frozen_periods",
@@ -87,4 +86,23 @@
 			To create frozen period, choose the started date and finished date of a frozen period. Check the balances of each account and ensure the temporary accounts have been closed. If every calculation is in order, freeze the period and the system would wait for future entries.
 		</ElementalParagraph>
 	</TextContainer>
+	<BasicForm
+		slot="form"
+		bind:startedAt={startedAt}
+		bind:finishedAt={finishedAt}
+		isConnecting={$isConnecting}
+		{IDPrefix}
+		errors={$errors}
+		on:submit={createFrozenPeriod}>
+		<svelte:fragment slot="button_group">
+			<TextCardButton
+				kind="button"
+				disabled={$isConnecting}
+				label="Check"/>
+			<TextCardButton
+				kind="submit"
+				disabled={$isConnecting}
+				label="Submit"/>
+		</svelte:fragment>
+	</BasicForm>
 </DescriptiveForm>
