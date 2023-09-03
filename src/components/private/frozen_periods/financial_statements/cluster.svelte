@@ -3,6 +3,7 @@
 	import type { Currency, Account, SummaryCalculation } from "+/entity"
 
 	import BalanceSheet from "%/frozen_periods/financial_statements/balance_sheet.svelte"
+	import Flex from "$/layout/flex.svelte"
 	import GridCell from "$/layout/grid_cell.svelte"
 	import IncomeStatement from "%/frozen_periods/financial_statements/income_statement.svelte"
 	import TrialBalance from "%/frozen_periods/financial_statements/trial_balance.svelte"
@@ -21,32 +22,40 @@
 </script>
 
 <GridCell kind="full">
-	<TrialBalance
-		kind="unadjusted"
-		{statement}
-		{currency}
-		accounts={allowedAccounts}
-		data={allowedCalculations}/>
+	<Flex>
+		<TrialBalance
+			kind="unadjusted"
+			{statement}
+			{currency}
+			accounts={allowedAccounts}
+			data={allowedCalculations}/>
+	</Flex>
 </GridCell>
 <GridCell kind="full">
-	<IncomeStatement
-		{statement}
-		{currency}
-		accounts={allowedAccounts}
-		data={allowedCalculations}/>
+	<Flex>
+		<IncomeStatement
+			{statement}
+			{currency}
+			accounts={allowedAccounts}
+			data={allowedCalculations}/>
+	</Flex>
 </GridCell>
 <GridCell kind="full">
-	<BalanceSheet
-		{statement}
-		{currency}
-		accounts={allowedAccounts}
-		data={allowedCalculations}/>
+	<Flex>
+		<BalanceSheet
+			{statement}
+			{currency}
+			accounts={allowedAccounts}
+			data={allowedCalculations}/>
+	</Flex>
 </GridCell>
 <GridCell kind="full">
-	<TrialBalance
-		kind="adjusted"
-		{statement}
-		{currency}
-		accounts={allowedAccounts}
-		data={allowedCalculations}/>
+	<Flex>
+		<TrialBalance
+			kind="adjusted"
+			{statement}
+			{currency}
+			accounts={allowedAccounts}
+			data={allowedCalculations}/>
+	</Flex>
 </GridCell>
