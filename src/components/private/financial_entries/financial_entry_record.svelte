@@ -12,18 +12,15 @@
 
 	import { UNKNOWN_OPTION, UNKNOWN_ACCOUNT } from "#/component"
 
-	import makeJSONRequester from "$/rest/make_json_requester"
 	import convertSnakeCaseToProperCase from "$/utility/convert_snake_case_to_proper_case"
-	import { formatAmount } from "!/index"
+	import formatAmount from "$/utility/format_amount"
+	import makeJSONRequester from "$/rest/make_json_requester"
 
 	import BasicForm from "%/financial_entries/basic_form.svelte"
 	import DataTableAccountCell from "$/catalog/data_table_account_cell.svelte"
 	import DataTableCell from "$/catalog/data_table_cell.svelte"
 	import DataTableRecord from "$/catalog/data_table_record.svelte"
 	import EditActionCardButtonPair from "$/button/card/edit_action_pair.svelte"
-
-	const minimumFractionDigits = 2
-	const maximumFractionDigits = 8
 
 	export let currencies: Currency[]
 	export let accounts: Account[]
@@ -56,25 +53,14 @@
 			account => account.id === chosenModifier?.credit_account_id
 		)
 	) ?? UNKNOWN_ACCOUNT
-	$: friendlyAction = convertSnakeCaseToProperCase(chosenModifier?.action ?? UNKNOWN_OPTION)
 	$: debitCurrency = debitAccount && currencies.find(
 		currency => currency.id === debitAccount?.currency_id
 	)
 	$: creditCurrency = creditAccount && currencies.find(
 		currency => currency.id === creditAccount?.currency_id
 	)
-	$: friendlyDebitAmount = formatAmount(
-		debitCurrency,
-		data.debit_amount,
-		minimumFractionDigits,
-		maximumFractionDigits
-	)
-	$: friendlyCreditAmount = formatAmount(
-		creditCurrency,
-		data.credit_amount,
-		minimumFractionDigits,
-		maximumFractionDigits
-	)
+	$: friendlyDebitAmount = formatAmount(debitCurrency, data.debit_amount)
+	$: friendlyCreditAmount = formatAmount(creditCurrency, data.credit_amount)
 	$: resolveRemarks = remarks || "None"
 
 	let isConnectingToUpdate = writable<boolean>(false)

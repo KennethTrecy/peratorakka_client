@@ -8,5 +8,5 @@ export const UNKNOWN_ACCOUNT: Account = {
 	"description": "Either the associated account is still loading or not yet created."
 }
 
-const DEFAULT_MINIMUM_FRACTION_DIGITS = 2
-const DEFAULT_MAXIMUM_FRACTION_DIGITS = 8
+export const DEFAULT_MINIMUM_FRACTION_DIGITS = 2
+export const DEFAULT_MAXIMUM_FRACTION_DIGITS = 8

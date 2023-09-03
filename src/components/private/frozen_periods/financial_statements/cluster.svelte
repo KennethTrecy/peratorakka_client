@@ -2,7 +2,7 @@
 	import type { FinancialStatementGroup } from "+/rest"
 	import type { Currency, Account, SummaryCalculation } from "+/entity"
 
-	import { formatAmount } from "!/index"
+	import formatAmount from "$/utility/format_amount"
 
 	import DataTableCell from "$/catalog/data_table_cell.svelte"
 	import DataTableHeader from "$/catalog/data_table_header.svelte"
@@ -10,9 +10,6 @@
 	import QuarternaryHeading from "$/typography/quarternary_heading.svelte"
 	import TrialRow from "%/frozen_periods/financial_statements/trial_row.svelte"
 	import UnitDataTable from "$/catalog/unit_data_table.svelte"
-
-	const minimumFractionDigits = 2
-	const maximumFractionDigits = 8
 
 	export let statement: FinancialStatementGroup
 	export let currencies: Currency[]
@@ -27,15 +24,11 @@
 	)
 	$: friendlyUnadjustedTotalDebitAmount = formatAmount(
 		currency,
-		statement.unadjusted_trial_balance.debit_total,
-		minimumFractionDigits,
-		maximumFractionDigits
+		statement.unadjusted_trial_balance.debit_total
 	)
 	$: friendlyUnadjustedTotalCreditAmount = formatAmount(
 		currency,
-		statement.unadjusted_trial_balance.credit_total,
-		minimumFractionDigits,
-		maximumFractionDigits
+		statement.unadjusted_trial_balance.credit_total
 	)
 </script>
 
