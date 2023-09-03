@@ -1,16 +1,16 @@
 <script lang="ts">
-	import type { Currencies, Account, FrozenPeriod, SummaryCalculation } from "+/entity"
+	import type { Currency, Account, FrozenPeriod, SummaryCalculation } from "+/entity"
 
 	import { createEventDispatcher } from "svelte"
 
 	import makeJSONRequester from "$/rest/make_json_requester"
 
 	import BasicForm from "%/frozen_periods/basic_form.svelte"
+	import FinancialStatements from "%/frozen_periods/financial_statements.svelte"
 	import DescriptiveForm from "$/form/descriptive_form.svelte"
 	import ElementalParagraph from "$/typography/elemental_paragraph.svelte"
 	import TextCardButton from "$/button/card/text.svelte"
 	import TextContainer from "$/typography/text_container.svelte"
-	import GridCell from "$/layout/grid_cell.svelte"
 
 	const dispatch = createEventDispatcher<{
 		"create": FrozenPeriod
@@ -144,7 +144,8 @@
 			<TextCardButton
 				kind="button"
 				disabled={$isConnectingToCreate}
-				label="Check"/>
+				label="Check"
+				on:click={dryRunCreateFrozenPeriod}/>
 			<TextCardButton
 				kind="submit"
 				disabled={$isConnectingToCreate}
@@ -152,3 +153,11 @@
 		</svelte:fragment>
 	</BasicForm>
 </DescriptiveForm>
+<FinancialStatements
+	isConnecting={$isConnectingToDryRunCreate}
+	startedAt={startedAt}
+	finishedAt={finishedAt}
+	{currencies}
+	{accounts}
+	data={summaryCalculations}>
+</FinancialStatements>
