@@ -97,8 +97,8 @@
 		<GridCell kind="full">
 			<PrimaryHeading>Frozen Periods</PrimaryHeading>
 		</GridCell>
+		<AddForm
+			isLoadingInitialData={$isConnectingForFrozenPeriods}
+			on:create={addFrozenPeriod}/>
 	</InnerGrid>
-	<AddForm
-		isLoadingInitialData={$isConnectingForFrozenPeriods}
-		on:create={addFrozenPeriod}/>
 </ArticleGrid>
