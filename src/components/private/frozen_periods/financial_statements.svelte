@@ -2,10 +2,9 @@
 	import type { FinancialStatementGroup } from "+/rest"
 	import type { Currency, Account, SummaryCalculation } from "+/entity"
 
-	import DataTableHeader from "$/catalog/data_table_header.svelte"
+	import CatalogBase from "$/catalog/base.svelte"
 	import TertiaryHeading from "$/typography/tertiary_heading.svelte"
-	import TrialRow from "%/frozen_periods/financial_statements/trial_row.svelte"
-	import UnnamedDataTable from "$/catalog/unnamed_data_table.svelte"
+	import Cluster from "%/frozen_periods/financial_statements/cluster.svelte"
 
 	export let isConnecting: boolean
 
@@ -17,26 +16,21 @@
 	export let data: Omit<SummaryCalculation, "frozen_period_id">[]
 </script>
 
-<UnnamedDataTable collectiveName="Unadjusted trial balances" {isConnecting} {data}>
-	<TertiaryHeading slot="name">Unadjusted Trial Balances</TertiaryHeading>
+<CatalogBase collectiveName="Financial Statements" {isConnecting} {data}>
+	<TertiaryHeading slot="name">Financial Statements</TertiaryHeading>
 	<svelte:fragment slot="filled_collection_description">
-		Below are the unadjusted balances of different accounts from {startedAt} to {finishedAt}.
-	</svelte:fragment>
-	<svelte:fragment slot="table_headers">
-		<DataTableHeader>Account</DataTableHeader>
-		<DataTableHeader>Debit Amount</DataTableHeader>
-		<DataTableHeader>Credit Amount</DataTableHeader>
-	</svelte:fragment>
-	<svelte:fragment slot="table_rows">
-		{#each data as calculation(calculation.account_id)}
-			<TrialRow
-				{currencies}
-				{accounts}
-				data={calculation}
-				kind="unadjusted"/>
-		{/each}
+		Below are the financial statements of various currencies from {startedAt} to {finishedAt}.
 	</svelte:fragment>
 	<svelte:fragment slot="empty_collection_description">
-		There are no unadjusted trial balances at the moment. Create or check frozen period to see.
+		There are no financial statements at the moment. Create or check frozen period to see.
 	</svelte:fragment>
-</UnnamedDataTable>
+	<svelte:fragment slot="available_content">
+		{#each statements as statement(statement.currency_id)}
+			<Cluster
+				{statement}
+				{currencies}
+				{accounts}
+				{data}/>
+		{/each}
+	</svelte:fragment>
+</CatalogBase>

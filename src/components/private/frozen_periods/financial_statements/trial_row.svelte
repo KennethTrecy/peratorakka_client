@@ -12,7 +12,7 @@
 	const minimumFractionDigits = 2
 	const maximumFractionDigits = 8
 
-	export let currencies: Currency[]
+	export let currency: Currency|undefined
 	export let accounts: Account[]
 	export let data: Omit<SummaryCalculation, "frozen_period_id">
 	export let kind: "unadjusted"|"adjusted"
@@ -20,9 +20,6 @@
 	$: account = accounts.find(
 		account => account.id === data.account_id
 	) ?? UNKNOWN_ACCOUNT
-	$: currency = currencies.find(
-		currency => currency.id === account.currency_id
-	)
 	$: emptyAmount = formatAmount(
 		currency,
 		"0",
