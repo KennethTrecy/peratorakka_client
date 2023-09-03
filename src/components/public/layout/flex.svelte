@@ -1,4 +1,14 @@
-<div>
+<script lang="ts">
+	import type { FlexDirection } from "+/component"
+
+	export let direction: FlexDirection = "row"
+
+	$: flexClasses = [
+		direction
+	].filter(Boolean).join(" ")
+</script>
+
+<div class={flexClasses}>
 	<slot/>
 </div>
 
@@ -16,7 +26,6 @@
 		);
 
 		display: flex;
-		flex-flow: row wrap;
 		align-items: center;
 		gap: 1rem;
 
@@ -26,6 +35,14 @@
 			@media (max-width: #{map.get(variables.$breakpoints, $screen)}) {
 				padding: var(--mdc-layout-grid-margin-#{$screen}, $margin);
 			}
+		}
+
+		&.row {
+			flex-flow: row wrap;
+		}
+
+		&.column {
+			flex-flow: column wrap;
 		}
 	}
 </style>

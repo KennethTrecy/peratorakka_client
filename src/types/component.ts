@@ -32,3 +32,7 @@ export type GridCellKind =
 export type TrialBalanceKind =
 	| "adjusted"
 	| "unadjusted"
+
+export type FlexDirection =
+	| "row"
+	| "column"

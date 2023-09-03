@@ -22,7 +22,7 @@
 </script>
 
 <GridCell kind="full">
-	<Flex>
+	<Flex direction="column">
 		<TrialBalance
 			kind="unadjusted"
 			{statement}
@@ -32,7 +32,7 @@
 	</Flex>
 </GridCell>
 <GridCell kind="full">
-	<Flex>
+	<Flex direction="column">
 		<IncomeStatement
 			{statement}
 			{currency}
@@ -41,7 +41,7 @@
 	</Flex>
 </GridCell>
 <GridCell kind="full">
-	<Flex>
+	<Flex direction="column">
 		<BalanceSheet
 			{statement}
 			{currency}
@@ -50,7 +50,7 @@
 	</Flex>
 </GridCell>
 <GridCell kind="full">
-	<Flex>
+	<Flex direction="column">
 		<TrialBalance
 			kind="adjusted"
 			{statement}
