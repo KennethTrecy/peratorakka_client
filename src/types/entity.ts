@@ -53,3 +53,17 @@ export interface FinancialEntry extends Entity {
 	credit_amount: string
 	remarks: string
 }
+
+export interface FrozenPeriod extends Entity {
+	started_at: string
+	finished_at: string
+}
+
+export interface SummaryCalculation extends Entity {
+	frozen_period_id: number
+	account_id: number
+	unadjusted_debit_amount: string
+	unadjusted_credit_amount: string
+	adjusted_debit_amount: string
+	adjusted_credit_amount: string
+}
