@@ -96,7 +96,7 @@
 					summaryCalculations = document.summary_calculations
 					accounts = document.accounts
 					currencies = document.currencies
-					statements = document.statements
+					statements = document["@meta"].statements
 
 					dryRunCreateErrors.set([])
 				}
