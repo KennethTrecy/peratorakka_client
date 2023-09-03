@@ -21,9 +21,7 @@
 	<svelte:fragment slot="filled_collection_description">
 		Below are the financial statements of various currencies from {startedAt} to {finishedAt}.
 	</svelte:fragment>
-	<svelte:fragment slot="empty_collection_description">
-		There are no financial statements at the moment. Create or check frozen period to see.
-	</svelte:fragment>
+	<slot slot="empty_collection_description" name="empty_collection_description"/>
 	<svelte:fragment slot="available_content">
 		{#each statements as statement(statement.currency_id)}
 			<Cluster

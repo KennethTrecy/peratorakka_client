@@ -33,6 +33,7 @@
 
 	export let isLoadingInitialData: boolean
 
+	let hasAttemptedDryRun = false
 	let statements: FinancialStatementGroup[] = []
 	let summaryCalculations: SummaryCalculation[] = []
 	let currencies: Currency[] = []
@@ -92,13 +93,13 @@
 				"statusCode": 200,
 				"action": async (response: Response) => {
 					const document = await response.json()
-
 					summaryCalculations = document.summary_calculations
 					accounts = document.accounts
 					currencies = document.currencies
 					statements = document["@meta"].statements
 
 					dryRunCreateErrors.set([])
+					hasAttemptedDryRun = true
 				}
 			}
 		],
@@ -156,12 +157,17 @@
 		</svelte:fragment>
 	</BasicForm>
 </DescriptiveForm>
-<FinancialStatements
-	isConnecting={$isConnectingToDryRunCreate}
-	startedAt={startedAt}
-	finishedAt={finishedAt}
-	{statements}
-	{accounts}
-	{currencies}
-	data={summaryCalculations}>
-</FinancialStatements>
+{#if hasAttemptedDryRun}
+	<FinancialStatements
+		isConnecting={$isConnectingToDryRunCreate}
+		startedAt={startedAt}
+		finishedAt={finishedAt}
+		{statements}
+		{accounts}
+		{currencies}
+		data={summaryCalculations}>
+		<svelte:fragment slot="empty_collection_description">
+			There are no financial statements at the chosen date range. Please check another range.
+		</svelte:fragment>
+	</FinancialStatements>
+{/if}
