@@ -1,7 +1,6 @@
 <script lang="ts">
 	import type { Currency, Account, SummaryCalculation } from "+/entity"
 	import type { FinancialStatementGroup } from "+/rest"
-	import type { TrialBalanceKind } from "+/component"
 
 	import formatAmount from "$/utility/format_amount"
 
@@ -11,36 +10,44 @@
 	import TrialRow from "%/frozen_periods/financial_statements/trial_row.svelte"
 	import UnitDataTable from "$/catalog/unit_data_table.svelte"
 
-	export let kind: TrialBalanceKind
 	export let statement: FinancialStatementGroup
 	export let currency: Currency|undefined
 	export let accounts: Account[]
 	export let data: Omit<SummaryCalculation, "frozen_period_id">[]
 
-	$: headingAdjective = kind === "adjusted" ? "Adjusted" : "Unadjusted"
-	$: friendlyTotalDebitAmount = formatAmount(
-		currency,
-		kind === "adjusted"
-			? statement.adjusted_trial_balance.debit_total
-			: statement.unadjusted_trial_balance.debit_total
+	$: incomeAccounts = accounts.filter(account => account.kind === "income")
+	$: incomeAccountIDs = incomeAccounts.map(account => account.id)
+	$: expenseAccounts = accounts.filter(account => account.kind === "expense")
+	$: expenseAccountIDs = expenseAccounts.map(account => account.id)
+
+	$: incomeCalculations = data.filter(
+		calculation => incomeAccountIDs.indexOf(calculation.account_id) > -1
 	)
-	$: friendlyTotalCreditAmount = formatAmount(
+	$: expenseCalculations = data.filter(
+		calculation => expenseAccountIDs.indexOf(calculation.account_id) > -1
+	)
+	$: friendlyNetAmount = formatAmount(
 		currency,
-		kind === "adjusted"
-			? statement.adjusted_trial_balance.credit_total
-			: statement.unadjusted_trial_balance.credit_total
+		statement.income_statement.net_total
 	)
 </script>
 
-<QuarternaryHeading>{headingAdjective} Trial Balance</QuarternaryHeading>
+<QuarternaryHeading>Income Statement</QuarternaryHeading>
 <UnitDataTable>
 	<svelte:fragment slot="table_headers">
-		<DataTableHeader>Account</DataTableHeader>
-		<DataTableHeader>Debit Amount</DataTableHeader>
-		<DataTableHeader>Credit Amount</DataTableHeader>
+		<DataTableHeader>Temporary Account</DataTableHeader>
+		<DataTableHeader>Debit</DataTableHeader>
+		<DataTableHeader>Credit</DataTableHeader>
 	</svelte:fragment>
 	<svelte:fragment slot="table_rows">
-		{#each data as calculation(calculation.account_id)}
+		{#each incomeCalculations as calculation(calculation.account_id)}
+			<TrialRow
+				{currency}
+				{accounts}
+				data={calculation}
+				kind="unadjusted"/>
+		{/each}
+		{#each expenseCalculations as calculation(calculation.account_id)}
 			<TrialRow
 				{currency}
 				{accounts}
@@ -50,7 +57,7 @@
 	</svelte:fragment>
 	<svelte:fragment slot="table_footer_cells">
 		<DataTableHeader scope="row">Total</DataTableHeader>
-		<DataTableCell kind="numeric">{friendlyTotalDebitAmount}</DataTableCell>
-		<DataTableCell kind="numeric">{friendlyTotalCreditAmount}</DataTableCell>
+		<DataTableCell></DataTableCell>
+		<DataTableCell kind="numeric">{friendlyNetAmount}</DataTableCell>
 	</svelte:fragment>
 </UnitDataTable>
