@@ -1,4 +1,5 @@
 <script lang="ts">
+	import type { FinancialStatementGroup } from "+/rest"
 	import type { Currency, Account, FrozenPeriod, SummaryCalculation } from "+/entity"
 
 	import { createEventDispatcher } from "svelte"
@@ -32,6 +33,7 @@
 
 	export let isLoadingInitialData: boolean
 
+	let statements: FinancialStatementGroup[] = []
 	let summaryCalculations: SummaryCalculation[] = []
 	let currencies: Currency[] = []
 	let accounts: Account[] = []
@@ -94,6 +96,7 @@
 					summaryCalculations = document.summary_calculations
 					accounts = document.accounts
 					currencies = document.currencies
+					statements = document.statements
 
 					dryRunCreateErrors.set([])
 				}
@@ -157,7 +160,8 @@
 	isConnecting={$isConnectingToDryRunCreate}
 	startedAt={startedAt}
 	finishedAt={finishedAt}
-	{currencies}
+	{statements}
 	{accounts}
+	{currencies}
 	data={summaryCalculations}>
 </FinancialStatements>

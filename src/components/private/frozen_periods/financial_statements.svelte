@@ -1,4 +1,5 @@
 <script lang="ts">
+	import type { FinancialStatementGroup } from "+/rest"
 	import type { Currency, Account, SummaryCalculation } from "+/entity"
 
 	import DataTableHeader from "$/catalog/data_table_header.svelte"
@@ -8,11 +9,12 @@
 
 	export let isConnecting: boolean
 
-	export let startedAt = ""
-	export let finishedAt = ""
-	export let currencies: Currency[] = []
-	export let accounts: Account[] = []
-	export let data: Omit<SummaryCalculation, "frozen_period_id">[] = []
+	export let startedAt: string
+	export let finishedAt: string
+	export let statements: FinancialStatementGroup[]
+	export let currencies: Currency[]
+	export let accounts: Account[]
+	export let data: Omit<SummaryCalculation, "frozen_period_id">[]
 </script>
 
 <UnnamedDataTable collectiveName="Unadjusted trial balances" {isConnecting} {data}>
