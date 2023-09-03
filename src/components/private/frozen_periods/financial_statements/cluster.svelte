@@ -2,14 +2,7 @@
 	import type { FinancialStatementGroup } from "+/rest"
 	import type { Currency, Account, SummaryCalculation } from "+/entity"
 
-	import formatAmount from "$/utility/format_amount"
-
-	import DataTableCell from "$/catalog/data_table_cell.svelte"
-	import DataTableHeader from "$/catalog/data_table_header.svelte"
-	import GridCell from "$/layout/grid_cell.svelte"
-	import QuarternaryHeading from "$/typography/quarternary_heading.svelte"
-	import TrialRow from "%/frozen_periods/financial_statements/trial_row.svelte"
-	import UnitDataTable from "$/catalog/unit_data_table.svelte"
+	import TrialBalance from "%/frozen_periods/financial_statements/trial_balance.svelte"
 
 	export let statement: FinancialStatementGroup
 	export let currencies: Currency[]
@@ -22,37 +15,17 @@
 	$: allowedCalculations = data.filter(
 		calculation => allowedAccountIDs.indexOf(calculation.account_id) > -1
 	)
-	$: friendlyUnadjustedTotalDebitAmount = formatAmount(
-		currency,
-		statement.unadjusted_trial_balance.debit_total
-	)
-	$: friendlyUnadjustedTotalCreditAmount = formatAmount(
-		currency,
-		statement.unadjusted_trial_balance.credit_total
-	)
 </script>
 
-<GridCell kind="normal">
-	<QuarternaryHeading>Unadjusted Trial Balance</QuarternaryHeading>
-	<UnitDataTable>
-		<svelte:fragment slot="table_headers">
-			<DataTableHeader>Account</DataTableHeader>
-			<DataTableHeader>Debit Amount</DataTableHeader>
-			<DataTableHeader>Credit Amount</DataTableHeader>
-		</svelte:fragment>
-		<svelte:fragment slot="table_rows">
-			{#each allowedCalculations as calculation(calculation.account_id)}
-				<TrialRow
-					{currency}
-					accounts={allowedAccounts}
-					data={calculation}
-					kind="unadjusted"/>
-			{/each}
-		</svelte:fragment>
-		<svelte:fragment slot="table_footer_cells">
-			<DataTableHeader scope="row">Total</DataTableHeader>
-			<DataTableCell kind="numeric">{friendlyUnadjustedTotalDebitAmount}</DataTableCell>
-			<DataTableCell kind="numeric">{friendlyUnadjustedTotalCreditAmount}</DataTableCell>
-		</svelte:fragment>
-	</UnitDataTable>
-</GridCell>
+<TrialBalance
+	kind="unadjusted"
+	{statement}
+	{currency}
+	accounts={allowedAccounts}
+	data={allowedCalculations}/>
+<TrialBalance
+	kind="adjusted"
+	{statement}
+	{currency}
+	accounts={allowedAccounts}
+	data={allowedCalculations}/>
