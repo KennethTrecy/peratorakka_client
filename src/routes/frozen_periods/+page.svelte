@@ -13,9 +13,9 @@
 		mustBeAuthenticatedUser
 	} from "$/global_state"
 
-	import AddForm from "%/financial_entries/add_form.svelte"
+	import AddForm from "%/frozen_period/add_form.svelte"
 	import ArticleGrid from "$/layout/article_grid.svelte"
-	import DataTable from "%/financial_entries/data_table.svelte"
+	// import DataTable from "%/frozen_period/data_table.svelte"
 	import GridCell from "$/layout/grid_cell.svelte"
 	import InnerGrid from "$/layout/inner_grid.svelte"
 	import PrimaryHeading from "$/typography/primary_heading.svelte"
@@ -98,4 +98,7 @@
 			<PrimaryHeading>Frozen Periods</PrimaryHeading>
 		</GridCell>
 	</InnerGrid>
+	<AddForm
+		isLoadingInitialData={$isConnectingForFrozenPeriods}
+		on:create={addFrozenPeriod}/>
 </ArticleGrid>
