@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { FrozenPeriod, SummaryCalculation } from "+/entity"
+	import type { Currencies, Account, FrozenPeriod, SummaryCalculation } from "+/entity"
 
 	import { createEventDispatcher } from "svelte"
 
@@ -10,6 +10,7 @@
 	import ElementalParagraph from "$/typography/elemental_paragraph.svelte"
 	import TextCardButton from "$/button/card/text.svelte"
 	import TextContainer from "$/typography/text_container.svelte"
+	import GridCell from "$/layout/grid_cell.svelte"
 
 	const dispatch = createEventDispatcher<{
 		"create": FrozenPeriod
@@ -31,10 +32,18 @@
 
 	export let isLoadingInitialData: boolean
 
+	let summaryCalculations: SummaryCalculation[] = []
+	let currencies: Currency[] = []
+	let accounts: Account[] = []
+
 	let startedAt: string = defaultStartedDate
 	let finishedAt: string = defaultFinishedDate
 
-	let { isConnecting, errors, send } = makeJSONRequester({
+	let {
+		"isConnecting": isConnectingToCreate,
+		"errors": createErrors,
+		"send": requestToCreate
+	} = makeJSONRequester({
 		"path": "/api/v1/frozen_periods",
 		"defaultRequestConfiguration": {
 			"method": "POST"
@@ -48,7 +57,7 @@
 
 					startedAt = defaultStartedDate
 					finishedAt = defaultFinishedDate
-					errors.set([])
+					createErrors.set([])
 					dispatch("create", frozenPeriod)
 				}
 			}
@@ -57,9 +66,46 @@
 	})
 
 	async function createFrozenPeriod() {
-		await send({
+		await requestToCreate({
 			"body": JSON.stringify({
-				"financial_entry": {
+				"frozen_period": {
+					"started_at": `${startedAt} 00:00:00`,
+					"finished_at": `${finishedAt} 11:59:59`
+				}
+			})
+		})
+	}
+
+	let {
+		"isConnecting": isConnectingToDryRunCreate,
+		"errors": dryRunCreateErrors,
+		"send": requestToDryRunCreate
+	} = makeJSONRequester({
+		"path": "/api/v1/frozen_periods/dry_run",
+		"defaultRequestConfiguration": {
+			"method": "POST"
+		},
+		"manualResponseHandlers": [
+			{
+				"statusCode": 200,
+				"action": async (response: Response) => {
+					const document = await response.json()
+
+					summaryCalculations = document.summary_calculations
+					accounts = document.accounts
+					currencies = document.currencies
+
+					dryRunCreateErrors.set([])
+				}
+			}
+		],
+		"expectedErrorStatusCodes": [ 400 ]
+	})
+
+	async function dryRunCreateFrozenPeriod() {
+		await requestToDryRunCreate({
+			"body": JSON.stringify({
+				"frozen_period": {
 					"started_at": `${startedAt} 00:00:00`,
 					"finished_at": `${finishedAt} 11:59:59`
 				}
@@ -90,18 +136,18 @@
 		slot="form"
 		bind:startedAt={startedAt}
 		bind:finishedAt={finishedAt}
-		isConnecting={$isConnecting}
+		isConnecting={$isConnectingToCreate}
 		{IDPrefix}
-		errors={$errors}
+		errors={$createErrors}
 		on:submit={createFrozenPeriod}>
 		<svelte:fragment slot="button_group">
 			<TextCardButton
 				kind="button"
-				disabled={$isConnecting}
+				disabled={$isConnectingToCreate}
 				label="Check"/>
 			<TextCardButton
 				kind="submit"
-				disabled={$isConnecting}
+				disabled={$isConnectingToCreate}
 				label="Submit"/>
 		</svelte:fragment>
 	</BasicForm>
