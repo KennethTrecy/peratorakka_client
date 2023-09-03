@@ -2,6 +2,7 @@
 	import type { FinancialStatementGroup } from "+/rest"
 	import type { Currency, Account, SummaryCalculation } from "+/entity"
 
+	import BalanceSheet from "%/frozen_periods/financial_statements/balance_sheet.svelte"
 	import GridCell from "$/layout/grid_cell.svelte"
 	import IncomeStatement from "%/frozen_periods/financial_statements/income_statement.svelte"
 	import TrialBalance from "%/frozen_periods/financial_statements/trial_balance.svelte"
@@ -19,7 +20,7 @@
 	)
 </script>
 
-<GridCell kind="normal">
+<GridCell kind="full">
 	<TrialBalance
 		kind="unadjusted"
 		{statement}
@@ -27,14 +28,21 @@
 		accounts={allowedAccounts}
 		data={allowedCalculations}/>
 </GridCell>
-<GridCell kind="normal">
+<GridCell kind="full">
 	<IncomeStatement
 		{statement}
 		{currency}
 		accounts={allowedAccounts}
 		data={allowedCalculations}/>
 </GridCell>
-<GridCell kind="normal">
+<GridCell kind="full">
+	<BalanceSheet
+		{statement}
+		{currency}
+		accounts={allowedAccounts}
+		data={allowedCalculations}/>
+</GridCell>
+<GridCell kind="full">
 	<TrialBalance
 		kind="adjusted"
 		{statement}
