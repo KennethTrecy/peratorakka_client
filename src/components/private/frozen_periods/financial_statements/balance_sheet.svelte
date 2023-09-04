@@ -2,12 +2,8 @@
 	import type { Currency, Account, SummaryCalculation } from "+/entity"
 	import type { FinancialStatementGroup } from "+/rest"
 
-	import formatAmount from "$/utility/format_amount"
-
 	import CustomTrialRow from "%/frozen_periods/financial_statements/custom_trial_row.svelte"
-	import DataTableCell from "$/catalog/data_table_cell.svelte"
 	import DataTableHeader from "$/catalog/data_table_header.svelte"
-	import DataTableRow from "$/catalog/data_table_row.svelte"
 	import QuarternaryHeading from "$/typography/quarternary_heading.svelte"
 	import TrialRow from "%/frozen_periods/financial_statements/trial_row.svelte"
 	import UnitDataTable from "$/catalog/unit_data_table.svelte"
@@ -54,9 +50,8 @@
 			rowName="Total Assets"
 			{currency}
 			rawDebitAmount={statement.balance_sheet.total_assets}
-			rawCreditAmount="0.00"/>
-
-		<DataTableRow/>
+			rawCreditAmount="0.00"
+			hasEmptyTrailingRow={true}/>
 
 		{#each liabilityCalculations as calculation(calculation.account_id)}
 			<TrialRow
@@ -69,9 +64,8 @@
 			rowName="Total Liabilities"
 			{currency}
 			rawDebitAmount="0.00"
-			rawCreditAmount={statement.balance_sheet.total_liabilities}/>
-
-		<DataTableRow/>
+			rawCreditAmount={statement.balance_sheet.total_liabilities}
+			hasEmptyTrailingRow={true}/>
 
 		{#each equityCalculations as calculation(calculation.account_id)}
 			<TrialRow

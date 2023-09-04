@@ -11,6 +11,7 @@
 	export let currency: Currency|undefined
 	export let rawDebitAmount: string
 	export let rawCreditAmount: string
+	export let hasEmptyTrailingRow: boolean = false
 
 	$: emptyAmount = formatAmount(
 		currency,
@@ -38,4 +39,7 @@
 		<DataTableCell kind="numeric">{shownDebitAmount}</DataTableCell>
 		<DataTableCell kind="numeric">{shownCreditAmount}</DataTableCell>
 	</DataTableRow>
+	{#if hasEmptyTrailingRow}
+		<DataTableRow/>
+	{/if}
 {/if}
