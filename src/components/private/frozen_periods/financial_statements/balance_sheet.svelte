@@ -4,6 +4,7 @@
 
 	import formatAmount from "$/utility/format_amount"
 
+	import CustomTrialRow from "%/frozen_periods/financial_statements/custom_trial_row.svelte"
 	import DataTableCell from "$/catalog/data_table_cell.svelte"
 	import DataTableHeader from "$/catalog/data_table_header.svelte"
 	import DataTableRow from "$/catalog/data_table_row.svelte"
@@ -32,23 +33,6 @@
 	$: equityCalculations = data.filter(
 		calculation => equityAccountIDs.indexOf(calculation.account_id) > -1
 	)
-	$: friendlyTotalAssets = formatAmount(
-		currency,
-		statement.balance_sheet.total_assets
-	)
-	$: friendlyTotalLiabilities = formatAmount(
-		currency,
-		statement.balance_sheet.total_liabilities
-	)
-	$: friendlyTotalEquities = formatAmount(
-		currency,
-		statement.balance_sheet.total_equities
-	)
-
-	$: friendlyNetAmount = formatAmount(
-		currency,
-		statement.income_statement.net_total
-	)
 </script>
 
 <QuarternaryHeading>Balance Sheet</QuarternaryHeading>
@@ -66,11 +50,11 @@
 				data={calculation}
 				kind="unadjusted"/>
 		{/each}
-		<DataTableRow>
-			<DataTableHeader scope="row">Total Assets</DataTableHeader>
-			<DataTableCell kind="numeric">{friendlyTotalAssets}</DataTableCell>
-			<DataTableCell></DataTableCell>
-		</DataTableRow>
+		<CustomTrialRow
+			rowName="Total Assets"
+			{currency}
+			rawDebitAmount={statement.balance_sheet.total_assets}
+			rawCreditAmount="0.00"/>
 
 		<DataTableRow/>
 
@@ -81,11 +65,11 @@
 				data={calculation}
 				kind="unadjusted"/>
 		{/each}
-		<DataTableRow>
-			<DataTableHeader scope="row">Total Liabilities</DataTableHeader>
-			<DataTableCell></DataTableCell>
-			<DataTableCell kind="numeric">{friendlyTotalLiabilities}</DataTableCell>
-		</DataTableRow>
+		<CustomTrialRow
+			rowName="Total Liabilities"
+			{currency}
+			rawDebitAmount="0.00"
+			rawCreditAmount={statement.balance_sheet.total_liabilities}/>
 
 		<DataTableRow/>
 
@@ -96,15 +80,15 @@
 				data={calculation}
 				kind="unadjusted"/>
 		{/each}
-		<DataTableRow>
-			<DataTableHeader scope="row">Net Income</DataTableHeader>
-			<DataTableCell></DataTableCell>
-			<DataTableCell kind="numeric">{friendlyNetAmount}</DataTableCell>
-		</DataTableRow>
-		<DataTableRow>
-			<DataTableHeader scope="row">Total Equities</DataTableHeader>
-			<DataTableCell></DataTableCell>
-			<DataTableCell kind="numeric">{friendlyTotalEquities}</DataTableCell>
-		</DataTableRow>
+		<CustomTrialRow
+			rowName="Net Income"
+			{currency}
+			rawDebitAmount="0.00"
+			rawCreditAmount={statement.income_statement.net_total}/>
+		<CustomTrialRow
+			rowName="Total Equities"
+			{currency}
+			rawDebitAmount="0.00"
+			rawCreditAmount={statement.balance_sheet.total_equities}/>
 	</svelte:fragment>
 </UnitDataTable>

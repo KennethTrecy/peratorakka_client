@@ -56,7 +56,7 @@
 		{/each}
 	</svelte:fragment>
 	<svelte:fragment slot="table_footer_cells">
-		<DataTableHeader scope="row">Total</DataTableHeader>
+		<DataTableHeader scope="row">Net Total</DataTableHeader>
 		<DataTableCell></DataTableCell>
 		<DataTableCell kind="numeric">{friendlyNetAmount}</DataTableCell>
 	</svelte:fragment>
