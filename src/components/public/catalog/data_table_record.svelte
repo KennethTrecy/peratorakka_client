@@ -116,6 +116,7 @@
 				kind="button"
 				label="Delete"
 				on:click={confirmDeletion}/>
+			<slot name="additional_buttons"/>
 		{/if}
 	</DataTableCell>
 </DataTableRow>
