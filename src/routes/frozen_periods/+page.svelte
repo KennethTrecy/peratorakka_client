@@ -1,7 +1,8 @@
 <script lang="ts">
+	import type { GeneralError, FinancialStatementGroup } from "+/rest"
 	import type { Account, Currency, FrozenPeriod, SummaryCalculation } from "+/entity"
 
-	import { get } from "svelte/store"
+	import { get, writable } from "svelte/store"
 	import { onMount } from "svelte"
 	import { afterNavigate, beforeNavigate, goto } from "$app/navigation"
 
@@ -16,6 +17,7 @@
 	import AddForm from "%/frozen_periods/add_form.svelte"
 	import ArticleGrid from "$/layout/article_grid.svelte"
 	import DataTable from "%/frozen_periods/data_table.svelte"
+	import FinancialStatements from "%/frozen_periods/financial_statements.svelte"
 	import GridCell from "$/layout/grid_cell.svelte"
 	import InnerGrid from "$/layout/inner_grid.svelte"
 	import PrimaryHeading from "$/typography/primary_heading.svelte"
@@ -29,10 +31,7 @@
 		goto
 	})
 
-	let currencies: Currency[] = []
-	let accounts: Account[] = []
 	let frozenPeriods: FrozenPeriod[] = []
-	let summaryCalculations: SummaryCalculation[] = []
 
 	let {
 		"isConnecting": isConnectingForFrozenPeriods,
@@ -58,6 +57,47 @@
 		],
 		"expectedErrorStatusCodes": [ 401 ]
 	})
+
+	let currencies: Currency[] = []
+	let accounts: Account[] = []
+	let summaryCalculations: SummaryCalculation[] = []
+	let statements: FinancialStatementGroup[] = []
+
+	let chosenPeriod: FrozenPeriod|null = null
+	let isConnectingToShow = writable<boolean>(false)
+	let showErrors = writable<GeneralError[]>([])
+	$: {
+		if (chosenPeriod !== null) {
+			const requesterInfo = makeJSONRequester({
+				"path": `/api/v1/frozen_periods/${chosenPeriod.id}`,
+				"defaultRequestConfiguration": {
+					"method": "GET",
+				},
+				"manualResponseHandlers": [
+					{
+						"statusCode": 200,
+						"action": async (response: Response) => {
+							const document = await response.json()
+							currencies = document.currencies
+							accounts = document.accounts
+							summaryCalculations = document.summary_calculations
+							statements = document["@meta"].statements
+
+							showErrors.set([])
+						}
+					}
+				],
+				"expectedErrorStatusCodes": [ 400 ]
+			})
+
+			isConnectingToShow = requesterInfo.isConnecting
+			showErrors = requesterInfo.errors
+			requesterInfo.send({})
+		}
+	}
+
+	$: startedAt = (chosenPeriod?.started_at || "----------").slice(0, "YYYY-MM-DD".length)
+	$: finishedAt = (chosenPeriod?.finished_at || "----------").slice(0, "YYYY-MM-DD".length)
 
 	async function loadList() {
 		const currentServerURL = get(serverURL)
@@ -86,6 +126,11 @@
 			frozenPeriod => frozenPeriod.id !== oldFrozenPeriod.id
 		)
 	}
+
+	function checkFrozenPeriod(event: CustomEvent<FrozenPeriod>) {
+		const selectedFrozenPeriod = event.detail
+		chosenPeriod = selectedFrozenPeriod
+	}
 </script>
 
 <svelte:head>
@@ -104,6 +149,21 @@
 			isConnecting={$isConnectingForFrozenPeriods}
 			data={frozenPeriods}
 			on:delete={removeFrozenPeriod}
-			on:check/>
+			on:check={checkFrozenPeriod}/>
+
+		{#if chosenPeriod !== null && currencies}
+			<FinancialStatements
+				isConnecting={$isConnectingToShow}
+				startedAt={startedAt}
+				finishedAt={finishedAt}
+				{statements}
+				{accounts}
+				{currencies}
+				data={summaryCalculations}>
+				<svelte:fragment slot="empty_collection_description">
+					There are no financial statements at the chosen date range. Please check another range.
+				</svelte:fragment>
+			</FinancialStatements>
+		{/if}
 	</InnerGrid>
 </ArticleGrid>
