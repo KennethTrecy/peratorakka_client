@@ -108,7 +108,7 @@
 		{:else}
 			<TextButton
 				class="mdc-button--raised"
-				kind="submit"
+				kind="button"
 				label="Edit"
 				on:click={startEditing}/>
 			<TextButton

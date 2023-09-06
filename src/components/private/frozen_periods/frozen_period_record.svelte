@@ -115,8 +115,8 @@
 		{:else}
 			<TextButton
 				class="mdc-button--raised"
-				kind="submit"
-				label="Edit"
+				kind="button"
+				label="Check"
 				on:click={checkCalculations}/>
 			<TextButton
 				class="mdc-button--outlined"
