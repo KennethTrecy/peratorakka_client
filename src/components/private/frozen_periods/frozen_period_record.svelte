@@ -32,7 +32,7 @@
 
 	$: {
 		const requesterInfo = makeJSONRequester({
-			"path": `/api/v1/frozen_periods/${data.id}`,
+			"path": `/api/v1/frozen_periods/${data.id}/force`,
 			"defaultRequestConfiguration": {
 				"method": "DELETE",
 			},
@@ -121,7 +121,7 @@
 			<TextButton
 				class="mdc-button--outlined"
 				kind="button"
-				label="Delete"
+				label="Force Delete"
 				on:click={confirmDeletion}/>
 		{/if}
 	</DataTableCell>
