@@ -15,7 +15,7 @@
 
 	import AddForm from "%/frozen_periods/add_form.svelte"
 	import ArticleGrid from "$/layout/article_grid.svelte"
-	// import DataTable from "%/frozen_period/data_table.svelte"
+	import DataTable from "%/frozen_periods/data_table.svelte"
 	import GridCell from "$/layout/grid_cell.svelte"
 	import InnerGrid from "$/layout/inner_grid.svelte"
 	import PrimaryHeading from "$/typography/primary_heading.svelte"
@@ -100,5 +100,10 @@
 		<AddForm
 			isLoadingInitialData={$isConnectingForFrozenPeriods}
 			on:create={addFrozenPeriod}/>
+		<DataTable
+			isConnecting={$isConnectingForFrozenPeriods}
+			data={frozenPeriods}
+			on:delete={removeFrozenPeriod}
+			on:check/>
 	</InnerGrid>
 </ArticleGrid>
