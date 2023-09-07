@@ -1,14 +1,12 @@
 <script lang="ts">
 	import type { GeneralError } from "+/rest"
 	import type {
-		AcceptableModifierKind,
-		AcceptableModifierAction,
 		Account,
 		Currency,
-		Modifier
+		Modifier,
+		FinancialEntry
 	} from "+/entity"
 
-	import makeAccountTransformer from "$/form/choice_info_transformer/make_account_transformer"
 	import transformModifier from "$/form/choice_info_transformer/transform_modifier"
 
 	import BasicForm from "$/form/basic_form.svelte"
@@ -25,6 +23,7 @@
 	export let debitAmount: string
 	export let creditAmount: string
 	export let remarks: string
+	export let forceDisabledFields: (keyof FinancialEntry)[] = []
 
 	export let isConnecting: boolean
 	export let errors: GeneralError[]
@@ -56,7 +55,7 @@
 		<ChoiceListField
 			fieldName="Modifier"
 			errorFieldName="modifier_id"
-			disabled={isConnecting}
+			disabled={isConnecting || forceDisabledFields.includes("modifier_id")}
 			bind:value={modifierID}
 			rawChoices={modifiers}
 			choiceConverter={transformModifier}
@@ -66,7 +65,7 @@
 			variant="date"
 			fieldName="Transaction Date"
 			errorFieldName="transacted_at"
-			disabled={isConnecting}
+			disabled={isConnecting || forceDisabledFields.includes("transacted_at")}
 			bind:value={transactedAt}
 			{IDPrefix}
 			{errors}/>
@@ -74,27 +73,31 @@
 			<TextField
 				fieldName="Debit and Credit Amount"
 				errorFieldName="amount"
-				disabled={isConnecting}
+				disabled={
+					isConnecting
+					|| forceDisabledFields.includes("debit_amount")
+					|| forceDisabledFields.includes("credit_amount")
+				}
 				bind:value={debitAmount}
 				{IDPrefix}
 				{errors}/>
 		{:else}
 			<TextField
 				fieldName="Debit Amount"
-				disabled={isConnecting}
+				disabled={isConnecting || forceDisabledFields.includes("debit_amount")}
 				bind:value={debitAmount}
 				{IDPrefix}
 				{errors}/>
 			<TextField
 				fieldName="Credit Amount"
-				disabled={isConnecting}
+				disabled={isConnecting || forceDisabledFields.includes("credit_amount")}
 				bind:value={creditAmount}
 				{IDPrefix}
 				{errors}/>
 		{/if}
 		<TextField
 			fieldName="Remarks"
-			disabled={isConnecting}
+			disabled={isConnecting || forceDisabledFields.includes("remarks")}
 			bind:value={remarks}
 			{IDPrefix}
 			{errors}/>
