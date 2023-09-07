@@ -1,6 +1,5 @@
 <script lang="ts">
 	import type { GeneralError } from "+/rest"
-	import type { CardStatus } from "+/component"
 	import type {
 		Currency,
 		Account,
@@ -36,6 +35,12 @@
 	let description = data.description
 	let kind = fallbackToAceptableKind(data.kind)
 	let action = fallbackToAceptableAction(data.action)
+	const forceDisabledFields = [
+		"debit_account_id",
+		"credit_account_id",
+		"kind",
+		"action"
+	]
 
 	$: IDPrefix = `old_modifier_${data.id}`
 	$: formID = `${IDPrefix}_update_form`
@@ -161,6 +166,7 @@
 		{currencies}
 		{accounts}
 		errors={$updateErrors}
+		{forceDisabledFields}
 		on:submit={confirmEdit}>
 		<EditActionCardButtonPair
 			slot="button_group"
