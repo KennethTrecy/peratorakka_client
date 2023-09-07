@@ -35,6 +35,9 @@
 	let creditAmount = `${data.credit_amount}`
 	let transactedAt = data.transacted_at.slice(0, "YYYY-MM-DD".length)
 	let remarks = data.remarks
+	const forceDisabledFields: (keyof FinancialEntry)[] = [
+		"modifier_id"
+	]
 
 	$: IDPrefix = `old_modifier_${data.id}`
 	$: formID = `${IDPrefix}_update_form`
@@ -167,6 +170,7 @@
 		{currencies}
 		{accounts}
 		{modifiers}
+		{forceDisabledFields}
 		errors={$updateErrors}
 		on:submit={confirmEdit}>
 		<EditActionCardButtonPair
