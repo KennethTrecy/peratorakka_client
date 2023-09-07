@@ -35,7 +35,7 @@
 	let description = data.description
 	let kind = fallbackToAceptableKind(data.kind)
 	let action = fallbackToAceptableAction(data.action)
-	const forceDisabledFields = [
+	const forceDisabledFields: (keyof Modifier)[] = [
 		"debit_account_id",
 		"credit_account_id",
 		"kind",
