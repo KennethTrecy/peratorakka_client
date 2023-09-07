@@ -4,7 +4,8 @@
 		AcceptableModifierKind,
 		AcceptableModifierAction,
 		Account,
-		Currency
+		Currency,
+		Modifier
 	} from "+/entity"
 
 	import { acceptableModifierKinds, acceptableModifierActions } from "#/entity"
@@ -29,6 +30,7 @@
 	export let description: string
 	export let kind: AcceptableModifierKind
 	export let action: AcceptableModifierAction
+	export let forceDisabledFields: (keyof Modifier)[] = []
 
 	export let isConnecting: boolean
 	export let errors: GeneralError[]
@@ -42,7 +44,7 @@
 		<ChoiceListField
 			fieldName="Debit Account"
 			errorFieldName="debit_account_id"
-			disabled={isConnecting}
+			disabled={isConnecting || forceDisabledFields.includes("debit_account_id")}
 			bind:value={debitAccountID}
 			rawChoices={accounts}
 			choiceConverter={transformAccount}
@@ -51,7 +53,7 @@
 		<ChoiceListField
 			fieldName="Credit Account"
 			errorFieldName="credit_account_id"
-			disabled={isConnecting}
+			disabled={isConnecting || forceDisabledFields.includes("credit_account_id")}
 			bind:value={creditAccountID}
 			rawChoices={accounts}
 			choiceConverter={transformAccount}
@@ -59,7 +61,7 @@
 			{errors}/>
 		<ChoiceListField
 			fieldName="Kind"
-			disabled={isConnecting}
+			disabled={isConnecting || forceDisabledFields.includes("kind")}
 			bind:value={kind}
 			rawChoices={ACCEPTABLE_MODIFIER_KINDS}
 			choiceConverter={transformString}
@@ -67,7 +69,7 @@
 			{errors}/>
 		<ChoiceListField
 			fieldName="Action"
-			disabled={isConnecting}
+			disabled={isConnecting || forceDisabledFields.includes("action")}
 			bind:value={action}
 			rawChoices={ACCEPTABLE_MODIFIER_ACTIONS}
 			choiceConverter={transformString}
@@ -75,13 +77,13 @@
 			{errors}/>
 		<TextField
 			fieldName="Name"
-			disabled={isConnecting}
+			disabled={isConnecting || forceDisabledFields.includes("name")}
 			bind:value={name}
 			{IDPrefix}
 			{errors}/>
 		<TextField
 			fieldName="Description"
-			disabled={isConnecting}
+			disabled={isConnecting || forceDisabledFields.includes("description")}
 			bind:value={description}
 			{IDPrefix}
 			{errors}/>
