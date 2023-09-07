@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { GeneralError } from "+/rest"
-	import type { Currency, AcceptableAccountKind } from "+/entity"
+	import type { Currency, AcceptableAccountKind, Account } from "+/entity"
 
 	import { acceptableAccountKinds } from "#/entity"
 
@@ -20,6 +20,7 @@
 	export let name: string
 	export let description: string
 	export let kind: AcceptableAccountKind
+	export let forceDisabledFields: (keyof Account)[] = []
 
 	export let isConnecting: boolean
 	export let errors: GeneralError[]
@@ -31,7 +32,7 @@
 		<ChoiceListField
 			fieldName="Currency"
 			errorFieldName="currency_id"
-			disabled={isConnecting}
+			disabled={isConnecting || forceDisabledFields.includes("currency_id")}
 			bind:value={currencyID}
 			rawChoices={currencies}
 			choiceConverter={transformCurrency}
@@ -39,7 +40,7 @@
 			{errors}/>
 		<ChoiceListField
 			fieldName="Kind"
-			disabled={isConnecting}
+			disabled={isConnecting || forceDisabledFields.includes("kind")}
 			bind:value={kind}
 			rawChoices={ACCEPTABLE_ACCOUNT_KINDS}
 			choiceConverter={transformString}
@@ -47,13 +48,13 @@
 			{errors}/>
 		<TextField
 			fieldName="Name"
-			disabled={isConnecting}
+			disabled={isConnecting || forceDisabledFields.includes("name")}
 			bind:value={name}
 			{IDPrefix}
 			{errors}/>
 		<TextField
 			fieldName="Description"
-			disabled={isConnecting}
+			disabled={isConnecting || forceDisabledFields.includes("description")}
 			bind:value={description}
 			{IDPrefix}
 			{errors}/>
