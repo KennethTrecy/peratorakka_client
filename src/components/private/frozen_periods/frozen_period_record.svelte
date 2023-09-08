@@ -80,9 +80,6 @@
 		{finishedAt}
 	</DataTableCell>
 	<DataTableCell>
-		{finishedAt}
-	</DataTableCell>
-	<DataTableCell>
 		{#if isConfirmingDeletion}
 			<article class="mdc-card">
 				<div class="mdc-card__content">
