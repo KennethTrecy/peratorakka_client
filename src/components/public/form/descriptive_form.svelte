@@ -10,17 +10,15 @@
 	export let individualName: string
 	export let mayShowForm: boolean
 	export let isLoadingInitialData: boolean = false
-	export let descriptionSize: GridCellKind = "majority"
-	export let formSize: GridCellKind = "minority"
 </script>
 
 <GridCell kind="full">
 	<SecondaryHeading>Add {individualName}</SecondaryHeading>
 </GridCell>
-<GridCell kind={descriptionSize}>
+<GridCell kind="full">
 	<slot name="description"></slot>
 </GridCell>
-<GridCell kind={formSize}>
+<GridCell kind="full">
 	<IndeterminateProgressBar
 		isLoading={isLoadingInitialData}
 		progressBarLabel="Waiting for server's response..."/>

@@ -2,7 +2,6 @@
 	<slot/>
 </article>
 
-
 <style lang="scss">
 	@use "@/components/third-party/new_index";
 

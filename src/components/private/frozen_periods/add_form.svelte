@@ -125,9 +125,7 @@
 <DescriptiveForm
 	individualName="Frozen Period"
 	mayShowForm={true}
-	{isLoadingInitialData}
-	descriptionSize="wide"
-	formSize="narrow">
+	{isLoadingInitialData}>
 	<TextContainer slot="description">
 		<ElementalParagraph>
 			Frozen periods prevents editing, removal, or addition of financial entries at a certain point of time. They contain summary of calculations of each account which would be used on the consecutive frozen period.
