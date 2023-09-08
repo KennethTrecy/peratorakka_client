@@ -1,5 +1,7 @@
 <script lang="ts">
-	import { onMount } from "svelte"
+	import type { MenuItemInfo } from "%/shell/types"
+
+	import { onMount, onDestroy } from "svelte"
 	import { MDCDrawer } from "@material/drawer"
 
 	import { menuItemInfos } from "%/shell/state"
@@ -36,12 +38,17 @@
 	onMount(() => {
 		drawerInstance = MDCDrawer.attachTo(drawer as HTMLElement)
 	})
+
+	let lastMenuItemInfos: MenuItemInfo[] = []
+	onDestroy(menuItemInfos.subscribe(newMenuItemInfos => {
+		lastMenuItemInfos = newMenuItemInfos as MenuItemInfo[]
+	}))
 </script>
 
 <aside class={drawerClasses} bind:this={drawer}>
 	<div class="mdc-drawer__content">
 		<nav class="mdc-deprecated-list">
-			{#each $menuItemInfos as info(info.link)}
+			{#each lastMenuItemInfos as info(info.link)}
 				<Item
 					address={info.link}
 					icon={info.icon}
