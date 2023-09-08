@@ -4,7 +4,6 @@
 	import GridCell from "$/layout/grid_cell.svelte"
 	import SecondaryHeading from "$/typography/secondary_heading.svelte"
 	import UnitDataTable from "$/catalog/unit_data_table.svelte"
-	import TextContainer from "$/typography/text_container.svelte"
 
 	export let isConnecting: boolean
 	export let collectiveName: string

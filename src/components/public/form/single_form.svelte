@@ -1,4 +1,5 @@
 <script lang="ts">
+	import Flex from "$/layout/flex.svelte"
 	import Grid from "$/layout/grid.svelte"
 	import GridCell from "$/layout/grid_cell.svelte"
 	import InnerGrid from "$/layout/inner_grid.svelte"
@@ -8,24 +9,26 @@
 	<InnerGrid>
 		<GridCell kind="padder"/>
 		<GridCell kind="wide">
-			<form class="mdc-card" on:submit|preventDefault>
-				<div class="mdc-card__content">
-					<img src="logo.png" alt="Peratorakka logo"/>
-					<slot name="description_layer"/>
-				</div>
-				<div class="mdc-card__content">
-					<Grid>
-						<InnerGrid>
-							<slot name="field_layer"/>
-						</InnerGrid>
-					</Grid>
-				</div>
-				<div class="mdc-card__actions">
-					<div class="mdc-card__action-buttons">
-						<slot name="action_layer"/>
+			<Flex direction="column" mustPad={false}>
+				<form class="mdc-card" on:submit|preventDefault>
+					<div class="mdc-card__content">
+						<img src="logo.png" alt="Peratorakka logo"/>
+						<slot name="description_layer"/>
 					</div>
-				</div>
-			</form>
+					<div class="mdc-card__content">
+						<Grid>
+							<InnerGrid>
+								<slot name="field_layer"/>
+							</InnerGrid>
+						</Grid>
+					</div>
+					<div class="mdc-card__actions">
+						<div class="mdc-card__action-buttons">
+							<slot name="action_layer"/>
+						</div>
+					</div>
+				</form>
+			</Flex>
 		</GridCell>
 		<GridCell kind="padder"/>
 	</InnerGrid>
