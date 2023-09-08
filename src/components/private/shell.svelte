@@ -51,7 +51,7 @@
 </div>
 
 <style lang="scss">
-	@use "@/components/third-party/new_index";
+	@use "@/components/third-party/index";
 
 	@use "@material/typography/mdc-typography";
 	@use "@material/top-app-bar/mdc-top-app-bar";

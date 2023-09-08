@@ -3,7 +3,7 @@
 </div>
 
 <style lang="scss">
-	@use "@/components/third-party/new_index";
+	@use "@/components/third-party/index";
 
 	@use "@material/layout-grid/mdc-layout-grid";
 </style>

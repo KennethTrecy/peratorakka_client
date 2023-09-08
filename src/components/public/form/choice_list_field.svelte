@@ -139,7 +139,7 @@
 {/if}
 
 <style lang="scss">
-	@use "@/components/third-party/new_index";
+	@use "@/components/third-party/index";
 
 	@use "@material/list";
 	@use "@material/menu-surface/mdc-menu-surface";

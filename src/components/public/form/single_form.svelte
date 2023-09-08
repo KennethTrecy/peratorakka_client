@@ -35,7 +35,7 @@
 </Grid>
 
 <style lang="scss">
-	@use "@/components/third-party/new_index";
+	@use "@/components/third-party/index";
 
 	@use "@material/card";
 

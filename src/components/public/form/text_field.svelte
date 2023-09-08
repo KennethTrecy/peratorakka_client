@@ -92,7 +92,7 @@
 {/if}
 
 <style lang="scss">
-	@use "@/components/third-party/new_index";
+	@use "@/components/third-party/index";
 
 	@use "@material/floating-label/mdc-floating-label";
 	@use "@material/line-ripple/mdc-line-ripple";
