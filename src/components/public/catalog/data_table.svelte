@@ -16,16 +16,8 @@
 	{collectiveName}
 	{data}>
 	<SecondaryHeading slot="name">Available {collectiveName}</SecondaryHeading>
-	<Flex slot="filled_collection_description" direction="column" mustPad={false}>
-		<TextContainer>
-			<slot name="filled_collection_description"/>
-		</TextContainer>
-	</Flex>
-	<Flex slot="empty_collection_description" direction="column" mustPad={false}>
-		<TextContainer>
-			<slot name="empty_collection_description"/>
-		</TextContainer>
-	</Flex>
+	<slot slot="filled_collection_description" name="filled_collection_description"/>
+	<slot slot="empty_collection_description" name="empty_collection_description"/>
 	<GridCell slot="available_content" kind="full">
 		<Flex direction="column" mustPad={false}>
 			<UnitDataTable>

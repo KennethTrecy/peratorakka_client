@@ -1,7 +1,9 @@
 <script lang="ts">
 	import ElementalParagraph from "$/typography/elemental_paragraph.svelte"
+	import Flex from "$/layout/flex.svelte"
 	import GridCell from "$/layout/grid_cell.svelte"
 	import IndeterminateProgressBar from "$/utility/indeterminate_progress_bar.svelte"
+	import TextContainer from "$/typography/text_container.svelte"
 
 	export let isConnecting: boolean
 	export let collectiveName: string
@@ -22,21 +24,33 @@
 
 {#if isConnecting}
 	<GridCell kind="full">
-		<ElementalParagraph>
-			Please wait while the client request the list from the server.
-		</ElementalParagraph>
+		<Flex direction="column" mustPad={false}>
+			<TextContainer>
+				<ElementalParagraph>
+					Please wait while the client request the list from the server.
+				</ElementalParagraph>
+			</TextContainer>
+		</Flex>
 	</GridCell>
 {:else if hasData}
 	<GridCell kind="full">
-		<ElementalParagraph>
-			<slot name="filled_collection_description"></slot>
-		</ElementalParagraph>
+		<Flex direction="column" mustPad={false}>
+			<TextContainer>
+				<ElementalParagraph>
+					<slot name="filled_collection_description"></slot>
+				</ElementalParagraph>
+			</TextContainer>
+		</Flex>
 	</GridCell>
 	<slot name="available_content"/>
 {:else}
 	<GridCell kind="full">
-		<ElementalParagraph>
-			<slot name="empty_collection_description"/>
-		</ElementalParagraph>
+		<Flex direction="column" mustPad={false}>
+			<TextContainer>
+				<ElementalParagraph>
+					<slot name="empty_collection_description"/>
+				</ElementalParagraph>
+			</TextContainer>
+		</Flex>
 	</GridCell>
 {/if}
