@@ -21,11 +21,6 @@
 	@use "@material/layout-grid/variables";
 
 	.container {
-		padding: var(
-			--mdc-layout-grid-margin-desktop,
-			map.get(variables.$default-margin, desktop)
-		);
-
 		$text_container_width: 70ch;
 		$gap: 1rem;
 
@@ -33,15 +28,6 @@
 		flex-flow: row wrap;
 		align-items: center;
 		justify-content: center;
-
-		@each $screen in map.keys(variables.$breakpoints) {
-			$margin: map.get(variables.$default-margin, $screen);
-
-			@media (max-width: #{map.get(variables.$breakpoints, $screen)}) {
-				padding: var(--mdc-layout-grid-margin-#{$screen}, $margin);
-				max-width: calc(#{$text_container_width * 2} + #{$gap});
-			}
-		}
 
 		&__content {
 			display: flex;
