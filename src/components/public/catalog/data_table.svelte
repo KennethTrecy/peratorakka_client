@@ -19,14 +19,24 @@
 	<slot slot="filled_collection_description" name="filled_collection_description"/>
 	<slot slot="empty_collection_description" name="empty_collection_description"/>
 	<GridCell slot="available_content" kind="full">
-		<Flex direction="column" mustPad={false}>
-			<UnitDataTable>
-				<slot slot="table_headers" name="table_headers"/>
-				<slot slot="table_rows" name="table_rows"/>
-				{#if $$slots.table_footer_cells}
-					<slot name="table_footer_cells"/>
-				{/if}
-			</UnitDataTable>
-		</Flex>
+		<div>
+			<Flex direction="column" mustPad={false}>
+				<UnitDataTable>
+					<slot slot="table_headers" name="table_headers"/>
+					<slot slot="table_rows" name="table_rows"/>
+					{#if $$slots.table_footer_cells}
+						<slot name="table_footer_cells"/>
+					{/if}
+				</UnitDataTable>
+			</Flex>
+		</div>
 	</GridCell>
 </CatalogBase>
+
+<style lang="scss">
+	@use "@/components/third-party/new_index";
+
+	div {
+		overflow-x: scroll;
+	}
+</style>
