@@ -27,6 +27,10 @@
 	let name = data.name
 	let description = data.description
 	let kind = fallbackToAceptableKind(data.kind)
+	let forceDisabledFields: (keyof Account)[] = [
+		"currency_id",
+		"kind"
+	]
 
 	$: IDPrefix = `old_account_${data.id}`
 	$: formID = `${IDPrefix}_update_form`
@@ -36,14 +40,6 @@
 		currency => currency.id === parseInt(currencyID)
 	) as Currency
 
-	$: cardClasses = [
-		...(
-			(isEditing || isConfirmingDeletion)
-				? [ "s12", "m12", "l6" ]
-				: [ "s6", "m6", "l4" ]
-		),
-		"secondary-container"
-	].join(" ")
 	let isConnectingToUpdate = writable<boolean>(false)
 	let updateErrors = writable<GeneralError[]>([])
 	let requestUpdate = () => Promise.resolve()
@@ -148,6 +144,7 @@
 		isConnecting={$isConnectingToUpdate}
 		{IDPrefix}
 		{currencies}
+		{forceDisabledFields}
 		errors={$updateErrors}
 		on:submit={confirmEdit}>
 		<EditActionCardButtonPair
