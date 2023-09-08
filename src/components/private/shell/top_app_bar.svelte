@@ -2,11 +2,8 @@
 	import { onMount } from "svelte"
 	import { MDCTopAppBar } from "@material/top-app-bar"
 
-	import { mustBeInDarkMode } from "%/shell/state"
-
 	import AppName from "%/shell/top_app_bar/app_name.svelte"
 	import NavigationButton from "%/shell/top_app_bar/navigation.svelte"
-	import ActionItemButton from "%/shell/top_app_bar/action_item.svelte"
 
 	export let isMenuShown: boolean
 
@@ -15,10 +12,6 @@
 
 	function toggleMenu() {
 		isMenuShown = !isMenuShown
-	}
-
-	function toggleMode() {
-		mustBeInDarkMode.update(isInDarkMode => !isInDarkMode)
 	}
 
 	onMount(() => {
@@ -34,14 +27,6 @@
 				icon="menu"
 				on:click={toggleMenu}/>
 			<AppName/>
-		</section>
-		<section
-			class="mdc-top-app-bar__section mdc-top-app-bar__section--align-end"
-			role="toolbar">
-			<ActionItemButton
-				label="Toggle theme mode"
-				icon={$mustBeInDarkMode ? "dark_mode" : "light_mode"}
-				on:click={toggleMode}/>
 		</section>
 	</div>
 </header>
