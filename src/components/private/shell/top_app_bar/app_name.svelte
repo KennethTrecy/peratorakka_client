@@ -18,6 +18,7 @@
 
 <style lang="scss">
 	@use "@/components/third-party/index";
+	@use "@material/theme/theme-color";
 	@use "@material/top-app-bar/mdc-top-app-bar";
 
 	.mdc-top-app-bar__title {
@@ -30,6 +31,8 @@
 		> img {
 			height: 3rem;
 			width: auto;
+			border: 1px #{theme-color.$surface} solid;
+			border-radius: 6px;
 		}
 
 		> [data-app-name] {
