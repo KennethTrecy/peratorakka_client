@@ -1,6 +1,5 @@
 <script lang="ts">
-	import type { GridCellKind } from "+/component"
-
+	import InteractiveContainer from "$/layout/interactive_container.svelte"
 	import GridCell from "$/layout/grid_cell.svelte"
 	import IndeterminateProgressBar from "$/utility/indeterminate_progress_bar.svelte"
 	import SecondaryHeading from "$/typography/secondary_heading.svelte"
@@ -16,21 +15,23 @@
 	<SecondaryHeading>Add {individualName}</SecondaryHeading>
 </GridCell>
 <GridCell kind="full">
-	<slot name="description"></slot>
-</GridCell>
-<GridCell kind="full">
-	<IndeterminateProgressBar
-		isLoading={isLoadingInitialData}
-		progressBarLabel="Waiting for server's response..."/>
-	{#if isLoadingInitialData}
-		<TextContainer>
-			<ShortParagraph>
-				Initial data for the form is loading...
-			</ShortParagraph>
-		</TextContainer>
-	{:else if mayShowForm}
-		<slot name="form"></slot>
-	{:else}
-		<slot name="requirement"></slot>
-	{/if}
+	<InteractiveContainer>
+		<slot slot="text" name="description"/>
+		<div slot="widget">
+			<IndeterminateProgressBar
+				isLoading={isLoadingInitialData}
+				progressBarLabel="Waiting for server's response..."/>
+			{#if isLoadingInitialData}
+				<TextContainer>
+					<ShortParagraph>
+						Initial data for the form is loading...
+					</ShortParagraph>
+				</TextContainer>
+			{:else if mayShowForm}
+				<slot name="form"/>
+			{:else}
+				<slot name="requirement"/>
+			{/if}
+		</div>
+	</InteractiveContainer>
 </GridCell>
