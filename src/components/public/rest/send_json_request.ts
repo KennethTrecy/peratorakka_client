@@ -7,7 +7,7 @@ import type {
 
 import { get } from "svelte/store"
 
-import { serverURL } from "$/global_state"
+import { serverURL, accessToken, hasAccessToken } from "$/global_state"
 
 export default async function sendJSONRequest(
 	specialRequestInfo: Partial<Request>,
@@ -19,13 +19,18 @@ export default async function sendJSONRequest(
 	dependencies.errors.set([])
 
 	try {
+		const headers = {
+			"Content-Type": "application/json",
+			"Accept": "application/json"
+		}
+
+		if (get(hasAccessToken)) {
+			headers["Authorization"] = `Bearer ${get(accessToken)}`
+		}
+
 		const response = await fetch(`${currentServerURL}${constraints.path}`, {
 			"mode": "cors",
-			"credentials": "include",
-			"headers": {
-				"Content-Type": "application/json",
-				"Accept": "application/json"
-			},
+			headers,
 			...constraints.defaultRequestConfiguration,
 			...specialRequestInfo
 		})

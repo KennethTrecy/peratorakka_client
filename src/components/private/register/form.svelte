@@ -35,7 +35,8 @@
 	let { isConnecting, errors, send } = makeJSONRequester({
 		"path": "/register",
 		"defaultRequestConfiguration": {
-			"method": "POST"
+			"method": "POST",
+			"credentials": "include"
 		},
 		"manualResponseHandlers": [
 			{

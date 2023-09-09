@@ -36,7 +36,8 @@
 	let { isConnecting, errors, send } = makeJSONRequester({
 		"path": "/login",
 		"defaultRequestConfiguration": {
-			"method": "POST"
+			"method": "POST",
+			"credentials": "include"
 		},
 		"manualResponseHandlers": [
 			{
