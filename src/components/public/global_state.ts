@@ -2,6 +2,7 @@ import type { Unsubscriber } from "svelte/store"
 
 import { derived, writable } from "svelte/store"
 
+import { RECOMMENDED_API_VERSION } from "#/rest"
 import {
 	SERVER_URL_KEY,
 	CSRF_TOKEN_KEY,
@@ -139,6 +140,22 @@ export function initializeGlobalStates() {
 			if (newServerURL === "") CSRFToken.set("")
 			if (newServerURL === "") accessToken.set("")
 			if (newServerURL === "") accessTokenMetadata.set(new Map())
+			if (newServerURL === "") hasCompatibleServer.set(false)
+			if (newServerURL !== "") {
+				fetch(newServerURL, {
+					"headers": {
+						"Content-Type": "application/json",
+						"Accept": "application/json"
+					},
+					"mode": "cors"
+				}).then(async response => {
+					if (response.status === 200) {
+
+					} else {
+						hasCompatibleServer.set(false)
+					}
+				})
+			}
 		}
 	})
 	stopStoringCSRFToken = CSRFToken.subscribe(newCSRFToken => {
