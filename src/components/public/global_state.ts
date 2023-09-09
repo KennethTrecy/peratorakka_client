@@ -1,5 +1,6 @@
 import type { Unsubscriber } from "svelte/store"
 
+import { compare } from "semver"
 import { derived, writable } from "svelte/store"
 
 import { RECOMMENDED_API_VERSION } from "#/rest"
@@ -150,7 +151,11 @@ export function initializeGlobalStates() {
 					"mode": "cors"
 				}).then(async response => {
 					if (response.status === 200) {
-
+						const serverInfo = await response.json()
+						hasCompatibleServer.set(compare(
+							serverInfo.versions.lowest_supported_api_specification,
+							RECOMMENDED_API_VERSION
+						) === 0)
 					} else {
 						hasCompatibleServer.set(false)
 					}
