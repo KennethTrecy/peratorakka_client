@@ -3,6 +3,7 @@
 
 	import { onMount, onDestroy } from "svelte"
 	import { MDCDrawer } from "@material/drawer"
+	import { afterNavigate } from "$app/navigation"
 
 	import { menuItemInfos } from "%/shell/state"
 
@@ -35,6 +36,7 @@
 		isMenuShown = false
 	}
 
+	afterNavigate(close)
 	onMount(() => {
 		drawerInstance = MDCDrawer.attachTo(drawer as HTMLElement)
 	})
