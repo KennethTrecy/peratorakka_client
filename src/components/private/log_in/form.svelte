@@ -6,6 +6,9 @@
 	import {
 		serverURL,
 		userEmail,
+		accessToken,
+		accessTokenMetadata,
+
 		mustHaveToken,
 		mustBeGuest
 	} from "$/global_state"
@@ -36,6 +39,21 @@
 			"method": "POST"
 		},
 		"manualResponseHandlers": [
+			{
+				"statusCode": 200,
+				"action": async (response: Response) => {
+					const { meta } = await response.json()
+					const { data, expiration } = meta.token
+
+					accessToken.set(data)
+					accessTokenMetadata.set(new Map([
+						[ "type", expiration.type ],
+						[ "data", expiration.data ]
+					]))
+					userEmail.set(email)
+					errors.set([])
+				}
+			},
 			{
 				"statusCode": 204,
 				"action": async (response: Response) => {
