@@ -12,12 +12,14 @@ import {
 
 export const hasLoadedGlobalStates = writable<boolean>(false)
 export const serverURL = writable<string>("")
+export const hasCompatibleServer = writable<boolean>(true)
 export const CSRFToken = writable<string>("")
 export const userEmail = writable<string>("")
 export const accessToken = writable<string>("")
 export const accessTokenMetadata = writable<Map<string, string>>(new Map())
 
 export const hasRequirements = writable<boolean>(false)
+export const mustHaveCompatibleServer = writable<boolean>(false)
 export const mustHaveToken = writable<boolean>(false)
 export const mustHaveAccessToken = writable<boolean>(false)
 export const mustBeGuest = writable<boolean>(false)
@@ -58,6 +60,8 @@ export const redirectPath = derived<string>(
 	[
 		hasLoadedGlobalStates,
 		hasRequirements,
+		mustHaveCompatibleServer,
+		hasCompatibleServer,
 		mustHaveToken,
 		hasToken,
 		mustHaveAccessToken,
@@ -69,6 +73,8 @@ export const redirectPath = derived<string>(
 	([
 		wereGlobalStatesLoaded,
 		doesHaveRequirements,
+		doesHaveCompatibleServer,
+		isServerCompatible,
 		doesRequireToken,
 		isTokenPresent,
 		doesRequireAccessToken,
@@ -79,6 +85,10 @@ export const redirectPath = derived<string>(
 	]) => {
 		if (wereGlobalStatesLoaded) {
 			if (doesHaveRequirements) {
+				if (doesHaveCompatibleServer && !isServerCompatible) {
+					return "/"
+				}
+
 				if (doesRequireToken && !isTokenPresent) {
 					return "/"
 				}
