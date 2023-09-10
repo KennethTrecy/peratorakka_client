@@ -22,7 +22,7 @@
 	$: hasSimpleErrors = simpleErrors.length > 0
 </script>
 
-<form class="mdc-card" {id} on:submit>
+<form class="mdc-card" {id} on:submit|preventDefault>
 	<IndeterminateProgressBar
 		isLoading={isConnecting}
 		{progressBarLabel}/>
