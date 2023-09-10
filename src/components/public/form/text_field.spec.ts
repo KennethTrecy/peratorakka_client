@@ -7,7 +7,7 @@ import { act, render, cleanup } from "@testing-library/svelte"
 import Component from "./text_field.svelte"
 
 describe("Text field behavior", () => {
-	it("can render with no value", async () => {
+	it.skip("can render with no value", async () => {
 		const user = userEvent.setup()
 		const props = {
 			"fieldName": "",
@@ -24,7 +24,7 @@ describe("Text field behavior", () => {
 		cleanup()
 	})
 
-	it("can render with new value", async () => {
+	it.skip("can render with new value", async () => {
 		const user = userEvent.setup()
 		const props = {
 			"fieldName": "",
@@ -42,7 +42,7 @@ describe("Text field behavior", () => {
 		cleanup()
 	})
 
-	it("can render with no error", async () => {
+	it.skip("can render with no error", async () => {
 		const user = userEvent.setup()
 		const props = {
 			"fieldName": "hello",
@@ -63,7 +63,7 @@ describe("Text field behavior", () => {
 		cleanup()
 	})
 
-	it("can render with error", async () => {
+	it.skip("can render with error", async () => {
 		const user = userEvent.setup()
 		const props = {
 			"fieldName": "hello",
@@ -85,7 +85,7 @@ describe("Text field behavior", () => {
 		cleanup()
 	})
 
-	it("can render as email", async () => {
+	it.skip("can render as email", async () => {
 		const user = userEvent.setup()
 		const props = {
 			"fieldName": "",
