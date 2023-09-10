@@ -1,8 +1,11 @@
 <script lang="ts">
 	import type { GeneralError } from "+/rest"
 
+	import { isSimpleError } from "+/rest"
+
 	import Flex from "$/layout/flex.svelte"
 	import IndeterminateProgressBar from "$/utility/indeterminate_progress_bar.svelte"
+	import ShortParagraph from "$/typography/short_paragraph.svelte";
 
 	export let errors: GeneralError[]
 	export let id: string|null
@@ -15,12 +18,21 @@
 			? "Failed to submit the details. Please check the errors."
 			: "Enter valid details only and submit the form."
 		)
+	$: simpleErrors = errors.filter(isSimpleError).map(error => error.message).join(" ")
+	$: hasSimpleErrors = simpleErrors.length > 0
 </script>
 
 <form class="mdc-card" {id} on:submit>
 	<IndeterminateProgressBar
 		isLoading={isConnecting}
 		{progressBarLabel}/>
+	{#if hasSimpleErrors}
+		<div class="mdc-card__content">
+			<ShortParagraph>
+				{simpleErrors}
+			</ShortParagraph>
+		</div>
+	{/if}
 	<div class="mdc-card__content">
 		<Flex>
 			<slot name="fields"/>
