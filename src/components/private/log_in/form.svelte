@@ -1,6 +1,8 @@
 <script lang="ts">
 	import { afterNavigate, beforeNavigate, goto } from "$app/navigation"
 
+	import { MAINTENANCE_EXPIRATION_MECHANISM } from "#/rest"
+
 	import makeJSONRequester from "$/rest/make_json_requester"
 	import applyRequirements from "$/utility/apply_requirements"
 	import {
@@ -52,7 +54,7 @@
 						[ "lastUsedAt", new Date() ]
 					])
 
-					if (accessTokenMetadataRaw.get("type") === "maintenance") {
+					if (accessTokenMetadataRaw.get("type") === MAINTENANCE_EXPIRATION_MECHANISM) {
 						accessToken.set(data)
 						accessTokenMetadata.set(accessTokenMetadataRaw)
 						userEmail.set("email")

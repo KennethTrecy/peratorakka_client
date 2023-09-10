@@ -3,7 +3,7 @@ import type { Unsubscriber } from "svelte/store"
 import { compare } from "semver"
 import { derived, writable } from "svelte/store"
 
-import { RECOMMENDED_API_VERSION } from "#/rest"
+import { RECOMMENDED_API_VERSION, MAINTENANCE_EXPIRATION_MECHANISM } from "#/rest"
 import {
 	SERVER_URL_KEY,
 	CSRF_TOKEN_KEY,
@@ -46,6 +46,25 @@ export const hasAccessToken = derived(
 		&& currentAccessToken !== ""
 		&& currentAccessTokenMetadata.size > 0
 )
+export const hasSupportedAccessToken = derived(
+	[ hasAccessToken, accessTokenMetadata ],
+	([ hasAccessTokenCurrently, currentAccessTokenMetadata ]) => {
+		if (!hasAccessTokenCurrently) return true
+
+		if (currentAccessTokenMetadata.get("type") === MAINTENANCE_EXPIRATION_MECHANISM) {
+			const lastUsedAt = new Date(currentAccessTokenMetadata.get("lastUsedAt") ?? new Date())
+			const currentDateAndTime = new Date()
+			const millisecondDifference = currentDateAndTime.valueOf() - lastUsedAt.valueOf()
+			// Round off which the author guess that millisecond slippage is acceptable
+			const secondDifference = Math.round(millisecondDifference / 1000)
+			const lifetime = currentAccessTokenMetadata.get("data") ?? 0
+
+			return secondDifference < lifetime
+		} else {
+			return false
+		}
+	}
+)
 
 export const serverIcon = derived<string>(
 	[ hasServer, hasToken ],
@@ -68,6 +87,7 @@ export const redirectPath = derived<string>(
 		hasToken,
 		mustHaveAccessToken,
 		hasAccessToken,
+		hasSupportedAccessToken,
 		mustBeGuest,
 		mustBeAuthenticatedUser,
 		hasUser
@@ -81,6 +101,7 @@ export const redirectPath = derived<string>(
 		isTokenPresent,
 		doesRequireAccessToken,
 		isAccessTokenPresent,
+		isAccessTokenSupported,
 		doesRequireGuest,
 		doesRequireAuthenticatedUser,
 		isAuthenticatedUserPresent
@@ -95,7 +116,7 @@ export const redirectPath = derived<string>(
 					return "/"
 				}
 
-				if (doesRequireAccessToken && !isAccessTokenPresent) {
+				if (doesRequireAccessToken && (!isAccessTokenPresent || !isAccessTokenSupported)) {
 					return "/"
 				}
 
@@ -181,7 +202,7 @@ export function initializeGlobalStates() {
 				ACCESS_TOKEN_METADATA_KEY,
 				JSON.stringify(Array.from(newAccessTokenMetadata.entries()))
 			)
-			if (newAccessTokenMetadata === "") accessToken.set("")
+			if (newAccessTokenMetadata.size === 0) accessToken.set("")
 		}
 	})
 	stopStoringUserEmail = userEmail.subscribe(newUserEmail => {
