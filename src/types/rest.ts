@@ -13,6 +13,11 @@ export function isFieldError(error: any): error is FieldError {
 	return Object.keys(error).includes("field")
 }
 
+export function isSimpleError(error: any): error is SimpleError {
+	const keys = Object.keys(error)
+	return keys.length === 1 && keys.includes("message")
+}
+
 export type GeneralError =
 	| SimpleError
 	| FieldError
