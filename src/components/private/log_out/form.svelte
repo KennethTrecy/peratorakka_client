@@ -11,8 +11,8 @@
 		mustBeAuthenticatedUser
 	} from "$/global_state"
 
-	import ShortParagraph from "$/typography/short_paragraph.svelte"
 	import ServerDisplay from "$/utility/server_display.svelte"
+	import ShortParagraph from "$/typography/short_paragraph.svelte"
 	import SingleForm from "$/form/single_form.svelte"
 	import TextCardButton from "$/button/card/text.svelte"
 	import TextContainer from "$/typography/text_container.svelte"
@@ -50,7 +50,7 @@
 	}
 </script>
 
-<SingleForm on:submit={logOut}>
+<SingleForm isConnecting={$isConnecting} errors={$errors} on:submit={logOut}>
 	<TextContainer slot="description_layer">
 		<ShortParagraph>
 			Please confirm if the client would request on

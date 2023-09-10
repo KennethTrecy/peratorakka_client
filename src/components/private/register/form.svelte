@@ -11,9 +11,9 @@
 	} from "$/global_state"
 
 	import GridCell from "$/layout/grid_cell.svelte"
-	import ShortParagraph from "$/typography/short_paragraph.svelte"
 	import PasswordField from "$/form/password_field.svelte"
 	import ServerDisplay from "$/utility/server_display.svelte"
+	import ShortParagraph from "$/typography/short_paragraph.svelte"
 	import SingleForm from "$/form/single_form.svelte"
 	import TextCardButton from "$/button/card/text.svelte"
 	import TextContainer from "$/typography/text_container.svelte"
@@ -62,7 +62,7 @@
 	}
 </script>
 
-<SingleForm on:submit={register}>
+<SingleForm isConnecting={$isConnecting} errors={$errors} on:submit={register}>
 	<TextContainer slot="description_layer">
 		<ShortParagraph>
 			Enter the credentials to be sent to <ServerDisplay address={$serverURL}/> to register.

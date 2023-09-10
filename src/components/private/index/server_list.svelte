@@ -79,13 +79,17 @@
 		} catch (error) {
 			didConnectionFail = true
 			serverURL.set("")
+			errors[0] = {
+				"field": "custom_server_url",
+				"message": "client fails to connect to the server"
+			}
 		}
 
 		isConnecting = false
 	}
 </script>
 
-<SingleForm	on:submit={connect}>
+<SingleForm	{isConnecting} errors={[]} on:submit={connect}>
 	<TextContainer slot="description_layer">
 		{#if $hasToken}
 			<WeakenedLeadHeading>
