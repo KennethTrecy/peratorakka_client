@@ -7,7 +7,7 @@ import type {
 
 import { get } from "svelte/store"
 
-import { serverURL, accessToken, hasAccessToken } from "$/global_state"
+import { serverURL, accessToken, hasAccessToken, accessTokenMetadata } from "$/global_state"
 
 export default async function sendJSONRequest(
 	specialRequestInfo: Partial<Request>,
@@ -26,6 +26,11 @@ export default async function sendJSONRequest(
 
 		if (get(hasAccessToken)) {
 			headers["Authorization"] = `Bearer ${get(accessToken)}`
+			accessTokenMetadata.update(currentAccessTokenMetadata => {
+				const newAccessTokenMetadata = new Map(currentAccessTokenMetadata)
+				newAccessTokenMetadata.set("lastUsedAt", new Date())
+				return newAccessTokenMetadata
+			})
 		}
 
 		const response = await fetch(`${currentServerURL}${constraints.path}`, {
