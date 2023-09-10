@@ -16,7 +16,7 @@
 		<GridCell kind="padder"/>
 		<GridCell kind="wide">
 			<Flex direction="column" mustPad={false}>
-				<div>
+				<div class="single_form">
 					<FormBase id={null} {isConnecting} {errors} on:submit>
 						<svelte:fragment slot="lead_content">
 							<img src="logo.png" alt="Peratorakka logo"/>
@@ -43,22 +43,20 @@
 
 	@include card.core-styles;
 
-	div > {
-		:global(.mdc-card__content) {
-			text-align: center;
-			padding: 1rem;
+	:global(.single_form .mdc-card__content) {
+		text-align: center;
+		padding: 1rem;
 
-			&:first-child > img {
-				margin-bottom: 1rem;
-			}
-
-			& + & {
-				padding-top: 0rem;
-			}
+		&:first-child > img {
+			margin-bottom: 1rem;
 		}
 
-		:global(.mdc-card__actions) {
-			justify-content: center;
+		& + & {
+			padding-top: 0rem;
 		}
+	}
+
+	:global(.single_form .mdc-card__actions) {
+		justify-content: center;
 	}
 </style>
