@@ -45,14 +45,25 @@
 				"action": async (response: Response) => {
 					const { meta } = await response.json()
 					const { data, expiration } = meta.token
-
-					accessToken.set(data)
-					accessTokenMetadata.set(new Map([
+					const accessTokenMetadataRaw = new Map([
 						[ "type", expiration.type ],
-						[ "data", expiration.data ]
-					]))
-					userEmail.set(email)
-					errors.set([])
+						[ "data", expiration.data ],
+						[ "startedAt", new Date() ],
+						[ "lastUsedAt", new Date() ]
+					])
+
+					if (accessTokenMetadataRaw.get("type") === "maintenance") {
+						accessToken.set(data)
+						accessTokenMetadata.set(accessTokenMetadataRaw)
+						userEmail.set("email")
+						errors.set([])
+					} else {
+						errors.set([
+							{
+								"message": "The client can only support servers with \"maintenance\" expiration mechanism."
+							}
+						])
+					}
 				}
 			},
 			{
