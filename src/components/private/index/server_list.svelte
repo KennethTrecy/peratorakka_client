@@ -4,7 +4,13 @@
 
 	import { PUBLIC_PRODUCTION_SERVER_CHOICES } from "$env/static/public"
 
-	import { serverURL, CSRFToken, hasServer, hasToken } from "$/global_state"
+	import {
+		serverURL,
+		CSRFToken,
+		hasServer,
+		hasToken,
+		hasCompatibleServer
+	} from "$/global_state"
 
 	import ChoiceListField from "$/form/choice_list_field.svelte"
 	import GridCell from "$/layout/grid_cell.svelte"
@@ -83,7 +89,7 @@
 	<TextContainer slot="description_layer">
 		{#if $hasToken}
 			<WeakenedLeadHeading>
-				You are currently connected
+				Status: Connected
 			</WeakenedLeadHeading>
 			<ShortParagraph>
 				You may change your current server (<ServerDisplay address={$serverURL}/>).
@@ -93,21 +99,21 @@
 			</ShortParagraph>
 		{:else if $hasServer}
 			<WeakenedLeadHeading>
-				The client is trying to connect to the server
+				Status: Connecting
 			</WeakenedLeadHeading>
 			<ShortParagraph>
 				Please wait for a moment.
 			</ShortParagraph>
-		{:else if didConnectionFail}
+		{:else if didConnectionFail || $hasCompatibleServer}
 			<WeakenedLeadHeading>
-				The client cannot connect to the server
+				Status: Connection Failed
 			</WeakenedLeadHeading>
 			<ShortParagraph>
 				Please look for another compatible server.
 			</ShortParagraph>
 		{:else}
 			<WeakenedLeadHeading>
-				You are not yet connected to any server
+				Status: Not Connected
 			</WeakenedLeadHeading>
 			<ShortParagraph>
 				Choose or specify a server you want to connect.

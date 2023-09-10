@@ -51,7 +51,7 @@
 <SingleForm on:submit={logOut}>
 	<TextContainer slot="description_layer">
 		<ShortParagraph>
-			Please confirm the client would request on
+			Please confirm if the client would request on
 			<ServerDisplay address={$serverURL}/> to log out.
 		</ShortParagraph>
 	</TextContainer>
