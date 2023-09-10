@@ -174,7 +174,7 @@ export function initializeGlobalStates() {
 					if (response.status === 200) {
 						const serverInfo = await response.json()
 						hasCompatibleServer.set(compare(
-							serverInfo.versions.lowest_supported_api_specification,
+							serverInfo.meta.versions.lowest_supported_api_specification,
 							RECOMMENDED_API_VERSION
 						) === 0)
 					} else {
