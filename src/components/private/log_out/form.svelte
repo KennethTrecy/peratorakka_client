@@ -7,6 +7,7 @@
 		serverURL,
 		userEmail,
 		mustHaveToken,
+		mustHaveAccessToken,
 		mustBeAuthenticatedUser
 	} from "$/global_state"
 
@@ -18,6 +19,7 @@
 
 	applyRequirements([
 		mustHaveToken,
+		mustHaveAccessToken,
 		mustBeAuthenticatedUser
 	], {
 		afterNavigate,
