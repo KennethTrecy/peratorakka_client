@@ -1,11 +1,16 @@
 <script lang="ts">
 	import { afterNavigate, beforeNavigate, goto } from "$app/navigation"
 
+	import { MAINTENANCE_EXPIRATION_MECHANISM } from "#/rest"
+
 	import makeJSONRequester from "$/rest/make_json_requester"
 	import applyRequirements from "$/utility/apply_requirements"
 	import {
 		serverURL,
 		userEmail,
+		accessToken,
+		accessTokenMetadata,
+
 		mustHaveToken,
 		mustBeGuest
 	} from "$/global_state"
@@ -40,10 +45,30 @@
 		},
 		"manualResponseHandlers": [
 			{
-				"statusCode": 200,
+				"statusCode": 201,
 				"action": async (response: Response) => {
-					errors.set([])
-					userEmail.set(email)
+
+					const { meta } = await response.json()
+					const { data, expiration } = meta.token
+					const accessTokenMetadataRaw = new Map([
+						[ "type", expiration.type ],
+						[ "data", expiration.data ],
+						[ "startedAt", new Date() ],
+						[ "lastUsedAt", new Date() ]
+					])
+
+					if (accessTokenMetadataRaw.get("type") === MAINTENANCE_EXPIRATION_MECHANISM) {
+						accessToken.set(data)
+						accessTokenMetadata.set(accessTokenMetadataRaw)
+						userEmail.set(email)
+						errors.set([])
+					} else {
+						errors.set([
+							{
+								"message": "The client can only support servers with \"maintenance\" expiration mechanism."
+							}
+						])
+					}
 				}
 			}
 		],
