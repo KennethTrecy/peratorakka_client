@@ -57,7 +57,7 @@
 					if (accessTokenMetadataRaw.get("type") === MAINTENANCE_EXPIRATION_MECHANISM) {
 						accessToken.set(data)
 						accessTokenMetadata.set(accessTokenMetadataRaw)
-						userEmail.set("email")
+						userEmail.set(email)
 						errors.set([])
 					} else {
 						errors.set([
