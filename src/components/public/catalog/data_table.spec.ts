@@ -7,7 +7,7 @@ import type { Entity } from "%/currencies/types"
 
 import Component from "./data_table.svelte"
 
-describe("Directory behavior", () => {
+describe("Data table behavior", () => {
 	it("can show loading state", async () => {
 		const collectiveName = "Currencies"
 		const isConnecting = true
@@ -35,7 +35,7 @@ describe("Directory behavior", () => {
 			data
 		})
 
-		const progress = container.querySelector("[role=progressbar]")
+		const progress = container.querySelector(".mdc-linear-progress--closed")
 
 		expect(progress).toBeNull()
 
