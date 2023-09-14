@@ -1,6 +1,5 @@
 <script lang="ts">
 	import type { GeneralError } from "+/rest"
-	import type { CardStatus } from "+/component"
 	import type { Currency, Account, AcceptableAccountKind } from "+/entity"
 
 	import { createEventDispatcher } from "svelte"
@@ -22,7 +21,6 @@
 	const dispatch = createEventDispatcher<{
 		"delete": Account
 	}>()
-	let status: CardStatus = "reading"
 	let currencyID = `${data.currency_id}`
 	let name = data.name
 	let description = data.description
@@ -34,8 +32,6 @@
 
 	$: IDPrefix = `old_account_${data.id}`
 	$: formID = `${IDPrefix}_update_form`
-	$: isEditing = status === "editing"
-	$: isConfirmingDeletion = status === "confirming_deletion"
 	$: associatedCurrency = currencies.find(
 		currency => currency.id === parseInt(currencyID)
 	) as Currency
