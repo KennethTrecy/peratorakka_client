@@ -12,7 +12,6 @@
 
 	import { UNKNOWN_OPTION, UNKNOWN_ACCOUNT } from "#/component"
 
-	import convertSnakeCaseToProperCase from "$/utility/convert_snake_case_to_proper_case"
 	import formatAmount from "$/utility/format_amount"
 	import makeJSONRequester from "$/rest/make_json_requester"
 
@@ -86,7 +85,7 @@
 						data = {
 							...data,
 							"modifier_id": parseInt(modifierID),
-							"transacted_at": transactedAt,
+							"transacted_at": `${transactedAt} 00:00:00`,
 							"debit_amount": debitAmount,
 							"credit_amount": creditAmount,
 							remarks
@@ -105,7 +104,7 @@
 				"body": JSON.stringify({
 					"financial_entry": {
 						"modifier_id": parseInt(modifierID),
-						"transacted_at": transactedAt,
+						"transacted_at": `${transactedAt} 00:00:00`,
 						"debit_amount": debitAmount,
 						"credit_amount": creditAmount,
 						remarks
