@@ -50,7 +50,7 @@
 				"statusCode": 201,
 				"action": async (response: Response) => {
 					const document = await response.json()
-					const { modifier } = document
+					const { financial_entry } = document
 
 					modifierID = UNKNOWN_OPTION
 					transactedAt = defaultTransactedDate
@@ -58,7 +58,7 @@
 					creditAmount = "0"
 					remarks = ""
 					errors.set([])
-					dispatch("create", modifier)
+					dispatch("create", financial_entry)
 				}
 			}
 		],
