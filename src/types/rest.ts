@@ -1,5 +1,6 @@
 import type { Writable } from "svelte/store"
-import type { GeneralError } from "+/rest"
+
+import { SEARCH_MODES } from "#/rest"
 
 export interface SimpleError {
 	message: string
@@ -61,3 +62,5 @@ export interface FinancialStatementGroup {
 	},
 	adjusted_trial_balance: TrialBalance
 }
+
+export type SearchMode = typeof SEARCH_MODES[number]
