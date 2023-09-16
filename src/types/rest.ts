@@ -65,8 +65,8 @@ export interface FinancialStatementGroup {
 
 export type SearchMode = typeof SEARCH_MODES[number]
 
-export type Order =
+export type SortOrder =
 	| "ascending"
 	| "descending"
 
-export type OrderInfo = [ string, Order ]
+export type SortOrderInfo = [ string, SortOrder ]
