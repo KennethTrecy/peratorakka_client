@@ -1,15 +1,30 @@
 <script lang="ts">
 	import type { ChoiceInfo } from "+/component"
-	import type { SearchMode, GeneralError } from "+/rest"
+	import type { GeneralError, SearchMode, SortOrder } from "+/rest"
 
-	import { SEARCH_NORMALLY_OPTION, SEARCH_ONLY_DELETED_OPTION } from "#/rest"
+	import {
+		SEARCH_NORMALLY_OPTION,
+		SEARCH_ONLY_DELETED_OPTION,
+		ASCENDING_ORDER,
+		DESCENDING_ORDER
+	} from "#/rest"
+
+	import transformString from "$/form/choice_info_transformer/transform_string"
 
 	import ChoiceListField from "$/form/choice_list_field.svelte"
 
 	export let searchMode: SearchMode
+	export let sortCriterion: string
+	export let sortOrder: SortOrder
+
 	export let availableChoices: unknown[] = [
 		SEARCH_NORMALLY_OPTION,
 		SEARCH_ONLY_DELETED_OPTION
+	]
+	export let availableSortCriteria: unknown[] = []
+	export let availableSortOrders: unknown[] = [
+		ASCENDING_ORDER,
+		DESCENDING_ORDER
 	]
 
 	export let isConnecting: boolean
@@ -28,4 +43,17 @@
 	rawChoices={availableChoices}
 	choiceConverter={returnChoiceAgain}
 	{errors}/>
-<slot name="after_presence_field"/>
+<ChoiceListField
+	fieldName="Sort Criteria"
+	disabled={isConnecting}
+	bind:value={sortCriterion}
+	rawChoices={availableSortCriteria}
+	choiceConverter={transformString}
+	{errors}/>
+<ChoiceListField
+	fieldName="Sort Order"
+	disabled={isConnecting}
+	bind:value={sortOrder}
+	rawChoices={availableSortOrders}
+	choiceConverter={transformString}
+	{errors}/>

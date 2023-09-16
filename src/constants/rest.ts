@@ -28,3 +28,6 @@ export const SEARCH_ONLY_DELETED_OPTION: ChoiceInfo = {
 	"label": "Archived",
 	"data": SEARCH_ONLY_DELETED
 }
+
+export const ASCENDING_ORDER = "ascending"
+export const DESCENDING_ORDER = "descending"

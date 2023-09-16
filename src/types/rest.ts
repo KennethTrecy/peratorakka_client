@@ -1,6 +1,6 @@
 import type { Writable } from "svelte/store"
 
-import { SEARCH_MODES } from "#/rest"
+import { SEARCH_MODES, ASCENDING_ORDER, DESCENDING_ORDER } from "#/rest"
 
 export interface SimpleError {
 	message: string
@@ -66,7 +66,7 @@ export interface FinancialStatementGroup {
 export type SearchMode = typeof SEARCH_MODES[number]
 
 export type SortOrder =
-	| "ascending"
-	| "descending"
+	| ASCENDING_ORDER
+	| DESCENDING_ORDER
 
 export type SortOrderInfo = [ string, SortOrder ]
