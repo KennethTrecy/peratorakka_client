@@ -43,6 +43,7 @@
 	rawChoices={availableChoices}
 	choiceConverter={returnChoiceAgain}
 	{errors}/>
+<slot name="after_presence_field"/>
 <ChoiceListField
 	fieldName="Sort Criteria"
 	disabled={isConnecting}
