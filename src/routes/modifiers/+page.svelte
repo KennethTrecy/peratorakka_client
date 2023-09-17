@@ -6,7 +6,7 @@
 	import { onMount } from "svelte"
 	import { afterNavigate, beforeNavigate, goto } from "$app/navigation"
 
-	import { SEARCH_NORMALLY, DESCENDING_ORDER, MAXIMUM_PAGINATED_LIST_LENGTH } from "#/rest"
+	import { SEARCH_NORMALLY, ASCENDING_ORDER, MAXIMUM_PAGINATED_LIST_LENGTH } from "#/rest"
 
 	import makeJSONRequester from "$/rest/make_json_requester"
 	import applyRequirements from "$/utility/apply_requirements"
@@ -40,8 +40,8 @@
 	let modifiers: Modifier[] = []
 
 	let searchMode: SearchMode = SEARCH_NORMALLY
-	let sortCriterion: string = "transacted_at"
-	let sortOrder: SortOrder = DESCENDING_ORDER
+	let sortCriterion: string = "name"
+	let sortOrder: SortOrder = ASCENDING_ORDER
 	let lastOffset: number = 0
 
 	const individualName = "modifier"
