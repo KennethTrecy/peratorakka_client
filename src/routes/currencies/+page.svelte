@@ -1,9 +1,12 @@
 <script lang="ts">
+	import type { SearchMode, SortOrder } from "+/rest"
 	import type { Currency } from "+/entity"
 
-	import { get } from "svelte/store"
+	import { get, writable } from "svelte/store"
 	import { onMount } from "svelte"
 	import { afterNavigate, beforeNavigate, goto } from "$app/navigation"
+
+	import { SEARCH_NORMALLY, ASCENDING_ORDER } from "#/rest"
 
 	import makeJSONRequester from "$/rest/make_json_requester"
 	import applyRequirements from "$/utility/apply_requirements"
@@ -32,8 +35,37 @@
 	})
 
 	let currencies: Currency[] = []
+
+	let searchMode: SearchMode = SEARCH_NORMALLY
+	let sortCriterion: string = "name"
+	let sortOrder: SortOrder = ASCENDING_ORDER
+
+	const collectiveName = "currencies"
+	const partialPath = `/api/v1/${collectiveName}`
+	let parameters: [string, string][] = [
+		[ "filter[search_mode]", searchMode as string ],
+		[ "sort[0][0]", sortCriterion ],
+		[ "sort[0][1]", sortOrder as string ]
+	]
+	let completePath = writable(partialPath)
+	$: {
+		parameters = [
+			[ "filter[search_mode]", searchMode as string ],
+			[ "sort[0][0]", sortCriterion ],
+			[ "sort[0][1]", sortOrder as string ]
+		]
+
+		completePath.set(`${partialPath}?${
+			new URLSearchParams([
+				...parameters
+			]).toString()
+		}`)
+
+		reloadCurrencies()
+	}
+
 	let { isConnecting, errors, send } = makeJSONRequester({
-		"path": "/api/v1/currencies",
+		"path": completePath,
 		"defaultRequestConfiguration": {
 			"method": "GET"
 		},
@@ -50,6 +82,11 @@
 		"expectedErrorStatusCodes": [ 401 ]
 	})
 
+	async function reloadCurrencies() {
+		currencies = []
+		await send({})
+	}
+
 	async function loadList() {
 		const currentServerURL = get(serverURL)
 
@@ -58,7 +95,7 @@
 			return
 		}
 
-		await send({})
+		await reloadCurrencies()
 	}
 
 	onMount(loadList)
@@ -89,7 +126,11 @@
 		<AddForm on:create={addCurrency}/>
 		<Collection
 			data={currencies}
+			bind:searchMode={searchMode}
+			bind:sortCriterion={sortCriterion}
+			bind:sortOrder={sortOrder}
 			isConnecting={$isConnecting}
+			listError={$errors}
 			on:delete={removeCurrency}/>
 	</InnerGrid>
 </ArticleGrid>

@@ -6,7 +6,7 @@
 	import { onMount } from "svelte"
 	import { afterNavigate, beforeNavigate, goto } from "$app/navigation"
 
-	import { SEARCH_NORMALLY, ASCENDING_ORDER, MAXIMUM_PAGINATED_LIST_LENGTH } from "#/rest"
+	import { SEARCH_NORMALLY, ASCENDING_ORDER } from "#/rest"
 
 	import makeJSONRequester from "$/rest/make_json_requester"
 	import applyRequirements from "$/utility/apply_requirements"
@@ -20,7 +20,6 @@
 	import AddForm from "%/accounts/add_form.svelte"
 	import ArticleGrid from "$/layout/article_grid.svelte"
 	import Collection from "%/accounts/collection.svelte"
-	import ExtraResourceLoader from "$/catalog/extra_resource_loader.svelte"
 	import GridCell from "$/layout/grid_cell.svelte"
 	import InnerGrid from "$/layout/inner_grid.svelte"
 	import PrimaryHeading from "$/typography/primary_heading.svelte"
@@ -42,8 +41,8 @@
 	let sortCriterion: string = "name"
 	let sortOrder: SortOrder = ASCENDING_ORDER
 
-	const individualName = "accounts"
-	const partialPath = `/api/v1/${individualName}`
+	const collectiveName = "accounts"
+	const partialPath = `/api/v1/${collectiveName}`
 	let parameters: [string, string][] = [
 		[ "filter[search_mode]", searchMode as string ],
 		[ "sort[0][0]", sortCriterion ],
