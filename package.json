@@ -65,7 +65,9 @@
 		"@material/theme": "^14.0.0",
 		"@material/top-app-bar": "^14.0.0",
 		"@material/typography": "^14.0.0",
+		"@types/lodash.debounce": "^4.0.7",
 		"fraction.js": "^4.3.6",
+		"lodash.debounce": "^4.0.8",
 		"semver": "^7.5.4",
 		"svelte": "^4.1.1"
 	}
