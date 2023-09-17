@@ -10,17 +10,8 @@ export function formatAmount(
 	const untrimmedAmount = parsedAmount
 		.round(maximumFractionDigits)
 		.toString(maximumFractionDigits)
-		.split("")
 
-	for (let i = untrimmedAmount.length - 1; i >= 0; ++i) {
-		if (untrimmedAmount[i] === "0" && i > minimumFractionDigits) {
-			untrimmedAmount.pop()
-		} else {
-			break;
-		}
-	}
-
-	const trimmedAmount = untrimmedAmount.join("").split(".")
+	const trimmedAmount = untrimmedAmount.split(".")
 	const whole = trimmedAmount[0]
 	let rawFraction = trimmedAmount[1] ?? ""
 	rawFraction = `${rawFraction}${
@@ -31,7 +22,6 @@ export function formatAmount(
 		: `.${rawFraction}`
 
 	const formattedAmount = `${whole}${rawFraction}`
-
 
 	return `${currency?.code ?? "---"} ${formattedAmount}`
 }
