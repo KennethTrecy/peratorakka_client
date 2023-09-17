@@ -88,12 +88,12 @@
 {#if !isConnectingForInitialList}
 	<GridCell kind="full">
 		<Flex direction="column">
-			{#if isConnecting}
+			{#if $isConnecting}
 				<ShortParagraph>Loading next items...</ShortParagraph>
 			{:else}
-					<TextButton
-						label="Load next items"
-						on:click={loadResources}/>
+				<TextButton
+					label="Load next items"
+					on:click={loadResources}/>
 			{/if}
 		</Flex>
 	</GridCell>
