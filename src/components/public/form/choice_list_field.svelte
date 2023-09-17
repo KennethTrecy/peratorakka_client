@@ -22,9 +22,13 @@
 	export let rawChoices: unknown[]
 	export let choiceConverter: (choice: any) => ChoiceInfo
 
+	let select: MDCSelect|null = null
+
 	$: {
 		if (value === UNKNOWN_OPTION && rawChoices.length > 0) {
 			value = choiceConverter(rawChoices[0]).data
+
+			if (select !== null) select.setValue(value)
 		}
 	}
 
@@ -55,12 +59,13 @@
 	let selectElement: any = null
 	let menuElement: any = null
 	onMount(() => {
-		const select = new MDCSelect(selectElement)
+		select = new MDCSelect(selectElement)
 		const menu = new MDCMenu(menuElement)
 		const menuSurface = new MDCMenuSurface(menuElement)
 		select.listen("MDCSelect:change", () => {
 			value = select.value
 		})
+		select.setValue(value)
 	})
 </script>
 
