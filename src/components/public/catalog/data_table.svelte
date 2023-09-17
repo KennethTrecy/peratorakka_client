@@ -19,9 +19,13 @@
 	<slot slot="empty_collection_description" name="empty_collection_description"/>
 	<GridCell slot="available_content" kind="full">
 		<div>
-			<Flex direction="row" mustPad={false}>
-				<slot name="list_specifier"/>
-			</Flex>
+			{#if $$slots.list_specifier}
+				<Flex direction="column">
+					<Flex direction="row" mustPad={false}>
+						<slot name="list_specifier"/>
+					</Flex>
+				</Flex>
+			{/if}
 			<Flex direction="column" mustPad={false}>
 				<UnitDataTable>
 					<slot slot="table_headers" name="table_headers"/>
