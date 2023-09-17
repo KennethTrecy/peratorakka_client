@@ -2,7 +2,7 @@
 	import type { SearchMode, SortOrder } from "+/rest"
 	import type { Account, Currency, Modifier } from "+/entity"
 
-	import { get } from "svelte/store"
+	import { get, writable } from "svelte/store"
 	import { onMount } from "svelte"
 	import { afterNavigate, beforeNavigate, goto } from "$app/navigation"
 
@@ -51,12 +51,21 @@
 		[ "sort[0][0]", sortCriterion ],
 		[ "sort[0][1]", sortOrder as string ]
 	]
+	let completePath = writable(partialPath)
 	$: {
 		parameters = [
 			[ "filter[search_mode]", searchMode as string ],
 			[ "sort[0][0]", sortCriterion ],
 			[ "sort[0][1]", sortOrder as string ]
 		]
+
+		completePath.set(`${partialPath}?${
+			new URLSearchParams([
+				...parameters,
+				[ "page[offset]", `${lastOffset}` ],
+				[ "page[limit]", MAXIMUM_PAGINATED_LIST_LENGTH ]
+			]).toString()
+		}`)
 	}
 
 	let {
@@ -64,13 +73,7 @@
 		"errors": errorsForModifiers,
 		"send": requestForModifiers
 	} = makeJSONRequester({
-		"path": `${partialPath}?${
-			new URLSearchParams([
-				...parameters,
-				[ "page[offset]", `${lastOffset}` ],
-				[ "page[limit]", MAXIMUM_PAGINATED_LIST_LENGTH ]
-			]).toString()
-		}`,
+		"path": completePath,
 		"defaultRequestConfiguration": {
 			"method": "GET"
 		},
