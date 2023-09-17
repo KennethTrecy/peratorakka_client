@@ -47,8 +47,11 @@
 					let responseDocument = await response.json()
 					errors.set([])
 					const resources = responseDocument[individualName]
-					lastOffset = lastOffset + responseDocument[individualName].length - 1
-					dispatch("addResources", resources)
+
+					if (resources.length > 0) {
+						lastOffset = lastOffset + resources.length
+						dispatch("addResources", resources)
+					}
 
 				}
 			}
