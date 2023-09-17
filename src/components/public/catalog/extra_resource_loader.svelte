@@ -1,6 +1,7 @@
 <script lang="ts">
+	import { createEventDispatcher } from "svelte"
 	import { writable } from "svelte/store"
-	import { onMount, createEventDispatcher } from "svelte"
+	import debounce from "lodash.debounce"
 
 	import makeJSONRequester from "$/rest/make_json_requester"
 
@@ -26,8 +27,8 @@
 		const newPath = `${partialPath}?${
 			new URLSearchParams([
 				...parameters,
-				[ "page[offset]", `${lastOffset}` ],
-				[ "page[limit]", "1" ]
+				[ "page[offset]", `${lastOffset + 1}` ],
+				[ "page[limit]", "15" ]
 			]).toString()
 		}`
 
@@ -55,11 +56,6 @@
 		"expectedErrorStatusCodes": [ 401 ]
 	})
 
-	let isInClient = false
-	onMount(() => {
-		isInClient = true
-	})
-
 	let oldParameters: string[][] = []
 	let abortController: AbortController|null = null
 
@@ -73,14 +69,17 @@
 		})
 	}
 
+	const reloadFully = debounce(() => dispatch("reloadFully"), 500)
 	$: {
-		if (isInClient) {
+		if (isConnectingForInitialList) {
+			oldParameters = parameters
+		} else {
 			const encodedOldParameters = JSON.stringify(oldParameters)
 			const encodedCurrentParameters = JSON.stringify(parameters)
 
 			if (encodedOldParameters !== encodedCurrentParameters) {
 				if (abortController !== null) abortController.abort()
-				dispatch("reloadFully")
+				reloadFully()
 			}
 		}
 	}
