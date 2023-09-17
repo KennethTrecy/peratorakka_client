@@ -5,8 +5,7 @@
 	import {
 		SEARCH_NORMALLY_OPTION,
 		SEARCH_ONLY_DELETED_OPTION,
-		ASCENDING_ORDER,
-		DESCENDING_ORDER
+		SORT_ORDERS
 	} from "#/rest"
 
 	import transformString from "$/form/choice_info_transformer/transform_string"
@@ -23,8 +22,7 @@
 	]
 	export let availableSortCriteria: unknown[] = []
 	export let availableSortOrders: unknown[] = [
-		ASCENDING_ORDER,
-		DESCENDING_ORDER
+		...SORT_ORDERS
 	]
 
 	export let isConnecting: boolean

@@ -31,3 +31,7 @@ export const SEARCH_ONLY_DELETED_OPTION: ChoiceInfo = {
 
 export const ASCENDING_ORDER = "ascending"
 export const DESCENDING_ORDER = "descending"
+export const SORT_ORDERS = [
+	ASCENDING_ORDER,
+	DESCENDING_ORDER
+] as const
