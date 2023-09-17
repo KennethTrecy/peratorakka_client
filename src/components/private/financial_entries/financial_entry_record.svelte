@@ -185,7 +185,7 @@
 			kind="numeric"
 			rawDebit={[ friendlyDebitAmount ]}
 			rawCredit={[ friendlyCreditAmount ]}/>
-		<DataTableCell>
+		<DataTableCell kind="descriptive">
 			{resolveRemarks}
 		</DataTableCell>
 	</svelte:fragment>

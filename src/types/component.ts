@@ -6,6 +6,7 @@ export type CardStatus =
 export type DataTableCellKind =
 	| "normal"
 	| "numeric"
+	| "descriptive"
 
 export type DataTableCellScope =
 	| "row"

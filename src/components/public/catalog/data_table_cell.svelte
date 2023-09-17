@@ -5,7 +5,8 @@
 
 	$: rowClasses = [
 		"mdc-data-table__cell",
-		kind === "numeric" ? "mdc-data-table__cell--numeric" : false
+		kind === "numeric" ? "mdc-data-table__cell--numeric" : false,
+		kind === "descriptive" ? "mdc-data-table__cell--descriptive" : false
 	].filter(Boolean).join(" ")
 </script>
 
@@ -20,4 +21,12 @@
 
 	@include data-table.theme-baseline;
 	@include data-table.core-styles;
+
+	:global(.mdc-data-table__cell.mdc-data-table__cell--descriptive) {
+		max-width: 70ch;
+		overflow: visible;
+		text-overflow: initial;
+		white-space: normal;
+		text-align: justify;
+	}
 </style>
