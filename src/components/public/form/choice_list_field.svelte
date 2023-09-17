@@ -63,7 +63,9 @@
 		const menu = new MDCMenu(menuElement)
 		const menuSurface = new MDCMenuSurface(menuElement)
 		select.listen("MDCSelect:change", () => {
-			value = select.value
+			if (select !== null) {
+				value = select.value
+			}
 		})
 		select.setValue(value)
 	})
