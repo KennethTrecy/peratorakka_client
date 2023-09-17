@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { RequesterConstraints, SearchMode, SortOrder } from "+/rest"
+	import type { SearchMode, SortOrder } from "+/rest"
 	import type { Account, Currency, Modifier, FinancialEntry } from "+/entity"
 
 	import { get } from "svelte/store"
@@ -68,7 +68,7 @@
 		"path": `${partialPath}?${
 			new URLSearchParams([
 				...parameters,
-				[ "page[offset]", "0" ],
+				[ "page[offset]", `${lastOffset}` ],
 				[ "page[limit]", "1" ]
 			]).toString()
 		}`,
@@ -133,7 +133,7 @@
 			return
 		}
 
-		reloadFinancialEntries()
+		await reloadFinancialEntries()
 		await requestForModifiers({})
 	}
 
