@@ -19,7 +19,7 @@
 
 	export let isConnectingForInitialList: boolean
 	export let partialPath: string
-	export let individualName: string
+	export let collectiveName: string
 	export let parameters: [string, string][]
 	export let lastOffset: number
 
@@ -48,7 +48,7 @@
 				"action": async (response: Response) => {
 					let responseDocument = await response.json()
 					errors.set([])
-					const resources = responseDocument[individualName]
+					const resources = responseDocument[collectiveName]
 
 					if (resources.length > 0) {
 						lastOffset = lastOffset + resources.length

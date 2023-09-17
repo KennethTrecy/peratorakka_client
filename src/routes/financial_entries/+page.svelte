@@ -45,8 +45,8 @@
 	let sortOrder: SortOrder = DESCENDING_ORDER
 	let lastOffset: number = 0
 
-	const individualName = "financial_entries"
-	const partialPath = `/api/v1/${individualName}`
+	const collectiveName = "financial_entries"
+	const partialPath = `/api/v1/${collectiveName}`
 	let parameters: [string, string][] = [
 		[ "filter[search_mode]", searchMode as string ],
 		[ "sort[0][0]", sortCriterion ],
@@ -84,7 +84,7 @@
 				"action": async (response: Response) => {
 					let responseDocument = await response.json()
 					errorsForFinancialEntries.set([])
-					financialEntries = responseDocument[individualName]
+					financialEntries = responseDocument[collectiveName]
 					lastOffset = financialEntries.length - 1
 				}
 			}
@@ -196,7 +196,7 @@
 			isConnectingForInitialList={$isConnectingForFinancialEntries}
 			{partialPath}
 			{parameters}
-			{individualName}
+			{collectiveName}
 			bind:lastOffset={lastOffset}
 			on:reloadFully={reloadFinancialEntries}
 			on:addResources={addFinancialEntries}/>

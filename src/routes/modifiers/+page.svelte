@@ -44,8 +44,8 @@
 	let sortOrder: SortOrder = ASCENDING_ORDER
 	let lastOffset: number = 0
 
-	const individualName = "modifier"
-	const partialPath = `/api/v1/${individualName}`
+	const collectiveName = "modifiers"
+	const partialPath = `/api/v1/${collectiveName}`
 	let parameters: [string, string][] = [
 		[ "filter[search_mode]", searchMode as string ],
 		[ "sort[0][0]", sortCriterion ],
@@ -189,7 +189,7 @@
 			isConnectingForInitialList={$isConnectingForModifiers}
 			{partialPath}
 			{parameters}
-			{individualName}
+			{collectiveName}
 			bind:lastOffset={lastOffset}
 			on:reloadFully={reloadModifiers}
 			on:addResources={addModifiers}/>
