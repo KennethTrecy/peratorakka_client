@@ -15,7 +15,7 @@ export function formatAmount(
 	const whole = trimmedAmount[0]
 	let rawFraction = trimmedAmount[1] ?? ""
 	rawFraction = `${rawFraction}${
-		Array(minimumFractionDigits - rawFraction.length).fill(0).join("")
+		Array(Math.max(minimumFractionDigits - rawFraction.length, 0)).fill(0).join("")
 	}`
 	rawFraction = rawFraction.length === 0
 		? ""
