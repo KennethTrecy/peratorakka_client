@@ -20,7 +20,7 @@
 		SEARCH_NORMALLY_OPTION,
 		SEARCH_ONLY_DELETED_OPTION
 	]
-	export let availableSortCriteria: unknown[] = []
+	export let availableSortCriteria: unknown[]
 	export let availableSortOrders: unknown[] = [
 		...SORT_ORDERS
 	]

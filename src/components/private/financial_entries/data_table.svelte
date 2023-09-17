@@ -19,6 +19,13 @@
 	export let sortOrder: SortOrder
 
 	export let listError: GeneralError[]
+
+	const availableSortCriteria = [
+		"transacted_at",
+		"created_at",
+		"updated_at",
+		"deleted_at"
+	]
 </script>
 
 <DataTable collectiveName="Financial Entries" {isConnecting} {data}>
@@ -32,6 +39,7 @@
 		bind:sortCriterion={sortCriterion}
 		bind:sortOrder={sortOrder}
 		{isConnecting}
+		{availableSortCriteria}
 		errors={listError}/>
 	<DataTableRecordHeader slot="table_headers">
 		<DataTableHeader slot="leading_headers">Transaction Date</DataTableHeader>
