@@ -27,13 +27,18 @@
 				</Flex>
 			{/if}
 			<Flex direction="column" mustPad={false}>
-				<UnitDataTable>
-					<slot slot="table_headers" name="table_headers"/>
-					<slot slot="table_rows" name="table_rows"/>
-					{#if $$slots.table_footer_cells}
-						<slot name="table_footer_cells"/>
-					{/if}
-				</UnitDataTable>
+				{#if $$slots.table_footer_cells}
+					<UnitDataTable>
+						<slot slot="table_headers" name="table_headers"/>
+						<slot slot="table_rows" name="table_rows"/>
+						<slot slot="table_footer_cells" name="table_footer_cells"/>
+					</UnitDataTable>
+				{:else}
+					<UnitDataTable>
+						<slot slot="table_headers" name="table_headers"/>
+						<slot slot="table_rows" name="table_rows"/>
+					</UnitDataTable>
+				{/if}
 			</Flex>
 		</div>
 	</GridCell>
