@@ -4,9 +4,9 @@ export const RECOMMENDED_API_VERSION = "0.2.0"
 
 export const MAINTENANCE_EXPIRATION_MECHANISM = "maintenance"
 
-export const SEARCH_NORMALLY = "NORMAL"
-export const SEARCH_WITH_DELETED = "WITH_DELETED"
-export const SEARCH_ONLY_DELETED = "ONLY_DELETED"
+export const SEARCH_NORMALLY = "normal"
+export const SEARCH_WITH_DELETED = "with_deleted"
+export const SEARCH_ONLY_DELETED = "only_deleted"
 
 export const SEARCH_MODES = [
 	SEARCH_NORMALLY,
