@@ -45,7 +45,7 @@
 				{currency}
 				{accounts}
 				data={calculation}
-				kind="unadjusted"/>
+				{kind}/>
 		{/each}
 	</svelte:fragment>
 	<svelte:fragment slot="table_footer_cells">
