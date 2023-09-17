@@ -3,6 +3,8 @@
 	import { writable } from "svelte/store"
 	import debounce from "lodash.debounce"
 
+	import { MAXIMUM_PAGINATED_LIST_LENGTH } from "#/rest"
+
 	import makeJSONRequester from "$/rest/make_json_requester"
 
 	import Flex from "$/layout/flex.svelte"
@@ -28,7 +30,7 @@
 			new URLSearchParams([
 				...parameters,
 				[ "page[offset]", `${lastOffset + 1}` ],
-				[ "page[limit]", "15" ]
+				[ "page[limit]", MAXIMUM_PAGINATED_LIST_LENGTH ]
 			]).toString()
 		}`
 

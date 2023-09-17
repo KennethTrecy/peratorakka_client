@@ -6,7 +6,7 @@
 	import { onMount } from "svelte"
 	import { afterNavigate, beforeNavigate, goto } from "$app/navigation"
 
-	import { SEARCH_NORMALLY, DESCENDING_ORDER } from "#/rest"
+	import { SEARCH_NORMALLY, DESCENDING_ORDER, MAXIMUM_PAGINATED_LIST_LENGTH } from "#/rest"
 
 	import makeJSONRequester from "$/rest/make_json_requester"
 	import applyRequirements from "$/utility/apply_requirements"
@@ -68,7 +68,7 @@
 			new URLSearchParams([
 				...parameters,
 				[ "page[offset]", `${lastOffset}` ],
-				[ "page[limit]", "1" ]
+				[ "page[limit]", MAXIMUM_PAGINATED_LIST_LENGTH ]
 			]).toString()
 		}`,
 		"defaultRequestConfiguration": {

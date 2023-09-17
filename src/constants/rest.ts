@@ -35,3 +35,5 @@ export const SORT_ORDERS = [
 	ASCENDING_ORDER,
 	DESCENDING_ORDER
 ] as const
+
+export const MAXIMUM_PAGINATED_LIST_LENGTH = "15"
