@@ -1,9 +1,12 @@
 <script lang="ts">
+	import type { SearchMode, SortOrder } from "+/rest"
 	import type { Account, Currency } from "+/entity"
 
-	import { get } from "svelte/store"
+	import { get, writable } from "svelte/store"
 	import { onMount } from "svelte"
 	import { afterNavigate, beforeNavigate, goto } from "$app/navigation"
+
+	import { SEARCH_NORMALLY, ASCENDING_ORDER, MAXIMUM_PAGINATED_LIST_LENGTH } from "#/rest"
 
 	import makeJSONRequester from "$/rest/make_json_requester"
 	import applyRequirements from "$/utility/apply_requirements"
@@ -17,6 +20,7 @@
 	import AddForm from "%/accounts/add_form.svelte"
 	import ArticleGrid from "$/layout/article_grid.svelte"
 	import Collection from "%/accounts/collection.svelte"
+	import ExtraResourceLoader from "$/catalog/extra_resource_loader.svelte"
 	import GridCell from "$/layout/grid_cell.svelte"
 	import InnerGrid from "$/layout/inner_grid.svelte"
 	import PrimaryHeading from "$/typography/primary_heading.svelte"
@@ -34,12 +38,40 @@
 	let currencies: Currency[] = []
 	let accounts: Account[] = []
 
+	let searchMode: SearchMode = SEARCH_NORMALLY
+	let sortCriterion: string = "name"
+	let sortOrder: SortOrder = ASCENDING_ORDER
+
+	const individualName = "accounts"
+	const partialPath = `/api/v1/${individualName}`
+	let parameters: [string, string][] = [
+		[ "filter[search_mode]", searchMode as string ],
+		[ "sort[0][0]", sortCriterion ],
+		[ "sort[0][1]", sortOrder as string ]
+	]
+	let completePath = writable(partialPath)
+	$: {
+		parameters = [
+			[ "filter[search_mode]", searchMode as string ],
+			[ "sort[0][0]", sortCriterion ],
+			[ "sort[0][1]", sortOrder as string ]
+		]
+
+		completePath.set(`${partialPath}?${
+			new URLSearchParams([
+				...parameters
+			]).toString()
+		}`)
+
+		reloadAccounts()
+	}
+
 	let {
 		"isConnecting": isConnectingForAccounts,
 		"errors": errorsForAccounts,
 		"send": requestForAccounts
 	} = makeJSONRequester({
-		"path": "/api/v1/accounts",
+		"path": completePath,
 		"defaultRequestConfiguration": {
 			"method": "GET"
 		},
@@ -78,6 +110,11 @@
 		"expectedErrorStatusCodes": [ 401 ]
 	})
 
+	async function reloadAccounts() {
+		accounts = []
+		await requestForAccounts({})
+	}
+
 	async function loadList() {
 		const currentServerURL = get(serverURL)
 
@@ -87,7 +124,7 @@
 		}
 
 		await requestForCurrencies({})
-		await requestForAccounts({})
+		await reloadAccounts()
 	}
 
 	onMount(loadList)
@@ -122,7 +159,11 @@
 		<Collection
 			{currencies}
 			data={accounts}
+			bind:searchMode={searchMode}
+			bind:sortCriterion={sortCriterion}
+			bind:sortOrder={sortOrder}
 			isConnecting={$isConnectingForAccounts}
+			listError={$errorsForAccounts}
 			on:delete={removeAccount}/>
 	</InnerGrid>
 </ArticleGrid>

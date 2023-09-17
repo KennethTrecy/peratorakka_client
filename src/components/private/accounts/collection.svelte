@@ -1,12 +1,29 @@
 <script lang="ts">
 	import type { Currency, Account } from "+/entity"
+	import type { GeneralError, SearchMode, SortOrder } from "+/rest"
 
+	import AccountCard from "%/accounts/account_card.svelte"
 	import Collection from "$/catalog/collection.svelte"
-	import AccountCard from "%/accounts/account_card.svelte";
+	import Flex from "$/layout/flex.svelte"
+	import GridCell from "$/layout/grid_cell.svelte"
+	import ListSpecifier from "$/form/list_specifier.svelte"
 
 	export let isConnecting: boolean
 	export let currencies: Currency[]
 	export let data: Account[]
+
+	export let searchMode: SearchMode
+	export let sortCriterion: string
+	export let sortOrder: SortOrder
+
+	export let listError: GeneralError[]
+
+	const availableSortCriteria = [
+		"name",
+		"created_at",
+		"updated_at",
+		"deleted_at"
+	]
 </script>
 
 <Collection collectiveName="Financial Accounts" {isConnecting} {data}>
@@ -15,6 +32,19 @@
 		They can be associated to modifiers.
 	</svelte:fragment>
 	<svelte:fragment slot="cards">
+		<GridCell kind="full">
+			<Flex direction="column">
+				<Flex direction="row" mustPad={false}>
+					<ListSpecifier
+						bind:searchMode={searchMode}
+						bind:sortCriterion={sortCriterion}
+						bind:sortOrder={sortOrder}
+						{isConnecting}
+						{availableSortCriteria}
+						errors={listError}/>
+				</Flex>
+			</Flex>
+		</GridCell>
 		{#each data as entity(entity.id)}
 			<AccountCard
 				bind:data={entity}
