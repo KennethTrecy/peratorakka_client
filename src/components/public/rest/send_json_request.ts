@@ -33,7 +33,10 @@ export default async function sendJSONRequest(
 			})
 		}
 
-		const response = await fetch(`${currentServerURL}${constraints.path}`, {
+		const endpoint = typeof constraints.path === "string"
+			? constraints.path
+			: get(constraints.path)
+		const response = await fetch(`${currentServerURL}${endpoint}`, {
 			"mode": "cors",
 			headers,
 			...constraints.defaultRequestConfiguration,

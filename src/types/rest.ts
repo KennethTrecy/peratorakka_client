@@ -1,4 +1,4 @@
-import type { Writable } from "svelte/store"
+import type { Writable, Readable } from "svelte/store"
 
 import { SEARCH_MODES, SORT_ORDERS } from "#/rest"
 
@@ -29,7 +29,7 @@ interface RequesterCase {
 }
 
 export interface RequesterConstraints {
-	path: string,
+	path: string|Readable<string>,
 	defaultRequestConfiguration: Partial<RequestInit>,
 	manualResponseHandlers: RequesterCase[],
 	expectedErrorStatusCodes: number[]
