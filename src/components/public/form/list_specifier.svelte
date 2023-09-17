@@ -16,7 +16,7 @@
 	export let sortCriterion: string
 	export let sortOrder: SortOrder
 
-	export let availableChoices: unknown[] = [
+	export let availableSearchModes: unknown[] = [
 		SEARCH_NORMALLY_OPTION,
 		SEARCH_ONLY_DELETED_OPTION
 	]
@@ -38,7 +38,7 @@
 	fieldName="Presence"
 	disabled={isConnecting}
 	bind:value={searchMode}
-	rawChoices={availableChoices}
+	rawChoices={availableSearchModes}
 	choiceConverter={returnChoiceAgain}
 	{errors}/>
 <slot name="after_presence_field"/>
