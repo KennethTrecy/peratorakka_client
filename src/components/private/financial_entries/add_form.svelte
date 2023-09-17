@@ -52,8 +52,6 @@
 					const document = await response.json()
 					const { financial_entry } = document
 
-					modifierID = UNKNOWN_OPTION
-					transactedAt = defaultTransactedDate
 					debitAmount = "0"
 					creditAmount = "0"
 					remarks = ""
