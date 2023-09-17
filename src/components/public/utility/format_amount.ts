@@ -7,11 +7,13 @@ import { formatAmount as formatAmountStrictly } from "!/index"
 export default function formatAmount(currency: Currency | undefined, amount: string): string {
 	const minimumFractionDigits = DEFAULT_MINIMUM_FRACTION_DIGITS
 	const maximumFractionDigits = DEFAULT_MAXIMUM_FRACTION_DIGITS
+	const isNegative = amount.startsWith("-")
+	const cleanAmount = isNegative ? amount.slice(1): amount
 
-	return formatAmountStrictly(
+	return `${isNegative ? "(" : ""}${formatAmountStrictly(
 		currency,
-		amount,
+		cleanAmount,
 		minimumFractionDigits,
 		maximumFractionDigits
-	)
+	)}${isNegative ? ")" : ""}`
 }
