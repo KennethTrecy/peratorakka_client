@@ -176,7 +176,11 @@
 			{currencies}
 			{accounts}
 			data={modifiers}
+			bind:searchMode={searchMode}
+			bind:sortCriterion={sortCriterion}
+			bind:sortOrder={sortOrder}
 			isConnecting={$isConnectingForModifiers}
+			listError={$errorsForModifiers}
 			on:delete={removeModifier}/>
 		<ExtraResourceLoader
 			isConnectingForInitialList={$isConnectingForModifiers}

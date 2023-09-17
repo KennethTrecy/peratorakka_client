@@ -1,12 +1,12 @@
 <script lang="ts">
-	import type { GeneralError, SearchMode, SortOrder } from "+/rest"
 	import type { Currency, Account, Modifier, FinancialEntry } from "+/entity"
+	import type { GeneralError, SearchMode, SortOrder } from "+/rest"
 
 	import DataTable from "$/catalog/data_table.svelte"
-	import ListSpecifier from "$/form/list_specifier.svelte"
 	import DataTableHeader from "$/catalog/data_table_header.svelte"
 	import DataTableRecordHeader from "$/catalog/data_table_record_headers.svelte"
 	import FinancialEntryRecord from "%/financial_entries/financial_entry_record.svelte"
+	import ListSpecifier from "$/form/list_specifier.svelte"
 
 	export let isConnecting: boolean
 	export let currencies: Currency[]
