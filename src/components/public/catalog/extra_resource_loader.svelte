@@ -18,7 +18,7 @@
 	export let isConnectingForInitialList: boolean
 	export let partialPath: string
 	export let individualName: string
-	export let parameters: string[][]
+	export let parameters: [string, string][]
 	export let lastOffset: number
 
 	let path = writable(partialPath)
@@ -47,7 +47,7 @@
 					let responseDocument = await response.json()
 					errors.set([])
 					const resources = responseDocument[individualName]
-					lastOffset = lastOffset + responseDocument[individualName].length
+					lastOffset = lastOffset + responseDocument[individualName].length - 1
 					dispatch("addResources", resources)
 
 				}
@@ -79,7 +79,7 @@
 
 			if (encodedOldParameters !== encodedCurrentParameters) {
 				if (abortController !== null) abortController.abort()
-				reloadFully()
+				if (lastOffset > 0) reloadFully()
 			}
 		}
 	}
@@ -87,14 +87,14 @@
 
 {#if !isConnectingForInitialList}
 	<GridCell kind="full">
-		{#if isConnecting}
-			<ShortParagraph>Loading next items...</ShortParagraph>
-		{:else}
-			<Flex direction="column">
-				<TextButton
-					label="Load next items"
-					on:click={loadResources}/>
-			</Flex>
-		{/if}
+		<Flex direction="column">
+			{#if isConnecting}
+				<ShortParagraph>Loading next items...</ShortParagraph>
+			{:else}
+					<TextButton
+						label="Load next items"
+						on:click={loadResources}/>
+			{/if}
+		</Flex>
 	</GridCell>
 {/if}
