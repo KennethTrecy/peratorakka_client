@@ -2,10 +2,11 @@
 	import type { RequesterConstraints, SearchMode, SortOrder } from "+/rest"
 	import type { Account, Currency, Modifier, FinancialEntry } from "+/entity"
 
-	import debounce from "lodash.debounce"
 	import { get } from "svelte/store"
 	import { onMount } from "svelte"
 	import { afterNavigate, beforeNavigate, goto } from "$app/navigation"
+
+	import { SEARCH_NORMALLY, DESCENDING_ORDER } from "#/rest"
 
 	import makeJSONRequester from "$/rest/make_json_requester"
 	import applyRequirements from "$/utility/apply_requirements"
@@ -19,10 +20,10 @@
 	import AddForm from "%/financial_entries/add_form.svelte"
 	import ArticleGrid from "$/layout/article_grid.svelte"
 	import DataTable from "%/financial_entries/data_table.svelte"
+	import ExtraResourceLoader from "$/catalog/extra_resource_loader.svelte"
 	import GridCell from "$/layout/grid_cell.svelte"
 	import InnerGrid from "$/layout/inner_grid.svelte"
 	import PrimaryHeading from "$/typography/primary_heading.svelte"
-	import { SEARCH_NORMALLY, DESCENDING_ORDER } from "#/rest";
 
 	applyRequirements([
 		mustHaveToken,
@@ -44,8 +45,33 @@
 	let sortOrder: SortOrder = DESCENDING_ORDER
 	let lastOffset: number = 0
 
-	let financialEntryConstraints: RequesterConstraints = {
-		"path": "/api/v1/financial_entries",
+	const individualName = "financial_entries"
+	const partialPath = `/api/v1/${individualName}`
+	let parameters: [string, string][] = [
+		[ "filter[search_mode]", searchMode as string ],
+		[ "sort[0][0]", sortCriterion ],
+		[ "sort[0][1]", sortOrder as string ]
+	]
+	$: {
+		parameters = [
+			[ "filter[search_mode]", searchMode as string ],
+			[ "sort[0][0]", sortCriterion ],
+			[ "sort[0][1]", sortOrder as string ]
+		]
+	}
+
+	let {
+		"isConnecting": isConnectingForFinancialEntries,
+		"errors": errorsForFinancialEntries,
+		"send": requestForFinancialEntries
+	} = makeJSONRequester({
+		"path": `${partialPath}?${
+			new URLSearchParams([
+				...parameters,
+				[ "page[offset]", "0" ],
+				[ "page[limit]", "1" ]
+			]).toString()
+		}`,
 		"defaultRequestConfiguration": {
 			"method": "GET"
 		},
@@ -55,18 +81,13 @@
 				"action": async (response: Response) => {
 					let responseDocument = await response.json()
 					errorsForFinancialEntries.set([])
-					financialEntries = responseDocument.financial_entries
+					financialEntries = responseDocument[individualName]
+					lastOffset = financialEntries.length - 1
 				}
 			}
 		],
 		"expectedErrorStatusCodes": [ 401 ]
-	}
-
-	let {
-		"isConnecting": isConnectingForFinancialEntries,
-		"errors": errorsForFinancialEntries,
-		"send": requestForFinancialEntries
-	} = makeJSONRequester(financialEntryConstraints)
+	})
 
 	let {
 		"isConnecting": isConnectingForModifiers,
@@ -99,34 +120,9 @@
 		"expectedErrorStatusCodes": [ 401 ]
 	})
 
-	let abortController: AbortController|null = null
-
-	async function loadFinancialEntries() {
-		if (abortController !== null) abortController.abort()
-
-		abortController = new AbortController()
-
-		await requestForFinancialEntries({
-			"signal": abortController.signal
-		})
-	}
-
-	const reloadFinancialEntries = debounce(loadFinancialEntries, 500)
-
-
-	$: {
-		const path = `/api/v1/financial_entries?${
-			new URLSearchParams([
-				[ "filter[search_mode]", searchMode as string ],
-				[ "sort[0][0]", sortCriterion ],
-				[ "sort[0][1]", sortOrder as string ],
-				[ "page[offset]", `${lastOffset}` ],
-				[ "page[limit]", "20" ]
-			]).toString()
-		}`
-
-		financialEntryConstraints.path = path
-		reloadFinancialEntries()
+	async function reloadFinancialEntries() {
+		financialEntries = []
+		await requestForFinancialEntries({})
 	}
 
 	async function loadList() {
@@ -148,6 +144,14 @@
 		financialEntries = [
 			...financialEntries,
 			newFinancialEntry
+		]
+	}
+
+	function addFinancialEntries(event: CustomEvent<unknown[]>) {
+		const newFinancialEntries = event.detail as FinancialEntry[]
+		financialEntries = [
+			...financialEntries,
+			...newFinancialEntries
 		]
 	}
 
@@ -185,5 +189,13 @@
 			isConnecting={$isConnectingForFinancialEntries}
 			listError={$errorsForFinancialEntries}
 			on:delete={removeFinancialEntry}/>
+		<ExtraResourceLoader
+			isConnectingForInitialList={$isConnectingForFinancialEntries}
+			{partialPath}
+			{parameters}
+			{individualName}
+			bind:lastOffset={lastOffset}
+			on:reloadFully={reloadFinancialEntries}
+			on:addResources={addFinancialEntries}/>
 	</InnerGrid>
 </ArticleGrid>
