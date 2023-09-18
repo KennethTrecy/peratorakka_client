@@ -35,9 +35,9 @@ describe("Collection behavior", () => {
 			data
 		})
 
-		const progress = container.querySelector("[role=progressbar]")
+		const progress = container.querySelector(".mdc-linear-progress--closed")
 
-		expect(progress).toBeNull()
+		expect(progress).not.toBeNull()
 
 		cleanup()
 	})
