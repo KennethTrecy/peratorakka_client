@@ -7,7 +7,7 @@ import { act, render, cleanup } from "@testing-library/svelte"
 import Component from "./password_field.svelte"
 
 describe("Password field behavior", () => {
-	it.skip("can render with no value", async () => {
+	it("can render with no value", async () => {
 		const user = userEvent.setup()
 		const props = {
 			"fieldName": "",
@@ -17,14 +17,12 @@ describe("Password field behavior", () => {
 		}
 		const { container, getByRole } = render(Component, props)
 
-		const textBox = getByRole("textbox")
-
-		expect(textBox.classList.contains("active")).toBeFalsy()
+		expect(container.querySelector(".mdc-floating-label--float-above")).toBeNull()
 
 		cleanup()
 	})
 
-	it.skip("can render with new value", async () => {
+	it("can render with new value", async () => {
 		const user = userEvent.setup()
 		const props = {
 			"fieldName": "",
@@ -37,12 +35,12 @@ describe("Password field behavior", () => {
 		const textBox = getByRole("textbox")
 		await user.type(textBox, "Hello world")
 
-		expect(textBox.classList.contains("active")).toBeTruthy()
+		expect(container.querySelector(".mdc-floating-label--float-above")).not.toBeNull()
 
 		cleanup()
 	})
 
-	it.skip("can render with no error", async () => {
+	it("can render with no error", async () => {
 		const user = userEvent.setup()
 		const props = {
 			"fieldName": "hello",
@@ -63,7 +61,7 @@ describe("Password field behavior", () => {
 		cleanup()
 	})
 
-	it.skip("can render with error", async () => {
+	it("can render with error", async () => {
 		const user = userEvent.setup()
 		const props = {
 			"fieldName": "hello",

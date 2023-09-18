@@ -17,9 +17,7 @@ describe("Text field behavior", () => {
 		}
 		const { container, getByRole } = render(Component, props)
 
-		const textBox = getByRole("textbox")
-
-		expect(textBox.classList.contains("active")).toBeFalsy()
+		expect(container.querySelector(".mdc-floating-label--float-above")).toBeNull()
 
 		cleanup()
 	})
