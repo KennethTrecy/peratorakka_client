@@ -20,11 +20,11 @@ describe("Choice list field behavior", () => {
 			}),
 			"errors": []
 		}
-		const { container, getByRole } = render(Component, props)
+		const { container } = render(Component, props)
 
-		const select = getByRole("combobox")
+		const selectedText = container.querySelector(".mdc-select__selected-text")
 
-		expect(select.querySelector("option[value='']")).toBeFalsy()
+		expect(selectedText.innerHTML).toEqual("A")
 
 		cleanup()
 	})
@@ -40,19 +40,13 @@ describe("Choice list field behavior", () => {
 				"data": choice,
 				"label": choice.toUpperCase()
 			}),
-			"rawChoices": [ "a", "b", "c" ],
-			"rawChoices": [ "a", "b", "c" ],
-			"choiceConverter": (choice) => ({
-				"data": choice,
-				"label": choice.toUpperCase()
-			}),
 			"errors": []
 		}
-		const { container, getByRole } = render(Component, props)
+		const { container } = render(Component, props)
 
-		const select = getByRole("combobox")
+		const selectedText = container.querySelector(".mdc-select__selected-text")
 
-		expect(select.querySelector("option[value='']")).toBeTruthy()
+		expect(selectedText.innerHTML).toEqual("Please select one of the choices...")
 
 		cleanup()
 	})
