@@ -13,7 +13,8 @@ export const accountKinds = [
 
 export const acceptableModifierActions = [
 	"record",
-	"close"
+	"close",
+	"exchange"
 ] as const
 
 export const modifierActions = [
