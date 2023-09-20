@@ -12,6 +12,7 @@
 	import DataTableHeader from "$/catalog/data_table_header.svelte"
 	import DataTableRow from "$/catalog/data_table_row.svelte"
 	import Flex from "$/layout/flex.svelte"
+	import ShortParagraph from "$/typography/short_paragraph.svelte"
 	import TextButton from "$/button/text.svelte"
 	import WeakenedTertiaryHeading from "$/typography/weakened_tertiary_heading.svelte"
 
@@ -59,7 +60,6 @@
 
 	async function confirmDelete() {
 		await requestDelete()
-		deleteErrors.set([])
 	}
 
 	function cancelEdit() {
@@ -84,6 +84,11 @@
 							Delete {label}?
 						</WeakenedTertiaryHeading>
 						<slot name="delete_confirmation_message"/>
+						{#each $deleteErrors as error}
+							<ShortParagraph>
+								{error.message}
+							</ShortParagraph>
+						{/each}
 					</Flex>
 				</div>
 				<div class="mdc-card__actions">
