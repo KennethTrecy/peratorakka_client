@@ -21,6 +21,7 @@
 	import DataTableCell from "$/catalog/data_table_cell.svelte"
 	import DataTableRecord from "$/catalog/data_table_record.svelte"
 	import EditActionCardButtonPair from "$/button/card/edit_action_pair.svelte"
+	import ShortParagraph from "$/typography/short_paragraph.svelte"
 
 	export let currencies: Currency[]
 	export let accounts: Account[]
@@ -107,6 +108,7 @@
 					"statusCode": 204,
 					"action": async (response: Response) => {
 						dispatch("delete", data)
+						deleteErrors.set([])
 					}
 				}
 			],
@@ -173,6 +175,9 @@
 			disabled={$isConnectingToUpdate}
 			on:cancelEdit={cancelEdit}/>
 	</BasicForm>
+	<ShortParagraph slot="delete_confirmation_message">
+		Deleting this modifier may prevent other data from showing.
+	</ShortParagraph>
 	<svelte:fragment slot="trailing_cells">
 		<DataTableCell>
 			{friendlyAction}
