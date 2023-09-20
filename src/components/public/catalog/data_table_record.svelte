@@ -5,6 +5,7 @@
 	import type { Account } from "+/entity"
 
 	import { createEventDispatcher } from "svelte"
+	import { get } from "svelte/store"
 
 	import DataTableAccountCell from "$/catalog/data_table_account_cell.svelte"
 	import DataTableCell from "$/catalog/data_table_cell.svelte"
@@ -50,8 +51,10 @@
 		event.preventDefault()
 
 		await requestUpdate()
-		updateErrors.set([])
-		startReading()
+		if (get(updateErrors).length === 0) {
+			updateErrors.set([])
+			startReading()
+		}
 	}
 
 	async function confirmDelete() {
