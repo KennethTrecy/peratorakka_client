@@ -139,13 +139,15 @@
 		</ul>
 	</div>
 </div>
-<div class="mdc-text-field-helper-line">
-	<p
-		class="mdc-text-field-helper-text mdc-text-field-helper-text--persistent mdc-text-field-helper-text--validation-msg"
-		id={helperID}>
-		{message}
-	</p>
-</div>
+{#if message !== ""}
+	<div class="mdc-text-field-helper-line">
+		<p
+			class="mdc-text-field-helper-text mdc-text-field-helper-text--persistent mdc-text-field-helper-text--validation-msg"
+			id={helperID}>
+			{message}
+		</p>
+	</div>
+{/if}
 
 <style lang="scss">
 	@use "@/components/third-party/index";
