@@ -139,11 +139,13 @@
 		</ul>
 	</div>
 </div>
-{#if message !== ""}
-	<div class="mdc-text-field-helper-line">
-		<p class="mdc-text-field-helper-text" id={helperID}>{message}</p>
-	</div>
-{/if}
+<div class="mdc-text-field-helper-line">
+	<p
+		class="mdc-text-field-helper-text mdc-text-field-helper-text--persistent mdc-text-field-helper-text--validation-msg"
+		id={helperID}>
+		{message}
+	</p>
+</div>
 
 <style lang="scss">
 	@use "@/components/third-party/index";
@@ -154,8 +156,10 @@
 	@use "@material/floating-label/mdc-floating-label";
 	@use "@material/notched-outline/mdc-notched-outline";
 	@use "@material/select/styles";
+	@use "@material/textfield/helper-text";
 
 	@include list.deprecated-core-styles;
+	@include helper-text.helper-text-core-styles;
 
 	.mdc-select__dropdown-icon {
 		font-size: 1.5rem;
