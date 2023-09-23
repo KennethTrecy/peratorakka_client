@@ -4,7 +4,6 @@
 	import { onMount } from "svelte"
 	import { MDCTextField } from "@material/textfield"
 	import { MDCLineRipple } from "@material/line-ripple"
-	import { MDCTextFieldHelperText } from "@material/textfield/helper-text"
 
 	import { isFieldError } from "+/rest"
 
@@ -38,18 +37,17 @@
 		"mdc-floating-label",
 		isActive ? "mdc-floating-label--float-above" : false
 	].filter(Boolean).join(" ")
-	$: isHelperTextHidden = message === ""
 
+	let field: any = null
 	let fieldElement: any = null
-	let helperTextElement: any = null
 	let topLineRippleElement: any = null
 	let bottomLineRippleElement: any = null
 	onMount(() => {
-		const field = new MDCTextField(fieldElement)
+		field = new MDCTextField(fieldElement)
 		const topLineRipple = new MDCLineRipple(topLineRippleElement)
 		const bottomLineRipple = new MDCLineRipple(bottomLineRippleElement)
-		const helperText = new MDCTextFieldHelperText(helperTextElement)
 	})
+	$: if (field !== null) field.helperTextContent = message
 </script>
 
 <label class={textfieldClass} bind:this={fieldElement}>
@@ -91,10 +89,8 @@
 </label>
 <div class="mdc-text-field-helper-line">
 	<p
-		class="mdc-text-field-helper-text mdc-text-field-helper-text--validation-msg"
-		id={helperID}
-		aria-hidden={isHelperTextHidden}
-		bind:this={helperTextElement}>
+		class="mdc-text-field-helper-text mdc-text-field-helper-text--persistent mdc-text-field-helper-text--validation-msg"
+		id={helperID}>
 		{message}
 	</p>
 </div>
