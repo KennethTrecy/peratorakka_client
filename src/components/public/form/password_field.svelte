@@ -3,6 +3,7 @@
 
 	import { onMount } from "svelte"
 	import { MDCTextField } from "@material/textfield"
+	import { MDCLineRipple } from "@material/line-ripple"
 
 	import { isFieldError } from "+/rest"
 
@@ -34,13 +35,17 @@
 	].filter(Boolean).join(" ")
 
 	let fieldElement: any
+	let topLineRippleElement: any = null
+	let bottomLineRippleElement: any = null
 	onMount(() => {
 		const field = new MDCTextField(fieldElement)
+		const topLineRipple = new MDCLineRipple(topLineRippleElement)
+		const bottomLineRipple = new MDCLineRipple(bottomLineRippleElement)
 	})
 </script>
 
 <label class={textfieldClass} bind:this={fieldElement}>
-	<span class="mdc-text-field__ripple"></span>
+	<span class="mdc-text-field__ripple" bind:this={topLineRippleElement}></span>
 	<span
 		class={floatingLabelClass}
 		id={fieldID}>
@@ -55,13 +60,15 @@
 		aria-labelledby={fieldID}
 		aria-controls={helperID}
 		aria-describedby={helperID}/>
-	<span class="mdc-line-ripple"></span>
+	<span class="mdc-line-ripple" bind:this={bottomLineRippleElement}></span>
 </label>
-{#if message !== ""}
-	<div class="mdc-text-field-helper-line">
-		<p class="mdc-text-field-helper-text" id={helperID}>{message}</p>
-	</div>
-{/if}
+<div class="mdc-text-field-helper-line">
+	<p
+		class="mdc-text-field-helper-text mdc-text-field-helper-text--persistent mdc-text-field-helper-text--validation-msg"
+		id={helperID}>
+		{message}
+	</p>
+</div>
 
 <style lang="scss">
 	@use "@/components/third-party/index";
@@ -69,6 +76,8 @@
 	@use "@material/floating-label/mdc-floating-label";
 	@use "@material/line-ripple/mdc-line-ripple";
 	@use "@material/textfield";
+	@use "@material/textfield/helper-text";
 
 	@include textfield.core-styles;
+	@include helper-text.helper-text-core-styles;
 </style>
