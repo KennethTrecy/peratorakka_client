@@ -133,6 +133,7 @@
 	})
 
 	async function reloadModifiers() {
+		lastOffset = 0
 		modifiers = []
 		await requestForModifiers({})
 	}
