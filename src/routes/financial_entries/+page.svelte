@@ -50,14 +50,18 @@
 	let parameters: [string, string][] = [
 		[ "filter[search_mode]", searchMode as string ],
 		[ "sort[0][0]", sortCriterion ],
-		[ "sort[0][1]", sortOrder as string ]
+		[ "sort[0][1]", sortOrder as string ],
+		[ "sort[1][0]", "created_at" ],
+		[ "sort[1][1]", sortOrder as string ]
 	]
 	let completePath = writable(partialPath)
 	$: {
 		parameters = [
 			[ "filter[search_mode]", searchMode as string ],
 			[ "sort[0][0]", sortCriterion ],
-			[ "sort[0][1]", sortOrder as string ]
+			[ "sort[0][1]", sortOrder as string ],
+			[ "sort[1][0]", "created_at" ],
+			[ "sort[1][1]", sortOrder as string ]
 		]
 
 		completePath.set(`${partialPath}?${
