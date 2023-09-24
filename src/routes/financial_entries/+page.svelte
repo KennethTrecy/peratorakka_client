@@ -156,8 +156,8 @@
 	function addFinancialEntry(event: CustomEvent<FinancialEntry>) {
 		const newFinancialEntry = event.detail
 		financialEntries = [
-			...financialEntries,
-			newFinancialEntry
+			newFinancialEntry,
+			...financialEntries
 		]
 	}
 
