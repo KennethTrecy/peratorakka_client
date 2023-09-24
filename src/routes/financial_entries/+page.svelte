@@ -135,7 +135,6 @@
 	})
 
 	async function reloadFinancialEntries() {
-		lastOffset = 0
 		financialEntries = []
 		await requestForFinancialEntries({})
 	}

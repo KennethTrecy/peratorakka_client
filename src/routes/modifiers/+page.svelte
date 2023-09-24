@@ -90,13 +90,6 @@
 					modifiers = responseDocument[collectiveName]
 					lastOffset = responseDocument[collectiveName].length - 1
 				}
-			},
-			{
-				"statusCode": 204,
-				"action": async (response: Response) => {
-					errorsForModifiers.set([])
-					modifiers = []
-				}
 			}
 		],
 		"expectedErrorStatusCodes": [ 401 ]
@@ -133,7 +126,6 @@
 	})
 
 	async function reloadModifiers() {
-		lastOffset = 0
 		modifiers = []
 		await requestForModifiers({})
 	}
