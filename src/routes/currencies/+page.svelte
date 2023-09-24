@@ -103,8 +103,8 @@
 	function addCurrency(event: CustomEvent<Currency>) {
 		const newCurrency = event.detail
 		currencies = [
-			...currencies,
-			newCurrency
+			newCurrency,
+			...currencies
 		]
 	}
 
