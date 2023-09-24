@@ -8,6 +8,7 @@
 		SORT_ORDERS
 	} from "#/rest"
 
+	import transformAttributeName from "$/form/choice_info_transformer/transform_attribute_name"
 	import transformString from "$/form/choice_info_transformer/transform_string"
 
 	import ChoiceListField from "$/form/choice_list_field.svelte"
@@ -47,7 +48,7 @@
 	disabled={isConnecting}
 	bind:value={sortCriterion}
 	rawChoices={availableSortCriteria}
-	choiceConverter={transformString}
+	choiceConverter={transformAttributeName}
 	{errors}/>
 <ChoiceListField
 	fieldName="Sort Order"
