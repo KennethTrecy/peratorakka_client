@@ -84,6 +84,7 @@
 					let responseDocument = await response.json()
 					errorsForModifiers.set([])
 					modifiers = responseDocument.modifiers
+					lastOffset = responseDocument.modifiers.length - 1
 				}
 			},
 			{
