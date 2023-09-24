@@ -37,6 +37,7 @@
 	let currencies: Currency[] = []
 	let accounts: Account[] = []
 
+	let isInClient = false
 	let searchMode: SearchMode = SEARCH_NORMALLY
 	let sortCriterion: string = "name"
 	let sortOrder: SortOrder = ASCENDING_ORDER
@@ -62,7 +63,7 @@
 			]).toString()
 		}`)
 
-		reloadAccounts()
+		if (isInClient) reloadAccounts()
 	}
 
 	let {
@@ -131,6 +132,7 @@
 
 		await requestForCurrencies({})
 		await reloadAccounts()
+		isInClient = true
 	}
 
 	onMount(loadList)
