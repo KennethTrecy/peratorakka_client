@@ -107,7 +107,14 @@
 		"errors": errorsForAccounts,
 		"send": requestForAccounts
 	} = makeJSONRequester({
-		"path": "/api/v1/accounts",
+		"path": `/api/v1/accounts?${
+			new URLSearchParams([
+				[ "sort[0][0]", "name" ],
+				[ "sort[0][1]", "ascending" ],
+				[ "sort[1][0]", "created_at" ],
+				[ "sort[1][1]", "ascending" ]
+			]).toString()
+		}`,
 		"defaultRequestConfiguration": {
 			"method": "GET"
 		},
