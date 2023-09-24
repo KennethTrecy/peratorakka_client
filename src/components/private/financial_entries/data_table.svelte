@@ -40,7 +40,7 @@
 		{availableSortCriteria}
 		errors={listError}/>
 	<DataTableRecordHeader slot="table_headers">
-		<DataTableHeader slot="leading_headers">Transaction Date</DataTableHeader>
+		<DataTableHeader slot="leading_headers">Transacted Date</DataTableHeader>
 		<svelte:fragment slot="trailing_headers">
 			<DataTableHeader>Amounts</DataTableHeader>
 			<DataTableHeader>Remarks</DataTableHeader>
