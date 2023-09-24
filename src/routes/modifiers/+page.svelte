@@ -49,14 +49,18 @@
 	let parameters: [string, string][] = [
 		[ "filter[search_mode]", searchMode as string ],
 		[ "sort[0][0]", sortCriterion ],
-		[ "sort[0][1]", sortOrder as string ]
+		[ "sort[0][1]", sortOrder as string ],
+		[ "sort[1][0]", "created_at" ],
+		[ "sort[1][1]", sortOrder as string ]
 	]
 	let completePath = writable(partialPath)
 	$: {
 		parameters = [
 			[ "filter[search_mode]", searchMode as string ],
 			[ "sort[0][0]", sortCriterion ],
-			[ "sort[0][1]", sortOrder as string ]
+			[ "sort[0][1]", sortOrder as string ],
+			[ "sort[1][0]", "created_at" ],
+			[ "sort[1][1]", sortOrder as string ]
 		]
 
 		completePath.set(`${partialPath}?${
@@ -83,8 +87,8 @@
 				"action": async (response: Response) => {
 					let responseDocument = await response.json()
 					errorsForModifiers.set([])
-					modifiers = responseDocument.modifiers
-					lastOffset = responseDocument.modifiers.length - 1
+					modifiers = responseDocument[collectiveName]
+					lastOffset = responseDocument[collectiveName].length - 1
 				}
 			},
 			{

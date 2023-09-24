@@ -21,9 +21,7 @@
 
 	const availableSortCriteria = [
 		"name",
-		"created_at",
 		"updated_at",
-		"deleted_at"
 	]
 </script>
 
