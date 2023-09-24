@@ -147,8 +147,8 @@
 	function addModifier(event: CustomEvent<Modifier>) {
 		const newModifier = event.detail
 		modifiers = [
-			...modifiers,
-			newModifier
+			newModifier,
+			...modifiers
 		]
 	}
 
