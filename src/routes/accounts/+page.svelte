@@ -140,8 +140,8 @@
 	function addAccount(event: CustomEvent<Account>) {
 		const newAccount = event.detail
 		accounts = [
-			...accounts,
-			newAccount
+			newAccount,
+			...accounts
 		]
 	}
 
