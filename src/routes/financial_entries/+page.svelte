@@ -35,6 +35,8 @@
 		goto
 	})
 
+	let hasRequestedFirstList = false
+
 	let currencies: Currency[] = []
 	let accounts: Account[] = []
 	let modifiers: Modifier[] = []
@@ -149,6 +151,7 @@
 
 		await reloadFinancialEntries()
 		await requestForModifiers({})
+		hasRequestedFirstList = true
 	}
 
 	onMount(loadList)
@@ -204,7 +207,7 @@
 			listError={$errorsForFinancialEntries}
 			on:delete={removeFinancialEntry}/>
 		<ExtraResourceLoader
-			isConnectingForInitialList={$isConnectingForFinancialEntries}
+			isConnectingForInitialList={$isConnectingForFinancialEntries && hasRequestedFirstList}
 			{partialPath}
 			{parameters}
 			{collectiveName}
