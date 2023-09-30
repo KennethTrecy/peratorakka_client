@@ -98,19 +98,31 @@
 		"expectedErrorStatusCodes": [ 401 ]
 	})
 
+	const partialDependencyPath = "/api/v1/modifiers"
+	const dependencyPathParameters = [
+		[ "sort[0][0]", "name" ],
+		[ "sort[0][1]", "ascending" ],
+		[ "sort[1][0]", "created_at" ],
+		[ "sort[1][1]", "ascending" ]
+	]
+	let totalNumberOfDependencies: number = 0
+	let lastDependencyOffset: number = 0
+	const completeDependencyPath = writable(partialDependencyPath)
+	$: {
+		completePath.set(`${partialDependencyPath}?${
+			new URLSearchParams([
+				...dependencyPathParameters,
+				[ "page[offset]", `${lastDependencyOffset}` ],
+				[ "page[limit]", MAXIMUM_PAGINATED_LIST_LENGTH ]
+			]).toString()
+		}`)
+	}
 	let {
 		"isConnecting": isConnectingForModifiers,
 		"errors": errorsForModifiers,
 		"send": requestForModifiers
 	} = makeJSONRequester({
-		"path": `/api/v1/modifiers?${
-			new URLSearchParams([
-				[ "sort[0][0]", "name" ],
-				[ "sort[0][1]", "ascending" ],
-				[ "sort[1][0]", "created_at" ],
-				[ "sort[1][1]", "ascending" ]
-			]).toString()
-		}`,
+		"path": completeDependencyPath,
 		"defaultRequestConfiguration": {
 			"method": "GET"
 		},
@@ -123,6 +135,8 @@
 					currencies = responseDocument.currencies
 					accounts = responseDocument.accounts
 					modifiers = responseDocument.modifiers
+					lastDependencyOffset = lastDependencyOffset + modifiers.length
+					totalNumberOfDependencies = responseDocument.meta.overall_filtered_count
 				}
 			},
 			{
