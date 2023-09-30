@@ -8,8 +8,9 @@
 
 	import { SEARCH_NORMALLY, DESCENDING_ORDER, MAXIMUM_PAGINATED_LIST_LENGTH } from "#/rest"
 
-	import makeJSONRequester from "$/rest/make_json_requester"
 	import applyRequirements from "$/utility/apply_requirements"
+	import makeJSONRequester from "$/rest/make_json_requester"
+	import mergeUniqueResources from "$/utility/merge_unique_resources"
 	import {
 		serverURL,
 		mustHaveToken,
@@ -106,13 +107,13 @@
 		[ "sort[1][1]", "ascending" ]
 	]
 	let totalNumberOfDependencies: number = 0
-	let lastDependencyOffset: number = 0
+	let lastDependencyOffset: number = -1
 	const completeDependencyPath = writable(partialDependencyPath)
 	$: {
-		completePath.set(`${partialDependencyPath}?${
+		completeDependencyPath.set(`${partialDependencyPath}?${
 			new URLSearchParams([
 				...dependencyPathParameters,
-				[ "page[offset]", `${lastDependencyOffset}` ],
+				[ "page[offset]", `${lastDependencyOffset + 1}` ],
 				[ "page[limit]", MAXIMUM_PAGINATED_LIST_LENGTH ]
 			]).toString()
 		}`)
@@ -132,10 +133,10 @@
 				"action": async (response: Response) => {
 					let responseDocument = await response.json()
 					errorsForModifiers.set([])
-					currencies = responseDocument.currencies
-					accounts = responseDocument.accounts
-					modifiers = responseDocument.modifiers
-					lastDependencyOffset = lastDependencyOffset + modifiers.length
+					currencies = mergeUniqueResources(currencies, responseDocument.currencies)
+					accounts = mergeUniqueResources(accounts, responseDocument.accounts)
+					modifiers = [ ...modifiers, ...responseDocument.modifiers ]
+					lastDependencyOffset = lastDependencyOffset + responseDocument.modifiers.length
 					totalNumberOfDependencies = responseDocument.meta.overall_filtered_count
 				}
 			},
@@ -164,8 +165,13 @@
 		}
 
 		await reloadFinancialEntries()
-		await requestForModifiers({})
 		hasRequestedFirstList = true
+
+		await requestForModifiers({})
+
+		while (lastDependencyOffset + 1 < totalNumberOfDependencies) {
+			await requestForModifiers({})
+		}
 	}
 
 	onMount(loadList)
