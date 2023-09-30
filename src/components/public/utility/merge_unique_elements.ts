@@ -2,7 +2,7 @@ export default function mergeUniqueElements<T>(
 	originalData: T[],
 	newData: T[],
 	generateKey: (element: T) => string|number
-): T {
+): T[] {
 	const uniqueElements = [ ...originalData ]
 	const existingIDs = new Set<string|number>()
 
