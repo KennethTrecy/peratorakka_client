@@ -1,13 +1,18 @@
 <script lang="ts">
+	import type { Readable } from "svelte/store"
 	import type { MenuItemInfo } from "%/shell/types"
+	import type { ContextBundle } from "+/component"
 
-	import { onMount, onDestroy } from "svelte"
+	import { onMount, onDestroy, getContext } from "svelte"
 	import { MDCDrawer } from "@material/drawer"
 	import { afterNavigate } from "$app/navigation"
 
-	import { menuItemInfos } from "%/shell/state"
+	import { SHELL_CONTEXT } from "#/contexts"
 
 	import Item from "%/shell/navigation_drawer/item.svelte"
+
+	const shell = getContext(SHELL_CONTEXT) as ContextBundle
+	const menuItemInfos = shell.menuItemInfos as Readable<MenuItemInfo[]>
 
 	export let isMenuShown: boolean
 	let drawer: HTMLElement|null = null
