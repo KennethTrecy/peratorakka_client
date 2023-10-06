@@ -18,7 +18,7 @@
 	}>()
 	const IDPrefix = "new_"
 	const previousDate =  new Date()
-	previousDate.setMonth(previousDate.getMonth() - 1)
+	previousDate.setDate(1)
 	const previousYear =  previousDate.getFullYear()
 	const previousMonth =  makeTwoDigits(previousDate.getMonth() + 1)
 	const previousDay =  makeTwoDigits(previousDate.getDate())
