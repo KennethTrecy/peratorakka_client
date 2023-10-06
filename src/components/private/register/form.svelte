@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { afterNavigate, beforeNavigate, goto } from "$app/navigation"
 
-	import { MAINTENANCE_EXPIRATION_MECHANISM } from "#/rest"
+	import { MAINTENANCE_EXPIRATION_MECHANISM, SUPPORTED_TOKEN_EXPIRATION_TYPES } from "#/rest"
 
 	import makeJSONRequester from "$/rest/make_json_requester"
 	import applyRequirements from "$/utility/apply_requirements"
@@ -78,6 +78,9 @@
 	async function register() {
 		await send({
 			"body": JSON.stringify({
+				"@meta": {
+					...SUPPORTED_TOKEN_EXPIRATION_TYPES
+				},
 				username,
 				email,
 				password,
