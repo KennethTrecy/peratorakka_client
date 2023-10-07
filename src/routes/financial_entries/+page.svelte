@@ -1,21 +1,20 @@
 <script lang="ts">
+	import type { Account, Currency, FinancialEntry, Modifier } from "+/entity"
+	import type { ContextBundle } from "+/component"
 	import type { SearchMode, SortOrder } from "+/rest"
-	import type { Account, Currency, Modifier, FinancialEntry } from "+/entity"
 
 	import { get, writable } from "svelte/store"
-	import { onMount } from "svelte"
+	import { onMount, getContext } from "svelte"
 	import { afterNavigate, beforeNavigate, goto } from "$app/navigation"
 
+	import { GLOBAL_CONTEXT } from "#/contexts"
 	import { SEARCH_NORMALLY, DESCENDING_ORDER, MAXIMUM_PAGINATED_LIST_LENGTH } from "#/rest"
 
 	import applyRequirements from "$/utility/apply_requirements"
 	import makeJSONRequester from "$/rest/make_json_requester"
 	import mergeUniqueResources from "$/utility/merge_unique_resources"
 	import {
-		serverURL,
-		mustHaveToken,
-		mustHaveAccessToken,
-		mustBeAuthenticatedUser
+		serverURL
 	} from "$/global_state"
 
 	import AddForm from "%/financial_entries/add_form.svelte"
@@ -26,10 +25,12 @@
 	import InnerGrid from "$/layout/inner_grid.svelte"
 	import PrimaryHeading from "$/typography/primary_heading.svelte"
 
-	applyRequirements([
-		mustHaveToken,
-		mustHaveAccessToken,
-		mustBeAuthenticatedUser
+	const globalContext = getContext(GLOBAL_CONTEXT) as ContextBundle
+
+	applyRequirements(globalContext, [
+		globalContext.mustHaveToken,
+		globalContext.mustHaveAccessToken,
+		globalContext.mustBeAuthenticatedUser
 	], {
 		afterNavigate,
 		beforeNavigate,
