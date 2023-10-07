@@ -21,121 +21,121 @@ export const userEmail = writable<string>("")
 export const accessToken = writable<string>("")
 export const accessTokenMetadata = writable<Map<string, string>>(new Map())
 
-export const hasRequirements = writable<boolean>(false)
-export const mustHaveCompatibleServer = writable<boolean>(false)
-export const mustHaveToken = writable<boolean>(false)
-export const mustHaveAccessToken = writable<boolean>(false)
-export const mustBeGuest = writable<boolean>(false)
-export const mustBeAuthenticatedUser = writable<boolean>(false)
+export function makeGlobalContext(): ContextBundle {
+	const hasRequirements = writable<boolean>(false)
+	const mustHaveCompatibleServer = writable<boolean>(false)
+	const mustHaveToken = writable<boolean>(false)
+	const mustHaveAccessToken = writable<boolean>(false)
+	const mustBeGuest = writable<boolean>(false)
+	const mustBeAuthenticatedUser = writable<boolean>(false)
 
-export const hasServer = derived(serverURL, currentServerURL => currentServerURL !== "")
-export const hasToken = derived(
-	[ hasServer, CSRFToken ],
-	([ hasServerCurrently, currentCSRFToken ]) => hasServerCurrently && currentCSRFToken !== ""
-)
-export const hasUser = derived(
-	[ hasToken, userEmail ],
-	([ hasTokenCurrently, currentUserEmail ]) => hasTokenCurrently && currentUserEmail !== ""
-)
-export const hasAccessToken = derived(
-	[ hasServer, accessToken, accessTokenMetadata ],
-	([
-		hasServerCurrently,
-		currentAccessToken,
-		currentAccessTokenMetadata
-	]) => hasServerCurrently
-		&& currentAccessToken !== ""
-		&& currentAccessTokenMetadata.size > 0
-)
-export const hasSupportedAccessToken = derived(
-	[ hasAccessToken, accessTokenMetadata ],
-	([ hasAccessTokenCurrently, currentAccessTokenMetadata ]) => {
-		if (!hasAccessTokenCurrently) return true
-
-		if (currentAccessTokenMetadata.get("type") === MAINTENANCE_EXPIRATION_MECHANISM) {
-			const lastUsedAt = new Date(currentAccessTokenMetadata.get("lastUsedAt") ?? new Date())
-			const currentDateAndTime = new Date()
-			const millisecondDifference = currentDateAndTime.valueOf() - lastUsedAt.valueOf()
-			// Round off which the author guess that millisecond slippage is acceptable
-			const secondDifference = Math.round(millisecondDifference / 1000)
-			const lifetime = currentAccessTokenMetadata.get("data") ?? 0
-
-			return secondDifference < lifetime
-		} else {
-			return false
-		}
-	}
-)
-
-export const serverIcon = derived<string>(
-	[ hasServer, hasToken ],
-	([ hasServerCurrently, hasTokenCurrently ]) => (
-		hasTokenCurrently
-			? "cloud"
-			: hasServerCurrently
-				? "pending"
-				: "cloud_off"
+	const hasServer = derived(serverURL, currentServerURL => currentServerURL !== "")
+	const hasToken = derived(
+		[ hasServer, CSRFToken ],
+		([ hasServerCurrently, currentCSRFToken ]) => hasServerCurrently && currentCSRFToken !== ""
 	)
-)
+	const hasUser = derived(
+		[ hasToken, userEmail ],
+		([ hasTokenCurrently, currentUserEmail ]) => hasTokenCurrently && currentUserEmail !== ""
+	)
+	const hasAccessToken = derived(
+		[ hasServer, accessToken, accessTokenMetadata ],
+		([
+			hasServerCurrently,
+			currentAccessToken,
+			currentAccessTokenMetadata
+		]) => hasServerCurrently
+			&& currentAccessToken !== ""
+			&& currentAccessTokenMetadata.size > 0
+	)
+	const hasSupportedAccessToken = derived(
+		[ hasAccessToken, accessTokenMetadata ],
+		([ hasAccessTokenCurrently, currentAccessTokenMetadata ]) => {
+			if (!hasAccessTokenCurrently) return true
 
-export const redirectPath = derived<string>(
-	[
-		hasLoadedGlobalStates,
-		hasRequirements,
-		mustHaveCompatibleServer,
-		hasCompatibleServer,
-		mustHaveToken,
-		hasToken,
-		mustHaveAccessToken,
-		hasAccessToken,
-		hasSupportedAccessToken,
-		mustBeGuest,
-		mustBeAuthenticatedUser,
-		hasUser
-	],
-	([
-		wereGlobalStatesLoaded,
-		doesHaveRequirements,
-		doesHaveCompatibleServer,
-		isServerCompatible,
-		doesRequireToken,
-		isTokenPresent,
-		doesRequireAccessToken,
-		isAccessTokenPresent,
-		isAccessTokenSupported,
-		doesRequireGuest,
-		doesRequireAuthenticatedUser,
-		isAuthenticatedUserPresent
-	]) => {
-		if (wereGlobalStatesLoaded) {
-			if (doesHaveRequirements) {
-				if (doesHaveCompatibleServer && !isServerCompatible) {
-					return "/"
-				}
+			if (currentAccessTokenMetadata.get("type") === MAINTENANCE_EXPIRATION_MECHANISM) {
+				const lastUsedAt = new Date(currentAccessTokenMetadata.get("lastUsedAt") ?? new Date())
+				const currentDateAndTime = new Date()
+				const millisecondDifference = currentDateAndTime.valueOf() - lastUsedAt.valueOf()
+				// Round off which the author guess that millisecond slippage is acceptable
+				const secondDifference = Math.round(millisecondDifference / 1000)
+				const lifetime = currentAccessTokenMetadata.get("data") ?? 0
 
-				if (doesRequireToken && !isTokenPresent) {
-					return "/"
-				}
-
-				if (doesRequireAccessToken && (!isAccessTokenPresent || !isAccessTokenSupported)) {
-					return "/"
-				}
-
-				if (doesRequireGuest && isAuthenticatedUserPresent) {
-					return "/"
-				}
-
-				if (doesRequireAuthenticatedUser && !isAuthenticatedUserPresent) {
-					return "/log_in"
-				}
+				return secondDifference < lifetime
+			} else {
+				return false
 			}
 		}
+	)
 
-		return ""
-	}
-)
+	const serverIcon = derived<string>(
+		[ hasServer, hasToken ],
+		([ hasServerCurrently, hasTokenCurrently ]) => (
+			hasTokenCurrently
+				? "cloud"
+				: hasServerCurrently
+					? "pending"
+					: "cloud_off"
+		)
+	)
 
-export function makeGlobalContext(): ContextBundle {
+	const redirectPath = derived<string>(
+		[
+			hasLoadedGlobalStates,
+			hasRequirements,
+			mustHaveCompatibleServer,
+			hasCompatibleServer,
+			mustHaveToken,
+			hasToken,
+			mustHaveAccessToken,
+			hasAccessToken,
+			hasSupportedAccessToken,
+			mustBeGuest,
+			mustBeAuthenticatedUser,
+			hasUser
+		],
+		([
+			wereGlobalStatesLoaded,
+			doesHaveRequirements,
+			doesHaveCompatibleServer,
+			isServerCompatible,
+			doesRequireToken,
+			isTokenPresent,
+			doesRequireAccessToken,
+			isAccessTokenPresent,
+			isAccessTokenSupported,
+			doesRequireGuest,
+			doesRequireAuthenticatedUser,
+			isAuthenticatedUserPresent
+		]) => {
+			if (wereGlobalStatesLoaded) {
+				if (doesHaveRequirements) {
+					if (doesHaveCompatibleServer && !isServerCompatible) {
+						return "/"
+					}
+
+					if (doesRequireToken && !isTokenPresent) {
+						return "/"
+					}
+
+					if (doesRequireAccessToken && (!isAccessTokenPresent || !isAccessTokenSupported)) {
+						return "/"
+					}
+
+					if (doesRequireGuest && isAuthenticatedUserPresent) {
+						return "/"
+					}
+
+					if (doesRequireAuthenticatedUser && !isAuthenticatedUserPresent) {
+						return "/log_in"
+					}
+				}
+			}
+
+			return ""
+		}
+	)
+
 	let stopStoringServerURL: Unsubscriber = () => null as void
 	let stopStoringCSRFToken: Unsubscriber = () => null as void
 	let stopStoringAccessToken: Unsubscriber = () => null as void
@@ -225,6 +225,21 @@ export function makeGlobalContext(): ContextBundle {
 	}
 
 	return {
+		hasRequirements,
+		mustHaveCompatibleServer,
+		mustHaveToken,
+		mustHaveAccessToken,
+		mustBeGuest,
+		mustBeAuthenticatedUser,
+		hasServer,
+		hasToken,
+		hasUser,
+		hasAccessToken,
+		hasSupportedAccessToken,
+
+		serverIcon,
+		redirectPath,
+
 		initializeGlobalStates,
 		unsubscribeWatchedGlobalStates
 	}
