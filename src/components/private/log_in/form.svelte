@@ -1,18 +1,12 @@
 <script lang="ts">
-	import { afterNavigate, beforeNavigate, goto } from "$app/navigation"
-
 	import { MAINTENANCE_EXPIRATION_MECHANISM } from "#/rest"
 
 	import makeJSONRequester from "$/rest/make_json_requester"
-	import applyRequirements from "$/utility/apply_requirements"
 	import {
 		serverURL,
 		userEmail,
 		accessToken,
-		accessTokenMetadata,
-
-		mustHaveToken,
-		mustBeGuest
+		accessTokenMetadata
 	} from "$/global_state"
 
 	import GridCell from "$/layout/grid_cell.svelte"
@@ -23,15 +17,6 @@
 	import TextCardButton from "$/button/card/text.svelte"
 	import TextContainer from "$/typography/text_container.svelte"
 	import TextField from "$/form/text_field.svelte"
-
-	applyRequirements([
-		mustHaveToken,
-		mustBeGuest
-	], {
-		afterNavigate,
-		beforeNavigate,
-		goto
-	})
 
 	let email = ""
 	let password = ""
