@@ -1,4 +1,5 @@
 import type { Unsubscriber } from "svelte/store"
+import type { ContextBundle } from "+/component"
 
 import { compare } from "semver"
 import { derived, writable } from "svelte/store"
@@ -134,90 +135,97 @@ export const redirectPath = derived<string>(
 	}
 )
 
-let stopStoringServerURL: Unsubscriber = () => null as void
-let stopStoringCSRFToken: Unsubscriber = () => null as void
-let stopStoringAccessToken: Unsubscriber = () => null as void
-let stopStoringAccessTokenMetadata: Unsubscriber = () => null as void
-let stopStoringUserEmail: Unsubscriber = () => null as void
+export function makeGlobalContext(): ContextBundle {
+	let stopStoringServerURL: Unsubscriber = () => null as void
+	let stopStoringCSRFToken: Unsubscriber = () => null as void
+	let stopStoringAccessToken: Unsubscriber = () => null as void
+	let stopStoringAccessTokenMetadata: Unsubscriber = () => null as void
+	let stopStoringUserEmail: Unsubscriber = () => null as void
 
-export function initializeGlobalStates() {
-	const storedServerURL = window.localStorage.getItem(SERVER_URL_KEY) ?? ""
-	const storedCSRFToken = window.localStorage.getItem(CSRF_TOKEN_KEY) ?? ""
-	const storedAccessToken = window.localStorage.getItem(ACCESS_TOKEN_KEY) ?? ""
-	const storedAccessTokenMetadata = window.localStorage.getItem(ACCESS_TOKEN_METADATA_KEY) ?? "[]"
-	const storedUserEmail = window.localStorage.getItem(USER_EMAIL_KEY) ?? ""
+	function initializeGlobalStates(): void {
+		const storedServerURL = window.localStorage.getItem(SERVER_URL_KEY) ?? ""
+		const storedCSRFToken = window.localStorage.getItem(CSRF_TOKEN_KEY) ?? ""
+		const storedAccessToken = window.localStorage.getItem(ACCESS_TOKEN_KEY) ?? ""
+		const storedAccessTokenMetadata = window.localStorage.getItem(ACCESS_TOKEN_METADATA_KEY) ?? "[]"
+		const storedUserEmail = window.localStorage.getItem(USER_EMAIL_KEY) ?? ""
 
-	setTimeout(() => {
-		serverURL.set(storedServerURL)
-		CSRFToken.set(storedCSRFToken)
-		accessToken.set(storedAccessToken)
-		accessTokenMetadata.set(new Map(JSON.parse(storedAccessTokenMetadata)))
-		userEmail.set(storedUserEmail)
-		hasLoadedGlobalStates.set(true)
-	}, 250)
+		setTimeout(() => {
+			serverURL.set(storedServerURL)
+			CSRFToken.set(storedCSRFToken)
+			accessToken.set(storedAccessToken)
+			accessTokenMetadata.set(new Map(JSON.parse(storedAccessTokenMetadata)))
+			userEmail.set(storedUserEmail)
+			hasLoadedGlobalStates.set(true)
+		}, 250)
 
-	stopStoringServerURL = serverURL.subscribe(newServerURL => {
-		if (typeof window !== "undefined") {
-			window.localStorage.setItem(SERVER_URL_KEY, newServerURL)
-			if (newServerURL === "") CSRFToken.set("")
-			if (newServerURL === "") accessToken.set("")
-			if (newServerURL === "") accessTokenMetadata.set(new Map())
-			if (newServerURL === "") hasCompatibleServer.set(false)
-			if (newServerURL !== "") {
-				fetch(newServerURL, {
-					"headers": {
-						"Content-Type": "application/json",
-						"Accept": "application/json"
-					},
-					"mode": "cors"
-				}).then(async response => {
-					if (response.status === 200) {
-						const serverInfo = await response.json()
-						hasCompatibleServer.set(compare(
-							serverInfo.meta.versions.lowest_supported_api_specification,
-							RECOMMENDED_API_VERSION
-						) === 0)
-					} else {
-						hasCompatibleServer.set(false)
-					}
-				})
+		stopStoringServerURL = serverURL.subscribe(newServerURL => {
+			if (typeof window !== "undefined") {
+				window.localStorage.setItem(SERVER_URL_KEY, newServerURL)
+				if (newServerURL === "") CSRFToken.set("")
+				if (newServerURL === "") accessToken.set("")
+				if (newServerURL === "") accessTokenMetadata.set(new Map())
+				if (newServerURL === "") hasCompatibleServer.set(false)
+				if (newServerURL !== "") {
+					fetch(newServerURL, {
+						"headers": {
+							"Content-Type": "application/json",
+							"Accept": "application/json"
+						},
+						"mode": "cors"
+					}).then(async response => {
+						if (response.status === 200) {
+							const serverInfo = await response.json()
+							hasCompatibleServer.set(compare(
+								serverInfo.meta.versions.lowest_supported_api_specification,
+								RECOMMENDED_API_VERSION
+							) === 0)
+						} else {
+							hasCompatibleServer.set(false)
+						}
+					})
+				}
 			}
-		}
-	})
-	stopStoringCSRFToken = CSRFToken.subscribe(newCSRFToken => {
-		if (typeof window !== "undefined") {
-			window.localStorage.setItem(CSRF_TOKEN_KEY, newCSRFToken)
-			if (newCSRFToken === "") userEmail.set("")
-		}
-	})
-	stopStoringAccessToken = accessToken.subscribe(newAccessToken => {
-		if (typeof window !== "undefined") {
-			window.localStorage.setItem(ACCESS_TOKEN_KEY, newAccessToken)
-			if (newAccessToken === "") userEmail.set("")
-		}
-	})
-	stopStoringAccessTokenMetadata = accessTokenMetadata.subscribe(newAccessTokenMetadata => {
-		if (typeof window !== "undefined") {
-			window.localStorage.setItem(
-				ACCESS_TOKEN_METADATA_KEY,
-				JSON.stringify(Array.from(newAccessTokenMetadata.entries()))
-			)
-			if (newAccessTokenMetadata.size === 0) accessToken.set("")
-		}
-	})
-	stopStoringUserEmail = userEmail.subscribe(newUserEmail => {
-		if (typeof window !== "undefined") {
-			window.localStorage.setItem(USER_EMAIL_KEY, newUserEmail)
-		}
-	})
-}
+		})
+		stopStoringCSRFToken = CSRFToken.subscribe(newCSRFToken => {
+			if (typeof window !== "undefined") {
+				window.localStorage.setItem(CSRF_TOKEN_KEY, newCSRFToken)
+				if (newCSRFToken === "") userEmail.set("")
+			}
+		})
+		stopStoringAccessToken = accessToken.subscribe(newAccessToken => {
+			if (typeof window !== "undefined") {
+				window.localStorage.setItem(ACCESS_TOKEN_KEY, newAccessToken)
+				if (newAccessToken === "") userEmail.set("")
+			}
+		})
+		stopStoringAccessTokenMetadata = accessTokenMetadata.subscribe(newAccessTokenMetadata => {
+			if (typeof window !== "undefined") {
+				window.localStorage.setItem(
+					ACCESS_TOKEN_METADATA_KEY,
+					JSON.stringify(Array.from(newAccessTokenMetadata.entries()))
+				)
+				if (newAccessTokenMetadata.size === 0) accessToken.set("")
+			}
+		})
+		stopStoringUserEmail = userEmail.subscribe(newUserEmail => {
+			if (typeof window !== "undefined") {
+				window.localStorage.setItem(USER_EMAIL_KEY, newUserEmail)
+			}
+		})
+	}
 
-export function unsubscribeWatchedGlobalStates() {
-	if (typeof window !== "undefined") {
-		stopStoringServerURL()
-		stopStoringCSRFToken()
-		stopStoringAccessToken()
-		stopStoringAccessTokenMetadata()
-		stopStoringUserEmail()
+	function unsubscribeWatchedGlobalStates(): void {
+		if (typeof window !== "undefined") {
+			stopStoringServerURL()
+			stopStoringCSRFToken()
+			stopStoringAccessToken()
+			stopStoringAccessTokenMetadata()
+			stopStoringUserEmail()
+		}
+	}
+
+	return {
+		initializeGlobalStates,
+		unsubscribeWatchedGlobalStates
 	}
 }
