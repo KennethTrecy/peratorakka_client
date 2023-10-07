@@ -1,20 +1,19 @@
 <script lang="ts">
-	import type { SearchMode, SortOrder } from "+/rest"
 	import type { Account, Currency } from "+/entity"
+	import type { ContextBundle } from "+/component"
+	import type { SearchMode, SortOrder } from "+/rest"
 
 	import { get, writable } from "svelte/store"
-	import { onMount } from "svelte"
+	import { onMount, getContext } from "svelte"
 	import { afterNavigate, beforeNavigate, goto } from "$app/navigation"
 
+	import { GLOBAL_CONTEXT } from "#/contexts"
 	import { SEARCH_NORMALLY, ASCENDING_ORDER } from "#/rest"
 
 	import makeJSONRequester from "$/rest/make_json_requester"
 	import applyRequirements from "$/utility/apply_requirements"
 	import {
-		serverURL,
-		mustHaveToken,
-		mustHaveAccessToken,
-		mustBeAuthenticatedUser
+		serverURL
 	} from "$/global_state"
 
 	import AddForm from "%/accounts/add_form.svelte"
@@ -24,10 +23,12 @@
 	import InnerGrid from "$/layout/inner_grid.svelte"
 	import PrimaryHeading from "$/typography/primary_heading.svelte"
 
-	applyRequirements([
-		mustHaveToken,
-		mustHaveAccessToken,
-		mustBeAuthenticatedUser
+	const globalContext = getContext(GLOBAL_CONTEXT) as ContextBundle
+
+	applyRequirements(globalContext, [
+		globalContext.mustHaveToken,
+		globalContext.mustHaveAccessToken,
+		globalContext.mustBeAuthenticatedUser
 	], {
 		afterNavigate,
 		beforeNavigate,
