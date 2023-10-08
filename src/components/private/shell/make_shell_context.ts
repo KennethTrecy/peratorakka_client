@@ -1,13 +1,21 @@
-import type { Unsubscriber } from "svelte/store"
+import type { Unsubscriber, Readable } from "svelte/store"
 import type { MenuItemInfo } from "%/shell/types"
 import type { ContextBundle } from "+/component"
 
 import { derived, writable } from "svelte/store"
 import { setMode } from "@/components/third-party/index"
 
-import { serverIcon, hasToken, hasUser } from "$/global_state"
+export default function makeShellContext(globalContext: ContextBundle): ContextBundle {
+	const {
+		serverIcon,
+		hasToken,
+		hasUser
+	} = globalContext as {
+		serverIcon: Readable<string>,
+		hasToken: Readable<boolean>,
+		hasUser: Readable<boolean>,
+	}
 
-export default function makeShellContext(): ContextBundle {
 	const menuItemInfos = derived<MenuItemInfo[]>(
 		[ serverIcon, hasToken, hasUser ],
 		([ currentServerIcon, hasTokenCurrently, hasUserCurrently ]) => {

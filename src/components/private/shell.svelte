@@ -13,7 +13,7 @@
 	export let isMenuShown = false
 
 	setContext(GLOBAL_CONTEXT, globalContext)
-	setContext(SHELL_CONTEXT, makeShellContext())
+	setContext(SHELL_CONTEXT, makeShellContext(globalContext))
 
 	onMount(() => {
 		(globalContext.initializeGlobalStates as () => void)()
