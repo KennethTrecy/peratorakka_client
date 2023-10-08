@@ -50,6 +50,11 @@
 <aside class={drawerClasses} bind:this={drawer}>
 	<div class="mdc-drawer__content">
 		<nav class="mdc-deprecated-list">
+			<Item
+				address="/profile"
+				icon="user"
+				label="Profile"/>
+			<hr class="mdc-deprecated-list-divider">
 			{#each lastMenuItemInfos as info(info.link)}
 				<Item
 					address={info.link}
