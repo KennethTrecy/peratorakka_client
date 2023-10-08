@@ -10,8 +10,8 @@
 	import { GLOBAL_CONTEXT } from "#/contexts"
 	import { SEARCH_NORMALLY, ASCENDING_ORDER, MAXIMUM_PAGINATED_LIST_LENGTH } from "#/rest"
 
+	import assertAuthentication from "$/page_requirement/assert_authentication"
 	import makeJSONRequester from "$/rest/make_json_requester"
-	import applyRequirements from "$/utility/apply_requirements"
 	import {
 		serverURL,
 	} from "$/global_state"
@@ -26,11 +26,7 @@
 
 	const globalContext = getContext(GLOBAL_CONTEXT) as ContextBundle
 
-	applyRequirements(globalContext, [
-		globalContext.mustHaveToken,
-		globalContext.mustHaveAccessToken,
-		globalContext.mustBeAuthenticatedUser
-	], {
+	assertAuthentication(globalContext, {
 		afterNavigate,
 		beforeNavigate,
 		goto
