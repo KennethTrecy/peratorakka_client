@@ -13,8 +13,7 @@ import {
 	ACCESS_TOKEN_METADATA_KEY
 } from "#/storage_keys"
 
-
-export function makeGlobalContext(): ContextBundle {
+export default function makeGlobalContext(): ContextBundle {
 	const hasLoadedGlobalStates = writable<boolean>(false)
 	const serverURL = writable<string>("")
 	const hasCompatibleServer = writable<boolean>(true)

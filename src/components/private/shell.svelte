@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { onMount, onDestroy, setContext } from "svelte"
 
-	import { makeGlobalContext } from "$/global_state"
+	import makeGlobalContext from "$/make_global_context"
 	import makeShellContext from "%/shell/make_shell_context"
 	import { GLOBAL_CONTEXT, SHELL_CONTEXT } from "#/contexts"
 
