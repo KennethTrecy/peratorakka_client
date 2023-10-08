@@ -5,7 +5,7 @@
 	import { getContext } from "svelte"
 
 	import { GLOBAL_CONTEXT } from "#/contexts"
-	import { MAINTENANCE_EXPIRATION_MECHANISM } from "#/rest"
+	import { MAINTENANCE_EXPIRATION_MECHANISM, SUPPORTED_TOKEN_EXPIRATION_TYPES } from "#/rest"
 
 	import makeJSONRequester from "$/rest/make_json_requester"
 
@@ -75,6 +75,9 @@
 	async function register() {
 		await send({
 			"body": JSON.stringify({
+				"@meta": {
+					...SUPPORTED_TOKEN_EXPIRATION_TYPES
+				},
 				username,
 				email,
 				password,
