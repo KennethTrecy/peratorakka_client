@@ -7,9 +7,15 @@
 	import { MDCDrawer } from "@material/drawer"
 	import { afterNavigate } from "$app/navigation"
 
-	import { SHELL_CONTEXT } from "#/contexts"
+	import { GLOBAL_CONTEXT, SHELL_CONTEXT } from "#/contexts"
 
 	import Item from "%/shell/navigation_drawer/item.svelte"
+
+	const {
+		userEmail
+	} = getContext(GLOBAL_CONTEXT) as ContextBundle as {
+		userEmail: Readable<string>
+	}
 
 	const shell = getContext(SHELL_CONTEXT) as ContextBundle
 	const menuItemInfos = shell.menuItemInfos as Readable<MenuItemInfo[]>
@@ -55,11 +61,13 @@
 <aside class={drawerClasses} bind:this={drawer}>
 	<div class="mdc-drawer__content">
 		<nav class="mdc-deprecated-list">
-			<Item
-				address="/profile"
-				icon="person"
-				label="Profile"/>
-			<hr class="mdc-deprecated-list-divider">
+			{#if $userEmail !== ""}
+				<Item
+					address="/profile"
+					icon="person"
+					label={"User: "+$userEmail}/>
+				<hr class="mdc-deprecated-list-divider"/>
+			{/if}
 			{#each lastMenuItemInfos as info(info.link)}
 				<Item
 					address={info.link}
