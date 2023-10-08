@@ -14,9 +14,5 @@ export default function assertAuthentication(
 		globalContext.mustHaveToken,
 		globalContext.mustHaveAccessToken,
 		globalContext.mustBeAuthenticatedUser
-	], {
-		afterNavigate,
-		beforeNavigate,
-		goto
-	})
+	], methods)
 }
