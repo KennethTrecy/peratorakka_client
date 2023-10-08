@@ -69,7 +69,7 @@
 				}
 			}
 		],
-		"expectedErrorStatusCodes": [ 401 ]
+		"expectedErrorStatusCodes": [ 401, 422 ]
 	})
 
 	async function register() {
