@@ -30,8 +30,8 @@ export default function makeShellContext(globalContext: ContextBundle): ContextB
 				hasTokenCurrently && hasUserCurrently ? {
 					"type": "item",
 					"link": "/profile",
-					"icon": "person",
-					"label": `Edit profile`
+					"icon": "edit",
+					"label": `Profile`
 				} : null,
 				hasTokenCurrently && hasUserCurrently ? {
 					"type": "item",
