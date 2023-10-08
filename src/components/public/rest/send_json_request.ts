@@ -7,13 +7,23 @@ import type {
 
 import { get } from "svelte/store"
 
-import { serverURL, accessToken, hasAccessToken, accessTokenMetadata } from "$/global_state"
-
 export default async function sendJSONRequest(
 	specialRequestInfo: Partial<Request>,
 	constraints: RequesterConstraints,
 	dependencies: RequesterDependencies
 ): Promise<void> {
+	const {
+		serverURL,
+		hasAccessToken,
+		accessToken,
+		accessTokenMetadata
+	} = dependencies.globalContext as {
+		serverURL: Writable<string>
+		hasAccessToken: Writable<string>
+		accessToken: Writable<string>
+		accessTokenMetadata: Writable<unknown>
+	}
+
 	const currentServerURL = get(serverURL)
 	dependencies.isConnecting.set(true)
 	dependencies.errors.set([])

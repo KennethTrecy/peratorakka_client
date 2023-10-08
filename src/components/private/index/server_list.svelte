@@ -1,16 +1,12 @@
 <script lang="ts">
+	import type { Writable, Readable } from "svelte/store"
 	import type { GeneralError } from "+/rest"
-	import type { ChoiceInfo } from "+/component"
+	import type { ChoiceInfo, ContextBundle } from "+/component"
 
+	import { getContext } from "svelte"
+
+	import { GLOBAL_CONTEXT } from "#/contexts"
 	import { PUBLIC_PRODUCTION_SERVER_CHOICES } from "$env/static/public"
-
-	import {
-		serverURL,
-		CSRFToken,
-		hasServer,
-		hasToken,
-		hasCompatibleServer
-	} from "$/global_state"
 
 	import ChoiceListField from "$/form/choice_list_field.svelte"
 	import GridCell from "$/layout/grid_cell.svelte"
@@ -21,6 +17,20 @@
 	import TextContainer from "$/typography/text_container.svelte"
 	import TextField from "$/form/text_field.svelte"
 	import WeakenedLeadHeading from "$/typography/weakened_primary_heading.svelte"
+
+	const {
+		serverURL,
+		CSRFToken,
+		hasServer,
+		hasToken,
+		hasCompatibleServer
+	} = getContext(GLOBAL_CONTEXT) as ContextBundle as {
+		serverURL: Writable<string>
+		CSRFToken: Writable<string>
+		hasServer: Readable<boolean>
+		hasToken: Readable<boolean>
+		hasCompatibleServer: Readable<boolean>
+	}
 
 	const CUSTOM_KEY = "custom"
 

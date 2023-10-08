@@ -1,4 +1,5 @@
 import type { Writable, Readable } from "svelte/store"
+import type { ContextBundle } from "+/component"
 
 import { SEARCH_MODES, SORT_ORDERS } from "#/rest"
 
@@ -36,7 +37,8 @@ export interface RequesterConstraints {
 }
 
 export interface RequesterDependencies {
-	isConnecting: Writable<boolean>,
+	globalContext: ContextBundle,
+	isConnecting: Writable<boolean>
 	errors: Writable<GeneralError[]>
 }
 
@@ -50,7 +52,7 @@ export interface TrialBalance {
 }
 
 export interface FinancialStatementGroup {
-	currency_id: number
+	currency_id: number,
 	unadjusted_trial_balance: TrialBalance,
 	income_statement: {
 		net_total: string

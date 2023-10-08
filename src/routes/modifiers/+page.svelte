@@ -1,21 +1,17 @@
 <script lang="ts">
-	import type { SearchMode, SortOrder } from "+/rest"
 	import type { Account, Currency, Modifier } from "+/entity"
+	import type { ContextBundle } from "+/component"
+	import type { SearchMode, SortOrder } from "+/rest"
 
 	import { get, writable } from "svelte/store"
-	import { onMount } from "svelte"
+	import { onMount, getContext } from "svelte"
 	import { afterNavigate, beforeNavigate, goto } from "$app/navigation"
 
+	import { GLOBAL_CONTEXT } from "#/contexts"
 	import { SEARCH_NORMALLY, ASCENDING_ORDER, MAXIMUM_PAGINATED_LIST_LENGTH } from "#/rest"
 
+	import assertAuthentication from "$/page_requirement/assert_authentication"
 	import makeJSONRequester from "$/rest/make_json_requester"
-	import applyRequirements from "$/utility/apply_requirements"
-	import {
-		serverURL,
-		mustHaveToken,
-		mustHaveAccessToken,
-		mustBeAuthenticatedUser
-	} from "$/global_state"
 
 	import AddForm from "%/modifiers/add_form.svelte"
 	import ArticleGrid from "$/layout/article_grid.svelte"
@@ -25,11 +21,9 @@
 	import InnerGrid from "$/layout/inner_grid.svelte"
 	import PrimaryHeading from "$/typography/primary_heading.svelte"
 
-	applyRequirements([
-		mustHaveToken,
-		mustHaveAccessToken,
-		mustBeAuthenticatedUser
-	], {
+	const globalContext = getContext(GLOBAL_CONTEXT) as ContextBundle
+
+	assertAuthentication(globalContext, {
 		afterNavigate,
 		beforeNavigate,
 		goto
@@ -133,7 +127,7 @@
 	}
 
 	async function loadList() {
-		const currentServerURL = get(serverURL)
+		const currentServerURL = get(globalContext.serverURL as any)
 
 		if (currentServerURL === "") {
 			setTimeout(loadList, 1000)

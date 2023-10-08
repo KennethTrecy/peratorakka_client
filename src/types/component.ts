@@ -1,3 +1,5 @@
+import { Readable, Writable } from "svelte/store"
+
 export type CardStatus =
 	| "reading"
 	| "editing"
@@ -37,3 +39,6 @@ export type TrialBalanceKind =
 export type FlexDirection =
 	| "row"
 	| "column"
+
+type ContextContent = Readable<unknown>|Writable<unknown>|(...arguments: unknown[]) => void|unknown
+export type ContextBundle = Record<string, ContextContent>

@@ -39,5 +39,5 @@ export const SORT_ORDERS = [
 export const MAXIMUM_PAGINATED_LIST_LENGTH = "15"
 
 export const SUPPORTED_TOKEN_EXPIRATION_TYPES = {
-	"expiration_type": [ MAINTENANCE_EXPIRATION_MECHANISM ]
+	"expiration_types": [ MAINTENANCE_EXPIRATION_MECHANISM ]
 }

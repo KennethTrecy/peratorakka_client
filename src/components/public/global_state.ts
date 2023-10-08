@@ -1,4 +1,5 @@
 import type { Unsubscriber } from "svelte/store"
+import type { ContextBundle } from "+/component"
 
 import { compare } from "semver"
 import { derived, writable } from "svelte/store"
@@ -12,212 +13,243 @@ import {
 	ACCESS_TOKEN_METADATA_KEY
 } from "#/storage_keys"
 
-export const hasLoadedGlobalStates = writable<boolean>(false)
-export const serverURL = writable<string>("")
-export const hasCompatibleServer = writable<boolean>(true)
-export const CSRFToken = writable<string>("")
-export const userEmail = writable<string>("")
-export const accessToken = writable<string>("")
-export const accessTokenMetadata = writable<Map<string, string>>(new Map())
 
-export const hasRequirements = writable<boolean>(false)
-export const mustHaveCompatibleServer = writable<boolean>(false)
-export const mustHaveToken = writable<boolean>(false)
-export const mustHaveAccessToken = writable<boolean>(false)
-export const mustBeGuest = writable<boolean>(false)
-export const mustBeAuthenticatedUser = writable<boolean>(false)
+export function makeGlobalContext(): ContextBundle {
+	const hasLoadedGlobalStates = writable<boolean>(false)
+	const serverURL = writable<string>("")
+	const hasCompatibleServer = writable<boolean>(true)
+	const CSRFToken = writable<string>("")
+	const userEmail = writable<string>("")
+	const accessToken = writable<string>("")
+	const accessTokenMetadata = writable<Map<string, string>>(new Map())
 
-export const hasServer = derived(serverURL, currentServerURL => currentServerURL !== "")
-export const hasToken = derived(
-	[ hasServer, CSRFToken ],
-	([ hasServerCurrently, currentCSRFToken ]) => hasServerCurrently && currentCSRFToken !== ""
-)
-export const hasUser = derived(
-	[ hasToken, userEmail ],
-	([ hasTokenCurrently, currentUserEmail ]) => hasTokenCurrently && currentUserEmail !== ""
-)
-export const hasAccessToken = derived(
-	[ hasServer, accessToken, accessTokenMetadata ],
-	([
-		hasServerCurrently,
-		currentAccessToken,
-		currentAccessTokenMetadata
-	]) => hasServerCurrently
-		&& currentAccessToken !== ""
-		&& currentAccessTokenMetadata.size > 0
-)
-export const hasSupportedAccessToken = derived(
-	[ hasAccessToken, accessTokenMetadata ],
-	([ hasAccessTokenCurrently, currentAccessTokenMetadata ]) => {
-		if (!hasAccessTokenCurrently) return true
+	const hasRequirements = writable<boolean>(false)
+	const mustHaveCompatibleServer = writable<boolean>(false)
+	const mustHaveToken = writable<boolean>(false)
+	const mustHaveAccessToken = writable<boolean>(false)
+	const mustBeGuest = writable<boolean>(false)
+	const mustBeAuthenticatedUser = writable<boolean>(false)
 
-		if (currentAccessTokenMetadata.get("type") === MAINTENANCE_EXPIRATION_MECHANISM) {
-			const lastUsedAt = new Date(currentAccessTokenMetadata.get("lastUsedAt") ?? new Date())
-			const currentDateAndTime = new Date()
-			const millisecondDifference = currentDateAndTime.valueOf() - lastUsedAt.valueOf()
-			// Round off which the author guess that millisecond slippage is acceptable
-			const secondDifference = Math.round(millisecondDifference / 1000)
-			const lifetime = currentAccessTokenMetadata.get("data") ?? 0
+	const hasServer = derived(serverURL, currentServerURL => currentServerURL !== "")
+	const hasToken = derived(
+		[ hasServer, CSRFToken ],
+		([ hasServerCurrently, currentCSRFToken ]) => hasServerCurrently && currentCSRFToken !== ""
+	)
+	const hasUser = derived(
+		[ hasToken, userEmail ],
+		([ hasTokenCurrently, currentUserEmail ]) => hasTokenCurrently && currentUserEmail !== ""
+	)
+	const hasAccessToken = derived(
+		[ hasServer, accessToken, accessTokenMetadata ],
+		([
+			hasServerCurrently,
+			currentAccessToken,
+			currentAccessTokenMetadata
+		]) => hasServerCurrently
+			&& currentAccessToken !== ""
+			&& currentAccessTokenMetadata.size > 0
+	)
+	const hasSupportedAccessToken = derived(
+		[ hasAccessToken, accessTokenMetadata ],
+		([ hasAccessTokenCurrently, currentAccessTokenMetadata ]) => {
+			if (!hasAccessTokenCurrently) return true
 
-			return secondDifference < lifetime
-		} else {
-			return false
+			if (currentAccessTokenMetadata.get("type") === MAINTENANCE_EXPIRATION_MECHANISM) {
+				const lastUsedAt = new Date(currentAccessTokenMetadata.get("lastUsedAt") ?? new Date())
+				const currentDateAndTime = new Date()
+				const millisecondDifference = currentDateAndTime.valueOf() - lastUsedAt.valueOf()
+				// Round off which the author guess that millisecond slippage is acceptable
+				const secondDifference = Math.round(millisecondDifference / 1000)
+				const lifetime = currentAccessTokenMetadata.get("data") ?? 0
+
+				return secondDifference < lifetime
+			} else {
+				return false
+			}
+		}
+	)
+
+	const serverIcon = derived<string>(
+		[ hasServer, hasToken ],
+		([ hasServerCurrently, hasTokenCurrently ]) => (
+			hasTokenCurrently
+				? "cloud"
+				: hasServerCurrently
+					? "pending"
+					: "cloud_off"
+		)
+	)
+
+	const redirectPath = derived<string>(
+		[
+			hasLoadedGlobalStates,
+			hasRequirements,
+			mustHaveCompatibleServer,
+			hasCompatibleServer,
+			mustHaveToken,
+			hasToken,
+			mustHaveAccessToken,
+			hasAccessToken,
+			hasSupportedAccessToken,
+			mustBeGuest,
+			mustBeAuthenticatedUser,
+			hasUser
+		],
+		([
+			wereGlobalStatesLoaded,
+			doesHaveRequirements,
+			doesHaveCompatibleServer,
+			isServerCompatible,
+			doesRequireToken,
+			isTokenPresent,
+			doesRequireAccessToken,
+			isAccessTokenPresent,
+			isAccessTokenSupported,
+			doesRequireGuest,
+			doesRequireAuthenticatedUser,
+			isAuthenticatedUserPresent
+		]) => {
+			if (wereGlobalStatesLoaded) {
+				if (doesHaveRequirements) {
+					if (doesHaveCompatibleServer && !isServerCompatible) {
+						return "/"
+					}
+
+					if (doesRequireToken && !isTokenPresent) {
+						return "/"
+					}
+
+					if (doesRequireAccessToken && (!isAccessTokenPresent || !isAccessTokenSupported)) {
+						return "/"
+					}
+
+					if (doesRequireGuest && isAuthenticatedUserPresent) {
+						return "/"
+					}
+
+					if (doesRequireAuthenticatedUser && !isAuthenticatedUserPresent) {
+						return "/log_in"
+					}
+				}
+			}
+
+			return ""
+		}
+	)
+
+	let stopStoringServerURL: Unsubscriber = () => null as void
+	let stopStoringCSRFToken: Unsubscriber = () => null as void
+	let stopStoringAccessToken: Unsubscriber = () => null as void
+	let stopStoringAccessTokenMetadata: Unsubscriber = () => null as void
+	let stopStoringUserEmail: Unsubscriber = () => null as void
+
+	function initializeGlobalStates(): void {
+		const storedServerURL = window.localStorage.getItem(SERVER_URL_KEY) ?? ""
+		const storedCSRFToken = window.localStorage.getItem(CSRF_TOKEN_KEY) ?? ""
+		const storedAccessToken = window.localStorage.getItem(ACCESS_TOKEN_KEY) ?? ""
+		const storedAccessTokenMetadata = window.localStorage.getItem(ACCESS_TOKEN_METADATA_KEY) ?? "[]"
+		const storedUserEmail = window.localStorage.getItem(USER_EMAIL_KEY) ?? ""
+
+		setTimeout(() => {
+			serverURL.set(storedServerURL)
+			CSRFToken.set(storedCSRFToken)
+			accessToken.set(storedAccessToken)
+			accessTokenMetadata.set(new Map(JSON.parse(storedAccessTokenMetadata)))
+			userEmail.set(storedUserEmail)
+			hasLoadedGlobalStates.set(true)
+		}, 250)
+
+		stopStoringServerURL = serverURL.subscribe(newServerURL => {
+			if (typeof window !== "undefined") {
+				window.localStorage.setItem(SERVER_URL_KEY, newServerURL)
+				if (newServerURL === "") CSRFToken.set("")
+				if (newServerURL === "") accessToken.set("")
+				if (newServerURL === "") accessTokenMetadata.set(new Map())
+				if (newServerURL === "") hasCompatibleServer.set(false)
+				if (newServerURL !== "") {
+					fetch(newServerURL, {
+						"headers": {
+							"Content-Type": "application/json",
+							"Accept": "application/json"
+						},
+						"mode": "cors"
+					}).then(async response => {
+						if (response.status === 200) {
+							const serverInfo = await response.json()
+							hasCompatibleServer.set(compare(
+								serverInfo.meta.versions.lowest_supported_api_specification,
+								RECOMMENDED_API_VERSION
+							) === 0)
+						} else {
+							hasCompatibleServer.set(false)
+						}
+					})
+				}
+			}
+		})
+		stopStoringCSRFToken = CSRFToken.subscribe(newCSRFToken => {
+			if (typeof window !== "undefined") {
+				window.localStorage.setItem(CSRF_TOKEN_KEY, newCSRFToken)
+				if (newCSRFToken === "") userEmail.set("")
+			}
+		})
+		stopStoringAccessToken = accessToken.subscribe(newAccessToken => {
+			if (typeof window !== "undefined") {
+				window.localStorage.setItem(ACCESS_TOKEN_KEY, newAccessToken)
+				if (newAccessToken === "") userEmail.set("")
+			}
+		})
+		stopStoringAccessTokenMetadata = accessTokenMetadata.subscribe(newAccessTokenMetadata => {
+			if (typeof window !== "undefined") {
+				window.localStorage.setItem(
+					ACCESS_TOKEN_METADATA_KEY,
+					JSON.stringify(Array.from(newAccessTokenMetadata.entries()))
+				)
+				if (newAccessTokenMetadata.size === 0) accessToken.set("")
+			}
+		})
+		stopStoringUserEmail = userEmail.subscribe(newUserEmail => {
+			if (typeof window !== "undefined") {
+				window.localStorage.setItem(USER_EMAIL_KEY, newUserEmail)
+			}
+		})
+	}
+
+	function unsubscribeWatchedGlobalStates(): void {
+		if (typeof window !== "undefined") {
+			stopStoringServerURL()
+			stopStoringCSRFToken()
+			stopStoringAccessToken()
+			stopStoringAccessTokenMetadata()
+			stopStoringUserEmail()
 		}
 	}
-)
 
-export const serverIcon = derived<string>(
-	[ hasServer, hasToken ],
-	([ hasServerCurrently, hasTokenCurrently ]) => (
-		hasTokenCurrently
-			? "cloud"
-			: hasServerCurrently
-				? "pending"
-				: "cloud_off"
-	)
-)
-
-export const redirectPath = derived<string>(
-	[
+	return {
 		hasLoadedGlobalStates,
+		serverURL,
+		hasCompatibleServer,
+		CSRFToken,
+		userEmail,
+		accessToken,
+		accessTokenMetadata,
+
 		hasRequirements,
 		mustHaveCompatibleServer,
-		hasCompatibleServer,
 		mustHaveToken,
-		hasToken,
 		mustHaveAccessToken,
-		hasAccessToken,
-		hasSupportedAccessToken,
 		mustBeGuest,
 		mustBeAuthenticatedUser,
-		hasUser
-	],
-	([
-		wereGlobalStatesLoaded,
-		doesHaveRequirements,
-		doesHaveCompatibleServer,
-		isServerCompatible,
-		doesRequireToken,
-		isTokenPresent,
-		doesRequireAccessToken,
-		isAccessTokenPresent,
-		isAccessTokenSupported,
-		doesRequireGuest,
-		doesRequireAuthenticatedUser,
-		isAuthenticatedUserPresent
-	]) => {
-		if (wereGlobalStatesLoaded) {
-			if (doesHaveRequirements) {
-				if (doesHaveCompatibleServer && !isServerCompatible) {
-					return "/"
-				}
+		hasServer,
+		hasToken,
+		hasUser,
+		hasAccessToken,
+		hasSupportedAccessToken,
 
-				if (doesRequireToken && !isTokenPresent) {
-					return "/"
-				}
+		serverIcon,
+		redirectPath,
 
-				if (doesRequireAccessToken && (!isAccessTokenPresent || !isAccessTokenSupported)) {
-					return "/"
-				}
-
-				if (doesRequireGuest && isAuthenticatedUserPresent) {
-					return "/"
-				}
-
-				if (doesRequireAuthenticatedUser && !isAuthenticatedUserPresent) {
-					return "/log_in"
-				}
-			}
-		}
-
-		return ""
-	}
-)
-
-let stopStoringServerURL: Unsubscriber = () => null as void
-let stopStoringCSRFToken: Unsubscriber = () => null as void
-let stopStoringAccessToken: Unsubscriber = () => null as void
-let stopStoringAccessTokenMetadata: Unsubscriber = () => null as void
-let stopStoringUserEmail: Unsubscriber = () => null as void
-
-export function initializeGlobalStates() {
-	const storedServerURL = window.localStorage.getItem(SERVER_URL_KEY) ?? ""
-	const storedCSRFToken = window.localStorage.getItem(CSRF_TOKEN_KEY) ?? ""
-	const storedAccessToken = window.localStorage.getItem(ACCESS_TOKEN_KEY) ?? ""
-	const storedAccessTokenMetadata = window.localStorage.getItem(ACCESS_TOKEN_METADATA_KEY) ?? "[]"
-	const storedUserEmail = window.localStorage.getItem(USER_EMAIL_KEY) ?? ""
-
-	setTimeout(() => {
-		serverURL.set(storedServerURL)
-		CSRFToken.set(storedCSRFToken)
-		accessToken.set(storedAccessToken)
-		accessTokenMetadata.set(new Map(JSON.parse(storedAccessTokenMetadata)))
-		userEmail.set(storedUserEmail)
-		hasLoadedGlobalStates.set(true)
-	}, 250)
-
-	stopStoringServerURL = serverURL.subscribe(newServerURL => {
-		if (typeof window !== "undefined") {
-			window.localStorage.setItem(SERVER_URL_KEY, newServerURL)
-			if (newServerURL === "") CSRFToken.set("")
-			if (newServerURL === "") accessToken.set("")
-			if (newServerURL === "") accessTokenMetadata.set(new Map())
-			if (newServerURL === "") hasCompatibleServer.set(false)
-			if (newServerURL !== "") {
-				fetch(newServerURL, {
-					"headers": {
-						"Content-Type": "application/json",
-						"Accept": "application/json"
-					},
-					"mode": "cors"
-				}).then(async response => {
-					if (response.status === 200) {
-						const serverInfo = await response.json()
-						hasCompatibleServer.set(compare(
-							serverInfo.meta.versions.lowest_supported_api_specification,
-							RECOMMENDED_API_VERSION
-						) === 0)
-					} else {
-						hasCompatibleServer.set(false)
-					}
-				})
-			}
-		}
-	})
-	stopStoringCSRFToken = CSRFToken.subscribe(newCSRFToken => {
-		if (typeof window !== "undefined") {
-			window.localStorage.setItem(CSRF_TOKEN_KEY, newCSRFToken)
-			if (newCSRFToken === "") userEmail.set("")
-		}
-	})
-	stopStoringAccessToken = accessToken.subscribe(newAccessToken => {
-		if (typeof window !== "undefined") {
-			window.localStorage.setItem(ACCESS_TOKEN_KEY, newAccessToken)
-			if (newAccessToken === "") userEmail.set("")
-		}
-	})
-	stopStoringAccessTokenMetadata = accessTokenMetadata.subscribe(newAccessTokenMetadata => {
-		if (typeof window !== "undefined") {
-			window.localStorage.setItem(
-				ACCESS_TOKEN_METADATA_KEY,
-				JSON.stringify(Array.from(newAccessTokenMetadata.entries()))
-			)
-			if (newAccessTokenMetadata.size === 0) accessToken.set("")
-		}
-	})
-	stopStoringUserEmail = userEmail.subscribe(newUserEmail => {
-		if (typeof window !== "undefined") {
-			window.localStorage.setItem(USER_EMAIL_KEY, newUserEmail)
-		}
-	})
-}
-
-export function unsubscribeWatchedGlobalStates() {
-	if (typeof window !== "undefined") {
-		stopStoringServerURL()
-		stopStoringCSRFToken()
-		stopStoringAccessToken()
-		stopStoringAccessTokenMetadata()
-		stopStoringUserEmail()
+		initializeGlobalStates,
+		unsubscribeWatchedGlobalStates
 	}
 }

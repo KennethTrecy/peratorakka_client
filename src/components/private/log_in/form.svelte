@@ -1,19 +1,13 @@
 <script lang="ts">
-	import { afterNavigate, beforeNavigate, goto } from "$app/navigation"
+	import type { Writable } from "svelte/store"
+	import type { ContextBundle } from "+/component"
 
+	import { getContext } from "svelte"
+
+	import { GLOBAL_CONTEXT } from "#/contexts"
 	import { MAINTENANCE_EXPIRATION_MECHANISM, SUPPORTED_TOKEN_EXPIRATION_TYPES } from "#/rest"
 
 	import makeJSONRequester from "$/rest/make_json_requester"
-	import applyRequirements from "$/utility/apply_requirements"
-	import {
-		serverURL,
-		userEmail,
-		accessToken,
-		accessTokenMetadata,
-
-		mustHaveToken,
-		mustBeGuest
-	} from "$/global_state"
 
 	import GridCell from "$/layout/grid_cell.svelte"
 	import PasswordField from "$/form/password_field.svelte"
@@ -24,14 +18,17 @@
 	import TextContainer from "$/typography/text_container.svelte"
 	import TextField from "$/form/text_field.svelte"
 
-	applyRequirements([
-		mustHaveToken,
-		mustBeGuest
-	], {
-		afterNavigate,
-		beforeNavigate,
-		goto
-	})
+	const {
+		serverURL,
+		userEmail,
+		accessToken,
+		accessTokenMetadata
+	} = getContext(GLOBAL_CONTEXT) as ContextBundle as {
+		serverURL: Writable<string>
+		userEmail: Writable<string>
+		accessToken: Writable<string>
+		accessTokenMetadata: Writable<unknown>
+	}
 
 	let email = ""
 	let password = ""
@@ -71,12 +68,12 @@
 			{
 				"statusCode": 204,
 				"action": async (response: Response) => {
-					errors.set([])
+					errors.set([]);
 					userEmail.set(email)
 				}
 			}
 		],
-		"expectedErrorStatusCodes": [ 401 ]
+		"expectedErrorStatusCodes": [ 401, 422 ]
 	})
 
 	async function logIn() {

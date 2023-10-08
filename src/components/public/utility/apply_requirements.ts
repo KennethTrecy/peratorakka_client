@@ -1,12 +1,20 @@
 import type { Subcriber, Readable } from "svelte"
+import type { ContextBundle } from "+/component"
 
-import { hasRequirements, redirectPath } from "$/global_state"
+export default function applyRequirements(
+	globalContext: ContextBundle,
+	guards: Readable[],
+	methods: {
+		goto: (url: string|URL) => void,
+		afterNavigate: (navigate: any) => void
+		beforeNavigate: (navigate: any) => void
+	}
+): void {
+	const {
+		hasRequirements,
+		redirectPath
+	} = globalContext
 
-export default function applyRequirements(guards: Readable[], methods: {
-	goto: (url: string|URL) => void,
-	afterNavigate: (navigate: any) => void
-	beforeNavigate: (navigate: any) => void
-}): void {
 	methods.afterNavigate(() => {
 		hasRequirements.set(guards.length > 0)
 		guards.map(guard => guard.set(true))
@@ -15,6 +23,7 @@ export default function applyRequirements(guards: Readable[], methods: {
 	const forgetPossibleRedirection = redirectPath.subscribe(path => {
 		if (path !== "") methods.goto(path as string)
 	})
+
 	methods.beforeNavigate(() => {
 		forgetPossibleRedirection()
 		hasRequirements.set(false)

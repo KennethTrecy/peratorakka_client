@@ -1,19 +1,16 @@
 <script lang="ts">
-	import type { GeneralError, FinancialStatementGroup } from "+/rest"
 	import type { Account, Currency, FrozenPeriod, SummaryCalculation } from "+/entity"
+	import type { ContextBundle } from "+/component"
+	import type { GeneralError, FinancialStatementGroup } from "+/rest"
 
 	import { get, writable } from "svelte/store"
-	import { onMount } from "svelte"
+	import { onMount, getContext } from "svelte"
 	import { afterNavigate, beforeNavigate, goto } from "$app/navigation"
 
+	import { GLOBAL_CONTEXT } from "#/contexts"
+
+	import assertAuthentication from "$/page_requirement/assert_authentication"
 	import makeJSONRequester from "$/rest/make_json_requester"
-	import applyRequirements from "$/utility/apply_requirements"
-	import {
-		serverURL,
-		mustHaveToken,
-		mustHaveAccessToken,
-		mustBeAuthenticatedUser
-	} from "$/global_state"
 
 	import AddForm from "%/frozen_periods/add_form.svelte"
 	import ArticleGrid from "$/layout/article_grid.svelte"
@@ -23,11 +20,9 @@
 	import InnerGrid from "$/layout/inner_grid.svelte"
 	import PrimaryHeading from "$/typography/primary_heading.svelte"
 
-	applyRequirements([
-		mustHaveToken,
-		mustHaveAccessToken,
-		mustBeAuthenticatedUser
-	], {
+	const globalContext = getContext(GLOBAL_CONTEXT) as ContextBundle
+
+	assertAuthentication(globalContext, {
 		afterNavigate,
 		beforeNavigate,
 		goto
@@ -102,7 +97,7 @@
 	$: finishedAt = (chosenPeriod?.finished_at || "----------").slice(0, "YYYY-MM-DD".length)
 
 	async function loadList() {
-		const currentServerURL = get(serverURL)
+		const currentServerURL = get(globalContext.serverURL as any)
 
 		if (currentServerURL === "") {
 			setTimeout(loadList, 1000)

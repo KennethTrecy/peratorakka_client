@@ -1,23 +1,25 @@
 <script lang="ts">
-	import { onMount, onDestroy } from "svelte"
+	import { onMount, onDestroy, setContext } from "svelte"
 
-	import { initializeGlobalStates, unsubscribeWatchedGlobalStates } from "$/global_state"
-	import { setTheme } from "@/components/third-party/index"
-	import { initializeShellState, unsubscribeWatchedStates } from "%/shell/state"
+	import { makeGlobalContext } from "$/global_state"
+	import makeShellContext from "%/shell/make_shell_context"
+	import { GLOBAL_CONTEXT, SHELL_CONTEXT } from "#/contexts"
 
 	import TopAppBar from "%/shell/top_app_bar.svelte"
 	import NavigationDrawer from "%/shell/navigation_drawer.svelte"
 
+	const globalContext = makeGlobalContext()
+
 	export let isMenuShown = false
 
+	setContext(GLOBAL_CONTEXT, globalContext)
+	setContext(SHELL_CONTEXT, makeShellContext(globalContext))
+
 	onMount(() => {
-		setTheme("/logo.png")
-		initializeShellState()
-		initializeGlobalStates()
+		(globalContext.initializeGlobalStates as () => void)()
 	})
 
-	onDestroy(unsubscribeWatchedGlobalStates)
-	onDestroy(unsubscribeWatchedStates)
+	onDestroy(globalContext.unsubscribeWatchedGlobalStates as () => void)
 
 	/**
 	 * Previous main
