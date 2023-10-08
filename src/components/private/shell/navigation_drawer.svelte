@@ -52,7 +52,7 @@
 		<nav class="mdc-deprecated-list">
 			<Item
 				address="/profile"
-				icon="user"
+				icon="person"
 				label="Profile"/>
 			<hr class="mdc-deprecated-list-divider">
 			{#each lastMenuItemInfos as info(info.link)}
