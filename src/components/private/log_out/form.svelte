@@ -2,6 +2,7 @@
 	import type { Writable } from "svelte/store"
 	import type { ContextBundle } from "+/component"
 
+	import { get } from "svelte/store"
 	import { getContext } from "svelte"
 	import { afterNavigate, beforeNavigate, goto } from "$app/navigation"
 
@@ -22,10 +23,12 @@
 		serverURL,
 		userEmail,
 		accessTokenMetadata,
+		CSRFToken
 	} = getContext(GLOBAL_CONTEXT) as ContextBundle as {
 		serverURL: Writable<string>,
 		userEmail: Writable<string>,
-		accessTokenMetadata: Writable<Map<string, string>>
+		accessTokenMetadata: Writable<Map<string, string>>,
+		CSRFToken: Writable<string>
 	}
 
 	assertAuthentication(globalContext, {
@@ -44,9 +47,32 @@
 			{
 				"statusCode": 200,
 				"action": async (response: Response) => {
-					errors.set([])
 					userEmail.set("")
 					accessTokenMetadata.set(new Map())
+
+					try {
+						const response = await fetch(`${get(serverURL)}/`, {
+							"method": "GET",
+							"mode": "cors",
+							"credentials": "include"
+						})
+
+						if (response.status === 200) {
+							const responseDocument = await response.json()
+							CSRFToken.set(responseDocument.data.csrf_token)
+						} else {
+							throw new Error()
+						}
+
+						errors.set([])
+					} catch (error) {
+						serverURL.set("")
+						errors.set([
+							{
+								"message": "Client fails to request new CSRF token to server"
+							}
+						])
+					}
 				}
 			}
 		],
