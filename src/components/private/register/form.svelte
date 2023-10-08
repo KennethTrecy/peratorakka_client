@@ -1,13 +1,13 @@
 <script lang="ts">
+	import type { Writable } from "svelte/store"
+	import type { ContextBundle } from "+/component"
+
+	import { getContext } from "svelte"
+
+	import { GLOBAL_CONTEXT } from "#/contexts"
 	import { MAINTENANCE_EXPIRATION_MECHANISM } from "#/rest"
 
 	import makeJSONRequester from "$/rest/make_json_requester"
-	import {
-		serverURL,
-		userEmail,
-		accessToken,
-		accessTokenMetadata,
-	} from "$/global_state"
 
 	import GridCell from "$/layout/grid_cell.svelte"
 	import PasswordField from "$/form/password_field.svelte"
@@ -17,6 +17,18 @@
 	import TextCardButton from "$/button/card/text.svelte"
 	import TextContainer from "$/typography/text_container.svelte"
 	import TextField from "$/form/text_field.svelte"
+
+	const {
+		serverURL,
+		userEmail,
+		accessToken,
+		accessTokenMetadata
+	} = getContext(GLOBAL_CONTEXT) as ContextBundle as {
+		serverURL: Writable<string>
+		userEmail: Writable<string>
+		accessToken: Writable<string>
+		accessTokenMetadata: Writable<unknown>
+	}
 
 	let username = ""
 	let email = ""

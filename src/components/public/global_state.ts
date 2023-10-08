@@ -13,15 +13,16 @@ import {
 	ACCESS_TOKEN_METADATA_KEY
 } from "#/storage_keys"
 
-export const hasLoadedGlobalStates = writable<boolean>(false)
-export const serverURL = writable<string>("")
-export const hasCompatibleServer = writable<boolean>(true)
-export const CSRFToken = writable<string>("")
-export const userEmail = writable<string>("")
-export const accessToken = writable<string>("")
-export const accessTokenMetadata = writable<Map<string, string>>(new Map())
 
 export function makeGlobalContext(): ContextBundle {
+	const hasLoadedGlobalStates = writable<boolean>(false)
+	const serverURL = writable<string>("")
+	const hasCompatibleServer = writable<boolean>(true)
+	const CSRFToken = writable<string>("")
+	const userEmail = writable<string>("")
+	const accessToken = writable<string>("")
+	const accessTokenMetadata = writable<Map<string, string>>(new Map())
+
 	const hasRequirements = writable<boolean>(false)
 	const mustHaveCompatibleServer = writable<boolean>(false)
 	const mustHaveToken = writable<boolean>(false)
@@ -225,6 +226,14 @@ export function makeGlobalContext(): ContextBundle {
 	}
 
 	return {
+		hasLoadedGlobalStates,
+		serverURL,
+		hasCompatibleServer,
+		CSRFToken,
+		userEmail,
+		accessToken,
+		accessTokenMetadata,
+
 		hasRequirements,
 		mustHaveCompatibleServer,
 		mustHaveToken,

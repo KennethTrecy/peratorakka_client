@@ -1,15 +1,14 @@
 <script lang="ts">
+	import type { Writable } from "svelte/store"
+	import type { ContextBundle } from "+/component"
+
+	import { getContext } from "svelte"
 	import { afterNavigate, beforeNavigate, goto } from "$app/navigation"
 
+	import { GLOBAL_CONTEXT } from "#/contexts"
+
+	import assertAuthentication from "$/page_requirement/assert_authentication"
 	import makeJSONRequester from "$/rest/make_json_requester"
-	import applyRequirements from "$/utility/apply_requirements"
-	import {
-		serverURL,
-		userEmail,
-		mustHaveToken,
-		mustHaveAccessToken,
-		mustBeAuthenticatedUser
-	} from "$/global_state"
 
 	import ServerDisplay from "$/utility/server_display.svelte"
 	import ShortParagraph from "$/typography/short_paragraph.svelte"
@@ -17,11 +16,17 @@
 	import TextCardButton from "$/button/card/text.svelte"
 	import TextContainer from "$/typography/text_container.svelte"
 
-	applyRequirements([
-		mustHaveToken,
-		mustHaveAccessToken,
-		mustBeAuthenticatedUser
-	], {
+	const globalContext = getContext(GLOBAL_CONTEXT) as ContextBundle
+
+	const {
+		serverURL,
+		userEmail
+	} = getContext(GLOBAL_CONTEXT) as ContextBundle as {
+		serverURL: Writable<string>,
+		userEmail: Writable<string>
+	}
+
+	assertAuthentication(globalContext, {
 		afterNavigate,
 		beforeNavigate,
 		goto

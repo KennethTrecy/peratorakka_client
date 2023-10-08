@@ -11,9 +11,6 @@
 
 	import assertAuthentication from "$/page_requirement/assert_authentication"
 	import makeJSONRequester from "$/rest/make_json_requester"
-	import {
-		serverURL
-	} from "$/global_state"
 
 	import AddForm from "%/frozen_periods/add_form.svelte"
 	import ArticleGrid from "$/layout/article_grid.svelte"
@@ -100,7 +97,7 @@
 	$: finishedAt = (chosenPeriod?.finished_at || "----------").slice(0, "YYYY-MM-DD".length)
 
 	async function loadList() {
-		const currentServerURL = get(serverURL)
+		const currentServerURL = get(globalContext.serverURL as any)
 
 		if (currentServerURL === "") {
 			setTimeout(loadList, 1000)

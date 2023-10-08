@@ -12,9 +12,6 @@
 
 	import assertAuthentication from "$/page_requirement/assert_authentication"
 	import makeJSONRequester from "$/rest/make_json_requester"
-	import {
-		serverURL
-	} from "$/global_state"
 
 	import AddForm from "%/accounts/add_form.svelte"
 	import ArticleGrid from "$/layout/article_grid.svelte"
@@ -120,7 +117,7 @@
 	}
 
 	async function loadList() {
-		const currentServerURL = get(serverURL)
+		const currentServerURL = get(globalContext.serverURL as any)
 
 		if (currentServerURL === "") {
 			setTimeout(loadList, 1000)
