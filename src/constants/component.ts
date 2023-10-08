@@ -9,4 +9,4 @@ export const UNKNOWN_ACCOUNT: Account = {
 }
 
 export const DEFAULT_MINIMUM_FRACTION_DIGITS = 2
-export const DEFAULT_MAXIMUM_FRACTION_DIGITS = 8
+export const DEFAULT_MAXIMUM_FRACTION_DIGITS = 12
