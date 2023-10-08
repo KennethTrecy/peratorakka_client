@@ -21,12 +21,6 @@ export default function makeShellContext(globalContext: ContextBundle): ContextB
 		[ serverIcon, userEmail, hasToken, hasUser ],
 		([ currentServerIcon, currentUserEmail, hasTokenCurrently, hasUserCurrently ]) => {
 			return [
-				hasTokenCurrently && hasUserCurrently ? {
-					"type": "item",
-					"link": "/profile",
-					"icon": "person",
-					"label": `User: ${currentUserEmail}`
-				} : null,
 				{
 					"type": "item",
 					"link": "/",
@@ -35,11 +29,17 @@ export default function makeShellContext(globalContext: ContextBundle): ContextB
 				},
 				hasTokenCurrently && hasUserCurrently ? {
 					"type": "item",
+					"link": "/profile",
+					"icon": "person",
+					"label": `Edit profile`
+				} : null,
+				hasTokenCurrently && hasUserCurrently ? {
+					"type": "item",
 					"link": "/log_out",
 					"icon": "logout",
 					"label": "Log out"
 				} : null,
-				hasTokenCurrently && hasUserCurrently ? {
+				hasTokenCurrently ? {
 					"type": "divider"
 				} : null,
 				hasTokenCurrently && !hasUserCurrently ? {
