@@ -10,7 +10,6 @@
 	import { GLOBAL_CONTEXT, SHELL_CONTEXT } from "#/contexts"
 
 	import Item from "%/shell/navigation_drawer/item.svelte"
-	import ServerDisplay from "$/utility/server_display.svelte"
 
 	const {
 		serverURL,
@@ -62,10 +61,12 @@
 </script>
 
 <aside class={drawerClasses} bind:this={drawer}>
-	<div class="mdc-drawer__header">
-		<h5 class="mdc-drawer__title">Current user</h5>
-		<h6 class="mdc-drawer__subtitle">{$userEmail}</h6>
-	</div>
+	{#if $userEmail !== ""}
+		<div class="mdc-drawer__header">
+			<h5 class="mdc-drawer__title">Current user</h5>
+			<h6 class="mdc-drawer__subtitle">{$userEmail}</h6>
+		</div>
+	{/if}
 	<div class="mdc-drawer__content">
 		<nav class="mdc-deprecated-list">
 			{#each lastMenuItemInfos as info}
