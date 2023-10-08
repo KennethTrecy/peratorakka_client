@@ -20,10 +20,12 @@
 
 	const {
 		serverURL,
-		userEmail
+		userEmail,
+		accessTokenMetadata,
 	} = getContext(GLOBAL_CONTEXT) as ContextBundle as {
 		serverURL: Writable<string>,
-		userEmail: Writable<string>
+		userEmail: Writable<string>,
+		accessTokenMetadata: Writable<Map<string, string>>
 	}
 
 	assertAuthentication(globalContext, {
@@ -44,6 +46,7 @@
 				"action": async (response: Response) => {
 					errors.set([])
 					userEmail.set("")
+					accessTokenMetadata.set(new Map())
 				}
 			}
 		],
