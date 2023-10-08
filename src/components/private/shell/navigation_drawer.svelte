@@ -61,18 +61,15 @@
 <aside class={drawerClasses} bind:this={drawer}>
 	<div class="mdc-drawer__content">
 		<nav class="mdc-deprecated-list">
-			{#if $userEmail !== ""}
-				<Item
-					address="/profile"
-					icon="person"
-					label={"User: "+$userEmail}/>
-				<hr class="mdc-deprecated-list-divider"/>
-			{/if}
-			{#each lastMenuItemInfos as info(info.link)}
-				<Item
-					address={info.link}
-					icon={info.icon}
-					label={info.label}/>
+			{#each lastMenuItemInfos as info}
+				{#if info.type === "item"}
+					<Item
+						address={info.link}
+						icon={info.icon}
+						label={info.label}/>
+				{:else}
+					<hr class="mdc-deprecated-list-divider"/>
+				{/if}
 			{/each}
 		</nav>
 	</div>
