@@ -14,6 +14,8 @@
 	import PrimaryHeading from "$/typography/primary_heading.svelte"
 	import TextContainer from "$/typography/text_container.svelte"
 
+	import Form from "%/profile/form.svelte"
+
 	const globalContext = getContext(GLOBAL_CONTEXT) as ContextBundle
 
 	assertAuthentication(globalContext, {
@@ -33,7 +35,10 @@
 			<PrimaryHeading>Profile</PrimaryHeading>
 		</GridCell>
 		<GridCell kind="full">
-			<TextContainer>Come back later. It is not yet available.</TextContainer>
+			<Form/>
+		</GridCell>
+		<GridCell kind="full">
+			<TextContainer>Some features are not yet available. Come back later.</TextContainer>
 		</GridCell>
 	</InnerGrid>
 </ArticleGrid>
