@@ -57,27 +57,22 @@
 </script>
 
 <InnerGrid>
-	<GridCell kind="padder"/>
 	<GridCell kind="narrow">
-		<div class="single_form">
+		<div class="profile_form">
 			<FormBase id={null} isConnecting={$isConnecting} errors={$errors} on:submit={update}>
 				<TextContainer slot="lead_content">
 					<ShortParagraph>
 						Update the credentials you have on <ServerDisplay address={$serverURL}/>.
 					</ShortParagraph>
 				</TextContainer>
-				<Grid slot="field_content">
-					<InnerGrid>
-						<GridCell kind="full">
-							<TextField
-								variant="email"
-								fieldName="Email"
-								disabled={$isConnecting}
-								bind:value={email}
-								errors={$errors}/>
-						</GridCell>
-					</InnerGrid>
-				</Grid>
+				<svelte:fragment slot="field_content">
+					<TextField
+						variant="email"
+						fieldName="Email"
+						disabled={$isConnecting}
+						bind:value={email}
+						errors={$errors}/>
+				</svelte:fragment>
 				<svelte:fragment slot="action_buttons">
 					<TextCardButton
 						kind="submit"
@@ -87,7 +82,6 @@
 			</FormBase>
 		</div>
 	</GridCell>
-	<GridCell kind="padder"/>
 </InnerGrid>
 
 <style lang="scss">
@@ -97,7 +91,7 @@
 
 	@include card.core-styles;
 
-	:global(.single_form .mdc-card__content) {
+	:global(.profile_form .mdc-card__content) {
 		padding: 1rem;
 
 		& + .mdc-card__content {
@@ -105,7 +99,7 @@
 		}
 	}
 
-	// :global(.single_form .mdc-card__actions) {
+	// :global(.profile_form .mdc-card__actions) {
 	// 	justify-content: center;
 	// }
 </style>
