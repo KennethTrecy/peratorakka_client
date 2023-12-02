@@ -11,8 +11,11 @@
 	import GridCell from "$/layout/grid_cell.svelte"
 	import ServerDisplay from "$/utility/server_display.svelte"
 	import ShortParagraph from "$/typography/short_paragraph.svelte"
-	import BasicForm from "$/form/basic_form.svelte"
+	import FormBase from "$/form/base.svelte"
+	import Grid from "$/layout/grid.svelte"
+	import InnerGrid from "$/layout/inner_grid.svelte"
 	import TextCardButton from "$/button/card/text.svelte"
+	import TextContainer from "$/typography/text_container.svelte"
 	import TextField from "$/form/text_field.svelte"
 
 	const {
@@ -53,24 +56,56 @@
 	}
 </script>
 
-<BasicForm isConnecting={$isConnecting} errors={$errors} on:submit={update}>
-	<svelte:fragment slot="fields">
-		<ShortParagraph>
-			Update the credentials you have on <ServerDisplay address={$serverURL}/>.
-		</ShortParagraph>
-		<GridCell kind="full">
-			<TextField
-				variant="email"
-				fieldName="Email"
-				disabled={$isConnecting}
-				bind:value={email}
-				errors={$errors}/>
-		</GridCell>
-	</svelte:fragment>
-	<svelte:fragment slot="button_group">
-		<TextCardButton
-			kind="submit"
-			disabled={$isConnecting}
-			label="Update email"/>
-	</svelte:fragment>
-</BasicForm>
+<InnerGrid>
+	<GridCell kind="padder"/>
+	<GridCell kind="narrow">
+		<div class="single_form">
+			<FormBase id={null} isConnecting={$isConnecting} errors={$errors} on:submit={update}>
+				<TextContainer slot="lead_content">
+					<ShortParagraph>
+						Update the credentials you have on <ServerDisplay address={$serverURL}/>.
+					</ShortParagraph>
+				</TextContainer>
+				<Grid slot="field_content">
+					<InnerGrid>
+						<GridCell kind="full">
+							<TextField
+								variant="email"
+								fieldName="Email"
+								disabled={$isConnecting}
+								bind:value={email}
+								errors={$errors}/>
+						</GridCell>
+					</InnerGrid>
+				</Grid>
+				<svelte:fragment slot="action_buttons">
+					<TextCardButton
+						kind="submit"
+						disabled={$isConnecting}
+						label="Update email"/>
+				</svelte:fragment>
+			</FormBase>
+		</div>
+	</GridCell>
+	<GridCell kind="padder"/>
+</InnerGrid>
+
+<style lang="scss">
+	@use "@/components/third-party/index";
+
+	@use "@material/card";
+
+	@include card.core-styles;
+
+	:global(.single_form .mdc-card__content) {
+		padding: 1rem;
+
+		& + .mdc-card__content {
+			padding-top: 0rem;
+		}
+	}
+
+	// :global(.single_form .mdc-card__actions) {
+	// 	justify-content: center;
+	// }
+</style>

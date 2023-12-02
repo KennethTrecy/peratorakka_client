@@ -34,9 +34,9 @@
 		<GridCell kind="full">
 			<PrimaryHeading>Profile</PrimaryHeading>
 		</GridCell>
-		<GridCell kind="full">
-			<Form/>
-		</GridCell>
+	</InnerGrid>
+	<Form/>
+	<InnerGrid>
 		<GridCell kind="full">
 			<TextContainer>Some features are not yet available. Come back later.</TextContainer>
 		</GridCell>
