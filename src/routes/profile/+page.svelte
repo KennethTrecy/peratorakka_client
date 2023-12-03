@@ -14,7 +14,7 @@
 	import PrimaryHeading from "$/typography/primary_heading.svelte"
 	import TextContainer from "$/typography/text_container.svelte"
 
-	import Form from "%/profile/form.svelte"
+	import PlainAccountForm from "%/profile/plain_account_form.svelte"
 
 	const globalContext = getContext(GLOBAL_CONTEXT) as ContextBundle
 
@@ -34,10 +34,10 @@
 		<GridCell kind="full">
 			<PrimaryHeading>Profile</PrimaryHeading>
 		</GridCell>
-	</InnerGrid>
-	<Form/>
-	<InnerGrid>
-		<GridCell kind="full">
+		<GridCell kind="narrow">
+			<PlainAccountForm/>
+		</GridCell>
+		<GridCell kind="narrow">
 			<TextContainer>Some features are not yet available. Come back later.</TextContainer>
 		</GridCell>
 	</InnerGrid>
