@@ -24,6 +24,7 @@
 	}
 
 	let email = ""
+	let username = ""
 	let { isConnecting, errors, send } = makeJSONRequester({
 		"path": "/api/v1/user",
 		"defaultRequestConfiguration": {
@@ -64,6 +65,12 @@
 		Update the credentials you have on <ServerDisplay address={$serverURL}/>.
 	</ShortParagraph>
 	<svelte:fragment slot="fields">
+		<TextField
+			variant="text"
+			fieldName="Username"
+			disabled={$isConnecting}
+			bind:value={username}
+			errors={$errors}/>
 		<TextField
 			variant="email"
 			fieldName="Email"
