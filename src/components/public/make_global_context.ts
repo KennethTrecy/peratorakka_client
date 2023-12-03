@@ -10,7 +10,9 @@ import {
 	CSRF_TOKEN_KEY,
 	USER_EMAIL_KEY,
 	ACCESS_TOKEN_KEY,
-	ACCESS_TOKEN_METADATA_KEY
+	ACCESS_TOKEN_METADATA_KEY,
+
+	USER_EMAIL_KEY_v0_2_1
 } from "#/storage_keys"
 
 export default function makeGlobalContext(): ContextBundle {
@@ -59,7 +61,7 @@ export default function makeGlobalContext(): ContextBundle {
 				const millisecondDifference = currentDateAndTime.valueOf() - lastUsedAt.valueOf()
 				// Round off which the author guess that millisecond slippage is acceptable
 				const secondDifference = Math.round(millisecondDifference / 1000)
-				const lifetime = currentAccessTokenMetadata.get("data") ?? 0
+				const lifetime = Number(currentAccessTokenMetadata.get("data")) ?? 0
 
 				return secondDifference < lifetime
 			} else {
@@ -68,7 +70,7 @@ export default function makeGlobalContext(): ContextBundle {
 		}
 	)
 
-	const serverIcon = derived<string>(
+	const serverIcon = derived(
 		[ hasServer, hasToken ],
 		([ hasServerCurrently, hasTokenCurrently ]) => (
 			hasTokenCurrently
@@ -79,7 +81,7 @@ export default function makeGlobalContext(): ContextBundle {
 		)
 	)
 
-	const redirectPath = derived<string>(
+	const redirectPath = derived(
 		[
 			hasLoadedGlobalStates,
 			hasRequirements,
@@ -136,18 +138,21 @@ export default function makeGlobalContext(): ContextBundle {
 		}
 	)
 
-	let stopStoringServerURL: Unsubscriber = () => null as void
-	let stopStoringCSRFToken: Unsubscriber = () => null as void
-	let stopStoringAccessToken: Unsubscriber = () => null as void
-	let stopStoringAccessTokenMetadata: Unsubscriber = () => null as void
-	let stopStoringUserEmail: Unsubscriber = () => null as void
+	let stopStoringServerURL: Unsubscriber = () => null as unknown as void
+	let stopStoringCSRFToken: Unsubscriber = () => null as unknown as void
+	let stopStoringAccessToken: Unsubscriber = () => null as unknown as void
+	let stopStoringAccessTokenMetadata: Unsubscriber = () => null as unknown as void
+	let stopStoringUserEmail: Unsubscriber = () => null as unknown as void
 
 	function initializeGlobalStates(): void {
 		const storedServerURL = window.localStorage.getItem(SERVER_URL_KEY) ?? ""
 		const storedCSRFToken = window.localStorage.getItem(CSRF_TOKEN_KEY) ?? ""
 		const storedAccessToken = window.localStorage.getItem(ACCESS_TOKEN_KEY) ?? ""
-		const storedAccessTokenMetadata = window.localStorage.getItem(ACCESS_TOKEN_METADATA_KEY) ?? "[]"
-		const storedUserEmail = window.localStorage.getItem(USER_EMAIL_KEY) ?? ""
+		const storedAccessTokenMetadata = window.localStorage.getItem(ACCESS_TOKEN_METADATA_KEY)
+			?? "[]"
+		const storedUserEmail = window.localStorage.getItem(USER_EMAIL_KEY_v0_2_1)
+			?? window.localStorage.getItem(USER_EMAIL_KEY)
+			?? ""
 
 		setTimeout(() => {
 			serverURL.set(storedServerURL)
@@ -209,6 +214,10 @@ export default function makeGlobalContext(): ContextBundle {
 		})
 		stopStoringUserEmail = userEmail.subscribe(newUserEmail => {
 			if (typeof window !== "undefined") {
+				if (window.localStorage.getItem(USER_EMAIL_KEY_v0_2_1) !== null) {
+					window.localStorage.removeItem(USER_EMAIL_KEY_v0_2_1);
+				}
+
 				window.localStorage.setItem(USER_EMAIL_KEY, newUserEmail)
 			}
 		})
