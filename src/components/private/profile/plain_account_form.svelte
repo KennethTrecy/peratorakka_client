@@ -40,13 +40,14 @@
 				}
 			}
 		],
-		"expectedErrorStatusCodes": [ 401, 422 ]
+		"expectedErrorStatusCodes": [ 400, 422 ]
 	})
 
 	async function update() {
 		await send({
 			"body": JSON.stringify({
 				"user": {
+					username,
 					email
 				}
 			})
