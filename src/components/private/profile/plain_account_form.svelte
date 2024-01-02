@@ -35,7 +35,7 @@
 			{
 				"statusCode": 204,
 				"action": async (_response: Response) => {
-					errors.set([]);
+					errors.set([])
 					userEmail.set(email)
 				}
 			}
@@ -59,8 +59,7 @@
 	id={null}
 	isConnecting={$isConnecting}
 	errors={$errors}
-	actionLabel="Update
-	email"
+	actionLabel="Change plain credentials"
 	on:submit={update}>
 	<ShortParagraph slot="text_description">
 		Update the credentials you have on <ServerDisplay address={$serverURL}/>.
