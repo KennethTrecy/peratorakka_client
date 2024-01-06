@@ -35,6 +35,9 @@
 			{
 				"statusCode": 204,
 				"action": async (_response: Response) => {
+					oldPassword = ""
+					newPassword = ""
+					confirmNewPassword = ""
 					errors.set([])
 				}
 			}
