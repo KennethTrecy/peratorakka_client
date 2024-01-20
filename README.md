@@ -8,6 +8,13 @@
 # Peratorakka Client
 A client for any Peratorakka server.
 
+## Purpose
+The purpose of this system is to track the cash flow and create financial statements automatically.
+The system allows the users (persons or businesses) to manage their financies.
+
+Screenshots of this project can be found in [author's post]. Currently, there is no server available
+to access by common people. Yet, the instructions how to start the system can be found below.
+
 ## Origin
 Some parts of the repository was based from [`sveltekit`] branch of [Web Template].
 
@@ -58,3 +65,4 @@ This personal project may contain references to trademarks, which are included i
 [pnpm]: https://pnpm.io/installation
 [Conventional Commits specification]: https://www.conventionalcommits.org/en/v1.0.0/
 [contributing guide]: ./CONTRIBUTING.md
+[author's post]: https://www.linkedin.com/posts/kenneth-trecy-tobias_good-day-everyone-after-five-months-of-testing-activity-7134037085828616192-Xtvx
