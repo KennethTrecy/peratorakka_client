@@ -8,9 +8,8 @@
 # Peratorakka Client
 A client for any Peratorakka server.
 
-## Purpose
-The purpose of this system is to track the cash flow and create financial statements automatically.
-The system allows the users (persons or businesses) to manage their financies.
+Peratorakka is a software system aimed to manage and track the finances, personal or commercial. It
+is made up of a client and [server]. In this repository, it has an implementation of the client which allows the users to interact with server. The server may be implemented in different programming language as long as it has compatible API.
 
 Screenshots of this project can be found in [author's post]. Currently, there is no server available
 to access by common people. Yet, the instructions how to start the system can be found below.
@@ -65,4 +64,5 @@ This personal project may contain references to trademarks, which are included i
 [pnpm]: https://pnpm.io/installation
 [Conventional Commits specification]: https://www.conventionalcommits.org/en/v1.0.0/
 [contributing guide]: ./CONTRIBUTING.md
+[server]: https://github.com/KennethTrecy/peratorakka_server
 [author's post]: https://www.linkedin.com/posts/kenneth-trecy-tobias_good-day-everyone-after-five-months-of-testing-activity-7134037085828616192-Xtvx
