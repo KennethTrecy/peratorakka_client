@@ -21,7 +21,7 @@ The template has been specialized for front-end development.
 
 ## Usage
 
-### Initialization
+### Initialization (for developers)
 If you want to contribute, the repository should be initialized to adhere in [Conventional Commits
 specification] for organize commits and automated generation of change log.
 
@@ -30,21 +30,20 @@ specification] for organize commits and automated generation of change log.
 - [pnpm] (optional)
 
 #### Instructions
-By running the command below, all your commits will be linted to follow the [Conventional Commits
+1. By running the command below, all your commits will be linted to follow the [Conventional Commits
 specification].
-```
-$ npm install
-```
+   ```
+   $ npm install
+   ```
 
-Or if you have installed [pnpm], run the following command:
-```
-$ pnpm install
-```
-
-To generate the change log automatically, run the command below:
-```
-$ npx changelogen --from=[tag name or branch name or commit itself] --to=master
-```
+   Or if you have installed [pnpm], run the following command:
+   ```
+   $ pnpm install
+   ```
+2. To generate the change log automatically, run the command below:
+   ```
+   $ npx changelogen --from=[tag name or branch name or commit itself] --to=master
+   ```
 
 ## Notes
 
