@@ -30,6 +30,12 @@
 		goto
 	})
 
+	const currentDate =  new Date()
+	const currentYear =  currentDate.getFullYear()
+	const currentMonth =  makeTwoDigits(currentDate.getMonth() + 1)
+	const currentDay =  makeTwoDigits(currentDate.getDate())
+	const defaultTransactedDate = `${currentYear}-${currentMonth}-${currentDay}`
+
 	let hasRequestedFirstList = false
 
 	let currencies: Currency[] = []
@@ -37,6 +43,8 @@
 	let modifiers: Modifier[] = []
 	let financialEntries: FinancialEntry[] = []
 
+	let startedAt: string = defaultTransactedDate
+	let finishedAt: string = defaultTransactedDate
 	let searchMode: SearchMode = SEARCH_NORMALLY
 	let sortCriterion: string = "transacted_at"
 	let sortOrder: SortOrder = DESCENDING_ORDER
@@ -192,6 +200,10 @@
 			financialEntry => financialEntry.id !== oldFinancialEntry.id
 		)
 	}
+
+	function makeTwoDigits(value: number): string {
+		return value <= 9 ? `0${value}` : `${value}`
+	}
 </script>
 
 <svelte:head>
@@ -214,6 +226,8 @@
 			{accounts}
 			{modifiers}
 			data={financialEntries}
+			bind:startedAt={startedAt}
+			bind:finishedAt={finishedAt}
 			bind:searchMode={searchMode}
 			bind:sortCriterion={sortCriterion}
 			bind:sortOrder={sortOrder}

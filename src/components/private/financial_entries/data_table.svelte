@@ -14,11 +14,11 @@
 	export let modifiers: Modifier[]
 	export let data: FinancialEntry[]
 
+	export let startedAt: string
+	export let finishedAt: string
 	export let searchMode: SearchMode
 	export let sortCriterion: string
 	export let sortOrder: SortOrder
-	export let startedAt: string
-	export let finishedAt: string
 
 	export let listError: GeneralError[]
 </script>
@@ -30,11 +30,11 @@
 	</svelte:fragment>
 	<ListSpecifier
 		slot="list_specifier"
+		bind:startedAt={startedAt}
+		bind:finishedAt={finishedAt}
 		bind:searchMode={searchMode}
 		bind:sortCriterion={sortCriterion}
 		bind:sortOrder={sortOrder}
-		bind:startedAt={startedAt}
-		bind:finishedAt={finishedAt}
 		{isConnecting}
 		{listError}/>
 	<DataTableRecordHeader slot="table_headers">
