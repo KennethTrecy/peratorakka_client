@@ -14,8 +14,8 @@
 	export let modifiers: Modifier[]
 	export let data: FinancialEntry[]
 
-	export let startedAt: string
-	export let finishedAt: string
+	export let beginDate: string
+	export let endDate: string
 	export let searchMode: SearchMode
 	export let sortCriterion: string
 	export let sortOrder: SortOrder
@@ -30,8 +30,8 @@
 	</svelte:fragment>
 	<ListSpecifier
 		slot="list_specifier"
-		bind:startedAt={startedAt}
-		bind:finishedAt={finishedAt}
+		bind:beginDate={beginDate}
+		bind:endDate={endDate}
 		bind:searchMode={searchMode}
 		bind:sortCriterion={sortCriterion}
 		bind:sortOrder={sortOrder}

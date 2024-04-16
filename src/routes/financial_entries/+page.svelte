@@ -43,8 +43,8 @@
 	let modifiers: Modifier[] = []
 	let financialEntries: FinancialEntry[] = []
 
-	let startedAt: string = defaultTransactedDate
-	let finishedAt: string = defaultTransactedDate
+	let beginDate: string = defaultTransactedDate
+	let endDate: string = defaultTransactedDate
 	let searchMode: SearchMode = SEARCH_NORMALLY
 	let sortCriterion: string = "transacted_at"
 	let sortOrder: SortOrder = DESCENDING_ORDER
@@ -54,6 +54,8 @@
 	const partialPath = `/api/v1/${collectiveName}`
 	let parameters: [string, string][] = [
 		[ "filter[search_mode]", searchMode as string ],
+		[ "filter[begin_date]", beginDate as string ],
+		[ "filter[end_date]", endDate as string ],
 		[ "sort[0][0]", sortCriterion ],
 		[ "sort[0][1]", sortOrder as string ],
 		[ "sort[1][0]", "created_at" ],
@@ -63,6 +65,8 @@
 	$: {
 		parameters = [
 			[ "filter[search_mode]", searchMode as string ],
+			[ "filter[begin_date]", beginDate as string ],
+			[ "filter[end_date]", endDate as string ],
 			[ "sort[0][0]", sortCriterion ],
 			[ "sort[0][1]", sortOrder as string ],
 			[ "sort[1][0]", "created_at" ],
@@ -226,8 +230,8 @@
 			{accounts}
 			{modifiers}
 			data={financialEntries}
-			bind:startedAt={startedAt}
-			bind:finishedAt={finishedAt}
+			bind:beginDate={beginDate}
+			bind:endDate={endDate}
 			bind:searchMode={searchMode}
 			bind:sortCriterion={sortCriterion}
 			bind:sortOrder={sortOrder}

@@ -6,8 +6,8 @@
 
 	export let isConnecting: boolean
 
-	export let startedAt: string
-	export let finishedAt: string
+	export let beginDate: string
+	export let endDate: string
 	export let searchMode: SearchMode
 	export let sortCriterion: string
 	export let sortOrder: SortOrder
@@ -21,17 +21,17 @@
 
 <TextField
 	variant="date"
-	fieldName="Started Date"
-	errorFieldName="started_at"
+	fieldName="Begin Date"
+	errorFieldName="begin_date"
 	disabled={isConnecting}
-	bind:value={startedAt}
+	bind:value={beginDate}
 	errors={listError}/>
 <TextField
 	variant="date"
-	fieldName="Finished Date"
-	errorFieldName="finished_at"
+	fieldName="End Date"
+	errorFieldName="end_at"
 	disabled={isConnecting}
-	bind:value={finishedAt}
+	bind:value={endDate}
 	errors={listError}/>
 <ListSpecifier
 	bind:searchMode={searchMode}
