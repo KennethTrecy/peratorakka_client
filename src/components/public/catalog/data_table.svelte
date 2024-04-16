@@ -17,30 +17,26 @@
 	<SecondaryHeading slot="name">Available {collectiveName}</SecondaryHeading>
 	<slot slot="filled_collection_description" name="filled_collection_description"/>
 	<slot slot="empty_collection_description" name="empty_collection_description"/>
+	<Flex slot="list_specifier" direction="column">
+		<Flex direction="row" mustPad={false}>
+			<slot name="list_specifier"/>
+		</Flex>
+	</Flex>
 	<GridCell slot="available_content" kind="full">
-		<div>
-			{#if $$slots.list_specifier}
-				<Flex direction="column">
-					<Flex direction="row" mustPad={false}>
-						<slot name="list_specifier"/>
-					</Flex>
-				</Flex>
+		<Flex direction="column" mustPad={false}>
+			{#if $$slots.table_footer_cells}
+				<UnitDataTable>
+					<slot slot="table_headers" name="table_headers"/>
+					<slot slot="table_rows" name="table_rows"/>
+					<slot slot="table_footer_cells" name="table_footer_cells"/>
+				</UnitDataTable>
+			{:else}
+				<UnitDataTable>
+					<slot slot="table_headers" name="table_headers"/>
+					<slot slot="table_rows" name="table_rows"/>
+				</UnitDataTable>
 			{/if}
-			<Flex direction="column" mustPad={false}>
-				{#if $$slots.table_footer_cells}
-					<UnitDataTable>
-						<slot slot="table_headers" name="table_headers"/>
-						<slot slot="table_rows" name="table_rows"/>
-						<slot slot="table_footer_cells" name="table_footer_cells"/>
-					</UnitDataTable>
-				{:else}
-					<UnitDataTable>
-						<slot slot="table_headers" name="table_headers"/>
-						<slot slot="table_rows" name="table_rows"/>
-					</UnitDataTable>
-				{/if}
-			</Flex>
-		</div>
+		</Flex>
 	</GridCell>
 </CatalogBase>
 
