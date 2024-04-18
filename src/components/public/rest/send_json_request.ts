@@ -1,8 +1,7 @@
+import { type Writable } from "svelte/store"
 import type {
-	GeneralError,
 	RequesterConstraints,
-	RequesterDependencies,
-	RequesterActions
+	RequesterDependencies
 } from "+/rest"
 
 import { get } from "svelte/store"
@@ -29,7 +28,7 @@ export default async function sendJSONRequest(
 	dependencies.errors.set([])
 
 	try {
-		const headers = {
+		const headers: HeadersInit = {
 			"Content-Type": "application/json",
 			"Accept": "application/json"
 		}

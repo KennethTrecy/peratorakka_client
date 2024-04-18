@@ -23,7 +23,7 @@
 	export let parameters: [string, string][]
 	export let lastOffset: number
 
-	let path = writable(partialPath)
+	let nextPath = writable(partialPath)
 
 	$: {
 		const newPath = `${partialPath}?${
@@ -34,11 +34,11 @@
 			]).toString()
 		}`
 
-		path.set(newPath)
+		nextPath.set(newPath)
 	}
 
 	let { isConnecting, errors, send } = makeJSONRequester({
-		path,
+		"path": nextPath,
 		"defaultRequestConfiguration": {
 			"method": "GET"
 		},
@@ -54,7 +54,6 @@
 						lastOffset = lastOffset + resources.length
 						dispatch("addResources", resources)
 					}
-
 				}
 			}
 		],

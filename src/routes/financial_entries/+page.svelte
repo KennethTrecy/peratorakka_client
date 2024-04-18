@@ -104,7 +104,7 @@
 					let responseDocument = await response.json()
 					errorsForFinancialEntries.set([])
 					financialEntries = responseDocument[collectiveName]
-					lastOffset = responseDocument[collectiveName].length - 1
+					lastOffset = Math.max(0, responseDocument[collectiveName].length - 1)
 				}
 			}
 		],
