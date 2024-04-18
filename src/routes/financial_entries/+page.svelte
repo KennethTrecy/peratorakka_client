@@ -34,7 +34,13 @@
 	const currentYear =  currentDate.getFullYear()
 	const currentMonth =  makeTwoDigits(currentDate.getMonth() + 1)
 	const currentDay =  makeTwoDigits(currentDate.getDate())
-	const defaultTransactedDate = `${currentYear}-${currentMonth}-${currentDay}`
+	const currentTransactedDate = `${currentYear}-${currentMonth}-${currentDay}`
+	const lastDate =  new Date()
+	lastDate.setMonth(lastDate.getMonth() - 1)
+	const lastYear =  lastDate.getFullYear()
+	const lastMonth =  makeTwoDigits(lastDate.getMonth() + 1)
+	const lastDay =  makeTwoDigits(lastDate.getDate())
+	const lastTransactedDate = `${lastYear}-${lastMonth}-${lastDay}`
 
 	let hasRequestedFirstList = false
 
@@ -43,8 +49,8 @@
 	let modifiers: Modifier[] = []
 	let financialEntries: FinancialEntry[] = []
 
-	let beginDate: string = defaultTransactedDate
-	let endDate: string = defaultTransactedDate
+	let beginDate: string = lastTransactedDate
+	let endDate: string = currentTransactedDate
 	let searchMode: SearchMode = SEARCH_NORMALLY
 	let sortCriterion: string = "transacted_at"
 	let sortOrder: SortOrder = DESCENDING_ORDER
