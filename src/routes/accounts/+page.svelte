@@ -8,7 +8,7 @@
 	import { afterNavigate, beforeNavigate, goto } from "$app/navigation"
 
 	import { GLOBAL_CONTEXT } from "#/contexts"
-	import { SEARCH_NORMALLY, ASCENDING_ORDER } from "#/rest"
+	import { SEARCH_NORMALLY, ASCENDING_ORDER, MAXIMUM_PAGINATED_LIST_LENGTH } from "#/rest"
 
 	import assertAuthentication from "$/page_requirement/assert_authentication"
 	import makeJSONRequester from "$/rest/make_json_requester"
@@ -16,6 +16,7 @@
 	import AddForm from "%/accounts/add_form.svelte"
 	import ArticleGrid from "$/layout/article_grid.svelte"
 	import Collection from "%/accounts/collection.svelte"
+	import ExtraResourceLoader from "$/catalog/extra_resource_loader.svelte"
 	import GridCell from "$/layout/grid_cell.svelte"
 	import InnerGrid from "$/layout/inner_grid.svelte"
 	import PrimaryHeading from "$/typography/primary_heading.svelte"
@@ -28,13 +29,15 @@
 		goto
 	})
 
+	let isRequestingDependencies = true
+
 	let currencies: Currency[] = []
 	let accounts: Account[] = []
 
-	let isInClient = false
 	let searchMode: SearchMode = SEARCH_NORMALLY
 	let sortCriterion: string = "name"
 	let sortOrder: SortOrder = ASCENDING_ORDER
+	let lastOffset: number = 0
 
 	const collectiveName = "accounts"
 	const partialPath = `/api/v1/${collectiveName}`
@@ -53,11 +56,11 @@
 
 		completePath.set(`${partialPath}?${
 			new URLSearchParams([
-				...parameters
+				...parameters,
+				[ "page[offset]", `${lastOffset}` ],
+				[ "page[limit]", MAXIMUM_PAGINATED_LIST_LENGTH ]
 			]).toString()
 		}`)
-
-		if (isInClient) reloadAccounts()
 	}
 
 	let {
@@ -75,26 +78,39 @@
 				"action": async (response: Response) => {
 					let responseDocument = await response.json()
 					errorsForAccounts.set([])
-					accounts = responseDocument.accounts
+					accounts = responseDocument[collectiveName]
+					lastOffset = Math.max(0, responseDocument[collectiveName].length - 1)
 				}
 			}
 		],
 		"expectedErrorStatusCodes": [ 401 ]
 	})
 
+	const partialDependencyPath = "/api/v1/currencies"
+	const dependencyPathParameters = [
+		[ "sort[0][0]", "name" ],
+		[ "sort[0][1]", "ascending" ],
+		[ "sort[1][0]", "created_at" ],
+		[ "sort[1][1]", "ascending" ]
+	]
+	let totalNumberOfDependencies: number = 0
+	let lastDependencyOffset: number = -1
+	const completeDependencyPath = writable(partialDependencyPath)
+	$: {
+		completeDependencyPath.set(`${partialDependencyPath}?${
+			new URLSearchParams([
+				...dependencyPathParameters,
+				[ "page[offset]", `${lastDependencyOffset + 1}` ],
+				[ "page[limit]", MAXIMUM_PAGINATED_LIST_LENGTH ]
+			]).toString()
+		}`)
+	}
 	let {
 		"isConnecting": isConnectingForCurrencies,
 		"errors": errorsForCurrencies,
 		"send": requestForCurrencies
 	} = makeJSONRequester({
-		"path": `/api/v1/currencies?${
-			new URLSearchParams([
-				[ "sort[0][0]", "name" ],
-				[ "sort[0][1]", "ascending" ],
-				[ "sort[1][0]", "created_at" ],
-				[ "sort[1][1]", "ascending" ]
-			]).toString()
-		}`,
+		"path": completeDependencyPath,
 		"defaultRequestConfiguration": {
 			"method": "GET"
 		},
@@ -104,7 +120,16 @@
 				"action": async (response: Response) => {
 					let responseDocument = await response.json()
 					errorsForCurrencies.set([])
-					currencies = responseDocument.currencies
+					currencies = [ ...currencies, ...responseDocument.currencies ]
+					lastDependencyOffset = lastDependencyOffset + responseDocument.currencies.length
+					totalNumberOfDependencies = responseDocument.meta.overall_filtered_count
+				}
+			},
+			{
+				"statusCode": 204,
+				"action": async (response: Response) => {
+					errorsForCurrencies.set([])
+					currencies = []
 				}
 			}
 		],
@@ -124,9 +149,15 @@
 			return
 		}
 
+		isRequestingDependencies = true
 		await requestForCurrencies({})
+
+		while (lastDependencyOffset + 1 < totalNumberOfDependencies) {
+			await requestForCurrencies({})
+		}
+
+		isRequestingDependencies = false
 		await reloadAccounts()
-		isInClient = true
 	}
 
 	onMount(loadList)
@@ -136,6 +167,14 @@
 		accounts = [
 			newAccount,
 			...accounts
+		]
+	}
+
+	function addAccounts(event: CustomEvent<unknown[]>) {
+		const newAccounts = event.detail as Account[]
+		accounts = [
+			...accounts,
+			...newAccounts
 		]
 	}
 
@@ -164,8 +203,16 @@
 			bind:searchMode={searchMode}
 			bind:sortCriterion={sortCriterion}
 			bind:sortOrder={sortOrder}
-			isConnecting={$isConnectingForAccounts}
+			isConnecting={isRequestingDependencies || $isConnectingForAccounts}
 			listError={$errorsForAccounts}
 			on:delete={removeAccount}/>
+		<ExtraResourceLoader
+			isConnectingForInitialList={isRequestingDependencies || $isConnectingForAccounts}
+			{partialPath}
+			{parameters}
+			{collectiveName}
+			bind:lastOffset={lastOffset}
+			on:reloadFully={reloadAccounts}
+			on:addResources={addAccounts}/>
 	</InnerGrid>
 </ArticleGrid>
