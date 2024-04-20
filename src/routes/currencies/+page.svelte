@@ -8,7 +8,7 @@
 	import { afterNavigate, beforeNavigate, goto } from "$app/navigation"
 
 	import { GLOBAL_CONTEXT } from "#/contexts"
-	import { SEARCH_NORMALLY, ASCENDING_ORDER } from "#/rest"
+	import { SEARCH_NORMALLY, ASCENDING_ORDER, MAXIMUM_PAGINATED_LIST_LENGTH } from "#/rest"
 
 	import assertAuthentication from "$/page_requirement/assert_authentication"
 	import makeJSONRequester from "$/rest/make_json_requester"
@@ -16,6 +16,7 @@
 	import AddForm from "%/currencies/add_form.svelte"
 	import ArticleGrid from "$/layout/article_grid.svelte"
 	import Collection from "%/currencies/collection.svelte"
+	import ExtraResourceLoader from "$/catalog/extra_resource_loader.svelte"
 	import GridCell from "$/layout/grid_cell.svelte"
 	import InnerGrid from "$/layout/inner_grid.svelte"
 	import PrimaryHeading from "$/typography/primary_heading.svelte"
@@ -33,6 +34,7 @@
 	let searchMode: SearchMode = SEARCH_NORMALLY
 	let sortCriterion: string = "name"
 	let sortOrder: SortOrder = ASCENDING_ORDER
+	let lastOffset: number = 0
 
 	const collectiveName = "currencies"
 	const partialPath = `/api/v1/${collectiveName}`
@@ -42,20 +44,21 @@
 		[ "sort[0][1]", sortOrder as string ]
 	]
 	let completePath = writable(partialPath)
+
 	$: {
 		parameters = [
 			[ "filter[search_mode]", searchMode as string ],
 			[ "sort[0][0]", sortCriterion ],
-			[ "sort[0][1]", sortOrder as string ]
+			[ "sort[0][1]", sortOrder as string ],
 		]
 
 		completePath.set(`${partialPath}?${
 			new URLSearchParams([
-				...parameters
+				...parameters,
+				[ "page[offset]", `${lastOffset}` ],
+				[ "page[limit]", MAXIMUM_PAGINATED_LIST_LENGTH ]
 			]).toString()
 		}`)
-
-		reloadCurrencies()
 	}
 
 	let { isConnecting, errors, send } = makeJSONRequester({
@@ -69,7 +72,8 @@
 				"action": async (response: Response) => {
 					let responseDocument = await response.json()
 					errors.set([])
-					currencies = responseDocument.currencies
+					currencies = responseDocument[collectiveName]
+					lastOffset = Math.max(0, responseDocument[collectiveName].length - 1)
 				}
 			}
 		],
@@ -102,6 +106,14 @@
 		]
 	}
 
+	function addCurrencies(event: CustomEvent<unknown[]>) {
+		const newCurrencies = event.detail as Currency[]
+		currencies = [
+			...currencies,
+			...newCurrencies
+		]
+	}
+
 	function removeCurrency(event: CustomEvent<Currency>) {
 		const oldCurrency = event.detail
 		currencies = currencies.filter(currency => currency.id !== oldCurrency.id)
@@ -126,5 +138,13 @@
 			isConnecting={$isConnecting}
 			listError={$errors}
 			on:delete={removeCurrency}/>
+		<ExtraResourceLoader
+			isConnectingForInitialList={$isConnecting}
+			{partialPath}
+			{parameters}
+			{collectiveName}
+			bind:lastOffset={lastOffset}
+			on:reloadFully={reloadCurrencies}
+			on:addResources={addCurrencies}/>
 	</InnerGrid>
 </ArticleGrid>
