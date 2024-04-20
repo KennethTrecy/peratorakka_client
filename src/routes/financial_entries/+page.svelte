@@ -232,11 +232,11 @@
 			bind:searchMode={searchMode}
 			bind:sortCriterion={sortCriterion}
 			bind:sortOrder={sortOrder}
-			isConnecting={isRequestingDependencies || $isConnectingForFinancialEntries}
+			isConnecting={$isConnectingForFinancialEntries || isRequestingDependencies}
 			listError={$errorsForFinancialEntries}
 			on:delete={removeFinancialEntry}/>
 		<ExtraResourceLoader
-			isConnectingForInitialList={isRequestingDependencies || $isConnectingForFinancialEntries}
+			isConnectingForInitialList={$isConnectingForFinancialEntries || isRequestingDependencies}
 			{partialPath}
 			{parameters}
 			{collectiveName}
