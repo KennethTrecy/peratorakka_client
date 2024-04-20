@@ -242,7 +242,7 @@
 			bind:searchMode={searchMode}
 			bind:sortCriterion={sortCriterion}
 			bind:sortOrder={sortOrder}
-			isConnecting={$isConnectingForFinancialEntries}
+			isConnecting={isRequestingDependencies || $isConnectingForFinancialEntries}
 			listError={$errorsForFinancialEntries}
 			on:delete={removeFinancialEntry}/>
 		<ExtraResourceLoader
