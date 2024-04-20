@@ -4,6 +4,7 @@
 
 	import { createEventDispatcher } from "svelte"
 
+	import makeDateFieldValue from "$/utility/make_date_field_value"
 	import makeJSONRequester from "$/rest/make_json_requester"
 
 	import BasicForm from "%/frozen_periods/basic_form.svelte"
@@ -17,19 +18,11 @@
 		"create": FrozenPeriod
 	}>()
 	const IDPrefix = "new_"
+
 	const previousDate =  new Date()
 	previousDate.setDate(1)
-	const previousYear =  previousDate.getFullYear()
-	const previousMonth =  makeTwoDigits(previousDate.getMonth() + 1)
-	const previousDay =  makeTwoDigits(previousDate.getDate())
-
-	const currentDate =  new Date()
-	const currentYear =  currentDate.getFullYear()
-	const currentMonth =  makeTwoDigits(currentDate.getMonth() + 1)
-	const currentDay =  makeTwoDigits(currentDate.getDate())
-
-	const defaultStartedDate = `${previousYear}-${previousMonth}-${previousDay}`
-	const defaultFinishedDate = `${currentYear}-${currentMonth}-${currentDay}`
+	const defaultStartedDate = makeDateFieldValue(previousDate)
+	const defaultFinishedDate = makeDateFieldValue(new Date())
 
 	export let isLoadingInitialData: boolean
 
@@ -115,10 +108,6 @@
 				}
 			})
 		})
-	}
-
-	function makeTwoDigits(value: number): string {
-		return value <= 9 ? `0${value}` : `${value}`
 	}
 </script>
 

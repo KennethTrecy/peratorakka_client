@@ -11,6 +11,7 @@
 	import { SEARCH_NORMALLY, DESCENDING_ORDER, MAXIMUM_PAGINATED_LIST_LENGTH } from "#/rest"
 
 	import assertAuthentication from "$/page_requirement/assert_authentication"
+	import makeDateFieldValue from "$/utility/make_date_field_value"
 	import makeJSONRequester from "$/rest/make_json_requester"
 	import mergeUniqueResources from "$/utility/merge_unique_resources"
 
@@ -30,17 +31,10 @@
 		goto
 	})
 
-	const currentDate =  new Date()
-	const currentYear =  currentDate.getFullYear()
-	const currentMonth =  makeTwoDigits(currentDate.getMonth() + 1)
-	const currentDay =  makeTwoDigits(currentDate.getDate())
-	const currentTransactedDate = `${currentYear}-${currentMonth}-${currentDay}`
+	const currentTransactedDate = makeDateFieldValue(new Date())
 	const lastDate =  new Date()
 	lastDate.setMonth(lastDate.getMonth() - 1)
-	const lastYear =  lastDate.getFullYear()
-	const lastMonth =  makeTwoDigits(lastDate.getMonth() + 1)
-	const lastDay =  makeTwoDigits(lastDate.getDate())
-	const lastTransactedDate = `${lastYear}-${lastMonth}-${lastDay}`
+	const lastTransactedDate = makeDateFieldValue(lastDate)
 
 	let isRequestingDependencies = true
 
@@ -210,10 +204,6 @@
 		financialEntries = financialEntries.filter(
 			financialEntry => financialEntry.id !== oldFinancialEntry.id
 		)
-	}
-
-	function makeTwoDigits(value: number): string {
-		return value <= 9 ? `0${value}` : `${value}`
 	}
 </script>
 

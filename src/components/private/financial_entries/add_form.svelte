@@ -10,8 +10,9 @@
 
 	import { UNKNOWN_OPTION } from "#/component"
 
-	import makeJSONRequester from "$/rest/make_json_requester"
 	import convertSnakeCaseToProperCase from "$/utility/convert_snake_case_to_proper_case"
+	import makeDateFieldValue from "$/utility/make_date_field_value"
+	import makeJSONRequester from "$/rest/make_json_requester"
 
 	import BasicForm from "%/financial_entries/basic_form.svelte"
 	import DescriptiveForm from "$/form/descriptive_form.svelte"
@@ -23,11 +24,7 @@
 		"create": FinancialEntry
 	}>()
 	const IDPrefix = "new_"
-	const currentDate =  new Date()
-	const currentYear =  currentDate.getFullYear()
-	const currentMonth =  makeTwoDigits(currentDate.getMonth() + 1)
-	const currentDay =  makeTwoDigits(currentDate.getDate())
-	const defaultTransactedDate = `${currentYear}-${currentMonth}-${currentDay}`
+	const defaultTransactedDate = makeDateFieldValue(new Date())
 
 	export let isLoadingInitialData: boolean
 	export let currencies: Currency[]
@@ -75,10 +72,6 @@
 				}
 			})
 		})
-	}
-
-	function makeTwoDigits(value: number): string {
-		return value <= 9 ? `0${value}` : `${value}`
 	}
 
 	$: manualModifiers = modifiers.filter(modifier => modifier.kind === "manual")
