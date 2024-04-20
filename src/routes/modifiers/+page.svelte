@@ -12,6 +12,7 @@
 
 	import assertAuthentication from "$/page_requirement/assert_authentication"
 	import makeJSONRequester from "$/rest/make_json_requester"
+	import mergeUniqueResources from "$/utility/merge_unique_resources"
 
 	import AddForm from "%/modifiers/add_form.svelte"
 	import ArticleGrid from "$/layout/article_grid.svelte"
@@ -29,7 +30,7 @@
 		goto
 	})
 
-	let hasRequestedFirstList = false
+	let isRequestingDependencies = true
 
 	let currencies: Currency[] = []
 	let accounts: Account[] = []
@@ -84,26 +85,38 @@
 					let responseDocument = await response.json()
 					errorsForModifiers.set([])
 					modifiers = responseDocument[collectiveName]
-					lastOffset = responseDocument[collectiveName].length - 1
+					lastOffset = Math.max(0, responseDocument[collectiveName].length - 1)
 				}
 			}
 		],
 		"expectedErrorStatusCodes": [ 401 ]
 	})
 
+	const partialDependencyPath = "/api/v1/accounts"
+	const dependencyPathParameters = [
+		[ "sort[0][0]", "name" ],
+		[ "sort[0][1]", "ascending" ],
+		[ "sort[1][0]", "created_at" ],
+		[ "sort[1][1]", "ascending" ]
+	]
+	let totalNumberOfDependencies: number = 0
+	let lastDependencyOffset: number = -1
+	const completeDependencyPath = writable(partialDependencyPath)
+	$: {
+		completeDependencyPath.set(`${partialDependencyPath}?${
+			new URLSearchParams([
+				...dependencyPathParameters,
+				[ "page[offset]", `${lastDependencyOffset + 1}` ],
+				[ "page[limit]", MAXIMUM_PAGINATED_LIST_LENGTH ]
+			]).toString()
+		}`)
+	}
 	let {
 		"isConnecting": isConnectingForAccounts,
 		"errors": errorsForAccounts,
 		"send": requestForAccounts
 	} = makeJSONRequester({
-		"path": `/api/v1/accounts?${
-			new URLSearchParams([
-				[ "sort[0][0]", "name" ],
-				[ "sort[0][1]", "ascending" ],
-				[ "sort[1][0]", "created_at" ],
-				[ "sort[1][1]", "ascending" ]
-			]).toString()
-		}`,
+		"path": completeDependencyPath,
 		"defaultRequestConfiguration": {
 			"method": "GET"
 		},
@@ -113,8 +126,17 @@
 				"action": async (response: Response) => {
 					let responseDocument = await response.json()
 					errorsForAccounts.set([])
-					accounts = responseDocument.accounts
-					currencies = responseDocument.currencies
+					currencies = mergeUniqueResources(currencies, responseDocument.currencies)
+					accounts = [ ...accounts, ...responseDocument.accounts ]
+					lastDependencyOffset = lastDependencyOffset + responseDocument.accounts.length
+					totalNumberOfDependencies = responseDocument.meta.overall_filtered_count
+				}
+			},
+			{
+				"statusCode": 204,
+				"action": async (response: Response) => {
+					errorsForModifiers.set([])
+					modifiers = []
 				}
 			}
 		],
@@ -134,9 +156,16 @@
 			return
 		}
 
-		await reloadModifiers()
+		isRequestingDependencies = true
 		await requestForAccounts({})
-		hasRequestedFirstList = true
+
+		while (lastDependencyOffset + 1 < totalNumberOfDependencies) {
+			await requestForAccounts({})
+		}
+
+		isRequestingDependencies = false
+
+		await reloadModifiers()
 	}
 
 	onMount(loadList)
@@ -184,11 +213,11 @@
 			bind:searchMode={searchMode}
 			bind:sortCriterion={sortCriterion}
 			bind:sortOrder={sortOrder}
-			isConnecting={$isConnectingForModifiers}
+			isConnecting={$isConnectingForModifiers || isRequestingDependencies}
 			listError={$errorsForModifiers}
 			on:delete={removeModifier}/>
 		<ExtraResourceLoader
-			isConnectingForInitialList={$isConnectingForModifiers && hasRequestedFirstList}
+			isConnectingForInitialList={$isConnectingForModifiers || isRequestingDependencies}
 			{partialPath}
 			{parameters}
 			{collectiveName}
