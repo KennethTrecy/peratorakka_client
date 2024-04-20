@@ -203,11 +203,11 @@
 			bind:searchMode={searchMode}
 			bind:sortCriterion={sortCriterion}
 			bind:sortOrder={sortOrder}
-			isConnecting={isRequestingDependencies || $isConnectingForAccounts}
+			isConnecting={$isConnectingForAccounts || isRequestingDependencies}
 			listError={$errorsForAccounts}
 			on:delete={removeAccount}/>
 		<ExtraResourceLoader
-			isConnectingForInitialList={isRequestingDependencies || $isConnectingForAccounts}
+			isConnectingForInitialList={$isConnectingForAccounts || isRequestingDependencies}
 			{partialPath}
 			{parameters}
 			{collectiveName}
