@@ -92,7 +92,13 @@
 	}
 </script>
 
-{#if !isConnectingForInitialList}
+{#if isConnectingForInitialList}
+	<GridCell kind="full">
+		<Flex direction="column">
+			<ShortParagraph>Loading initial items...</ShortParagraph>
+		</Flex>
+	</GridCell>
+{:else}
 	<GridCell kind="full">
 		<Flex direction="column">
 			{#if $isConnecting}
