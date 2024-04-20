@@ -17,11 +17,13 @@
 	<SecondaryHeading slot="name">Available {collectiveName}</SecondaryHeading>
 	<slot slot="filled_collection_description" name="filled_collection_description"/>
 	<slot slot="empty_collection_description" name="empty_collection_description"/>
-	<Flex slot="list_specifier" direction="column">
-		<Flex direction="row" mustPad={false}>
-			<slot name="list_specifier"/>
+	{#if $$slots.list_specifier}
+		<Flex slot="list_specifier" direction="column">
+			<Flex direction="row" mustPad={false}>
+				<slot name="list_specifier"/>
+			</Flex>
 		</Flex>
-	</Flex>
+	{/if}
 	<GridCell slot="available_content" kind="full">
 		<Flex direction="column" mustPad={false}>
 			{#if $$slots.table_footer_cells}

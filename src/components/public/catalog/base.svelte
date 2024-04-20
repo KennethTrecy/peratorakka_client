@@ -21,7 +21,6 @@
 		{progressBarLabel}/>
 	<slot name="name"/>
 </GridCell>
-
 {#if isConnecting}
 	<GridCell kind="full">
 		<Flex direction="column" mustPad={false}>

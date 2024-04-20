@@ -147,7 +147,6 @@
 			data={frozenPeriods}
 			on:delete={removeFrozenPeriod}
 			on:check={checkFrozenPeriod}/>
-
 		{#if chosenPeriod !== null && currencies}
 			<FinancialStatements
 				isConnecting={$isConnectingToShow}
