@@ -42,7 +42,7 @@
 	const lastDay =  makeTwoDigits(lastDate.getDate())
 	const lastTransactedDate = `${lastYear}-${lastMonth}-${lastDay}`
 
-	let hasRequestedFirstList = false
+	let isRequestingDependencies = true
 
 	let currencies: Currency[] = []
 	let accounts: Account[] = []
@@ -176,14 +176,15 @@
 			return
 		}
 
-		await reloadFinancialEntries()
-		hasRequestedFirstList = true
-
+		isRequestingDependencies = true
 		await requestForModifiers({})
 
 		while (lastDependencyOffset + 1 < totalNumberOfDependencies) {
 			await requestForModifiers({})
 		}
+
+		isRequestingDependencies = false
+		await reloadFinancialEntries()
 	}
 
 	onMount(loadList)
@@ -245,7 +246,7 @@
 			listError={$errorsForFinancialEntries}
 			on:delete={removeFinancialEntry}/>
 		<ExtraResourceLoader
-			isConnectingForInitialList={$isConnectingForFinancialEntries && hasRequestedFirstList}
+			isConnectingForInitialList={isRequestingDependencies || $isConnectingForFinancialEntries}
 			{partialPath}
 			{parameters}
 			{collectiveName}
