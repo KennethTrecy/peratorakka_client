@@ -33,12 +33,12 @@
 </GridCell>
 <GridCell kind="triad">
 	<Flex direction="column">
-		<IncomeStatement
+		<BalanceSheet
 			{statement}
 			{currency}
 			accounts={allowedAccounts}
 			data={allowedCalculations}/>
-		<BalanceSheet
+		<IncomeStatement
 			{statement}
 			{currency}
 			accounts={allowedAccounts}
