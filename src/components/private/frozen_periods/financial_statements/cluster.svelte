@@ -4,7 +4,6 @@
 
 	import BalanceSheet from "%/frozen_periods/financial_statements/balance_sheet.svelte"
 	import Flex from "$/layout/flex.svelte"
-	import Grid from "$/layout/grid.svelte"
 	import GridCell from "$/layout/grid_cell.svelte"
 	import IncomeStatement from "%/frozen_periods/financial_statements/income_statement.svelte"
 	import TrialBalance from "%/frozen_periods/financial_statements/trial_balance.svelte"
@@ -22,13 +21,8 @@
 	)
 </script>
 
-<GridCell kind="wide">
+<GridCell kind="triad">
 	<Flex direction="column">
-		<IncomeStatement
-			{statement}
-			{currency}
-			accounts={allowedAccounts}
-			data={allowedCalculations}/>
 		<TrialBalance
 			kind="unadjusted"
 			{statement}
@@ -37,13 +31,22 @@
 			data={allowedCalculations}/>
 	</Flex>
 </GridCell>
-<GridCell kind="wide">
+<GridCell kind="triad">
 	<Flex direction="column">
+		<IncomeStatement
+			{statement}
+			{currency}
+			accounts={allowedAccounts}
+			data={allowedCalculations}/>
 		<BalanceSheet
 			{statement}
 			{currency}
 			accounts={allowedAccounts}
 			data={allowedCalculations}/>
+	</Flex>
+</GridCell>
+<GridCell kind="triad">
+	<Flex direction="column">
 		<TrialBalance
 			kind="adjusted"
 			{statement}
