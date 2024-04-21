@@ -41,11 +41,3 @@
 		</Flex>
 	</GridCell>
 </CatalogBase>
-
-<style lang="scss">
-	@use "@/components/third-party/index";
-
-	div {
-		overflow-x: scroll;
-	}
-</style>
