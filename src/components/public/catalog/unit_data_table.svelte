@@ -31,4 +31,8 @@
 
 	@include data-table.theme-baseline;
 	@include data-table.core-styles;
+
+	.mdc-data-table {
+		white-space: wrap;
+	}
 </style>
