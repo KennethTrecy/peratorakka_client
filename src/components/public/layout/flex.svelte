@@ -14,7 +14,6 @@
 	<slot/>
 </div>
 
-
 <style lang="scss">
 	@use "sass:map";
 	@use "@/components/third-party/index";
