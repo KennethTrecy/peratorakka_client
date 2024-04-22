@@ -22,7 +22,7 @@
 	@include data-table.theme-baseline;
 	@include data-table.core-styles;
 
-	:global(.mdc-data-table__cell.mdc-data-table__cell--descriptive) {
+	.mdc-data-table__cell--descriptive {
 		max-width: 70ch;
 		overflow: visible;
 		text-overflow: initial;

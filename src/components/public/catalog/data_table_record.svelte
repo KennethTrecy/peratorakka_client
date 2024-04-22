@@ -70,7 +70,7 @@
 
 <DataTableRow>
 	<slot name="leading_cells"/>
-	<DataTableHeader scope="row">{label}</DataTableHeader>
+	<DataTableHeader scope="row" kind="descriptive">{label}</DataTableHeader>
 	<DataTableAccountCell
 		rawDebit={[ debitAccountName ]}
 		rawCredit={[ creditAccountName ]}/>

@@ -6,7 +6,8 @@
 
 	$: headerClasses = [
 		"mdc-data-table__header-cell",
-		kind === "numeric" ? "mdc-data-table__header-cell--numeric" : false
+		kind === "numeric" ? "mdc-data-table__header-cell--numeric" : false,
+		kind === "descriptive" ? "mdc-data-table__header-cell--descriptive" : false
 	].filter(Boolean).join(" ")
 	$: resolvedScope = scope === "column" ? "col" : "row"
 	$: role = scope === "column" ? "columnheader" : null
@@ -26,4 +27,12 @@
 
 	@include data-table.theme-baseline;
 	@include data-table.core-styles;
+
+	.mdc-data-table__header-cell--descriptive {
+		max-width: 40ch;
+		overflow: visible;
+		text-overflow: initial;
+		white-space: normal;
+		text-align: left;
+	}
 </style>
