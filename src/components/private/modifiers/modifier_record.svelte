@@ -185,7 +185,7 @@
 		<DataTableCell>
 			{friendlyKind}
 		</DataTableCell>
-		<DataTableCell>
+		<DataTableCell kind="descriptive">
 			{resolveDescription}
 		</DataTableCell>
 	</svelte:fragment>
