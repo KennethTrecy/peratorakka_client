@@ -17,13 +17,17 @@
 	<SecondaryHeading slot="name">Available {collectiveName}</SecondaryHeading>
 	<slot slot="filled_collection_description" name="filled_collection_description"/>
 	<slot slot="empty_collection_description" name="empty_collection_description"/>
-	{#if $$slots.list_specifier}
-		<Flex slot="list_specifier" direction="column">
-			<Flex direction="row" mustPad={false}>
-				<slot name="list_specifier"/>
-			</Flex>
-		</Flex>
-	{/if}
+	<svelte:fragment slot="bare_list_specifier">
+		{#if $$slots.list_specifier}
+			<GridCell kind="full">
+				<Flex direction="column" mustPad={false}>
+					<Flex direction="row" mustPad={false}>
+						<slot name="list_specifier"/>
+					</Flex>
+				</Flex>
+			</GridCell>
+		{/if}
+	</svelte:fragment>
 	<GridCell slot="available_content" kind="full">
 		<Flex direction="column" mustPad={false}>
 			{#if $$slots.table_footer_cells}

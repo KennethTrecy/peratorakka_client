@@ -32,6 +32,7 @@
 		</Flex>
 	</GridCell>
 {:else if hasData}
+	<slot name="bare_list_specifier"/>
 	{#if $$slots.list_specifier}
 		<GridCell kind="full">
 			<slot name="list_specifier"/>
@@ -48,6 +49,7 @@
 	</GridCell>
 	<slot name="available_content"/>
 {:else}
+	<slot name="bare_list_specifier"/>
 	{#if $$slots.list_specifier}
 		<GridCell kind="full">
 			<slot name="list_specifier"/>
