@@ -14,13 +14,13 @@
 	import { acceptableModifierKinds, acceptableModifierActions } from "#/entity"
 	import { UNKNOWN_ACCOUNT } from "#/component"
 
-	import makeJSONRequester from "$/rest/make_json_requester"
 	import convertSnakeCaseToProperCase from "$/utility/convert_snake_case_to_proper_case"
+	import makeJSONRequester from "$/rest/make_json_requester"
 
 	import BasicForm from "%/modifiers/basic_form.svelte"
-	import DataTableCell from "$/catalog/data_table_cell.svelte"
-	import DataTableRecord from "$/catalog/data_table_record.svelte"
+	import CollectionItem from "$/catalog/collection_item.svelte"
 	import EditActionCardButtonPair from "$/button/card/edit_action_pair.svelte"
+	import Flex from "$/layout/flex.svelte"
 	import ShortParagraph from "$/typography/short_paragraph.svelte"
 
 	export let currencies: Currency[]
@@ -51,9 +51,9 @@
 	$: creditAccount = accounts.find(
 		account => account.id === data.credit_account_id
 	) ?? UNKNOWN_ACCOUNT
-	$: friendlyAction = convertSnakeCaseToProperCase(data.action)
-	$: friendlyKind = convertSnakeCaseToProperCase(data.kind)
-	$: resolveDescription = description || "None"
+	$: friendlyAction = data.action
+	$: friendlyKind = data.kind
+	$: resolvedDescription = description || "None"
 
 	let isConnectingToUpdate = writable<boolean>(false)
 	let updateErrors = writable<GeneralError[]>([])
@@ -142,14 +142,13 @@
 	}
 </script>
 
-<DataTableRecord
+<CollectionItem
+	kind="normal"
 	label={data.name}
-	{debitAccount}
-	{creditAccount}
-	{updateErrors}
+	updateErrors={updateErrors}
 	{requestUpdate}
 	isConnectingToDelete={$isConnectingToDelete}
-	{deleteErrors}
+	deleteErrors={deleteErrors}
 	{requestDelete}
 	on:resetDraft={resetDraft}>
 	<BasicForm
@@ -178,15 +177,16 @@
 	<ShortParagraph slot="delete_confirmation_message">
 		Deleting this modifier may prevent other data from showing.
 	</ShortParagraph>
-	<svelte:fragment slot="trailing_cells">
-		<DataTableCell>
-			{friendlyAction}
-		</DataTableCell>
-		<DataTableCell>
-			{friendlyKind}
-		</DataTableCell>
-		<DataTableCell kind="descriptive">
-			{resolveDescription}
-		</DataTableCell>
-	</svelte:fragment>
-</DataTableRecord>
+	<svelte:fragment slot="resource_info">
+		<Flex direction="row" mustPad={false}>
+			{#if convertSnakeCaseToProperCase(resolvedDescription) !== "None"}
+				<ShortParagraph>
+					{resolvedDescription}
+				</ShortParagraph>
+			{/if}
+			<ShortParagraph>
+				The {friendlyKind} modifier {friendlyAction} the debited “{debitAccount.name}” and credited “{creditAccount.name}”.
+			</ShortParagraph>
+		</Flex>
+</svelte:fragment>
+</CollectionItem>

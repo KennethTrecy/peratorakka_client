@@ -2,11 +2,11 @@
 	import type { Currency, Account, Modifier } from "+/entity"
 	import type { GeneralError, SearchMode, SortOrder } from "+/rest"
 
-	import DataTable from "$/catalog/data_table.svelte"
-	import DataTableHeader from "$/catalog/data_table_header.svelte"
-	import DataTableRecordHeader from "$/catalog/data_table_record_headers.svelte"
+	import Collection from "$/catalog/collection.svelte"
+	import Flex from "$/layout/flex.svelte"
+	import GridCell from "$/layout/grid_cell.svelte"
 	import ListSpecifier from "$/form/list_specifier.svelte"
-	import ModifierRecord from "%/modifiers/modifier_record.svelte"
+	import ModifierCard from "%/modifiers/modifier_card.svelte"
 
 	export let isConnecting: boolean
 	export let currencies: Currency[]
@@ -25,29 +25,27 @@
 	]
 </script>
 
-<DataTable collectiveName="Modifiers" {isConnecting} {data}>
+<Collection collectiveName="Modifiers" {isConnecting} {data}>
 	<svelte:fragment slot="filled_collection_description">
 		Below are the modifiers that you have added on to your profile.
 		They can be associated to account entries.
 	</svelte:fragment>
-	<ListSpecifier
-		slot="list_specifier"
-		bind:searchMode={searchMode}
-		bind:sortCriterion={sortCriterion}
-		bind:sortOrder={sortOrder}
-		{isConnecting}
-		{availableSortCriteria}
-		errors={listError}/>
-	<DataTableRecordHeader slot="table_headers">
-		<svelte:fragment slot="trailing_headers">
-			<DataTableHeader>Kind</DataTableHeader>
-			<DataTableHeader>Financial Action</DataTableHeader>
-			<DataTableHeader>Description</DataTableHeader>
-		</svelte:fragment>
-	</DataTableRecordHeader>
-	<svelte:fragment slot="table_rows">
+	<svelte:fragment slot="cards">
+		<GridCell kind="full">
+			<Flex direction="column">
+				<Flex direction="row" mustPad={false}>
+					<ListSpecifier
+						bind:searchMode={searchMode}
+						bind:sortCriterion={sortCriterion}
+						bind:sortOrder={sortOrder}
+						{isConnecting}
+						{availableSortCriteria}
+						errors={listError}/>
+				</Flex>
+			</Flex>
+		</GridCell>
 		{#each data as entity(entity.id)}
-			<ModifierRecord
+			<ModifierCard
 				bind:data={entity}
 				{currencies}
 				{accounts}
@@ -58,4 +56,4 @@
 		There are no available modifiers at the moment.
 		Create a modifier to view.
 	</svelte:fragment>
-</DataTable>
+</Collection>

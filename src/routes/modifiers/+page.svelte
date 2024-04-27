@@ -16,7 +16,7 @@
 
 	import AddForm from "%/modifiers/add_form.svelte"
 	import ArticleGrid from "$/layout/article_grid.svelte"
-	import DataTable from "%/modifiers/data_table.svelte"
+	import Collection from "%/modifiers/collection.svelte"
 	import ExtraResourceLoader from "$/catalog/extra_resource_loader.svelte"
 	import GridCell from "$/layout/grid_cell.svelte"
 	import InnerGrid from "$/layout/inner_grid.svelte"
@@ -206,7 +206,7 @@
 			{accounts}
 			isLoadingInitialData={$isConnectingForAccounts}
 			on:create={addModifier}/>
-		<DataTable
+		<Collection
 			{currencies}
 			{accounts}
 			data={modifiers}
