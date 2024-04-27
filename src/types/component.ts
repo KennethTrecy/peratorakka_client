@@ -41,5 +41,10 @@ export type FlexDirection =
 	| "row"
 	| "column"
 
+export type FlexJustifyContent =
+	| "start"
+	| "center"
+	| "stretch"
+
 type ContextContent = Readable<unknown>|Writable<unknown>|(() => void|unknown)
 export type ContextBundle = Record<string, ContextContent>

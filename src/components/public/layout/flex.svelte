@@ -1,11 +1,13 @@
 <script lang="ts">
-	import type { FlexDirection } from "+/component"
+	import type { FlexDirection, FlexJustifyContent } from "+/component"
 
 	export let direction: FlexDirection = "row"
+	export let justifyContent: FlexJustifyContent = "start"
 	export let mustPad = true
 
 	$: flexClasses = [
 		direction,
+		justifyContent,
 		mustPad && "pad"
 	].filter(Boolean).join(" ")
 </script>
@@ -31,6 +33,18 @@
 
 		&.column {
 			flex-flow: column wrap;
+		}
+
+		&.start {
+			justify-content: flex-start;
+		}
+
+		&.stretch {
+			justify-content: stretch;
+
+			> :global(*) {
+				flex: 1 0 100%;
+			}
 		}
 
 		&.pad {

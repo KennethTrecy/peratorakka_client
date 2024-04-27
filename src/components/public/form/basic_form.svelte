@@ -10,7 +10,7 @@
 </script>
 
 <FormBase {isConnecting} {id} {errors} on:submit>
-	<Flex slot="field_content">
+	<Flex slot="field_content" justifyContent="stretch">
 		<slot name="fields"/>
 	</Flex>
 	<slot slot="action_buttons" name="button_group"/>
