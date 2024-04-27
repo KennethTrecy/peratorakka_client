@@ -1,4 +1,4 @@
-<h1 class="mdc-typography--headline1">
+<h1 class="mdc-typography--headline2">
 	<slot/>
 </h1>
 
