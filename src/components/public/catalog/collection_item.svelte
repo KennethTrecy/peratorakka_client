@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { GeneralError } from "+/rest"
-	import type { CardStatus } from "+/component"
+	import type { CardStatus, GridCellKind } from "+/component"
 	import type { Writable } from "svelte/store"
 
 	import { createEventDispatcher } from "svelte"
@@ -15,6 +15,7 @@
 	export let requestUpdate: () => Promise<void>
 	export let isConnectingToDelete: boolean
 	export let deleteErrors: Writable<GeneralError[]>
+	export let kind: GridCellKind = "narrow"
 	export let requestDelete: () => Promise<void>
 
 	const dispatch = createEventDispatcher<{
@@ -57,7 +58,7 @@
 	}
 </script>
 
-<GridCell kind="narrow">
+<GridCell {kind}>
 	{#if isEditing}
 		<slot
 			name="edit_form"
