@@ -52,15 +52,15 @@
 			justify-content: stretch;
 
 			$flexible_widths: (
-				desktop: math.div(100%, 3),
-				tablet: 50%,
-				phone: 100%
+				phone: 100%,
+				tablet: calc(50% - (1rem / 2)),
+				desktop: calc(25% - (3rem / 4))
 			);
 
-			@each $screen in map.keys(variables.$breakpoints) {
+			@each $screen in map.keys($flexible_widths) {
 				$flexible_width: map.get($flexible_widths, $screen);
 
-				@media (max-width: #{map.get(variables.$breakpoints, $screen)}) {
+				@media (min-width: #{map.get(variables.$breakpoints, $screen)}) {
 					> :global(*) {
 						flex: 1 0 $flexible_width;
 					}
