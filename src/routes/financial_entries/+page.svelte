@@ -7,6 +7,7 @@
 	import { onMount, getContext } from "svelte"
 	import { afterNavigate, beforeNavigate, goto } from "$app/navigation"
 
+	import { DEFAULT_MINIMUM_PROGRESS_RATE } from "#/component"
 	import { GLOBAL_CONTEXT } from "#/contexts"
 	import { SEARCH_NORMALLY, DESCENDING_ORDER, MAXIMUM_PAGINATED_LIST_LENGTH } from "#/rest"
 
@@ -209,12 +210,12 @@
 	$: progressRate = isRequestingDependencies
 		? (
 			totalNumberOfDependencies === 0
-				? 0.01
+				? DEFAULT_MINIMUM_PROGRESS_RATE
 				: (
 					modifiers.length
-					+ Math.max(financialEntries.length, 0.01)
+					+ Math.max(Number(financialEntries.length > 0), DEFAULT_MINIMUM_PROGRESS_RATE)
 				) / (totalNumberOfDependencies + 1)
-		): Math.max(financialEntries.length, 0.01) / 1
+		): Math.max(Number(financialEntries.length > 0), DEFAULT_MINIMUM_PROGRESS_RATE) / 1
 
 	$: console.log(progressRate)
 </script>
