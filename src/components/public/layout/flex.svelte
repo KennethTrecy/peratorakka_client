@@ -18,6 +18,7 @@
 
 <style lang="scss">
 	@use "sass:map";
+	@use "sass:math";
 	@use "@/components/third-party/index";
 
 	@use "@material/layout-grid/variables";
@@ -44,6 +45,26 @@
 
 			> :global(*) {
 				flex: 1 0 100%;
+			}
+		}
+
+		&.responsive_stretch {
+			justify-content: stretch;
+
+			$flexible_widths: (
+				desktop: math.div(100%, 3),
+				tablet: 50%,
+				phone: 100%
+			);
+
+			@each $screen in map.keys(variables.$breakpoints) {
+				$flexible_width: map.get($flexible_widths, $screen);
+
+				@media (max-width: #{map.get(variables.$breakpoints, $screen)}) {
+					> :global(*) {
+						flex: 1 0 $flexible_width;
+					}
+				}
 			}
 		}
 

@@ -45,6 +45,7 @@ export type FlexJustifyContent =
 	| "start"
 	| "center"
 	| "stretch"
+	| "responsive_stretch"
 
 type ContextContent = Readable<unknown>|Writable<unknown>|(() => void|unknown)
 export type ContextBundle = Record<string, ContextContent>
