@@ -49,3 +49,8 @@ export type FlexJustifyContent =
 
 type ContextContent = Readable<unknown>|Writable<unknown>|(() => void|unknown)
 export type ContextBundle = Record<string, ContextContent>
+
+export interface BufferDelayConfiguration {
+	rate: number,
+	delay: number
+}
