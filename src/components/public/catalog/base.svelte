@@ -6,6 +6,7 @@
 	import TextContainer from "$/typography/text_container.svelte"
 
 	export let isConnecting: boolean
+	export let progressRate: number
 	export let collectiveName: string
 	export let data: unknown[]
 
