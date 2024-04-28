@@ -2,7 +2,7 @@
 	import InteractiveContainer from "$/layout/interactive_container.svelte"
 	import Flex from "$/layout/flex.svelte"
 	import GridCell from "$/layout/grid_cell.svelte"
-	import IndeterminateProgressBar from "$/utility/indeterminate_progress_bar.svelte"
+	import ReactiveProgressBar from "$/utility/reactive_progress_bar.svelte"
 	import SecondaryHeading from "$/typography/secondary_heading.svelte"
 	import ShortParagraph from "$/typography/short_paragraph.svelte"
 	import TextContainer from "$/typography/text_container.svelte"
@@ -19,7 +19,7 @@
 	<InteractiveContainer>
 		<slot slot="text" name="description"/>
 		<div slot="widget">
-			<IndeterminateProgressBar
+			<ReactiveProgressBar
 				isLoading={isLoadingInitialData}
 				progressBarLabel="Waiting for server's response..."/>
 			{#if isLoadingInitialData}

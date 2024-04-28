@@ -2,7 +2,7 @@
 	import ElementalParagraph from "$/typography/elemental_paragraph.svelte"
 	import Flex from "$/layout/flex.svelte"
 	import GridCell from "$/layout/grid_cell.svelte"
-	import IndeterminateProgressBar from "$/utility/indeterminate_progress_bar.svelte"
+	import ReactiveProgressBar from "$/utility/reactive_progress_bar.svelte"
 	import TextContainer from "$/typography/text_container.svelte"
 
 	export let isConnecting: boolean
@@ -17,8 +17,9 @@
 </script>
 
 <GridCell kind="full">
-	<IndeterminateProgressBar
+	<ReactiveProgressBar
 		isLoading={isConnecting}
+		{progressRate}
 		{progressBarLabel}/>
 	<slot name="name"/>
 </GridCell>

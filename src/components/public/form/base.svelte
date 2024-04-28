@@ -3,7 +3,7 @@
 
 	import { isSimpleError } from "+/rest"
 
-	import IndeterminateProgressBar from "$/utility/indeterminate_progress_bar.svelte"
+	import ReactiveProgressBar from "$/utility/reactive_progress_bar.svelte"
 	import ShortParagraph from "$/typography/short_paragraph.svelte";
 
 	export let errors: GeneralError[]
@@ -22,7 +22,7 @@
 </script>
 
 <form class="mdc-card" {id} on:submit|preventDefault>
-	<IndeterminateProgressBar
+	<ReactiveProgressBar
 		isLoading={isConnecting}
 		{progressBarLabel}/>
 	{#if $$slots.lead_content}
