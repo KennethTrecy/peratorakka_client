@@ -32,12 +32,6 @@
 		</Flex>
 	</GridCell>
 {:else if hasData}
-	<slot name="bare_list_specifier"/>
-	{#if $$slots.list_specifier}
-		<GridCell kind="full">
-			<slot name="list_specifier"/>
-		</GridCell>
-	{/if}
 	<GridCell kind="full">
 		<Flex direction="column" mustPad={false}>
 			<TextContainer>
@@ -47,14 +41,16 @@
 			</TextContainer>
 		</Flex>
 	</GridCell>
-	<slot name="available_content"/>
-{:else}
 	<slot name="bare_list_specifier"/>
 	{#if $$slots.list_specifier}
 		<GridCell kind="full">
-			<slot name="list_specifier"/>
+			<Flex direction="row" justifyContent="responsive_stretch" mustPad={false}>
+				<slot name="list_specifier"/>
+			</Flex>
 		</GridCell>
 	{/if}
+	<slot name="available_content"/>
+{:else}
 	<GridCell kind="full">
 		<Flex direction="column" mustPad={false}>
 			<TextContainer>
@@ -64,4 +60,10 @@
 			</TextContainer>
 		</Flex>
 	</GridCell>
+	<slot name="bare_list_specifier"/>
+	{#if $$slots.list_specifier}
+		<GridCell kind="full">
+			<slot name="list_specifier"/>
+		</GridCell>
+	{/if}
 {/if}
