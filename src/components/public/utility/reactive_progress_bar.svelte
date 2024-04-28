@@ -23,8 +23,8 @@
 		progressBar = new MDCLinearProgress(progressBarElement)
 	})
 	$: {
-		if (progressBar) {
-			progressBar.buffer = progressRate + (1 - progressRate) * 0.5
+		if (progressBar && !isIndetermined) {
+			progressBar.buffer = progressRate + (1 - progressRate) * 0.2
 			progressBar.progress = progressRate
 		}
 	}
@@ -37,7 +37,14 @@
 	aria-valuemin={0}
 	aria-valuemax={1}
 	bind:this={progressBarElement}>
+	<div class="mdc-linear-progress__buffer">
+		<div class="mdc-linear-progress__buffer-bar"></div>
+		<div class="mdc-linear-progress__buffer-dots"></div>
+	</div>
 	<div class="mdc-linear-progress__bar mdc-linear-progress__primary-bar">
+		<span class="mdc-linear-progress__bar-inner"></span>
+	</div>
+	<div class="mdc-linear-progress__bar mdc-linear-progress__secondary-bar">
 		<span class="mdc-linear-progress__bar-inner"></span>
 	</div>
 </div>
