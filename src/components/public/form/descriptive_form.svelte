@@ -1,5 +1,6 @@
 <script lang="ts">
 	import InteractiveContainer from "$/layout/interactive_container.svelte"
+	import Flex from "$/layout/flex.svelte"
 	import GridCell from "$/layout/grid_cell.svelte"
 	import IndeterminateProgressBar from "$/utility/indeterminate_progress_bar.svelte"
 	import SecondaryHeading from "$/typography/secondary_heading.svelte"
@@ -22,11 +23,13 @@
 				isLoading={isLoadingInitialData}
 				progressBarLabel="Waiting for server's response..."/>
 			{#if isLoadingInitialData}
-				<TextContainer>
-					<ShortParagraph>
-						Initial data for the form is loading...
-					</ShortParagraph>
-				</TextContainer>
+				<Flex direction="column" mustPad={false}>
+					<TextContainer>
+						<ShortParagraph>
+							Initial data for the form is loading...
+						</ShortParagraph>
+					</TextContainer>
+				</Flex>
 			{:else if mayShowForm}
 				<slot name="form"/>
 			{:else}
