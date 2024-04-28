@@ -2,6 +2,8 @@
 	import { onMount } from "svelte"
 	import { MDCLinearProgress } from "@material/linear-progress"
 
+	import { DEFAULT_BUFFER_DELAY_CONFIGURATIONS } from "#/component"
+
 	export let isLoading: boolean
 	export let progressBarLabel: string
 	export let progressRate: number = 0
@@ -19,13 +21,27 @@
 
 	let progressBar: MDCLinearProgress|null = null
 	let progressBarElement: any
+	let bufferRate = 0
 	onMount(() => {
 		progressBar = new MDCLinearProgress(progressBarElement)
 	})
 	$: {
 		if (progressBar && !isIndetermined) {
-			progressBar.buffer = progressRate + (1 - progressRate) * 0.2
 			progressBar.progress = progressRate
+
+			for (const delayConfiguration of DEFAULT_BUFFER_DELAY_CONFIGURATIONS) {
+				const calculatedBuffer = progressRate + (1 - progressRate) * delayConfiguration.rate
+				setTimeout(() => {
+					if (bufferRate < calculatedBuffer) {
+						bufferRate = calculatedBuffer
+					}
+				}, delayConfiguration.delay)
+			}
+		}
+	}
+	$: {
+		if (progressBar && !isIndetermined) {
+			progressBar.buffer = bufferRate
 		}
 	}
 </script>
