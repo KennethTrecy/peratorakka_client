@@ -22,7 +22,7 @@
 </script>
 
 <GridCell kind="triad">
-	<Flex direction="column">
+	<Flex direction="column" mustPad={false}>
 		<TrialBalance
 			kind="unadjusted"
 			{statement}
@@ -32,7 +32,7 @@
 	</Flex>
 </GridCell>
 <GridCell kind="triad">
-	<Flex direction="column">
+	<Flex direction="column" mustPad={false}>
 		<BalanceSheet
 			{statement}
 			{currency}
@@ -46,7 +46,7 @@
 	</Flex>
 </GridCell>
 <GridCell kind="triad">
-	<Flex direction="column">
+	<Flex direction="column" mustPad={false}>
 		<TrialBalance
 			kind="adjusted"
 			{statement}
