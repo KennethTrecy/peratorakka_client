@@ -8,26 +8,51 @@
 	export let progressBarLabel: string
 	export let progressRate: number = 0
 
-	$: isIndetermined = progressRate === 0
-	$: progressBarClasses = [
-		"mdc-linear-progress",
-		isLoading
-			? (
-				isIndetermined
-					? "mdc-linear-progress--indeterminate"
-					: null
-			): "mdc-linear-progress--closed"
-	].filter(Boolean).join(" ")
+	$: isDetermined = progressRate > 0
 
 	let progressBar: MDCLinearProgress|null = null
 	let progressBarElement: any
+	let oldDeterminedState: boolean
+	let isLoadingPreviously = true
 	let oldProgressRate = 0
 	let bufferRate = 0
 	onMount(() => {
 		progressBar = new MDCLinearProgress(progressBarElement)
+		progressBar.determinate = isDetermined
+		progressBar.progress = 0
+		progressBar.open()
+		oldDeterminedState = isDetermined
 	})
+
+	$: progressBarClasses = [
+		"mdc-linear-progress",
+		isLoadingPreviously
+			? (
+				!isDetermined
+					? "mdc-linear-progress--indeterminate"
+					: null
+			): "mdc-linear-progress--closed"
+	].filter(Boolean).join(" ")
 	$: {
-		if (progressBar && !isIndetermined) {
+		if (progressBar) {
+			let resolvedProgressBar = progressBar
+			setTimeout(() => {
+				if (isLoadingPreviously !== isLoading) {
+					if (isLoading) {
+						resolvedProgressBar.open()
+						resolvedProgressBar.determinate = isDetermined
+						resolvedProgressBar.progress = 0
+					} else {
+						resolvedProgressBar.close()
+					}
+
+					isLoadingPreviously = isLoading
+				}
+			}, 1000)
+		}
+	}
+	$: {
+		if (progressBar && isDetermined) {
 			progressBar.progress = progressRate
 
 			if (oldProgressRate > progressRate) {
@@ -47,7 +72,7 @@
 		}
 	}
 	$: {
-		if (progressBar && !isIndetermined) {
+		if (progressBar && isDetermined) {
 			progressBar.buffer = bufferRate
 		}
 	}
