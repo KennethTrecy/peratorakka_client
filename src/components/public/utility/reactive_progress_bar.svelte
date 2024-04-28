@@ -21,6 +21,7 @@
 
 	let progressBar: MDCLinearProgress|null = null
 	let progressBarElement: any
+	let oldProgressRate = 0
 	let bufferRate = 0
 	onMount(() => {
 		progressBar = new MDCLinearProgress(progressBarElement)
@@ -28,6 +29,12 @@
 	$: {
 		if (progressBar && !isIndetermined) {
 			progressBar.progress = progressRate
+
+			if (oldProgressRate > progressRate) {
+				bufferRate = 0
+			}
+
+			oldProgressRate = progressRate
 
 			for (const delayConfiguration of DEFAULT_BUFFER_DELAY_CONFIGURATIONS) {
 				const calculatedBuffer = progressRate + (1 - progressRate) * delayConfiguration.rate
