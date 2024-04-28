@@ -9,6 +9,7 @@
 	import ListSpecifier from "%/financial_entries/list_specifier.svelte"
 
 	export let isConnecting: boolean
+	export let progressRate: number
 	export let currencies: Currency[]
 	export let accounts: Account[]
 	export let modifiers: Modifier[]
@@ -23,7 +24,7 @@
 	export let listError: GeneralError[]
 </script>
 
-<DataTable collectiveName="Financial Entries" {isConnecting} {data}>
+<DataTable collectiveName="Financial Entries" {isConnecting} {progressRate} {data}>
 	<svelte:fragment slot="filled_collection_description">
 		Below are the financial entries that you have added on to your profile.
 		Entries should be frozen to prevent editing or deletion.

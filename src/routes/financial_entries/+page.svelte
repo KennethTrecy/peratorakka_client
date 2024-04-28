@@ -205,6 +205,13 @@
 			financialEntry => financialEntry.id !== oldFinancialEntry.id
 		)
 	}
+
+	$: progressRate = isRequestingDependencies
+		? (
+			modifiers.length
+			+ (financialEntries.length > 0 ? 1 : 0)
+		) / (totalNumberOfDependencies + 1)
+		: (financialEntries.length > 0 ? 1 : 0) / 1
 </script>
 
 <svelte:head>
@@ -232,6 +239,7 @@
 			bind:searchMode={searchMode}
 			bind:sortCriterion={sortCriterion}
 			bind:sortOrder={sortOrder}
+			{progressRate}
 			isConnecting={$isConnectingForFinancialEntries || isRequestingDependencies}
 			listError={$errorsForFinancialEntries}
 			on:delete={removeFinancialEntry}/>
