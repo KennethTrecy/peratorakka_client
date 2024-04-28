@@ -3,12 +3,11 @@
 	import type { GeneralError, SearchMode, SortOrder } from "+/rest"
 
 	import Collection from "$/catalog/collection.svelte"
-	import Flex from "$/layout/flex.svelte"
-	import GridCell from "$/layout/grid_cell.svelte"
 	import ListSpecifier from "$/form/list_specifier.svelte"
 	import ModifierCard from "%/modifiers/modifier_card.svelte"
 
 	export let isConnecting: boolean
+	export let progressRate: number
 	export let currencies: Currency[]
 	export let accounts: Account[]
 	export let data: Modifier[]
@@ -25,7 +24,7 @@
 	]
 </script>
 
-<Collection collectiveName="Modifiers" {isConnecting} {data}>
+<Collection collectiveName="Modifiers" {isConnecting} {progressRate} {data}>
 	<svelte:fragment slot="filled_collection_description">
 		Below are the modifiers that you have added on to your profile.
 		They can be associated to account entries.

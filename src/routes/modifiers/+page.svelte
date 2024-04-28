@@ -7,6 +7,7 @@
 	import { onMount, getContext } from "svelte"
 	import { afterNavigate, beforeNavigate, goto } from "$app/navigation"
 
+	import { DEFAULT_MINIMUM_PROGRESS_RATE } from "#/component"
 	import { GLOBAL_CONTEXT } from "#/contexts"
 	import { SEARCH_NORMALLY, ASCENDING_ORDER, MAXIMUM_PAGINATED_LIST_LENGTH } from "#/rest"
 
@@ -190,6 +191,16 @@
 		const oldModifier = event.detail
 		modifiers = modifiers.filter(modifier => modifier.id !== oldModifier.id)
 	}
+
+	$: progressRate = isRequestingDependencies
+		? (
+			totalNumberOfDependencies === 0
+				? DEFAULT_MINIMUM_PROGRESS_RATE
+				: (
+					accounts.length
+					+ Math.max(Number(modifiers.length > 0), DEFAULT_MINIMUM_PROGRESS_RATE)
+				) / (totalNumberOfDependencies + 1)
+		): Math.max(Number(modifiers.length > 0), DEFAULT_MINIMUM_PROGRESS_RATE) / 1
 </script>
 
 <svelte:head>
@@ -214,6 +225,7 @@
 			bind:sortCriterion={sortCriterion}
 			bind:sortOrder={sortOrder}
 			isConnecting={$isConnectingForModifiers || isRequestingDependencies}
+			{progressRate}
 			listError={$errorsForModifiers}
 			on:delete={removeModifier}/>
 		<ExtraResourceLoader
