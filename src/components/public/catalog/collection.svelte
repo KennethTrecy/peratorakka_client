@@ -1,15 +1,16 @@
 <script lang="ts">
 	import CatalogBase from "$/catalog/base.svelte"
-	import Flex from "$/layout/flex.svelte"
 	import SecondaryHeading from "$/typography/secondary_heading.svelte"
 
 	export let isConnecting: boolean
+	export let progressRate: number
 	export let collectiveName: string
 	export let data: unknown[]
 </script>
 
 <CatalogBase
 	{isConnecting}
+	{progressRate}
 	{collectiveName}
 	{data}>
 	<SecondaryHeading slot="name">Available {collectiveName}</SecondaryHeading>
