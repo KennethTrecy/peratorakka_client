@@ -29,7 +29,7 @@
 	@include data-table.core-styles;
 
 	.mdc-data-table__header-cell--descriptive {
-		max-width: 40ch;
+		max-width: 70ch;
 		overflow: visible;
 		text-overflow: initial;
 		white-space: normal;
