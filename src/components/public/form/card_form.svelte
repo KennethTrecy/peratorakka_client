@@ -17,7 +17,7 @@
 		<TextContainer slot="lead_content">
 			<slot name="text_description"/>
 		</TextContainer>
-		<Flex mustPad={false} slot="field_content">
+		<Flex slot="field_content" mustPad={false} justifyContent="stretch">
 			<slot name="fields"/>
 		</Flex>
 		<svelte:fragment slot="action_buttons">
