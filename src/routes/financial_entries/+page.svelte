@@ -216,8 +216,6 @@
 					+ Math.max(Number(financialEntries.length > 0), DEFAULT_MINIMUM_PROGRESS_RATE)
 				) / (totalNumberOfDependencies + 1)
 		): Math.max(Number(financialEntries.length > 0), DEFAULT_MINIMUM_PROGRESS_RATE) / 1
-
-	$: console.log(progressRate)
 </script>
 
 <svelte:head>

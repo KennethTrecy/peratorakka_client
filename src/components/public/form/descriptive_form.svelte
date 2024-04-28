@@ -18,7 +18,7 @@
 <GridCell kind="full">
 	<InteractiveContainer>
 		<slot slot="text" name="description"/>
-		<div slot="widget">
+		<svelte:fragment slot="widget">
 			<ReactiveProgressBar
 				isLoading={isLoadingInitialData}
 				progressBarLabel="Waiting for server's response..."/>
@@ -35,6 +35,6 @@
 			{:else}
 				<slot name="requirement"/>
 			{/if}
-		</div>
+		</svelte:fragment>
 	</InteractiveContainer>
 </GridCell>
