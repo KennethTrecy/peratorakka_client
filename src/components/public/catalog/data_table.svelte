@@ -20,10 +20,8 @@
 	<svelte:fragment slot="bare_list_specifier">
 		{#if $$slots.list_specifier}
 			<GridCell kind="full">
-				<Flex direction="column" mustPad={false}>
-					<Flex direction="row" mustPad={false}>
-						<slot name="list_specifier"/>
-					</Flex>
+				<Flex direction="row" justifyContent="responsive_stretch" mustPad={false}>
+					<slot name="list_specifier"/>
 				</Flex>
 			</GridCell>
 		{/if}
