@@ -177,8 +177,8 @@
 			await requestForModifiers({})
 		}
 
-		isRequestingDependencies = false
 		await reloadFinancialEntries()
+		isRequestingDependencies = false
 	}
 
 	onMount(loadList)
@@ -208,10 +208,15 @@
 
 	$: progressRate = isRequestingDependencies
 		? (
-			modifiers.length
-			+ (financialEntries.length > 0 ? 1 : 0)
-		) / (totalNumberOfDependencies + 1)
-		: (financialEntries.length > 0 ? 1 : 0) / 1
+			totalNumberOfDependencies === 0
+				? 0.01
+				: (
+					modifiers.length
+					+ Math.max(financialEntries.length, 0.01)
+				) / (totalNumberOfDependencies + 1)
+		): Math.max(financialEntries.length, 0.01) / 1
+
+	$: console.log(progressRate)
 </script>
 
 <svelte:head>
