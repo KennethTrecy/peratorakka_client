@@ -29,20 +29,15 @@
 		Below are the currencies that you have added on to your profile.
 		They can be associated to financial accounts.
 	</svelte:fragment>
+	<ListSpecifier
+		slot="list_specifier"
+		bind:searchMode={searchMode}
+		bind:sortCriterion={sortCriterion}
+		bind:sortOrder={sortOrder}
+		{isConnecting}
+		{availableSortCriteria}
+		errors={listError}/>
 	<svelte:fragment slot="cards">
-		<GridCell kind="full">
-			<Flex direction="column">
-				<Flex direction="row" mustPad={false}>
-					<ListSpecifier
-						bind:searchMode={searchMode}
-						bind:sortCriterion={sortCriterion}
-						bind:sortOrder={sortOrder}
-						{isConnecting}
-						{availableSortCriteria}
-						errors={listError}/>
-				</Flex>
-			</Flex>
-		</GridCell>
 		{#each data as entity(entity.id)}
 			<CurrencyCard bind:data={entity} on:delete/>
 		{/each}
