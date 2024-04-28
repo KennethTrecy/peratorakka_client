@@ -9,6 +9,7 @@
 	import assertAuthentication from "$/page_requirement/assert_authentication"
 
 	import ArticleGrid from "$/layout/article_grid.svelte"
+	import Flex from "$/layout/flex.svelte"
 	import GridCell from "$/layout/grid_cell.svelte"
 	import InnerGrid from "$/layout/inner_grid.svelte"
 	import PrimaryHeading from "$/typography/primary_heading.svelte"
@@ -42,7 +43,9 @@
 			<PasswordForm/>
 		</GridCell>
 		<GridCell kind="narrow">
-			<TextContainer>Some features are not yet available. Come back later.</TextContainer>
+			<Flex direction="row" justifyContent="center">
+				<TextContainer>Some features are not yet available. Come back later.</TextContainer>
+			</Flex>
 		</GridCell>
 	</InnerGrid>
 </ArticleGrid>
