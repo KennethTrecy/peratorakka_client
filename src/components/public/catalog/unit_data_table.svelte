@@ -4,7 +4,7 @@
 
 <div class="mdc-data-table">
 	<div class="mdc-data-table__table-container">
-		<table class="mdc-data-table__table" aria-label="Dessert calories">
+		<table class="mdc-data-table__table">
 			<thead>
 				<tr class="mdc-data-table__header-row">
 					<slot name="table_headers"/>
@@ -34,5 +34,6 @@
 
 	.mdc-data-table {
 		white-space: wrap;
+		max-width: 100%;
 	}
 </style>
