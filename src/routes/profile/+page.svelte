@@ -36,13 +36,13 @@
 		<GridCell kind="full">
 			<PrimaryHeading>Profile</PrimaryHeading>
 		</GridCell>
-		<GridCell kind="narrow">
+		<GridCell kind="triad">
 			<PlainAccountForm/>
 		</GridCell>
-		<GridCell kind="narrow">
+		<GridCell kind="triad">
 			<PasswordForm/>
 		</GridCell>
-		<GridCell kind="narrow">
+		<GridCell kind="triad">
 			<Flex direction="row" justifyContent="center">
 				<TextContainer>Some features are not yet available. Come back later.</TextContainer>
 			</Flex>
