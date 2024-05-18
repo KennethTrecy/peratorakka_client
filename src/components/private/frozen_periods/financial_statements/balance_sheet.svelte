@@ -34,9 +34,9 @@
 <QuarternaryHeading>Balance Sheet</QuarternaryHeading>
 <UnitDataTable>
 	<svelte:fragment slot="table_headers">
-		<DataTableHeader scope="col">Permanent Account</DataTableHeader>
-		<DataTableHeader scope="col" kind="numeric">Debit Amount</DataTableHeader>
-		<DataTableHeader scope="col" kind="numeric">Credit Amount</DataTableHeader>
+		<DataTableHeader scope="column">Permanent Account</DataTableHeader>
+		<DataTableHeader scope="column" kind="numeric">Debit Amount</DataTableHeader>
+		<DataTableHeader scope="column" kind="numeric">Credit Amount</DataTableHeader>
 	</svelte:fragment>
 	<svelte:fragment slot="table_rows">
 		{#each assetCalculations as calculation(calculation.account_id)}

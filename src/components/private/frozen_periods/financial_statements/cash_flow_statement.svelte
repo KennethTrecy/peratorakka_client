@@ -20,8 +20,8 @@
 <QuarternaryHeading>Cash Flow Statement</QuarternaryHeading>
 <UnitDataTable>
 	<svelte:fragment slot="table_headers">
-		<DataTableHeader scope="col">Category</DataTableHeader>
-		<DataTableHeader scope="col" kind="numeric">Amount</DataTableHeader>
+		<DataTableHeader scope="column">Category</DataTableHeader>
+		<DataTableHeader scope="column" kind="numeric">Amount</DataTableHeader>
 	</svelte:fragment>
 	<svelte:fragment slot="table_rows">
 
