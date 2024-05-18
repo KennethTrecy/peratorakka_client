@@ -45,8 +45,7 @@
 				cashFlowCategory={openedCashFlowCategory}
 				{currency}
 				{accounts}
-				{data}
-				hasEmptyTrailingRow={true}/>
+				{data}/>
 		{/each}
 		<AmountRow
 			rowName="Total Opened Liquid Amount"
@@ -58,8 +57,7 @@
 				cashFlowCategory={closedCashFlowCategory}
 				{currency}
 				{accounts}
-				{data}
-				hasEmptyTrailingRow={true}/>
+				{data}/>
 		{/each}
 	</svelte:fragment>
 	<svelte:fragment slot="table_footer_cells">
