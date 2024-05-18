@@ -22,7 +22,7 @@
 	export let collectiveName: string
 	export let parameters: [string, string][]
 	export let lastOffset: number
-	let lastResourceCount = 0
+	let hasPossibleUnloadedResources = true
 
 	let nextPath = writable(partialPath)
 
@@ -51,8 +51,9 @@
 					errors.set([])
 					const resources = responseDocument[collectiveName]
 
+					hasPossibleUnloadedResources = resources.length > 0
+
 					if (resources.length > 0) {
-						lastResourceCount = resources.length
 						lastOffset = lastOffset + resources.length
 						dispatch("addResources", resources)
 					}
@@ -87,13 +88,12 @@
 				if (abortController !== null) abortController.abort()
 				if (lastOffset >= 0) {
 					lastOffset = 0
+					hasPossibleUnloadedResources = true
 					reloadFully()
 				}
 			}
 		}
 	}
-
-	$: hasPossibleUnloadedResources = lastResourceCount > 0
 </script>
 
 {#if isConnectingForInitialList}
