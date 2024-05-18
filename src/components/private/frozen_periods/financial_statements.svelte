@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { FinancialStatementGroup } from "+/rest"
-	import type { Currency, Account, SummaryCalculation } from "+/entity"
+	import type { Currency, CashFlowCategory, Account, SummaryCalculation } from "+/entity"
 
 	import transformCurrency from "$/form/choice_info_transformer/transform_currency"
 
@@ -15,6 +15,7 @@
 	export let finishedAt: string
 	export let statements: FinancialStatementGroup[]
 	export let currencies: Currency[]
+	export let cashFlowCategories: CashFlowCategory[]
 	export let accounts: Account[]
 	export let data: Omit<SummaryCalculation, "frozen_period_id">[]
 
@@ -50,6 +51,7 @@
 			<Cluster
 				statement={selectedStatement}
 				{currencies}
+				{cashFlowCategories}
 				{accounts}
 				{data}/>
 		{/if}

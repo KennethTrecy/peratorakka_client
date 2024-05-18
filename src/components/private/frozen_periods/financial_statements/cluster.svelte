@@ -1,15 +1,17 @@
 <script lang="ts">
 	import type { FinancialStatementGroup } from "+/rest"
-	import type { Currency, Account, SummaryCalculation } from "+/entity"
+	import type { Currency, CashFlowCategory, Account, SummaryCalculation } from "+/entity"
 
 	import BalanceSheet from "%/frozen_periods/financial_statements/balance_sheet.svelte"
 	import Flex from "$/layout/flex.svelte"
 	import GridCell from "$/layout/grid_cell.svelte"
+	import CashFlowStatement from "%/frozen_periods/financial_statements/cash_flow_statement.svelte"
 	import IncomeStatement from "%/frozen_periods/financial_statements/income_statement.svelte"
 	import TrialBalance from "%/frozen_periods/financial_statements/trial_balance.svelte"
 
 	export let statement: FinancialStatementGroup
 	export let currencies: Currency[]
+	export let cashFlowCategories: CashFlowCategory[]
 	export let accounts: Account[]
 	export let data: Omit<SummaryCalculation, "frozen_period_id">[]
 
@@ -41,6 +43,12 @@
 		<IncomeStatement
 			{statement}
 			{currency}
+			accounts={allowedAccounts}
+			data={allowedCalculations}/>
+		<CashFlowStatement
+			{statement}
+			{currency}
+			{cashFlowCategories}
 			accounts={allowedAccounts}
 			data={allowedCalculations}/>
 	</Flex>
