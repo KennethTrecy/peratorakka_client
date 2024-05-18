@@ -22,6 +22,7 @@
 	export let collectiveName: string
 	export let parameters: [string, string][]
 	export let lastOffset: number
+	let lastResourceCount = 0
 
 	let nextPath = writable(partialPath)
 
@@ -51,6 +52,7 @@
 					const resources = responseDocument[collectiveName]
 
 					if (resources.length > 0) {
+						lastResourceCount = resources.length
 						lastOffset = lastOffset + resources.length
 						dispatch("addResources", resources)
 					}
@@ -90,6 +92,8 @@
 			}
 		}
 	}
+
+	$: hasPossibleUnloadedResources = lastResourceCount > 0
 </script>
 
 {#if isConnectingForInitialList}
@@ -103,7 +107,7 @@
 		<Flex direction="column">
 			{#if $isConnecting}
 				<ShortParagraph>Loading next items...</ShortParagraph>
-			{:else}
+			{:else if hasPossibleUnloadedResources}
 				<TextButton
 					label="Load next items"
 					on:click={loadResources}/>
