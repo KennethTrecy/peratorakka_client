@@ -1,8 +1,8 @@
 <script lang="ts">
-	import type { cashFlowCategoryKinds } from "#/entity"
-
 	import type { FinancialStatementGroup } from "+/rest"
 	import type { Currency, CashFlowCategory, Account, SummaryCalculation } from "+/entity"
+
+	import { acceptableCashFlowCategoryKinds } from "#/entity"
 
 	import BalanceSheet from "%/frozen_periods/financial_statements/balance_sheet.svelte"
 	import CashFlowStatement from "%/frozen_periods/financial_statements/cash_flow_statement.svelte"
@@ -51,7 +51,7 @@
 			{currency}
 			accounts={allowedAccounts}
 			data={allowedCalculations}/>
-		{#if cashFlowCategories.length < 3}
+		{#if hasAcceptableCashFlowCategories}
 			<ElementalParagraph>
 				Note: There are no or few accounts that belongs to cash flows categories. At least one account must belong to liquid cash flow category and at least one account must belong to illiquid cash flow category.
 			</ElementalParagraph>
