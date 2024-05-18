@@ -4,8 +4,6 @@
 
 	import Collection from "$/catalog/collection.svelte"
 	import CurrencyCard from "%/currencies/currency_card.svelte"
-	import Flex from "$/layout/flex.svelte"
-	import GridCell from "$/layout/grid_cell.svelte"
 	import ListSpecifier from "$/form/list_specifier.svelte"
 
 	export let isConnecting: boolean
@@ -24,7 +22,7 @@
 	]
 </script>
 
-<Collection collectiveName="Currencies" {isConnecting} {data}>
+<Collection collectiveName="Currencies" {isConnecting} {data} progressRate={0}>
 	<svelte:fragment slot="filled_collection_description">
 		Below are the currencies that you have added on to your profile.
 		They can be associated to financial accounts.
