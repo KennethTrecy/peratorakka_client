@@ -59,7 +59,7 @@
 			"body": JSON.stringify({
 				"account": {
 					"currency_id": parseInt(currencyID),
-					"cash_flow_category_id": cashFlowCategoryID === ""
+					"cash_flow_category_id": cashFlowCategoryID === UNKNOWN_OPTION
 						? null
 						: parseInt(cashFlowCategoryID),
 					name,

@@ -32,7 +32,7 @@
 	let isRequestingDependencies = true
 
 	let currencies: Currency[] = []
-	let cashFlowCategories: CashFlowCategory[]
+	let cashFlowCategories: CashFlowCategory[] = []
 	let accounts: Account[] = []
 
 	let searchMode: SearchMode = SEARCH_NORMALLY
@@ -142,9 +142,9 @@
 	const partialCashFlowCategoryDependencyPath = "/api/v1/cash_flow_categories"
 	let totalNumberOfCashFlowCategoryDependencies: number = 0
 	let lastCashFlowCategoryDependencyOffset: number = -1
-	const completeDependencyPath = writable(partialCashFlowCategoryDependencyPath)
+	const completeCashFlowCategoryDependencyPath = writable(partialCashFlowCategoryDependencyPath)
 	$: {
-		completeDependencyPath.set(`${partialCashFlowCategoryDependencyPath}?${
+		completeCashFlowCategoryDependencyPath.set(`${partialCashFlowCategoryDependencyPath}?${
 			new URLSearchParams([
 				...dependencyPathParameters,
 				[ "page[offset]", `${lastCashFlowCategoryDependencyOffset + 1}` ],
@@ -157,7 +157,7 @@
 		"errors": errorsForCashFlowCategories,
 		"send": requestForCashFlowCategories
 	} = makeJSONRequester({
-		"path": completeDependencyPath,
+		"path": completeCashFlowCategoryDependencyPath,
 		"defaultRequestConfiguration": {
 			"method": "GET"
 		},
@@ -203,12 +203,13 @@
 		}
 
 		isRequestingDependencies = true
-		await requestForCurrencies({})
 
+		await requestForCurrencies({})
 		while (lastCurrencyDependencyOffset + 1 < totalNumberOfCurrencyDependencies) {
 			await requestForCurrencies({})
 		}
 
+		await requestForCashFlowCategories({})
 		while (lastCashFlowCategoryDependencyOffset + 1 < lastCashFlowCategoryDependencyOffset) {
 			await requestForCashFlowCategories({})
 		}
