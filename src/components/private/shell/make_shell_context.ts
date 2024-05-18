@@ -62,6 +62,12 @@ export default function makeShellContext(globalContext: ContextBundle): ContextB
 				} : null,
 				hasTokenCurrently && hasUserCurrently ? {
 					"type": "item",
+					"link": "/cash_flow_categories",
+					"icon": "account_tree",
+					"label": "Cash Flow Categories"
+				} : null,
+				hasTokenCurrently && hasUserCurrently ? {
+					"type": "item",
 					"link": "/accounts",
 					"icon": "category",
 					"label": "Accounts"
