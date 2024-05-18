@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { GeneralError } from "+/rest"
-	import type { Currency, Account, AcceptableAccountKind } from "+/entity"
+	import type { Currency, CashFlowCategory, Account, AcceptableAccountKind } from "+/entity"
 
 	import { createEventDispatcher } from "svelte"
 	import { writable } from "svelte/store"
@@ -16,12 +16,16 @@
 	import ShortParagraph from "$/typography/short_paragraph.svelte"
 
 	export let currencies: Currency[]
+	export let cashFlowCategories: CashFlowCategory[]
 	export let data: Account
 
 	const dispatch = createEventDispatcher<{
 		"delete": Account
 	}>()
 	let currencyID = `${data.currency_id}`
+	let cashFlowCategoryID = data.cash_flow_category_id === null
+		? ""
+		: `${data.cash_flow_category_id}`
 	let name = data.name
 	let description = data.description
 	let kind = fallbackToAceptableKind(data.kind)
@@ -35,6 +39,9 @@
 	$: associatedCurrency = currencies.find(
 		currency => currency.id === parseInt(currencyID)
 	) as Currency
+	$: associatedCashFlowCategory = currencies.find(
+		currency => currency.id === parseInt(currencyID)
+	)
 
 	let isConnectingToUpdate = writable<boolean>(false)
 	let updateErrors = writable<GeneralError[]>([])
@@ -57,6 +64,9 @@
 						data = {
 							...data,
 							"currency_id": parseInt(currencyID),
+							"cash_flow_category_id": cashFlowCategoryID === ""
+								? null
+								: parseInt(cashFlowCategoryID),
 							name,
 							description,
 							kind
@@ -74,6 +84,9 @@
 				"body": JSON.stringify({
 					"account": {
 						"currency_id": parseInt(currencyID),
+						"cash_flow_category_id": cashFlowCategoryID === ""
+							? null
+							: parseInt(cashFlowCategoryID),
 						name,
 						description,
 						kind
@@ -106,6 +119,9 @@
 
 	function resetDraft() {
 		currencyID = `${data.currency_id}`
+		cashFlowCategoryID = data.cash_flow_category_id === null
+			? ""
+			: `${data.cash_flow_category_id}`
 		name = data.name
 		description = data.description
 		kind = fallbackToAceptableKind(data.kind)
@@ -134,12 +150,14 @@
 		let:cancelEdit
 		id={formID}
 		bind:currencyID={currencyID}
+		bind:cashFlowCategoryID={cashFlowCategoryID}
 		bind:name={name}
 		bind:description={description}
 		bind:kind={kind}
 		isConnecting={$isConnectingToUpdate}
 		{IDPrefix}
 		{currencies}
+		{cashFlowCategories}
 		{forceDisabledFields}
 		errors={$updateErrors}
 		on:submit={confirmEdit}>

@@ -1,15 +1,15 @@
 <script lang="ts">
-	import type { Currency, Account } from "+/entity"
+	import type { Currency, CashFlowCategory, Account } from "+/entity"
 	import type { GeneralError, SearchMode, SortOrder } from "+/rest"
 
 	import AccountCard from "%/accounts/account_card.svelte"
 	import Collection from "$/catalog/collection.svelte"
 	import Flex from "$/layout/flex.svelte"
-	import GridCell from "$/layout/grid_cell.svelte"
 	import ListSpecifier from "$/form/list_specifier.svelte"
 
 	export let isConnecting: boolean
 	export let currencies: Currency[]
+	export let cashFlowCategories: CashFlowCategory[]
 	export let data: Account[]
 
 	export let searchMode: SearchMode
@@ -31,19 +31,21 @@
 		Below are the financial accounts that you have added on to your profile.
 		They can be associated to modifiers.
 	</svelte:fragment>
-	<ListSpecifier
-		slot="list_specifier"
-		bind:searchMode={searchMode}
-		bind:sortCriterion={sortCriterion}
-		bind:sortOrder={sortOrder}
-		{isConnecting}
-		{availableSortCriteria}
-		errors={listError}/>
+	<Flex slot="list_specifier" justifyContent="responsive_stretch" mustPad={false}>
+		<ListSpecifier
+			bind:searchMode={searchMode}
+			bind:sortCriterion={sortCriterion}
+			bind:sortOrder={sortOrder}
+			{isConnecting}
+			{availableSortCriteria}
+			errors={listError}/>
+	</Flex>
 	<svelte:fragment slot="cards">
 		{#each data as entity(entity.id)}
 			<AccountCard
 				bind:data={entity}
 				{currencies}
+				{cashFlowCategories}
 				on:delete/>
 		{/each}
 	</svelte:fragment>

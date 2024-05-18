@@ -257,6 +257,7 @@
 			on:create={addAccount}/>
 		<Collection
 			{currencies}
+			{cashFlowCategories}
 			data={accounts}
 			bind:searchMode={searchMode}
 			bind:sortCriterion={sortCriterion}
