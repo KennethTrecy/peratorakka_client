@@ -4,6 +4,7 @@
 
 	import Collection from "$/catalog/collection.svelte"
 	import CashFlowCategoryCard from "%/cash_flow_categories/cash_flow_category_card.svelte"
+	import Flex from "$/layout/flex.svelte"
 	import ListSpecifier from "$/form/list_specifier.svelte"
 
 	export let isConnecting: boolean
@@ -27,14 +28,15 @@
 		Below are the cash flow categories that you have added on to your profile.
 		They can be associated to financial accounts.
 	</svelte:fragment>
-	<ListSpecifier
-		slot="list_specifier"
-		bind:searchMode={searchMode}
-		bind:sortCriterion={sortCriterion}
-		bind:sortOrder={sortOrder}
-		{isConnecting}
-		{availableSortCriteria}
-		errors={listError}/>
+	<Flex slot="list_specifier" justifyContent="responsive_stretch" mustPad={false}>
+		<ListSpecifier
+			bind:searchMode={searchMode}
+			bind:sortCriterion={sortCriterion}
+			bind:sortOrder={sortOrder}
+			{isConnecting}
+			{availableSortCriteria}
+			errors={listError}/>
+	</Flex>
 	<svelte:fragment slot="cards">
 		{#each data as entity(entity.id)}
 			<CashFlowCategoryCard bind:data={entity} on:delete/>
