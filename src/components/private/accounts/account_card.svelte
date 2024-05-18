@@ -6,6 +6,7 @@
 	import { writable } from "svelte/store"
 
 	import { acceptableAccountKinds } from "#/entity"
+	import { NO_CASH_FLOW_CATEGORY } from "#/component"
 
 	import makeJSONRequester from "$/rest/make_json_requester"
 	import convertSnakeCaseToProperCase from "$/utility/convert_snake_case_to_proper_case"
@@ -24,7 +25,7 @@
 	}>()
 	let currencyID = `${data.currency_id}`
 	let cashFlowCategoryID = data.cash_flow_category_id === null
-		? ""
+		? `${NO_CASH_FLOW_CATEGORY.id}`
 		: `${data.cash_flow_category_id}`
 	let name = data.name
 	let description = data.description
@@ -39,9 +40,10 @@
 	$: associatedCurrency = currencies.find(
 		currency => currency.id === parseInt(currencyID)
 	) as Currency
-	$: associatedCashFlowCategory = currencies.find(
-		currency => currency.id === parseInt(currencyID)
-	)
+	$: hasCashFlowCategory = cashFlowCategoryID !== `${NO_CASH_FLOW_CATEGORY.id}`
+	$: associatedCashFlowCategory = hasCashFlowCategory ? cashFlowCategories.find(
+		cashFlowCategory => cashFlowCategory.id === parseInt(cashFlowCategoryID)
+	) as CashFlowCategory : null
 
 	let isConnectingToUpdate = writable<boolean>(false)
 	let updateErrors = writable<GeneralError[]>([])
@@ -51,6 +53,8 @@
 	let requestDelete = () => Promise.resolve()
 
 	$: friendlyKind = convertSnakeCaseToProperCase(data.kind).toLocaleLowerCase()
+	$: friendlyCategoryName = hasCashFlowCategory ? associatedCashFlowCategory?.name : null
+	$: friendlyCategoryKind = hasCashFlowCategory ? associatedCashFlowCategory?.kind : null
 	$: {
 		const requesterInfo = makeJSONRequester({
 			"path": `/api/v1/accounts/${data.id}`,
@@ -178,6 +182,9 @@
 		<ShortParagraph>{data.description}</ShortParagraph>
 		<ShortParagraph>
 			This {friendlyKind} account uses {associatedCurrency.code} as its currency.
+			{#if hasCashFlowCategory}
+				It is considered as {friendlyCategoryKind} account under {friendlyCategoryName}.
+			{/if}
 		</ShortParagraph>
 	</svelte:fragment>
 </CollectionItem>

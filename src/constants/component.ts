@@ -14,7 +14,7 @@ export const UNKNOWN_ACCOUNT: Account = {
 	"updated_at": ""
 }
 
-export const NO_CASH_FLOW_CATEGORY_CATEGORY: CashFlowCategory = {
+export const NO_CASH_FLOW_CATEGORY: CashFlowCategory = {
 	"id": 0,
 	"name": "No Cash Flow Category",
 	"description": "This is an option used to represent uncategorized accounts.",

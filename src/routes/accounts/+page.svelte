@@ -8,7 +8,7 @@
 	import { afterNavigate, beforeNavigate, goto } from "$app/navigation"
 
 	import { GLOBAL_CONTEXT } from "#/contexts"
-	import { NO_CASH_FLOW_CATEGORY_CATEGORY } from "#/component"
+	import { NO_CASH_FLOW_CATEGORY } from "#/component"
 	import { SEARCH_NORMALLY, ASCENDING_ORDER, MAXIMUM_PAGINATED_LIST_LENGTH } from "#/rest"
 
 	import assertAuthentication from "$/page_requirement/assert_authentication"
@@ -243,7 +243,7 @@
 	}
 
 	$: selectableCashFlowCategories = [
-		NO_CASH_FLOW_CATEGORY_CATEGORY,
+		NO_CASH_FLOW_CATEGORY,
 		...cashFlowCategories
 	]
 </script>

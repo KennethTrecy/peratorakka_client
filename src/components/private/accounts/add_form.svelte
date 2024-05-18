@@ -3,7 +3,7 @@
 
 	import { createEventDispatcher } from "svelte"
 
-	import { UNKNOWN_OPTION } from "#/component"
+	import { NO_CASH_FLOW_CATEGORY, UNKNOWN_OPTION } from "#/component"
 	import { acceptableAccountKinds } from "#/entity"
 
 	import makeJSONRequester from "$/rest/make_json_requester"
@@ -24,7 +24,7 @@
 	export let cashFlowCategories: CashFlowCategory[]
 
 	export let currencyID: string = UNKNOWN_OPTION
-	export let cashFlowCategoryID: string = UNKNOWN_OPTION
+	export let cashFlowCategoryID: string = `${NO_CASH_FLOW_CATEGORY.id}`
 	export let name: string = ""
 	export let description: string =""
 	export let kind: AcceptableAccountKind = acceptableAccountKinds[0]
@@ -42,7 +42,7 @@
 					const { account } = document
 
 					currencyID = UNKNOWN_OPTION
-					cashFlowCategoryID = UNKNOWN_OPTION
+					cashFlowCategoryID = `${NO_CASH_FLOW_CATEGORY.id}`
 					name = ""
 					description = ""
 					kind = acceptableAccountKinds[0]
@@ -59,7 +59,7 @@
 			"body": JSON.stringify({
 				"account": {
 					"currency_id": parseInt(currencyID),
-					"cash_flow_category_id": cashFlowCategoryID === UNKNOWN_OPTION
+					"cash_flow_category_id": cashFlowCategoryID === `${NO_CASH_FLOW_CATEGORY.id}`
 						? null
 						: parseInt(cashFlowCategoryID),
 					name,
