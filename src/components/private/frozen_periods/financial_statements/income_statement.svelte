@@ -35,9 +35,9 @@
 <QuarternaryHeading>Income Statement</QuarternaryHeading>
 <UnitDataTable>
 	<svelte:fragment slot="table_headers">
-		<DataTableHeader>Temporary Account</DataTableHeader>
-		<DataTableHeader>Debit</DataTableHeader>
-		<DataTableHeader>Credit</DataTableHeader>
+		<DataTableHeader scope="col">Temporary Account</DataTableHeader>
+		<DataTableHeader scope="col" kind="numeric">Debit Amount</DataTableHeader>
+		<DataTableHeader scope="col" kind="numeric">Credit Amount</DataTableHeader>
 	</svelte:fragment>
 	<svelte:fragment slot="table_rows">
 		{#each incomeCalculations as calculation(calculation.account_id)}
