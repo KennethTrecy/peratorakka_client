@@ -1,6 +1,12 @@
 <script lang="ts">
 	import type { FinancialStatementGroup } from "+/rest"
-	import type { Currency, Account, FrozenPeriod, SummaryCalculation } from "+/entity"
+	import type {
+		Currency,
+		CashFlowCategory,
+		Account,
+		FrozenPeriod,
+		SummaryCalculation
+	} from "+/entity"
 
 	import { createEventDispatcher } from "svelte"
 
@@ -30,6 +36,7 @@
 	let statements: FinancialStatementGroup[] = []
 	let summaryCalculations: SummaryCalculation[] = []
 	let currencies: Currency[] = []
+	let cashFlowCategories: CashFlowCategory[] = []
 	let accounts: Account[] = []
 
 	let startedAt: string = defaultStartedDate
@@ -89,6 +96,7 @@
 					summaryCalculations = document.summary_calculations
 					accounts = document.accounts
 					currencies = document.currencies
+					cashFlowCategories = document.cash_flow_categories
 					statements = document["@meta"].statements
 
 					dryRunCreateErrors.set([])
@@ -152,6 +160,7 @@
 		{statements}
 		{accounts}
 		{currencies}
+		{cashFlowCategories}
 		data={summaryCalculations}>
 		<svelte:fragment slot="empty_collection_description">
 			There are no financial statements at the chosen date range. Please check another range.
