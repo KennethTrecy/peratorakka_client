@@ -62,7 +62,7 @@
 			Cash flow categories are used to classify changes in the current amount of accounts and determine the amount of available liquid cash and cash equivalents. Usual cash flow categories are cash and cash equivalent, operating activities, investment activities, and financing activities.
 		</ElementalParagraph>
 		<ElementalParagraph>
-			An account in liquid category means that the account can be converted into cash immediately (e.g. bank deposits or physical cash in wallet) or an imaginary expense (e.g. depreciation expense). An account in illiquid category means that the account can be converted into cash after a long period or never at all such as land or equipments.
+			A financial account in liquid category means that the account can be converted into cash immediately (e.g. bank deposits or physical cash in wallet) or an imaginary expense (e.g. depreciation expense). A financial account in illiquid category means that the account can be converted into cash after a long period or never at all such as land or equipments.
 		</ElementalParagraph>
 	</TextContainer>
 	<BasicForm
