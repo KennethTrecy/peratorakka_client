@@ -10,6 +10,7 @@
 	import BasicForm from "%/cash_flow_categories/basic_form.svelte"
 	import CollectionItem from "$/catalog/collection_item.svelte"
 	import EditActionCardButtonPair from "$/button/card/edit_action_pair.svelte"
+	import Flex from "$/layout/flex.svelte"
 	import ShortParagraph from "$/typography/short_paragraph.svelte"
 
 	export let data: CashFlowCategory
@@ -124,7 +125,12 @@
 	<ShortParagraph slot="delete_confirmation_message">
 		Deleting this cash flow category may cause inaccuracy of the cash flow statement.
 	</ShortParagraph>
-	<ShortParagraph slot="resource_info">
-		{data.name}
-	</ShortParagraph>
+	<Flex mustPad={false} slot="resource_info">
+		<ShortParagraph>
+			Accounts under this category would be considered as {data.kind}.
+		</ShortParagraph>
+		<ShortParagraph>
+			{data.description}
+		</ShortParagraph>
+	</Flex>
 </CollectionItem>
