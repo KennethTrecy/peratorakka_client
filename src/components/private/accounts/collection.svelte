@@ -26,7 +26,7 @@
 	]
 </script>
 
-<Collection collectiveName="Financial Accounts" {isConnecting} {data}>
+<Collection collectiveName="Financial Accounts" {isConnecting} {data} progressRate={0}>
 	<svelte:fragment slot="filled_collection_description">
 		Below are the financial accounts that you have added on to your profile.
 		They can be associated to modifiers.
