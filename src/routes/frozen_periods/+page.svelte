@@ -1,5 +1,11 @@
 <script lang="ts">
-	import type { Account, Currency, FrozenPeriod, SummaryCalculation } from "+/entity"
+	import type {
+		Account,
+		Currency,
+		CashFlowCategory,
+		FrozenPeriod,
+		SummaryCalculation
+	} from "+/entity"
 	import type { ContextBundle } from "+/component"
 	import type { GeneralError, FinancialStatementGroup } from "+/rest"
 
@@ -56,6 +62,7 @@
 	})
 
 	let currencies: Currency[] = []
+	let cashFlowCategories: CashFlowCategory[] = []
 	let accounts: Account[] = []
 	let summaryCalculations: SummaryCalculation[] = []
 	let statements: FinancialStatementGroup[] = []
@@ -76,6 +83,7 @@
 						"action": async (response: Response) => {
 							const document = await response.json()
 							currencies = document.currencies
+							cashFlowCategories = document.cash_flow_categories
 							accounts = document.accounts
 							summaryCalculations = document.summary_calculations
 							statements = document["@meta"].statements
@@ -155,6 +163,7 @@
 				{statements}
 				{accounts}
 				{currencies}
+				{cashFlowCategories}
 				data={summaryCalculations}>
 				<svelte:fragment slot="empty_collection_description">
 					There are no financial statements at the chosen date range. Please check another range.
