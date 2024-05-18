@@ -8,6 +8,7 @@
 	import { afterNavigate, beforeNavigate, goto } from "$app/navigation"
 
 	import { GLOBAL_CONTEXT } from "#/contexts"
+	import { NO_CASH_FLOW_CATEGORY_CATEGORY } from "#/component"
 	import { SEARCH_NORMALLY, ASCENDING_ORDER, MAXIMUM_PAGINATED_LIST_LENGTH } from "#/rest"
 
 	import assertAuthentication from "$/page_requirement/assert_authentication"
@@ -240,6 +241,11 @@
 		const oldAccount = event.detail
 		accounts = accounts.filter(account => account.id !== oldAccount.id)
 	}
+
+	$: selectableCashFlowCategories = [
+		NO_CASH_FLOW_CATEGORY_CATEGORY,
+		...cashFlowCategories
+	]
 </script>
 
 <svelte:head>
@@ -253,12 +259,12 @@
 		</GridCell>
 		<AddForm
 			{currencies}
-			{cashFlowCategories}
+			cashFlowCategories={selectableCashFlowCategories}
 			isLoadingInitialData={$isConnectingForCurrencies || $isConnectingForCashFlowCategories}
 			on:create={addAccount}/>
 		<Collection
 			{currencies}
-			{cashFlowCategories}
+			cashFlowCategories={selectableCashFlowCategories}
 			data={accounts}
 			bind:searchMode={searchMode}
 			bind:sortCriterion={sortCriterion}
