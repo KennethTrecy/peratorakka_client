@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { GeneralError } from "+/rest"
-	import type { AcceptableAccountKind, CashFlowCategory } from "+/entity"
+	import type { AcceptableCashFlowCategoryKind, CashFlowCategory } from "+/entity"
 
 	import { acceptableCashFlowCategoryKinds } from "#/entity"
 
@@ -16,7 +16,7 @@
 
 	export let name: string
 	export let description: string
-	export let kind: AcceptableAccountKind
+	export let kind: AcceptableCashFlowCategoryKind
 	export let forceDisabledFields: (keyof CashFlowCategory)[] = []
 
 	export let isConnecting: boolean
