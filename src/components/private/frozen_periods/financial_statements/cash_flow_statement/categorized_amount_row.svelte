@@ -13,10 +13,10 @@
 	export let data: Omit<SummaryCalculation, "frozen_period_id">[]
 
 	$: calculation = data.find(
-		data => data.account_id === account.id
+		data => `${data.account_id}` === `${account.id}`
 	) as SummaryCalculation
 	$: acceptableAccountKindIndex = ([ ...acceptableAccountKinds ] as string[])
-		.indexOf(cashFlowCategory.kind as string)
+		.indexOf(account.kind as string)
 	$: acceptableCashFlowCategoryKindIndex = ([ ...acceptableCashFlowCategoryKinds ] as string[])
 		.indexOf(cashFlowCategory.kind as string)
 	$: rawAmount = acceptableAccountKindIndex > -1 && acceptableCashFlowCategoryKindIndex > -1
@@ -26,9 +26,12 @@
 			calculation
 		)
 		: "0"
+	$: hasChange = rawAmount !== "0"
 </script>
 
-<AmountRow
-	rowName={account.name}
-	{currency}
-	{rawAmount}/>
+{#if hasChange}
+	<AmountRow
+		rowName={account.name}
+		{currency}
+		{rawAmount}/>
+{/if}

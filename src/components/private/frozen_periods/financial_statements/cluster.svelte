@@ -27,7 +27,6 @@
 	$: hasAcceptableCashFlowCategories = cashFlowCategories.length > 1
 		&& cashFlowCategories.some(category => category.kind === acceptableCashFlowCategoryKinds[0])
 		&& cashFlowCategories.some(category => category.kind === acceptableCashFlowCategoryKinds[1])
-	$: console.log({ cashFlowCategories }, cashFlowCategories.length > 1, acceptableCashFlowCategoryKinds[0], cashFlowCategories.some(category => category.kind === acceptableCashFlowCategoryKinds[0]), acceptableCashFlowCategoryKinds[1], cashFlowCategories.some(category => category.kind === acceptableCashFlowCategoryKinds[1]),)
 </script>
 
 <GridCell kind="triad">
