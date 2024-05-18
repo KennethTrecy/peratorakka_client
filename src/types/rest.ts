@@ -52,16 +52,20 @@ export interface TrialBalance {
 }
 
 export interface FinancialStatementGroup {
-	currency_id: number,
-	unadjusted_trial_balance: TrialBalance,
+	currency_id: number
+	unadjusted_trial_balance: TrialBalance
 	income_statement: {
 		net_total: string
-	},
+	}
 	balance_sheet: {
-		total_assets: string,
-		total_liabilities: string,
+		total_assets: string
+		total_liabilities: string
 		total_equities: string
-	},
+	}
+	cash_flow_statement: {
+		opened_liquid_amount: string
+		closed_liquid_amount: string
+	}
 	adjusted_trial_balance: TrialBalance
 }
 
