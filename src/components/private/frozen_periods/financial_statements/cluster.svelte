@@ -27,6 +27,7 @@
 	$: hasAcceptableCashFlowCategories = cashFlowCategories.length > 1
 		&& cashFlowCategories.some(category => category.kind === acceptableCashFlowCategoryKinds[0])
 		&& cashFlowCategories.some(category => category.kind === acceptableCashFlowCategoryKinds[1])
+	$: console.log({ cashFlowCategories }, cashFlowCategories.length > 1, acceptableCashFlowCategoryKinds[0], cashFlowCategories.some(category => category.kind === acceptableCashFlowCategoryKinds[0]), acceptableCashFlowCategoryKinds[1], cashFlowCategories.some(category => category.kind === acceptableCashFlowCategoryKinds[1]),)
 </script>
 
 <GridCell kind="triad">
@@ -52,16 +53,16 @@
 			accounts={allowedAccounts}
 			data={allowedCalculations}/>
 		{#if hasAcceptableCashFlowCategories}
-			<ElementalParagraph>
-				Note: There are no or few accounts that belongs to cash flows categories. At least one account must belong to liquid cash flow category and at least one account must belong to illiquid cash flow category.
-			</ElementalParagraph>
-		{:else}
 			<CashFlowStatement
 				{statement}
 				{currency}
 				{cashFlowCategories}
 				accounts={allowedAccounts}
 				data={allowedCalculations}/>
+		{:else}
+			<ElementalParagraph>
+				Note: There are no or few accounts that belongs to cash flows categories. At least one account must belong to liquid cash flow category and at least one account must belong to illiquid cash flow category.
+			</ElementalParagraph>
 		{/if}
 	</Flex>
 </GridCell>
