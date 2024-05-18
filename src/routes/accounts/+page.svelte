@@ -252,6 +252,7 @@
 		</GridCell>
 		<AddForm
 			{currencies}
+			{cashFlowCategories}
 			isLoadingInitialData={$isConnectingForCurrencies || $isConnectingForCashFlowCategories}
 			on:create={addAccount}/>
 		<Collection

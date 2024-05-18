@@ -1,9 +1,11 @@
 <script lang="ts">
 	import type { GeneralError } from "+/rest"
-	import type { Currency, AcceptableAccountKind, Account } from "+/entity"
+	import type { Currency, CashFlowCategory, AcceptableAccountKind, Account } from "+/entity"
 
 	import { acceptableAccountKinds } from "#/entity"
 
+	import transformCashFlowCategory
+		from "$/form/choice_info_transformer/transform_cash_flow_category"
 	import transformCurrency from "$/form/choice_info_transformer/transform_currency"
 	import transformString from "$/form/choice_info_transformer/transform_string"
 
@@ -15,8 +17,10 @@
 
 	export let IDPrefix: string
 	export let currencies: Currency[]
+	export let cashFlowCategories: CashFlowCategory[]
 
 	export let currencyID: string
+	export let cashFlowCategoryID: string
 	export let name: string
 	export let description: string
 	export let kind: AcceptableAccountKind
@@ -36,6 +40,15 @@
 			bind:value={currencyID}
 			rawChoices={currencies}
 			choiceConverter={transformCurrency}
+			{IDPrefix}
+			{errors}/>
+		<ChoiceListField
+			fieldName="Cash Flow Category"
+			errorFieldName="cash_flow_category_id"
+			disabled={isConnecting || forceDisabledFields.includes("cash_flow_category_id")}
+			bind:value={cashFlowCategoryID}
+			rawChoices={cashFlowCategories}
+			choiceConverter={transformCashFlowCategory}
 			{IDPrefix}
 			{errors}/>
 		<ChoiceListField

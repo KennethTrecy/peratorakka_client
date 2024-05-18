@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { Currency, Account, AcceptableAccountKind } from "+/entity"
+	import type { Currency, CashFlowCategory, Account, AcceptableAccountKind } from "+/entity"
 
 	import { createEventDispatcher } from "svelte"
 
@@ -21,8 +21,10 @@
 
 	export let isLoadingInitialData: boolean
 	export let currencies: Currency[]
+	export let cashFlowCategories: CashFlowCategory[]
 
 	export let currencyID: string = UNKNOWN_OPTION
+	export let cashFlowCategoryID: string = UNKNOWN_OPTION
 	export let name: string = ""
 	export let description: string =""
 	export let kind: AcceptableAccountKind = acceptableAccountKinds[0]
@@ -40,6 +42,7 @@
 					const { account } = document
 
 					currencyID = UNKNOWN_OPTION
+					cashFlowCategoryID = UNKNOWN_OPTION
 					name = ""
 					description = ""
 					kind = acceptableAccountKinds[0]
@@ -56,6 +59,9 @@
 			"body": JSON.stringify({
 				"account": {
 					"currency_id": parseInt(currencyID),
+					"cash_flow_category_id": cashFlowCategoryID === ""
+						? null
+						: parseInt(cashFlowCategoryID),
 					name,
 					description,
 					kind
@@ -89,7 +95,9 @@
 	<BasicForm
 		slot="form"
 		bind:currencies={currencies}
+		bind:cashFlowCategories={cashFlowCategories}
 		bind:currencyID={currencyID}
+		bind:cashFlowCategoryID={cashFlowCategoryID}
 		bind:name={name}
 		bind:description={description}
 		bind:kind={kind}
