@@ -4,7 +4,9 @@ import {
 	acceptableModifierKinds,
 	modifierKinds,
 	acceptableModifierActions,
-	modifierActions
+	modifierActions,
+	acceptableCashFlowCategoryKinds,
+	cashFlowCategoryKinds
 } from "#/entity"
 
 interface Entity {
@@ -18,12 +20,23 @@ export interface Currency extends Entity {
 	code: string
 }
 
+type CashFlowCategoryKind = typeof cashFlowCategoryKinds[number]
+
+export type AcceptableCashFlowCategoryKind = typeof acceptableCashFlowCategoryKinds[number]
+
+export interface CashFlowCategory extends Entity {
+	name: string
+	description: string
+	kind: CashFlowCategoryKind
+}
+
 type AccountKind = typeof accountKinds[number]
 
 export type AcceptableAccountKind = typeof acceptableAccountKinds[number]
 
 export interface Account extends Entity{
 	currency_id: number
+	cash_flow_category_id: number|null
 	name: string
 	description: string
 	kind: AccountKind
