@@ -1,5 +1,7 @@
 import Fraction from "fraction.js"
 
+import type { Currency } from "+/entity"
+
 export function formatAmount(
 	currency: Currency | undefined,
 	amount: string,
@@ -24,6 +26,14 @@ export function formatAmount(
 	const formattedAmount = `${whole}${rawFraction}`
 
 	return `${currency?.code ?? "---"} ${formattedAmount}`
+}
+
+export function addAmount(addend: string, adder: string): string {
+	return new Fraction(addend).add(adder).toString()
+}
+
+export function subtractAmount(addend: string, adder: string): string {
+	return new Fraction(addend).add(adder).toString()
 }
 
 export function setTheme(filename: string): void {
