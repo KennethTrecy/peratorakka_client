@@ -1,14 +1,11 @@
-import type { Unsubscriber, Readable } from "svelte/store"
-import type { DividerItemInfo, MenuItemInfo } from "%/shell/types"
+import type { Readable } from "svelte/store"
 import type { ContextBundle } from "+/component"
 
 import { derived, writable } from "svelte/store"
-import { setMode } from "@/components/third-party/index"
 
 export default function makeShellContext(globalContext: ContextBundle): ContextBundle {
 	const {
 		serverIcon,
-		userEmail,
 		hasToken,
 		hasUser
 	} = globalContext as {
@@ -17,9 +14,9 @@ export default function makeShellContext(globalContext: ContextBundle): ContextB
 		hasUser: Readable<boolean>,
 	}
 
-	const menuItemInfos = derived<(DividerItemInfo|MenuItemInfo)[]>(
-		[ serverIcon, userEmail, hasToken, hasUser ],
-		([ currentServerIcon, currentUserEmail, hasTokenCurrently, hasUserCurrently ]) => {
+	const menuItemInfos = derived(
+		[ serverIcon, hasToken, hasUser ],
+		([ currentServerIcon, hasTokenCurrently, hasUserCurrently ]) => {
 			return [
 				{
 					"type": "item",
