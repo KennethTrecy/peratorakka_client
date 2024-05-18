@@ -32,8 +32,8 @@ export function addAmount(addend: string, adder: string): string {
 	return new Fraction(addend).add(adder).toString()
 }
 
-export function subtractAmount(addend: string, adder: string): string {
-	return new Fraction(addend).add(adder).toString()
+export function subtractAmount(subtrahend: string, minuend: string): string {
+	return new Fraction(subtrahend).sub(minuend).toString()
 }
 
 export function setTheme(filename: string): void {

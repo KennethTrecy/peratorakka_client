@@ -30,12 +30,12 @@ export default function calculateFlowedAmount(
 				return addAmount(
 					subtractAmount(data.opened_debit_amount, data.closed_debit_amount),
 					subtractAmount(data.closed_credit_amount, data.opened_credit_amount)
-				);
+				)
 			case acceptableAccountKinds[2]: // Equity
 				return addAmount(
 					subtractAmount(data.opened_debit_amount, data.unadjusted_debit_amount),
 					subtractAmount(data.unadjusted_credit_amount, data.opened_credit_amount)
-				);
+				)
 		}
 	}
 
