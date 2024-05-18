@@ -50,7 +50,11 @@
 		<AmountRow
 			rowName="Total Opened Liquid Amount"
 			currency={currency}
-			rawAmount={statement.cash_flow_statement.opened_liquid_amount}
+			rawAmount={statement.cash_flow_statement.opened_liquid_amount}/>
+		<AmountRow
+			rowName="Net income"
+			currency={currency}
+			rawAmount={statement.income_statement.net_total}
 			hasEmptyTrailingRow={true}/>
 		{#each closedCashFlowCategories as closedCashFlowCategory}
 			<CategorizedSection
