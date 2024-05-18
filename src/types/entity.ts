@@ -75,6 +75,8 @@ export interface FrozenPeriod extends Entity {
 export interface SummaryCalculation extends Entity {
 	frozen_period_id: number
 	account_id: number
+	opened_debit_amount: string
+	opened_credit_amount: string
 	unadjusted_debit_amount: string
 	unadjusted_credit_amount: string
 	closed_debit_amount: string
