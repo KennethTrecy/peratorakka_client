@@ -64,6 +64,6 @@ export interface SummaryCalculation extends Entity {
 	account_id: number
 	unadjusted_debit_amount: string
 	unadjusted_credit_amount: string
-	adjusted_debit_amount: string
-	adjusted_credit_amount: string
+	closed_debit_amount: string
+	closed_credit_amount: string
 }

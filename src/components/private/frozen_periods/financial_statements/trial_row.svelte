@@ -16,10 +16,10 @@
 	) ?? UNKNOWN_ACCOUNT
 	$: rawDebitAmount = kind === "unadjusted"
 		? data.unadjusted_debit_amount
-		: data.adjusted_debit_amount
+		: data.closed_debit_amount
 	$: rawCreditAmount = kind === "unadjusted"
 		? data.unadjusted_credit_amount
-		: data.adjusted_credit_amount
+		: data.closed_credit_amount
 </script>
 
 <CustomTrialRow
