@@ -35,9 +35,9 @@
 <QuarternaryHeading>{headingAdjective} Trial Balance</QuarternaryHeading>
 <UnitDataTable>
 	<svelte:fragment slot="table_headers">
-		<DataTableHeader scope="col">Account</DataTableHeader>
-		<DataTableHeader scope="col" kind="numeric">Debit Amount</DataTableHeader>
-		<DataTableHeader scope="col" kind="numeric">Credit Amount</DataTableHeader>
+		<DataTableHeader scope="column">Account</DataTableHeader>
+		<DataTableHeader scope="column" kind="numeric">Debit Amount</DataTableHeader>
+		<DataTableHeader scope="column" kind="numeric">Credit Amount</DataTableHeader>
 	</svelte:fragment>
 	<svelte:fragment slot="table_rows">
 		{#each data as calculation(calculation.account_id)}
