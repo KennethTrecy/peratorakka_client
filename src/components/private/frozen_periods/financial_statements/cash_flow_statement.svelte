@@ -6,8 +6,8 @@
 
 	import formatAmount from "$/utility/format_amount"
 
-	import AmountRow
-		from "%/frozen_periods/financial_statements/cash_flow_statement/amount_row.svelte"
+	import TotalAmountRow
+		from "%/frozen_periods/financial_statements/cash_flow_statement/total_amount_row.svelte"
 	import CategorizedSection
 		from "%/frozen_periods/financial_statements/cash_flow_statement/categorized_section.svelte"
 	import DataTableCell from "$/catalog/data_table_cell.svelte"
@@ -37,31 +37,33 @@
 <UnitDataTable>
 	<svelte:fragment slot="table_headers">
 		<DataTableHeader scope="column">Category</DataTableHeader>
+		<DataTableHeader scope="column">Account</DataTableHeader>
 		<DataTableHeader scope="column" kind="numeric">Amount</DataTableHeader>
 	</svelte:fragment>
 	<svelte:fragment slot="table_rows">
 		{#each openedCashFlowCategories as openedCashFlowCategory}
 			<CategorizedSection
 				cashFlowCategory={openedCashFlowCategory}
+				cashFlowSubtotals={statement.cash_flow_statement.liquid_subtotals}
 				{currency}
 				{accounts}
 				{data}/>
 		{/each}
-		<AmountRow
-			rowName="Total Opened Liquid Amount"
+		<TotalAmountRow
+			rowName="Opened Liquid Balance"
 			currency={currency}
 			rawAmount={statement.cash_flow_statement.opened_liquid_amount}/>
-		<AmountRow
-			rowName="Net income"
-			currency={currency}
-			rawAmount={statement.income_statement.net_total}
-			hasEmptyTrailingRow={true}/>
 		{#each closedCashFlowCategories as closedCashFlowCategory}
 			<CategorizedSection
 				cashFlowCategory={closedCashFlowCategory}
+				cashFlowSubtotals={statement.cash_flow_statement.illiquid_subtotals}
 				{currency}
 				{accounts}
 				{data}/>
+		<TotalAmountRow
+			rowName="Closed Liquid Balance"
+			currency={currency}
+			rawAmount={statement.cash_flow_statement.closed_liquid_amount}/>
 		{/each}
 	</svelte:fragment>
 	<svelte:fragment slot="table_footer_cells">
