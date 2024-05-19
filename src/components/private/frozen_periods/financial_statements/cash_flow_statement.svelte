@@ -60,11 +60,11 @@
 				{currency}
 				{accounts}
 				{data}/>
+			{/each}
 		<TotalAmountRow
 			rowName="Closed Liquid Balance"
 			currency={currency}
 			rawAmount={statement.cash_flow_statement.closed_liquid_amount}/>
-		{/each}
 	</svelte:fragment>
 	<svelte:fragment slot="table_footer_cells">
 		<DataTableHeader scope="row">Total Closed Liquid Amount</DataTableHeader>

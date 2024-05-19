@@ -7,8 +7,10 @@
 	import DataTableHeader from "$/catalog/data_table_header.svelte"
 	import DataTableRow from "$/catalog/data_table_row.svelte"
 
-	export let rowName: string
+	export let categoryName: string
+	export let categoryNameRowSpan: number
 	export let currency: Currency|undefined
+	export let accountName: string
 	export let rawAmount: string
 	export let hasEmptyTrailingRow: boolean = false
 
@@ -16,10 +18,14 @@
 		currency,
 		rawAmount
 	)
+	$: mustSpan = categoryNameRowSpan > 0
 </script>
 
 <DataTableRow>
-	<DataTableHeader scope="row">{rowName}</DataTableHeader>
+	{#if mustSpan}
+		<DataTableHeader scope="row" rowSpan={categoryNameRowSpan}>{categoryName}</DataTableHeader>
+	{/if}
+	<DataTableCell>{accountName}</DataTableCell>
 	<DataTableCell kind="numeric">{friendlyAmount}</DataTableCell>
 </DataTableRow>
 {#if hasEmptyTrailingRow}
