@@ -18,9 +18,6 @@ export default function calculateFlowedAmount(
 		if (accountKind === acceptableAccountKinds[0]) {
 			// Asset
 			return subtractAmount(data.opened_debit_amount, data.opened_credit_amount)
-		} else if (accountKind === acceptableAccountKinds[3]) {
-			// Expense
-			return subtractAmount(data.unadjusted_debit_amount, data.unadjusted_credit_amount)
 		}
 	} else if (cashFlowCategoryKind === acceptableCashFlowCategoryKinds[1]) {
 		// Illiquid
@@ -33,8 +30,8 @@ export default function calculateFlowedAmount(
 				)
 			case acceptableAccountKinds[2]: // Equity
 				return addAmount(
-					subtractAmount(data.opened_debit_amount, data.unadjusted_debit_amount),
-					subtractAmount(data.unadjusted_credit_amount, data.opened_credit_amount)
+					subtractAmount(data.unadjusted_credit_amount, data.opened_credit_amount),
+					subtractAmount(data.opened_debit_amount, data.unadjusted_debit_amount)
 				)
 		}
 	}
