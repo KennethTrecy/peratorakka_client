@@ -54,11 +54,12 @@
 	$: changedAmountInfo = matchedAccountAmounts.filter(
 		amountInfo => amountInfo.rawAmount !== "0"
 	)
-	$: rowCountBeforeAccounts = isIlliquidBalance(matchedSubtotal) ? 1 : 0
+	$: hasSubtotal = matchedSubtotal.subtotal !== "0"
+	$: rowCountBeforeAccounts = isIlliquidBalance(matchedSubtotal) && hasSubtotal ? 1 : 0
 	$: firstRowSpan = changedAmountInfo.length + 1 + rowCountBeforeAccounts
 </script>
 
-{#if isIlliquidBalance(matchedSubtotal)}
+{#if isIlliquidBalance(matchedSubtotal) && hasSubtotal}
 	<AmountRow
 		categoryName={cashFlowCategory.name}
 		categoryNameRowSpan={firstRowSpan}
