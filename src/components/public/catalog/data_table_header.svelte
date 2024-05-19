@@ -3,6 +3,7 @@
 
 	export let kind: DataTableCellKind = "normal"
 	export let scope: DataTableCellScope = "row"
+	export let columnSpan: number = 1
 
 	$: headerClasses = [
 		"mdc-data-table__header-cell",
@@ -16,7 +17,8 @@
 <th
 	class={headerClasses}
 	{role}
-	scope={resolvedScope}>
+	scope={resolvedScope}
+	colspan={columnSpan}>
 	<slot/>
 </th>
 
