@@ -40,13 +40,14 @@
 			)
 			: "0"
 
+		console.log(account.name, rawAmount)
 		return {
 			"accountName": account.name,
 			rawAmount
 		}
 	})
 	$: changedAmountInfo = matchedAccountAmounts.filter(
-		amountInfo => amountInfo.rawAmount === "0"
+		amountInfo => amountInfo.rawAmount !== "0"
 	)
 	$: rowCountBeforeAccounts = isIlliquidBalance(matchedSubtotal) ? 1 : 0
 	$: firstRowSpan = changedAmountInfo.length + 1 + rowCountBeforeAccounts
