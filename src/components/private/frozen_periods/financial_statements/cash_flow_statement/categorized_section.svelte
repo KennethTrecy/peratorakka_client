@@ -40,7 +40,6 @@
 			)
 			: "0"
 
-		console.log(account.name, rawAmount)
 		return {
 			"accountName": account.name,
 			rawAmount

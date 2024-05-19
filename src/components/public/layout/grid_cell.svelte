@@ -60,4 +60,10 @@
 		@extend .mdc-layout-grid__cell--span-8-tablet;
 		@extend .mdc-layout-grid__cell--span-4-desktop;
 	}
+
+	.mdc-layout-grid__cell--pair {
+		@extend .mdc-layout-grid__cell--span-4-phone;
+		@extend .mdc-layout-grid__cell--span-8-tablet;
+		@extend .mdc-layout-grid__cell--span-6-desktop;
+	}
 </style>

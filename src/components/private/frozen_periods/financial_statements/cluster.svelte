@@ -31,8 +31,7 @@
 
 <GridCell kind="triad">
 	<Flex direction="column" mustPad={false}>
-		<TrialBalance
-			kind="unadjusted"
+		<BalanceSheet
 			{statement}
 			{currency}
 			accounts={allowedAccounts}
@@ -41,16 +40,15 @@
 </GridCell>
 <GridCell kind="triad">
 	<Flex direction="column" mustPad={false}>
-		<BalanceSheet
-			{statement}
-			{currency}
-			accounts={allowedAccounts}
-			data={allowedCalculations}/>
 		<IncomeStatement
 			{statement}
 			{currency}
 			accounts={allowedAccounts}
 			data={allowedCalculations}/>
+	</Flex>
+</GridCell>
+<GridCell kind="triad">
+	<Flex direction="column" mustPad={false}>
 		{#if hasAcceptableCashFlowCategories}
 			<CashFlowStatement
 				{statement}
@@ -65,7 +63,17 @@
 		{/if}
 	</Flex>
 </GridCell>
-<GridCell kind="triad">
+<GridCell kind="pair">
+	<Flex direction="column" mustPad={false}>
+		<TrialBalance
+			kind="unadjusted"
+			{statement}
+			{currency}
+			accounts={allowedAccounts}
+			data={allowedCalculations}/>
+	</Flex>
+</GridCell>
+<GridCell kind="pair">
 	<Flex direction="column" mustPad={false}>
 		<TrialBalance
 			kind="adjusted"
