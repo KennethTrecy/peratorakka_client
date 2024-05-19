@@ -25,7 +25,13 @@
 	$: matchedAccountAmounts = matchedAccounts.map(account => {
 		const calculation = data.find(
 			data => data.account_id === account.id
-		) as SummaryCalculation
+		)
+
+		if (typeof calculation === "undefined") return {
+			"accountName": account.name,
+			"rawAmount": "0"
+		}
+
 		const acceptableAccountKindIndex = ([ ...acceptableAccountKinds ] as string[])
 			.indexOf(account.kind as string)
 		const acceptableCashFlowCategoryKindIndex = (
@@ -36,7 +42,7 @@
 			? calculateFlowedAmount(
 				acceptableCashFlowCategoryKinds[acceptableCashFlowCategoryKindIndex],
 				acceptableAccountKinds[acceptableAccountKindIndex],
-				calculation
+				calculation as SummaryCalculation
 			)
 			: "0"
 

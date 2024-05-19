@@ -21,11 +21,13 @@
 	export let accounts: Account[]
 	export let data: Omit<SummaryCalculation, "frozen_period_id">[]
 
+	$: liquidSubtotals = statement.cash_flow_statement.liquid_subtotals
+	$: illiquidSubtotals = statement.cash_flow_statement.illiquid_subtotals
 	$: openedCashFlowCategories = cashFlowCategories.filter(
-		category => category.kind === acceptableCashFlowCategoryKinds[0]
+		category => liquidSubtotals.some(subtotal => subtotal.cash_flow_category_id === category.id)
 	)
 	$: closedCashFlowCategories = cashFlowCategories.filter(
-		category => category.kind === acceptableCashFlowCategoryKinds[1]
+		category => illiquidSubtotals.some(subtotal => subtotal.cash_flow_category_id === category.id)
 	)
 	$: friendlyClosedLiquidAmount = formatAmount(
 		currency,
