@@ -51,18 +51,10 @@ export interface TrialBalance {
 	credit_total: string
 }
 
-export interface LiquidBalance {
-	cash_flow_category_id: number
+export interface CashFlowActivitySummary {
+	cash_flow_activity_id: number
 	subtotal: string
-}
-
-export interface IlliquidBalance extends LiquidBalance {
 	net_income: string
-}
-
-export function isIlliquidBalance(balance: any): balance is IlliquidBalance {
-	const keys = Object.keys(balance)
-	return keys.includes("net_income")
 }
 
 export interface FinancialStatementGroup {
@@ -79,8 +71,7 @@ export interface FinancialStatementGroup {
 	cash_flow_statement: {
 		opened_liquid_amount: string
 		closed_liquid_amount: string
-		liquid_subtotals: LiquidBalance[],
-		illiquid_subtotals: IlliquidBalance[]
+		subtotals: CashFlowActivitySummary[]
 	}
 	adjusted_trial_balance: TrialBalance
 }
