@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { Currency, CashFlowCategory, Account } from "+/entity"
+	import type { Currency, Account } from "+/entity"
 	import type { GeneralError, SearchMode, SortOrder } from "+/rest"
 
 	import AccountCard from "%/accounts/account_card.svelte"
@@ -9,7 +9,6 @@
 
 	export let isConnecting: boolean
 	export let currencies: Currency[]
-	export let cashFlowCategories: CashFlowCategory[]
 	export let data: Account[]
 
 	export let searchMode: SearchMode
@@ -45,7 +44,6 @@
 			<AccountCard
 				bind:data={entity}
 				{currencies}
-				{cashFlowCategories}
 				on:delete/>
 		{/each}
 	</svelte:fragment>
