@@ -98,7 +98,7 @@
 					"action": async (response: Response) => {
 						data = {
 							...data,
-							// Renewal of cash flow activity is temporary
+							// TODO: Renewal of cash flow activity is temporary. To be removed next update.
 							"debit_cash_flow_activity_id": debitCashFlowActivityID === ""
 								? null
 								: parseInt(debitCashFlowActivityID),
@@ -152,7 +152,7 @@
 	}
 
 	function resetDraft() {
-		// Renewal of cash flow activity is temporary
+		// TODO: Renewal of cash flow activity is temporary. To be uncommented next update.
 		debitCashFlowActivityID = data.debit_cash_flow_activity_id === null
 			? `${NO_CASH_FLOW_ACTIVITY.id}`
 			: `${data.debit_cash_flow_activity_id}`
