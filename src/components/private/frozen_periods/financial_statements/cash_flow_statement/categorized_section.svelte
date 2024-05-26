@@ -16,7 +16,7 @@
 	export let cashFlowActivity: CashFlowActivity
 	export let cashFlowSubtotals: CashFlowActivitySubtotal[]
 	export let accounts: Account[]
-	export let flowCalculations: FlowCalculation[]
+	export let flowCalculations: Omit<FlowCalculation, "frozen_period_id">[]
 
 	$: matchedSubtotal = cashFlowSubtotals.find(
 		subtotal => subtotal.cash_flow_activity_id === cashFlowActivity.id

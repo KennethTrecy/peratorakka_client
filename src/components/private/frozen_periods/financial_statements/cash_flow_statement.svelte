@@ -22,7 +22,7 @@
 	export let currency: Currency|undefined
 	export let cashFlowActivities: CashFlowActivity[]
 	export let accounts: Account[]
-	export let flowCalculations: FlowCalculation[]
+	export let flowCalculations: Omit<FlowCalculation, "frozen_period_id">[]
 
 	$: subtotals = statement.cash_flow_statement.subtotals
 	$: friendlyClosedLiquidAmount = formatAmount(
