@@ -8,6 +8,7 @@
 	import type { CashFlowActivitySubtotal } from "+/rest"
 
 	import { UNKNOWN_ACCOUNT } from "#/component"
+	import { acceptableAccountKinds } from "#/entity"
 
 	import AmountRow
 		from "%/frozen_periods/financial_statements/cash_flow_statement/amount_row.svelte"
@@ -35,10 +36,14 @@
 				account
 			}
 		}
+	}).filter(flowCalculation => {
+		return flowCalculation["@meta"].account.kind !== acceptableAccountKinds[3]
+			&& flowCalculation["@meta"].account.kind !== acceptableAccountKinds[4]
+			&& flowCalculation.net_amount !== "0"
 	})
 	$: hasNetIncome = matchedSubtotal.net_income !== "0"
 	$: rowCountBeforeAccounts = hasNetIncome ? 1 : 0
-	$: firstRowSpan = matchedFlowCalculations.length + 1 + rowCountBeforeAccounts
+	$: firstRowSpan = accountedFlowCalculations.length + 1 + rowCountBeforeAccounts
 </script>
 
 {#if hasNetIncome}
