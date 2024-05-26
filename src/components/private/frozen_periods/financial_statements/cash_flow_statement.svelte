@@ -1,8 +1,11 @@
 <script lang="ts">
-	import type { Currency, CashFlowCategory, Account, SummaryCalculation } from "+/entity"
+	import type {
+		Currency,
+		CashFlowActivity,
+		Account,
+		FlowCalculation
+	} from "+/entity"
 	import type { FinancialStatementGroup } from "+/rest"
-
-	import { acceptableCashFlowCategoryKinds } from "#/entity"
 
 	import formatAmount from "$/utility/format_amount"
 
@@ -17,18 +20,11 @@
 
 	export let statement: FinancialStatementGroup
 	export let currency: Currency|undefined
-	export let cashFlowCategories: CashFlowCategory[]
+	export let cashFlowActivities: CashFlowActivity[]
 	export let accounts: Account[]
-	export let data: Omit<SummaryCalculation, "frozen_period_id">[]
+	export let flowCalculations: FlowCalculation[]
 
-	$: liquidSubtotals = statement.cash_flow_statement.liquid_subtotals
-	$: illiquidSubtotals = statement.cash_flow_statement.illiquid_subtotals
-	$: openedCashFlowCategories = cashFlowCategories.filter(
-		category => liquidSubtotals.some(subtotal => subtotal.cash_flow_category_id === category.id)
-	)
-	$: closedCashFlowCategories = cashFlowCategories.filter(
-		category => illiquidSubtotals.some(subtotal => subtotal.cash_flow_category_id === category.id)
-	)
+	$: subtotals = statement.cash_flow_statement.subtotals
 	$: friendlyClosedLiquidAmount = formatAmount(
 		currency,
 		statement.cash_flow_statement.closed_liquid_amount
@@ -43,25 +39,17 @@
 		<DataTableHeader scope="column" kind="numeric">Amount</DataTableHeader>
 	</svelte:fragment>
 	<svelte:fragment slot="table_rows">
-		{#each openedCashFlowCategories as openedCashFlowCategory}
-			<CategorizedSection
-				cashFlowCategory={openedCashFlowCategory}
-				cashFlowSubtotals={statement.cash_flow_statement.liquid_subtotals}
-				{currency}
-				{accounts}
-				{data}/>
-		{/each}
 		<TotalAmountRow
 			rowName="Opened Liquid Balance"
 			currency={currency}
 			rawAmount={statement.cash_flow_statement.opened_liquid_amount}/>
-		{#each closedCashFlowCategories as closedCashFlowCategory}
+		{#each cashFlowActivities as cashFlowActivity}
 			<CategorizedSection
-				cashFlowCategory={closedCashFlowCategory}
-				cashFlowSubtotals={statement.cash_flow_statement.illiquid_subtotals}
+				cashFlowActivity={cashFlowActivity}
+				cashFlowSubtotals={subtotals}
 				{currency}
 				{accounts}
-				{data}/>
+				{flowCalculations}/>
 			{/each}
 	</svelte:fragment>
 	<svelte:fragment slot="table_footer_cells">
