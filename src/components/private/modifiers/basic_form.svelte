@@ -57,7 +57,7 @@
 			{IDPrefix}
 			{errors}/>
 		<ChoiceListField
-			fieldName="Debit Cash Flow Category"
+			fieldName="Debit Cash Flow Activity"
 			errorFieldName="cash_flow_activity_id"
 			disabled={isConnecting || forceDisabledFields.includes("debit_cash_flow_activity_id")}
 			bind:value={debitCashFlowActivityID}
@@ -75,7 +75,7 @@
 			{IDPrefix}
 			{errors}/>
 		<ChoiceListField
-			fieldName="Credit Cash Flow Category"
+			fieldName="Credit Cash Flow Activity"
 			errorFieldName="cash_flow_activity_id"
 			disabled={isConnecting || forceDisabledFields.includes("credit_cash_flow_activity_id")}
 			bind:value={creditCashFlowActivityID}
