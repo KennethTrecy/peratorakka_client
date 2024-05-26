@@ -99,12 +99,14 @@
 						data = {
 							...data,
 							// TODO: Renewal of cash flow activity is temporary. To be removed next update.
-							"debit_cash_flow_activity_id": debitCashFlowActivityID === ""
-								? null
-								: parseInt(debitCashFlowActivityID),
-							"credit_cash_flow_activity_id": creditCashFlowActivityID === ""
-								? null
-								: parseInt(creditCashFlowActivityID),
+							"debit_cash_flow_activity_id":
+								debitCashFlowActivityID === `${NO_CASH_FLOW_ACTIVITY.id}`
+									? null
+									: parseInt(debitCashFlowActivityID),
+							"credit_cash_flow_activity_id":
+								creditCashFlowActivityID === `${NO_CASH_FLOW_ACTIVITY.id}`
+									? null
+									: parseInt(creditCashFlowActivityID),
 							name,
 							description
 						}
@@ -121,6 +123,15 @@
 			await requesterInfo.send({
 				"body": JSON.stringify({
 					"modifier": {
+						// TODO: Renewal of cash flow activity is temporary. To be removed next update.
+						"debit_cash_flow_activity_id":
+							debitCashFlowActivityID === `${NO_CASH_FLOW_ACTIVITY.id}`
+								? null
+								: parseInt(debitCashFlowActivityID),
+						"credit_cash_flow_activity_id":
+							creditCashFlowActivityID === `${NO_CASH_FLOW_ACTIVITY.id}`
+								? null
+								: parseInt(creditCashFlowActivityID),
 						name,
 						description
 					}
@@ -227,10 +238,12 @@
 			{/if}
 			<ShortParagraph>
 				The {friendlyKind} modifier {friendlyAction}
-				the debited “{debitAccount.name}”{#if hasDebitCashFlowActivity}
+				the debited “{debitAccount.name}”
+				{#if hasDebitCashFlowActivity}
 					(debited cash flow is considered under “{friendlyDebitActivityName}”)
 				{/if}
-				and credited “{creditAccount.name}”{#if hasCreditCashFlowActivity}
+				and credited “{creditAccount.name}”
+				{#if hasCreditCashFlowActivity}
 					(credited cash flow is considered under “{friendlyCreditActivityName}”)
 				{/if}.
 			</ShortParagraph>

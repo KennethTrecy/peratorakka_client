@@ -129,8 +129,10 @@
 					let responseDocument = await response.json()
 					errorsForAccounts.set([])
 					currencies = mergeUniqueResources(currencies, responseDocument.currencies)
-					accounts = [ ...accounts, ...responseDocument.accounts ]
-					lastAccountDependencyOffset = lastAccountDependencyOffset + responseDocument.accounts.length
+					accounts = mergeUniqueResources(accounts, responseDocument.accounts)
+					lastAccountDependencyOffset = lastAccountDependencyOffset + responseDocument
+						.accounts
+						.length
 					totalNumberOfAccountDependencies = responseDocument.meta.overall_filtered_count
 				}
 			},
