@@ -29,7 +29,6 @@ export type AcceptableAccountKind = typeof acceptableAccountKinds[number]
 
 export interface Account extends Entity{
 	currency_id: number
-	cash_flow_activity_id: number|null
 	name: string
 	description: string
 	kind: AccountKind
@@ -46,6 +45,8 @@ export type AcceptableModifierAction = typeof acceptableModifierActions[number]
 export interface Modifier extends Entity {
 	debit_account_id: number
 	credit_account_id: number
+	debit_cash_flow_activity_id: number
+	credit_cash_flow_activity_id: number
 	name: string
 	description: string
 	kind: ModifierKind
