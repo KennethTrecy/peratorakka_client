@@ -2,9 +2,10 @@
 	import type {
 		Account,
 		Currency,
-		CashFlowCategory,
+		CashFlowActivity,
 		FrozenPeriod,
-		SummaryCalculation
+		SummaryCalculation,
+		FlowCalculation
 	} from "+/entity"
 	import type { ContextBundle } from "+/component"
 	import type { GeneralError, FinancialStatementGroup } from "+/rest"
@@ -62,9 +63,10 @@
 	})
 
 	let currencies: Currency[] = []
-	let cashFlowCategories: CashFlowCategory[] = []
+	let cashFlowActivities: CashFlowActivity[] = []
 	let accounts: Account[] = []
 	let summaryCalculations: SummaryCalculation[] = []
+	let flowCalculations: FlowCalculation[] = []
 	let statements: FinancialStatementGroup[] = []
 
 	let chosenPeriod: FrozenPeriod|null = null
@@ -83,9 +85,10 @@
 						"action": async (response: Response) => {
 							const document = await response.json()
 							currencies = document.currencies
-							cashFlowCategories = document.cash_flow_categories
+							cashFlowActivities = document.cash_flow_activities
 							accounts = document.accounts
 							summaryCalculations = document.summary_calculations
+							flowCalculations = document.flow_calculations
 							statements = document["@meta"].statements
 
 							showErrors.set([])
@@ -163,8 +166,9 @@
 				{statements}
 				{accounts}
 				{currencies}
-				{cashFlowCategories}
-				data={summaryCalculations}>
+				{cashFlowActivities}
+				{summaryCalculations}
+				{flowCalculations}>
 				<svelte:fragment slot="empty_collection_description">
 					There are no financial statements at the chosen date range. Please check another range.
 				</svelte:fragment>
