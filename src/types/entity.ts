@@ -76,3 +76,10 @@ export interface SummaryCalculation extends Entity {
 	closed_debit_amount: string
 	closed_credit_amount: string
 }
+
+export interface FlowCalculation extends Entity {
+	frozen_period_id: number
+	cash_flow_activity_id: number
+	account_id: number
+	net_amount: string
+}
