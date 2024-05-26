@@ -1,27 +1,26 @@
 <script lang="ts">
 	import type { GeneralError } from "+/rest"
-	import type { AcceptableCashFlowCategoryKind, CashFlowCategory } from "+/entity"
+	import type { CashFlowActivity } from "+/entity"
 
 	import { createEventDispatcher } from "svelte"
 	import { writable } from "svelte/store"
 
 	import makeJSONRequester from "$/rest/make_json_requester"
 
-	import BasicForm from "%/cash_flow_categories/basic_form.svelte"
+	import BasicForm from "%/cash_flow_activities/basic_form.svelte"
 	import CollectionItem from "$/catalog/collection_item.svelte"
 	import EditActionCardButtonPair from "$/button/card/edit_action_pair.svelte"
 	import ShortParagraph from "$/typography/short_paragraph.svelte"
 
-	export let data: CashFlowCategory
+	export let data: CashFlowActivity
 
 	const dispatch = createEventDispatcher<{
-		"delete": CashFlowCategory
+		"delete": CashFlowActivity
 	}>()
 	let name = data.name
 	let description = data.description
-	let kind = data.kind as AcceptableCashFlowCategoryKind
 
-	$: IDPrefix = `old_cash_flow_category_${data.id}`
+	$: IDPrefix = `old_cash_flow_activity_${data.id}`
 	$: formID = `${IDPrefix}_update_form`
 	let isConnectingToUpdate = writable<boolean>(false)
 	let updateErrors = writable<GeneralError[]>([])
@@ -32,7 +31,7 @@
 
 	$: {
 		const requesterInfo = makeJSONRequester({
-			"path": `/api/v1/cash_flow_categories/${data.id}`,
+			"path": `/api/v1/cash_flow_activities/${data.id}`,
 			"defaultRequestConfiguration": {
 				"method": "PUT",
 			},
@@ -43,8 +42,7 @@
 						data = {
 							...data,
 							name,
-							description,
-							kind
+							description
 						}
 					}
 				}
@@ -57,10 +55,9 @@
 		requestUpdate = async () => {
 			await requesterInfo.send({
 				"body": JSON.stringify({
-					"cash_flow_category": {
+					"cash_flow_activity": {
 						name,
-						description,
-						kind
+						description
 					}
 				})
 			})
@@ -69,7 +66,7 @@
 
 	$: {
 		const requesterInfo = makeJSONRequester({
-			"path": `/api/v1/cash_flow_categories/${data.id}`,
+			"path": `/api/v1/cash_flow_activities/${data.id}`,
 			"defaultRequestConfiguration": {
 				"method": "DELETE",
 			},
@@ -92,7 +89,6 @@
 	function resetDraft() {
 		name = data.name
 		description = data.description
-		kind = data.kind as AcceptableCashFlowCategoryKind
 	}
 </script>
 
@@ -111,7 +107,6 @@
 		id={formID}
 		bind:name={name}
 		bind:description={description}
-		bind:kind={kind}
 		isConnecting={$isConnectingToUpdate}
 		{IDPrefix}
 		errors={$updateErrors}
@@ -122,14 +117,9 @@
 			on:cancelEdit={cancelEdit}/>
 	</BasicForm>
 	<ShortParagraph slot="delete_confirmation_message">
-		Deleting this cash flow category may cause inaccuracy of the cash flow statement.
+		Deleting this cash flow activity may cause inaccuracy of the cash flow statement.
 	</ShortParagraph>
-	<svelte:fragment slot="resource_info">
-		<ShortParagraph>
-			Accounts under this category would be considered as {data.kind}.
-		</ShortParagraph>
-		<ShortParagraph>
-			{data.description}
-		</ShortParagraph>
-	</svelte:fragment>
+	<ShortParagraph slot="resource_info">
+		{data.description}
+	</ShortParagraph>
 </CollectionItem>
