@@ -2,6 +2,7 @@
 	import type { GeneralError } from "+/rest"
 	import type {
 		Currency,
+		CashFlowActivity,
 		Account,
 		AcceptableModifierKind,
 		AcceptableModifierAction,
@@ -13,6 +14,7 @@
 
 	import { acceptableModifierKinds, acceptableModifierActions } from "#/entity"
 	import { UNKNOWN_ACCOUNT } from "#/component"
+	import { NO_CASH_FLOW_ACTIVITY } from "#/component"
 
 	import convertSnakeCaseToProperCase from "$/utility/convert_snake_case_to_proper_case"
 	import makeJSONRequester from "$/rest/make_json_requester"
@@ -24,6 +26,7 @@
 	import ShortParagraph from "$/typography/short_paragraph.svelte"
 
 	export let currencies: Currency[]
+	export let cashFlowActivities: CashFlowActivity[]
 	export let accounts: Account[]
 	export let data: Modifier
 
@@ -32,6 +35,12 @@
 	}>()
 	let debitAccountID = `${data.debit_account_id}`
 	let creditAccountID = `${data.credit_account_id}`
+	let debitCashFlowActivityID = data.debit_cash_flow_activity_id === null
+		? `${NO_CASH_FLOW_ACTIVITY.id}`
+		: `${data.debit_cash_flow_activity_id}`
+	let creditCashFlowActivityID = data.credit_cash_flow_activity_id === null
+		? `${NO_CASH_FLOW_ACTIVITY.id}`
+		: `${data.credit_cash_flow_activity_id}`
 	let name = data.name
 	let description = data.description
 	let kind = fallbackToAceptableKind(data.kind)
@@ -54,6 +63,21 @@
 	$: friendlyAction = data.action
 	$: friendlyKind = data.kind
 	$: resolvedDescription = description || "None"
+	$: hasDebitCashFlowActivity = debitCashFlowActivityID !== `${NO_CASH_FLOW_ACTIVITY.id}`
+	$: associatedDebitCashFlowActivity = hasDebitCashFlowActivity ? cashFlowActivities.find(
+		cashFlowActivity => cashFlowActivity.id === parseInt(debitCashFlowActivityID)
+	) as CashFlowActivity : null
+	$: hasCreditCashFlowActivity = creditCashFlowActivityID !== `${NO_CASH_FLOW_ACTIVITY.id}`
+	$: associatedCreditCashFlowActivity = hasCreditCashFlowActivity ? cashFlowActivities.find(
+		cashFlowActivity => cashFlowActivity.id === parseInt(creditCashFlowActivityID)
+	) as CashFlowActivity : null
+
+	$: friendlyDebitActivityName = hasDebitCashFlowActivity
+		? associatedDebitCashFlowActivity?.name
+		: null
+	$: friendlyCreditActivityName = hasDebitCashFlowActivity
+		? associatedCreditCashFlowActivity?.name
+		: null
 
 	let isConnectingToUpdate = writable<boolean>(false)
 	let updateErrors = writable<GeneralError[]>([])
@@ -74,6 +98,13 @@
 					"action": async (response: Response) => {
 						data = {
 							...data,
+							// Renewal of cash flow activity is temporary
+							"debit_cash_flow_activity_id": debitCashFlowActivityID === ""
+								? null
+								: parseInt(debitCashFlowActivityID),
+							"credit_cash_flow_activity_id": creditCashFlowActivityID === ""
+								? null
+								: parseInt(creditCashFlowActivityID),
 							name,
 							description
 						}
@@ -121,6 +152,13 @@
 	}
 
 	function resetDraft() {
+		// Renewal of cash flow activity is temporary
+		debitCashFlowActivityID = data.debit_cash_flow_activity_id === null
+			? `${NO_CASH_FLOW_ACTIVITY.id}`
+			: `${data.debit_cash_flow_activity_id}`
+		creditCashFlowActivityID = data.credit_cash_flow_activity_id === null
+			? `${NO_CASH_FLOW_ACTIVITY.id}`
+			: `${data.credit_cash_flow_activity_id}`
 		name = data.name
 		description = data.description
 	}
@@ -158,6 +196,8 @@
 		id={formID}
 		bind:debitAccountID={debitAccountID}
 		bind:creditAccountID={creditAccountID}
+		bind:debitCashFlowActivityID={debitCashFlowActivityID}
+		bind:creditCashFlowActivityID={creditCashFlowActivityID}
 		bind:name={name}
 		bind:description={description}
 		bind:kind={kind}
@@ -166,6 +206,7 @@
 		{IDPrefix}
 		{currencies}
 		{accounts}
+		{cashFlowActivities}
 		errors={$updateErrors}
 		{forceDisabledFields}
 		on:submit={confirmEdit}>
@@ -185,7 +226,13 @@
 				</ShortParagraph>
 			{/if}
 			<ShortParagraph>
-				The {friendlyKind} modifier {friendlyAction} the debited “{debitAccount.name}” and credited “{creditAccount.name}”.
+				The {friendlyKind} modifier {friendlyAction}
+				the debited “{debitAccount.name}”{#if hasDebitCashFlowActivity}
+					(debited cash flow is considered under “{friendlyDebitActivityName}”)
+				{/if}
+				and credited “{creditAccount.name}”{#if hasCreditCashFlowActivity}
+					(credited cash flow is considered under “{friendlyCreditActivityName}”)
+				{/if}.
 			</ShortParagraph>
 		</Flex>
 </svelte:fragment>
