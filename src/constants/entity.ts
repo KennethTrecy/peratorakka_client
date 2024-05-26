@@ -35,13 +35,3 @@ export const modifierKinds = [
 	"unknown",
 	...acceptableModifierKinds
 ] as const
-
-export const acceptableCashFlowCategoryKinds = [
-	"liquid",
-	"illiquid"
-] as const
-
-export const cashFlowCategoryKinds = [
-	"unknown",
-	...acceptableCashFlowCategoryKinds
-] as const
