@@ -1,9 +1,9 @@
 <script lang="ts">
-	import type { Currency, CashFlowCategory, Account, AcceptableAccountKind } from "+/entity"
+	import type { Currency, Account, AcceptableAccountKind } from "+/entity"
 
 	import { createEventDispatcher } from "svelte"
 
-	import { NO_CASH_FLOW_CATEGORY, UNKNOWN_OPTION } from "#/component"
+	import { UNKNOWN_OPTION } from "#/component"
 	import { acceptableAccountKinds } from "#/entity"
 
 	import makeJSONRequester from "$/rest/make_json_requester"
@@ -21,10 +21,8 @@
 
 	export let isLoadingInitialData: boolean
 	export let currencies: Currency[]
-	export let cashFlowCategories: CashFlowCategory[]
 
 	export let currencyID: string = UNKNOWN_OPTION
-	export let cashFlowCategoryID: string = `${NO_CASH_FLOW_CATEGORY.id}`
 	export let name: string = ""
 	export let description: string =""
 	export let kind: AcceptableAccountKind = acceptableAccountKinds[0]
@@ -42,7 +40,6 @@
 					const { account } = document
 
 					currencyID = UNKNOWN_OPTION
-					cashFlowCategoryID = `${NO_CASH_FLOW_CATEGORY.id}`
 					name = ""
 					description = ""
 					kind = acceptableAccountKinds[0]
@@ -59,9 +56,6 @@
 			"body": JSON.stringify({
 				"account": {
 					"currency_id": parseInt(currencyID),
-					"cash_flow_category_id": cashFlowCategoryID === `${NO_CASH_FLOW_CATEGORY.id}`
-						? null
-						: parseInt(cashFlowCategoryID),
 					name,
 					description,
 					kind
@@ -95,9 +89,7 @@
 	<BasicForm
 		slot="form"
 		bind:currencies={currencies}
-		bind:cashFlowCategories={cashFlowCategories}
 		bind:currencyID={currencyID}
-		bind:cashFlowCategoryID={cashFlowCategoryID}
 		bind:name={name}
 		bind:description={description}
 		bind:kind={kind}
