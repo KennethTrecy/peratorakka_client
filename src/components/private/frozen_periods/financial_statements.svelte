@@ -1,6 +1,12 @@
 <script lang="ts">
 	import type { FinancialStatementGroup } from "+/rest"
-	import type { Currency, CashFlowCategory, Account, SummaryCalculation } from "+/entity"
+	import type {
+		Currency,
+		CashFlowActivity,
+		Account,
+		SummaryCalculation,
+		FlowCalculation
+	} from "+/entity"
 
 	import transformCurrency from "$/form/choice_info_transformer/transform_currency"
 
@@ -15,9 +21,10 @@
 	export let finishedAt: string
 	export let statements: FinancialStatementGroup[]
 	export let currencies: Currency[]
-	export let cashFlowCategories: CashFlowCategory[]
+	export let cashFlowActivities: CashFlowActivity[]
 	export let accounts: Account[]
-	export let data: Omit<SummaryCalculation, "frozen_period_id">[]
+	export let summaryCalculations: Omit<SummaryCalculation, "frozen_period_id">[]
+	export let flowCalculations: Omit<FlowCalculation, "frozen_period_id">[]
 
 	let selectedCurrencyID = ""
 	$: {
@@ -29,9 +36,14 @@
 	$: selectedStatement = statements.find(
 		statement => `${statement.currency_id}` === selectedCurrencyID
 	)
+
+	$: data = [
+		...summaryCalculations,
+		...flowCalculations
+	]
 </script>
 
-<CatalogBase collectiveName="Financial Statements" {isConnecting} {data}>
+<CatalogBase collectiveName="Financial Statements" {isConnecting} {data} progressRate={0}>
 	<TertiaryHeading slot="name">Financial Statements</TertiaryHeading>
 	<svelte:fragment slot="filled_collection_description">
 		Below are the financial statements associated with
@@ -51,9 +63,10 @@
 			<Cluster
 				statement={selectedStatement}
 				{currencies}
-				{cashFlowCategories}
+				{cashFlowActivities}
 				{accounts}
-				{data}/>
+				{summaryCalculations}
+				{flowCalculations}/>
 		{/if}
 	</svelte:fragment>
 </CatalogBase>
