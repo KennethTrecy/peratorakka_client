@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { Currency, Account, Modifier } from "+/entity"
+	import type { Currency, CashFlowActivity, Account, Modifier } from "+/entity"
 	import type { GeneralError, SearchMode, SortOrder } from "+/rest"
 
 	import Collection from "$/catalog/collection.svelte"
@@ -9,6 +9,7 @@
 	export let isConnecting: boolean
 	export let progressRate: number
 	export let currencies: Currency[]
+	export let cashFlowActivities: CashFlowActivity[]
 	export let accounts: Account[]
 	export let data: Modifier[]
 
@@ -43,6 +44,7 @@
 				bind:data={entity}
 				{currencies}
 				{accounts}
+				{cashFlowActivities}
 				on:delete/>
 		{/each}
 	</svelte:fragment>
