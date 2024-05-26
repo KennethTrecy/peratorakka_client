@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { ContextBundle } from "+/component"
-	import type { CashFlowCategory } from "+/entity"
+	import type { CashFlowActivity } from "+/entity"
 	import type { SearchMode, SortOrder } from "+/rest"
 
 	import { get, writable } from "svelte/store"
@@ -13,9 +13,9 @@
 	import assertAuthentication from "$/page_requirement/assert_authentication"
 	import makeJSONRequester from "$/rest/make_json_requester"
 
-	import AddForm from "%/cash_flow_categories/add_form.svelte"
+	import AddForm from "%/cash_flow_activities/add_form.svelte"
 	import ArticleGrid from "$/layout/article_grid.svelte"
-	import Collection from "%/cash_flow_categories/collection.svelte"
+	import Collection from "%/cash_flow_activities/collection.svelte"
 	import ExtraResourceLoader from "$/catalog/extra_resource_loader.svelte"
 	import GridCell from "$/layout/grid_cell.svelte"
 	import InnerGrid from "$/layout/inner_grid.svelte"
@@ -29,14 +29,14 @@
 		goto
 	})
 
-	let cashFlowCategories: CashFlowCategory[] = []
+	let cashFlowActivities: CashFlowActivity[] = []
 
 	let searchMode: SearchMode = SEARCH_NORMALLY
 	let sortCriterion: string = "name"
 	let sortOrder: SortOrder = ASCENDING_ORDER
 	let lastOffset: number = 0
 
-	const collectiveName = "cash_flow_categories"
+	const collectiveName = "cash_flow_activities"
 	const partialPath = `/api/v1/${collectiveName}`
 	let parameters: [string, string][] = [
 		[ "filter[search_mode]", searchMode as string ],
@@ -72,7 +72,7 @@
 				"action": async (response: Response) => {
 					let responseDocument = await response.json()
 					errors.set([])
-					cashFlowCategories = responseDocument[collectiveName]
+					cashFlowActivities = responseDocument[collectiveName]
 					lastOffset = Math.max(0, responseDocument[collectiveName].length - 1)
 				}
 			}
@@ -80,8 +80,8 @@
 		"expectedErrorStatusCodes": [ 401 ]
 	})
 
-	async function reloadCashFlowCategories() {
-		cashFlowCategories = []
+	async function reloadCashFlowActivities() {
+		cashFlowActivities = []
 		await send({})
 	}
 
@@ -93,60 +93,60 @@
 			return
 		}
 
-		await reloadCashFlowCategories()
+		await reloadCashFlowActivities()
 	}
 
 	onMount(loadList)
 
-	function addCashFlowCategory(event: CustomEvent<CashFlowCategory>) {
-		const newCashFlowCategories = event.detail
-		cashFlowCategories = [
-			newCashFlowCategories,
-			...cashFlowCategories
+	function addCashFlowActivity(event: CustomEvent<CashFlowActivity>) {
+		const newCashFlowActivities = event.detail
+		cashFlowActivities = [
+			newCashFlowActivities,
+			...cashFlowActivities
 		]
 	}
 
-	function addCashFlowCategories(event: CustomEvent<unknown[]>) {
-		const newCashFlowCategories = event.detail as CashFlowCategory[]
-		cashFlowCategories = [
-			...cashFlowCategories,
-			...newCashFlowCategories
+	function addCashFlowActivities(event: CustomEvent<unknown[]>) {
+		const newCashFlowActivities = event.detail as CashFlowActivity[]
+		cashFlowActivities = [
+			...cashFlowActivities,
+			...newCashFlowActivities
 		]
 	}
 
-	function removeCashFlowCategories(event: CustomEvent<CashFlowCategory>) {
-		const oldCashFlowCategory = event.detail
-		cashFlowCategories = cashFlowCategories.filter(
-			cashFlowCategory => cashFlowCategory.id !== oldCashFlowCategory.id
+	function removeCashFlowActivities(event: CustomEvent<CashFlowActivity>) {
+		const oldCashFlowActivity = event.detail
+		cashFlowActivities = cashFlowActivities.filter(
+			CashFlowActivity => CashFlowActivity.id !== oldCashFlowActivity.id
 		)
 	}
 </script>
 
 <svelte:head>
-	<title>Cash Flow Categories</title>
+	<title>Cash Flow Activities</title>
 </svelte:head>
 
 <ArticleGrid>
 	<InnerGrid>
 		<GridCell kind="full">
-			<PrimaryHeading>Cash Flow Categories</PrimaryHeading>
+			<PrimaryHeading>Cash Flow Activities</PrimaryHeading>
 		</GridCell>
-		<AddForm on:create={addCashFlowCategory}/>
+		<AddForm on:create={addCashFlowActivity}/>
 		<Collection
-			data={cashFlowCategories}
+			data={cashFlowActivities}
 			bind:searchMode={searchMode}
 			bind:sortCriterion={sortCriterion}
 			bind:sortOrder={sortOrder}
 			isConnecting={$isConnecting}
 			listError={$errors}
-			on:delete={removeCashFlowCategories}/>
+			on:delete={removeCashFlowActivities}/>
 		<ExtraResourceLoader
 			isConnectingForInitialList={$isConnecting}
 			{partialPath}
 			{parameters}
 			{collectiveName}
 			bind:lastOffset={lastOffset}
-			on:reloadFully={reloadCashFlowCategories}
-			on:addResources={addCashFlowCategories}/>
+			on:reloadFully={reloadCashFlowActivities}
+			on:addResources={addCashFlowActivities}/>
 	</InnerGrid>
 </ArticleGrid>
