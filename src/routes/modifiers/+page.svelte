@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { Account, Currency, Modifier } from "+/entity"
+	import type { Account, CashFlowActivity, Currency, Modifier } from "+/entity"
 	import type { ContextBundle } from "+/component"
 	import type { SearchMode, SortOrder } from "+/rest"
 
@@ -7,7 +7,7 @@
 	import { onMount, getContext } from "svelte"
 	import { afterNavigate, beforeNavigate, goto } from "$app/navigation"
 
-	import { DEFAULT_MINIMUM_PROGRESS_RATE } from "#/component"
+	import { DEFAULT_MINIMUM_PROGRESS_RATE, NO_CASH_FLOW_ACTIVITY } from "#/component"
 	import { GLOBAL_CONTEXT } from "#/contexts"
 	import { SEARCH_NORMALLY, ASCENDING_ORDER, MAXIMUM_PAGINATED_LIST_LENGTH } from "#/rest"
 
@@ -34,6 +34,7 @@
 	let isRequestingDependencies = true
 
 	let currencies: Currency[] = []
+	let cashFlowActivities: CashFlowActivity[] = []
 	let accounts: Account[] = []
 	let modifiers: Modifier[] = []
 
@@ -93,21 +94,21 @@
 		"expectedErrorStatusCodes": [ 401 ]
 	})
 
-	const partialDependencyPath = "/api/v1/accounts"
 	const dependencyPathParameters = [
 		[ "sort[0][0]", "name" ],
 		[ "sort[0][1]", "ascending" ],
 		[ "sort[1][0]", "created_at" ],
 		[ "sort[1][1]", "ascending" ]
 	]
-	let totalNumberOfDependencies: number = 0
-	let lastDependencyOffset: number = -1
-	const completeDependencyPath = writable(partialDependencyPath)
+	const partialAccountDependencyPath = "/api/v1/accounts"
+	let totalNumberOfAccountDependencies: number = 0
+	let lastAccountDependencyOffset: number = -1
+	const completeAccountDependencyPath = writable(partialAccountDependencyPath)
 	$: {
-		completeDependencyPath.set(`${partialDependencyPath}?${
+		completeAccountDependencyPath.set(`${partialAccountDependencyPath}?${
 			new URLSearchParams([
 				...dependencyPathParameters,
-				[ "page[offset]", `${lastDependencyOffset + 1}` ],
+				[ "page[offset]", `${lastAccountDependencyOffset + 1}` ],
 				[ "page[limit]", MAXIMUM_PAGINATED_LIST_LENGTH ]
 			]).toString()
 		}`)
@@ -117,7 +118,7 @@
 		"errors": errorsForAccounts,
 		"send": requestForAccounts
 	} = makeJSONRequester({
-		"path": completeDependencyPath,
+		"path": completeAccountDependencyPath,
 		"defaultRequestConfiguration": {
 			"method": "GET"
 		},
@@ -129,8 +130,8 @@
 					errorsForAccounts.set([])
 					currencies = mergeUniqueResources(currencies, responseDocument.currencies)
 					accounts = [ ...accounts, ...responseDocument.accounts ]
-					lastDependencyOffset = lastDependencyOffset + responseDocument.accounts.length
-					totalNumberOfDependencies = responseDocument.meta.overall_filtered_count
+					lastAccountDependencyOffset = lastAccountDependencyOffset + responseDocument.accounts.length
+					totalNumberOfAccountDependencies = responseDocument.meta.overall_filtered_count
 				}
 			},
 			{
@@ -138,6 +139,56 @@
 				"action": async (response: Response) => {
 					errorsForModifiers.set([])
 					modifiers = []
+				}
+			}
+		],
+		"expectedErrorStatusCodes": [ 401 ]
+	})
+
+	const partialCashFlowActivityDependencyPath = "/api/v1/cash_flow_activities"
+	let totalNumberOfCashFlowActivityDependencies: number = 0
+	let lastCashFlowActivityDependencyOffset: number = -1
+	const completeCashFlowActivityDependencyPath = writable(partialCashFlowActivityDependencyPath)
+	$: {
+		completeCashFlowActivityDependencyPath.set(`${partialCashFlowActivityDependencyPath}?${
+			new URLSearchParams([
+				...dependencyPathParameters,
+				[ "page[offset]", `${lastCashFlowActivityDependencyOffset + 1}` ],
+				[ "page[limit]", MAXIMUM_PAGINATED_LIST_LENGTH ]
+			]).toString()
+		}`)
+	}
+	let {
+		"isConnecting": isConnectingForCashFlowActivities,
+		"errors": errorsForCashFlowActivities,
+		"send": requestForCashFlowActivities
+	} = makeJSONRequester({
+		"path": completeCashFlowActivityDependencyPath,
+		"defaultRequestConfiguration": {
+			"method": "GET"
+		},
+		"manualResponseHandlers": [
+			{
+				"statusCode": 200,
+				"action": async (response: Response) => {
+					let responseDocument = await response.json()
+					errorsForCashFlowActivities.set([])
+					cashFlowActivities = mergeUniqueResources(
+						cashFlowActivities,
+						responseDocument.cash_flow_activities
+					)
+					lastCashFlowActivityDependencyOffset = lastCashFlowActivityDependencyOffset
+						+ responseDocument.cash_flow_activities.length
+					totalNumberOfCashFlowActivityDependencies = responseDocument
+						.meta
+						.overall_filtered_count
+				}
+			},
+			{
+				"statusCode": 204,
+				"action": async (response: Response) => {
+					errorsForCashFlowActivities.set([])
+					cashFlowActivities = []
 				}
 			}
 		],
@@ -158,14 +209,18 @@
 		}
 
 		isRequestingDependencies = true
-		await requestForAccounts({})
 
-		while (lastDependencyOffset + 1 < totalNumberOfDependencies) {
+		await requestForAccounts({})
+		await requestForCashFlowActivities({})
+
+		while (lastAccountDependencyOffset + 1 < totalNumberOfAccountDependencies) {
 			await requestForAccounts({})
+		}
+		while (lastCashFlowActivityDependencyOffset + 1 < totalNumberOfCashFlowActivityDependencies) {
+			await requestForCashFlowActivities({})
 		}
 
 		isRequestingDependencies = false
-
 		await reloadModifiers()
 	}
 
@@ -194,13 +249,17 @@
 
 	$: progressRate = isRequestingDependencies
 		? (
-			totalNumberOfDependencies === 0
+			totalNumberOfAccountDependencies === 0
 				? DEFAULT_MINIMUM_PROGRESS_RATE
 				: (
 					accounts.length
 					+ Math.max(Number(modifiers.length > 0), DEFAULT_MINIMUM_PROGRESS_RATE)
-				) / (totalNumberOfDependencies + 1)
+				) / (totalNumberOfAccountDependencies + 1)
 		): Math.max(Number(modifiers.length > 0), DEFAULT_MINIMUM_PROGRESS_RATE) / 1
+	$: selectableCashFlowActivities = [
+		NO_CASH_FLOW_ACTIVITY,
+		...cashFlowActivities
+	]
 </script>
 
 <svelte:head>
@@ -215,10 +274,12 @@
 		<AddForm
 			{currencies}
 			{accounts}
-			isLoadingInitialData={$isConnectingForAccounts}
+			cashFlowActivities={selectableCashFlowActivities}
+			isLoadingInitialData={$isConnectingForAccounts || $isConnectingForCashFlowActivities}
 			on:create={addModifier}/>
 		<Collection
 			{currencies}
+			cashFlowActivities={selectableCashFlowActivities}
 			{accounts}
 			data={modifiers}
 			bind:searchMode={searchMode}
