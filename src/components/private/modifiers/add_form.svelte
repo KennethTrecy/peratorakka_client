@@ -1,6 +1,7 @@
 <script lang="ts">
 	import type {
 		Currency,
+		CashFlowActivity,
 		Account,
 		AcceptableModifierKind,
 		AcceptableModifierAction,
@@ -9,7 +10,7 @@
 
 	import { createEventDispatcher } from "svelte"
 
-	import { UNKNOWN_OPTION } from "#/component"
+	import { NO_CASH_FLOW_ACTIVITY, UNKNOWN_OPTION } from "#/component"
 	import { acceptableModifierKinds, acceptableModifierActions } from "#/entity"
 
 	import makeJSONRequester from "$/rest/make_json_requester"
@@ -28,8 +29,12 @@
 	export let isLoadingInitialData: boolean
 	export let currencies: Currency[]
 	export let accounts: Account[]
+	export let cashFlowActivities: CashFlowActivity[]
+
 	export let debitAccountID: string = UNKNOWN_OPTION
 	export let creditAccountID: string = UNKNOWN_OPTION
+	export let debitCashFlowActivityID: string = `${NO_CASH_FLOW_ACTIVITY.id}`
+	export let creditCashFlowActivityID: string = `${NO_CASH_FLOW_ACTIVITY.id}`
 	export let name: string = ""
 	export let description: string =""
 	export let kind: AcceptableModifierKind = acceptableModifierKinds[0]
@@ -49,6 +54,8 @@
 
 					debitAccountID = UNKNOWN_OPTION
 					creditAccountID = UNKNOWN_OPTION
+					debitCashFlowActivityID = `${NO_CASH_FLOW_ACTIVITY.id}`
+					creditCashFlowActivityID = `${NO_CASH_FLOW_ACTIVITY.id}`
 					name = ""
 					description = ""
 					kind = acceptableModifierKinds[0]
@@ -67,6 +74,14 @@
 				"modifier": {
 					"debit_account_id": parseInt(debitAccountID),
 					"credit_account_id": parseInt(creditAccountID),
+					"debit_cash_flow_activity_id":
+						debitCashFlowActivityID === `${NO_CASH_FLOW_ACTIVITY.id}`
+							? null
+							: parseInt(debitCashFlowActivityID),
+					"credit_cash_flow_activity_id":
+						creditCashFlowActivityID === `${NO_CASH_FLOW_ACTIVITY.id}`
+							? null
+							: parseInt(creditCashFlowActivityID),
 					name,
 					description,
 					kind,
@@ -106,8 +121,11 @@
 		slot="form"
 		currencies={currencies}
 		accounts={accounts}
+		bind:cashFlowActivities={cashFlowActivities}
 		bind:debitAccountID={debitAccountID}
 		bind:creditAccountID={creditAccountID}
+		bind:debitCashFlowActivityID={debitCashFlowActivityID}
+		bind:creditCashFlowActivityID={creditCashFlowActivityID}
 		bind:name={name}
 		bind:description={description}
 		bind:kind={kind}
