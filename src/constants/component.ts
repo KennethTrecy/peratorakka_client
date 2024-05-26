@@ -1,4 +1,4 @@
-import type { Account, CashFlowCategory } from "+/entity"
+import type { Account, CashFlowActivity } from "+/entity"
 import type { BufferDelayConfiguration } from "+/component"
 
 export const UNKNOWN_OPTION = "unknown"
@@ -8,17 +8,16 @@ export const UNKNOWN_ACCOUNT: Account = {
 	"name": "Unknown",
 	"description": "Either the associated account is still loading or not yet created.",
 	"currency_id": 0,
-	"cash_flow_category_id": 0,
+	"cash_flow_activity_id": 0,
 	"kind": "unknown",
 	"created_at": "",
 	"updated_at": ""
 }
 
-export const NO_CASH_FLOW_CATEGORY: CashFlowCategory = {
+export const NO_CASH_FLOW_ACTIVITY: CashFlowActivity = {
 	"id": 0,
-	"name": "No Cash Flow Category",
+	"name": "No Cash Flow Activity",
 	"description": "This is an option used to represent uncategorized accounts.",
-	"kind": "unknown",
 	"created_at": "",
 	"updated_at": ""
 }
