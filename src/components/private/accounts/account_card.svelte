@@ -27,7 +27,8 @@
 	let kind = fallbackToAceptableKind(data.kind)
 	let forceDisabledFields: (keyof Account)[] = [
 		"currency_id",
-		"kind"
+		// TODO: Renewal of account is temporary. To be removed next update.
+		// "kind"
 	]
 
 	$: IDPrefix = `old_account_${data.id}`
