@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { Account, Currency, CashFlowCategory } from "+/entity"
+	import type { Account, Currency } from "+/entity"
 	import type { ContextBundle } from "+/component"
 	import type { SearchMode, SortOrder } from "+/rest"
 
@@ -8,11 +8,11 @@
 	import { afterNavigate, beforeNavigate, goto } from "$app/navigation"
 
 	import { GLOBAL_CONTEXT } from "#/contexts"
-	import { NO_CASH_FLOW_CATEGORY } from "#/component"
 	import { SEARCH_NORMALLY, ASCENDING_ORDER, MAXIMUM_PAGINATED_LIST_LENGTH } from "#/rest"
 
 	import assertAuthentication from "$/page_requirement/assert_authentication"
 	import makeJSONRequester from "$/rest/make_json_requester"
+	import mergeUniqueResources from "$/utility/merge_unique_resources"
 
 	import AddForm from "%/accounts/add_form.svelte"
 	import ArticleGrid from "$/layout/article_grid.svelte"
@@ -33,7 +33,6 @@
 	let isRequestingDependencies = true
 
 	let currencies: Currency[] = []
-	let cashFlowCategories: CashFlowCategory[] = []
 	let accounts: Account[] = []
 
 	let searchMode: SearchMode = SEARCH_NORMALLY
@@ -88,21 +87,21 @@
 		"expectedErrorStatusCodes": [ 401 ]
 	})
 
+	const partialDependencyPath = "/api/v1/currencies"
 	const dependencyPathParameters = [
 		[ "sort[0][0]", "name" ],
 		[ "sort[0][1]", "ascending" ],
 		[ "sort[1][0]", "created_at" ],
 		[ "sort[1][1]", "ascending" ]
 	]
-	const partialCurrencyDependencyPath = "/api/v1/currencies"
-	let totalNumberOfCurrencyDependencies: number = 0
-	let lastCurrencyDependencyOffset: number = -1
-	const completeCurrencyDependencyPath = writable(partialCurrencyDependencyPath)
+	let totalNumberOfDependencies: number = 0
+	let lastDependencyOffset: number = -1
+	const completeDependencyPath = writable(partialDependencyPath)
 	$: {
-		completeCurrencyDependencyPath.set(`${partialCurrencyDependencyPath}?${
+		completeDependencyPath.set(`${partialDependencyPath}?${
 			new URLSearchParams([
 				...dependencyPathParameters,
-				[ "page[offset]", `${lastCurrencyDependencyOffset + 1}` ],
+				[ "page[offset]", `${lastDependencyOffset + 1}` ],
 				[ "page[limit]", MAXIMUM_PAGINATED_LIST_LENGTH ]
 			]).toString()
 		}`)
@@ -112,7 +111,7 @@
 		"errors": errorsForCurrencies,
 		"send": requestForCurrencies
 	} = makeJSONRequester({
-		"path": completeCurrencyDependencyPath,
+		"path": completeDependencyPath,
 		"defaultRequestConfiguration": {
 			"method": "GET"
 		},
@@ -122,61 +121,11 @@
 				"action": async (response: Response) => {
 					let responseDocument = await response.json()
 					errorsForCurrencies.set([])
-					currencies = [ ...currencies, ...responseDocument.currencies ]
-					lastCurrencyDependencyOffset = lastCurrencyDependencyOffset + responseDocument
+					currencies = mergeUniqueResources(currencies, responseDocument.currencies)
+					lastDependencyOffset = lastDependencyOffset + responseDocument
 						.currencies
 						.length
-					totalNumberOfCurrencyDependencies = responseDocument.meta.overall_filtered_count
-				}
-			},
-			{
-				"statusCode": 204,
-				"action": async (response: Response) => {
-					errorsForCurrencies.set([])
-					currencies = []
-				}
-			}
-		],
-		"expectedErrorStatusCodes": [ 401 ]
-	})
-
-	const partialCashFlowCategoryDependencyPath = "/api/v1/cash_flow_categories"
-	let totalNumberOfCashFlowCategoryDependencies: number = 0
-	let lastCashFlowCategoryDependencyOffset: number = -1
-	const completeCashFlowCategoryDependencyPath = writable(partialCashFlowCategoryDependencyPath)
-	$: {
-		completeCashFlowCategoryDependencyPath.set(`${partialCashFlowCategoryDependencyPath}?${
-			new URLSearchParams([
-				...dependencyPathParameters,
-				[ "page[offset]", `${lastCashFlowCategoryDependencyOffset + 1}` ],
-				[ "page[limit]", MAXIMUM_PAGINATED_LIST_LENGTH ]
-			]).toString()
-		}`)
-	}
-	let {
-		"isConnecting": isConnectingForCashFlowCategories,
-		"errors": errorsForCashFlowCategories,
-		"send": requestForCashFlowCategories
-	} = makeJSONRequester({
-		"path": completeCashFlowCategoryDependencyPath,
-		"defaultRequestConfiguration": {
-			"method": "GET"
-		},
-		"manualResponseHandlers": [
-			{
-				"statusCode": 200,
-				"action": async (response: Response) => {
-					let responseDocument = await response.json()
-					errorsForCashFlowCategories.set([])
-					cashFlowCategories = [
-						...cashFlowCategories,
-						...responseDocument.cash_flow_categories
-					]
-					lastCashFlowCategoryDependencyOffset = lastCashFlowCategoryDependencyOffset
-						+ responseDocument.cash_flow_categories.length
-					totalNumberOfCashFlowCategoryDependencies = responseDocument
-						.meta
-						.overall_filtered_count
+					totalNumberOfDependencies = responseDocument.meta.overall_filtered_count
 				}
 			},
 			{
@@ -206,13 +155,8 @@
 		isRequestingDependencies = true
 
 		await requestForCurrencies({})
-		while (lastCurrencyDependencyOffset + 1 < totalNumberOfCurrencyDependencies) {
+		while (lastDependencyOffset + 1 < totalNumberOfDependencies) {
 			await requestForCurrencies({})
-		}
-
-		await requestForCashFlowCategories({})
-		while (lastCashFlowCategoryDependencyOffset + 1 < lastCashFlowCategoryDependencyOffset) {
-			await requestForCashFlowCategories({})
 		}
 
 		isRequestingDependencies = false
@@ -241,11 +185,6 @@
 		const oldAccount = event.detail
 		accounts = accounts.filter(account => account.id !== oldAccount.id)
 	}
-
-	$: selectableCashFlowCategories = [
-		NO_CASH_FLOW_CATEGORY,
-		...cashFlowCategories
-	]
 </script>
 
 <svelte:head>
@@ -259,12 +198,10 @@
 		</GridCell>
 		<AddForm
 			{currencies}
-			cashFlowCategories={selectableCashFlowCategories}
-			isLoadingInitialData={$isConnectingForCurrencies || $isConnectingForCashFlowCategories}
+			isLoadingInitialData={$isConnectingForCurrencies}
 			on:create={addAccount}/>
 		<Collection
 			{currencies}
-			cashFlowCategories={selectableCashFlowCategories}
 			data={accounts}
 			bind:searchMode={searchMode}
 			bind:sortCriterion={sortCriterion}
