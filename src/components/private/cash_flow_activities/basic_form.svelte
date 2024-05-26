@@ -1,23 +1,15 @@
 <script lang="ts">
 	import type { GeneralError } from "+/rest"
-	import type { AcceptableCashFlowCategoryKind, CashFlowCategory } from "+/entity"
-
-	import { acceptableCashFlowCategoryKinds } from "#/entity"
-
-	import transformString from "$/form/choice_info_transformer/transform_string"
+	import type { CashFlowActivity } from "+/entity"
 
 	import BasicForm from "$/form/basic_form.svelte"
-	import ChoiceListField from "$/form/choice_list_field.svelte"
 	import TextField from "$/form/text_field.svelte"
-
-	export const ACCEPTABLE_CASH_FLOW_CATEGORY_KINDS = [ ...acceptableCashFlowCategoryKinds ]
 
 	export let IDPrefix: string
 
 	export let name: string
 	export let description: string
-	export let kind: AcceptableCashFlowCategoryKind
-	export let forceDisabledFields: (keyof CashFlowCategory)[] = []
+	export let forceDisabledFields: (keyof CashFlowActivity)[] = []
 
 	export let isConnecting: boolean
 	export let errors: GeneralError[]
@@ -36,14 +28,6 @@
 			fieldName="Description"
 			disabled={isConnecting || forceDisabledFields.includes("description")}
 			bind:value={description}
-			{IDPrefix}
-			{errors}/>
-		<ChoiceListField
-			fieldName="Kind"
-			disabled={isConnecting || forceDisabledFields.includes("kind")}
-			bind:value={kind}
-			rawChoices={ACCEPTABLE_CASH_FLOW_CATEGORY_KINDS}
-			choiceConverter={transformString}
 			{IDPrefix}
 			{errors}/>
 	</svelte:fragment>
