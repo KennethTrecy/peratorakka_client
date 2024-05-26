@@ -45,8 +45,8 @@ export type AcceptableModifierAction = typeof acceptableModifierActions[number]
 export interface Modifier extends Entity {
 	debit_account_id: number
 	credit_account_id: number
-	debit_cash_flow_activity_id: number
-	credit_cash_flow_activity_id: number
+	debit_cash_flow_activity_id: number|null
+	credit_cash_flow_activity_id: number|null
 	name: string
 	description: string
 	kind: ModifierKind
