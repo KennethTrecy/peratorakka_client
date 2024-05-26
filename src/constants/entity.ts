@@ -1,9 +1,11 @@
 export const acceptableAccountKinds = [
-	"asset",
+	"general_asset",
 	"liability",
 	"equity",
 	"expense",
-	"income"
+	"income",
+	"liquid_asset",
+	"depreciative_asset",
 ] as const
 
 export const accountKinds = [
