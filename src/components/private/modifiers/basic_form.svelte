@@ -4,6 +4,7 @@
 		AcceptableModifierKind,
 		AcceptableModifierAction,
 		Account,
+		CashFlowActivity,
 		Currency,
 		Modifier
 	} from "+/entity"
@@ -12,6 +13,8 @@
 
 	import makeAccountTransformer from "$/form/choice_info_transformer/make_account_transformer"
 	import transformString from "$/form/choice_info_transformer/transform_string"
+	import transformCashFlowActivity
+		from "$/form/choice_info_transformer/transform_cash_flow_activity"
 
 	import BasicForm from "$/form/basic_form.svelte"
 	import ChoiceListField from "$/form/choice_list_field.svelte"
@@ -23,9 +26,12 @@
 	export let IDPrefix: string
 	export let currencies: Currency[]
 	export let accounts: Account[]
+	export let cashFlowActivities: CashFlowActivity[]
 
 	export let debitAccountID: string
 	export let creditAccountID: string
+	export let debitCashFlowActivityID: string
+	export let creditCashFlowActivityID: string
 	export let name: string
 	export let description: string
 	export let kind: AcceptableModifierKind
@@ -51,12 +57,30 @@
 			{IDPrefix}
 			{errors}/>
 		<ChoiceListField
+			fieldName="Debit Cash Flow Category"
+			errorFieldName="cash_flow_activity_id"
+			disabled={isConnecting || forceDisabledFields.includes("debit_cash_flow_activity_id")}
+			bind:value={debitCashFlowActivityID}
+			rawChoices={cashFlowActivities}
+			choiceConverter={transformCashFlowActivity}
+			{IDPrefix}
+			{errors}/>
+		<ChoiceListField
 			fieldName="Credit Account"
 			errorFieldName="credit_account_id"
 			disabled={isConnecting || forceDisabledFields.includes("credit_account_id")}
 			bind:value={creditAccountID}
 			rawChoices={accounts}
 			choiceConverter={transformAccount}
+			{IDPrefix}
+			{errors}/>
+		<ChoiceListField
+			fieldName="Credit Cash Flow Category"
+			errorFieldName="cash_flow_activity_id"
+			disabled={isConnecting || forceDisabledFields.includes("credit_cash_flow_activity_id")}
+			bind:value={creditCashFlowActivityID}
+			rawChoices={cashFlowActivities}
+			choiceConverter={transformCashFlowActivity}
 			{IDPrefix}
 			{errors}/>
 		<ChoiceListField
