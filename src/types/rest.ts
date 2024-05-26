@@ -51,7 +51,7 @@ export interface TrialBalance {
 	credit_total: string
 }
 
-export interface CashFlowActivitySummary {
+export interface CashFlowActivitySubtotal {
 	cash_flow_activity_id: number
 	subtotal: string
 	net_income: string
@@ -71,7 +71,7 @@ export interface FinancialStatementGroup {
 	cash_flow_statement: {
 		opened_liquid_amount: string
 		closed_liquid_amount: string
-		subtotals: CashFlowActivitySummary[]
+		subtotals: CashFlowActivitySubtotal[]
 	}
 	adjusted_trial_balance: TrialBalance
 }
