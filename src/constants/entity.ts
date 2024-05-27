@@ -1,15 +1,24 @@
+export const UNKNOWN_ACCOUNT_KIND = "unknown"
+export const GENERAL_ASSET_ACCOUNT_KIND = "general_asset"
+export const LIABILITY_ACCOUNT_KIND = "liability"
+export const EQUITY_ACCOUNT_KIND = "equity"
+export const EXPENSE_ACCOUNT_KIND = "expense"
+export const INCOME_ACCOUNT_KIND = "income"
+export const LIQUID_ASSET_ACCOUNT_KIND = "liquid_asset"
+export const DEPRECIATIVE_ASSET_ACCOUNT_KIND = "depreciative_asset"
+
 export const acceptableAccountKinds = [
-	"general_asset",
-	"liability",
-	"equity",
-	"expense",
-	"income",
-	"liquid_asset",
-	"depreciative_asset",
+	GENERAL_ASSET_ACCOUNT_KIND,
+	LIABILITY_ACCOUNT_KIND,
+	EQUITY_ACCOUNT_KIND,
+	EXPENSE_ACCOUNT_KIND,
+	INCOME_ACCOUNT_KIND,
+	LIQUID_ASSET_ACCOUNT_KIND,
+	DEPRECIATIVE_ASSET_ACCOUNT_KIND
 ] as const
 
 export const accountKinds = [
-	"unknown",
+	UNKNOWN_ACCOUNT_KIND,
 	...acceptableAccountKinds
 ] as const
 
