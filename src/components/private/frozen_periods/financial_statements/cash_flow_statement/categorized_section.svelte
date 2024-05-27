@@ -21,7 +21,7 @@
 
 	$: matchedSubtotal = cashFlowSubtotals.find(
 		subtotal => subtotal.cash_flow_activity_id === cashFlowActivity.id
-	) as CashFlowActivitySubtotal
+	) as CashFlowActivitySubtotal|undefined
 	$: matchedFlowCalculations = flowCalculations.filter(
 		flowCalculation => flowCalculation.cash_flow_activity_id === cashFlowActivity.id
 	)
@@ -41,30 +41,32 @@
 			&& flowCalculation["@meta"].account.kind !== acceptableAccountKinds[4]
 			&& flowCalculation.net_amount !== "0"
 	})
-	$: hasNetIncome = matchedSubtotal.net_income !== "0"
+	$: hasNetIncome = matchedSubtotal?.net_income !== "0"
 	$: rowCountBeforeAccounts = hasNetIncome ? 1 : 0
 	$: firstRowSpan = accountedFlowCalculations.length + 1 + rowCountBeforeAccounts
 </script>
 
-{#if hasNetIncome}
+{#if typeof matchedSubtotal !== "undefined"}
+	{#if hasNetIncome}
+		<AmountRow
+			categoryName={cashFlowActivity.name}
+			categoryNameRowSpan={firstRowSpan}
+			currency={currency}
+			accountName="Net income"
+			rawAmount={matchedSubtotal.net_income}/>
+	{/if}
+	{#each accountedFlowCalculations as flowCalculation, i}
+		<AmountRow
+			categoryName={cashFlowActivity.name}
+			categoryNameRowSpan={i + rowCountBeforeAccounts === 0 ? firstRowSpan : 0}
+			currency={currency}
+			accountName={flowCalculation["@meta"].account.name}
+			rawAmount={flowCalculation.net_amount}/>
+	{/each}
 	<AmountRow
 		categoryName={cashFlowActivity.name}
-		categoryNameRowSpan={firstRowSpan}
+		categoryNameRowSpan={0}
 		currency={currency}
-		accountName="Net income"
-		rawAmount={matchedSubtotal.net_income}/>
+		accountName="Balance"
+		rawAmount={matchedSubtotal.subtotal}/>
 {/if}
-{#each accountedFlowCalculations as flowCalculation, i}
-	<AmountRow
-		categoryName={cashFlowActivity.name}
-		categoryNameRowSpan={i + rowCountBeforeAccounts === 0 ? firstRowSpan : 0}
-		currency={currency}
-		accountName={flowCalculation["@meta"].account.name}
-		rawAmount={flowCalculation.net_amount}/>
-{/each}
-<AmountRow
-	categoryName={cashFlowActivity.name}
-	categoryNameRowSpan={0}
-	currency={currency}
-	accountName="Balance"
-	rawAmount={matchedSubtotal.subtotal}/>
