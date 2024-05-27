@@ -75,7 +75,7 @@
 	$: friendlyDebitActivityName = hasDebitCashFlowActivity
 		? associatedDebitCashFlowActivity?.name
 		: null
-	$: friendlyCreditActivityName = hasDebitCashFlowActivity
+	$: friendlyCreditActivityName = hasCreditCashFlowActivity
 		? associatedCreditCashFlowActivity?.name
 		: null
 
