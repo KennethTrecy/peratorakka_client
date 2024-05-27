@@ -2,6 +2,13 @@
 	import type { Currency, Account, SummaryCalculation } from "+/entity"
 	import type { FinancialStatementGroup } from "+/rest"
 
+	import {
+		DEPRECIATIVE_ASSET_ACCOUNT_KIND,
+		EQUITY_ACCOUNT_KIND,
+		GENERAL_ASSET_ACCOUNT_KIND,
+		LIABILITY_ACCOUNT_KIND
+	} from "#/entity"
+
 	import CustomTrialRow from "%/frozen_periods/financial_statements/custom_trial_row.svelte"
 	import DataTableHeader from "$/catalog/data_table_header.svelte"
 	import QuarternaryHeading from "$/typography/quarternary_heading.svelte"
@@ -13,11 +20,15 @@
 	export let accounts: Account[]
 	export let data: Omit<SummaryCalculation, "frozen_period_id">[]
 
-	$: assetAccounts = accounts.filter(account => account.kind === "asset")
+	$: assetAccounts = accounts.filter(account => [
+		GENERAL_ASSET_ACCOUNT_KIND,
+		LIABILITY_ACCOUNT_KIND,
+		DEPRECIATIVE_ASSET_ACCOUNT_KIND
+	].indexOf(account.kind) > -1)
 	$: assetAccountIDs = assetAccounts.map(account => account.id)
-	$: liabilityAccounts = accounts.filter(account => account.kind === "liability")
+	$: liabilityAccounts = accounts.filter(account => account.kind === LIABILITY_ACCOUNT_KIND)
 	$: liabilityAccountIDs = liabilityAccounts.map(account => account.id)
-	$: equityAccounts = accounts.filter(account => account.kind === "equity")
+	$: equityAccounts = accounts.filter(account => account.kind === EQUITY_ACCOUNT_KIND)
 	$: equityAccountIDs = equityAccounts.map(account => account.id)
 
 	$: assetCalculations = data.filter(

@@ -2,6 +2,8 @@
 	import type { Currency, Account, SummaryCalculation } from "+/entity"
 	import type { FinancialStatementGroup } from "+/rest"
 
+	import { INCOME_ACCOUNT_KIND, EXPENSE_ACCOUNT_KIND } from "#/entity"
+
 	import formatAmount from "$/utility/format_amount"
 
 	import DataTableCell from "$/catalog/data_table_cell.svelte"
@@ -15,9 +17,9 @@
 	export let accounts: Account[]
 	export let data: Omit<SummaryCalculation, "frozen_period_id">[]
 
-	$: incomeAccounts = accounts.filter(account => account.kind === "income")
+	$: incomeAccounts = accounts.filter(account => account.kind === INCOME_ACCOUNT_KIND)
 	$: incomeAccountIDs = incomeAccounts.map(account => account.id)
-	$: expenseAccounts = accounts.filter(account => account.kind === "expense")
+	$: expenseAccounts = accounts.filter(account => account.kind === EXPENSE_ACCOUNT_KIND)
 	$: expenseAccountIDs = expenseAccounts.map(account => account.id)
 
 	$: incomeCalculations = data.filter(
