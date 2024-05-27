@@ -4,6 +4,8 @@
 
 	import { UNKNOWN_ACCOUNT } from "#/component"
 
+	import resolvedAmount from "$/utility/resolved_amount"
+
 	import CustomTrialRow from "%/frozen_periods/financial_statements/custom_trial_row.svelte"
 
 	export let currency: Currency|undefined
@@ -15,11 +17,11 @@
 		account => account.id === data.account_id
 	) ?? UNKNOWN_ACCOUNT
 	$: rawDebitAmount = kind === "unadjusted"
-		? data.unadjusted_debit_amount
-		: data.closed_debit_amount
+		? resolvedAmount(data.unadjusted_debit_amount, data.unadjusted_credit_amount)
+		: resolvedAmount(data.closed_debit_amount, data.closed_credit_amount)
 	$: rawCreditAmount = kind === "unadjusted"
-		? data.unadjusted_credit_amount
-		: data.closed_credit_amount
+		? resolvedAmount(data.unadjusted_credit_amount, data.unadjusted_debit_amount)
+		: resolvedAmount(data.closed_credit_amount, data.closed_debit_amount)
 </script>
 
 <CustomTrialRow
