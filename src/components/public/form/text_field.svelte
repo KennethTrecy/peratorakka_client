@@ -7,6 +7,8 @@
 
 	import { isFieldError } from "+/rest"
 
+	import div from "$/layout/flex.svelte"
+
 	export let fieldName: string
 	export let disabled: boolean
 	export let value: string
@@ -105,4 +107,12 @@
 
 	@include textfield.core-styles;
 	@include helper-text.helper-text-core-styles;
+
+	.mdc-text-field-helper-line {
+		text-align: center;
+	}
+
+	.mdc-text-field-helper-text {
+		width: 100%;
+	}
 </style>

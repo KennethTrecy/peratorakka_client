@@ -82,4 +82,12 @@
 
 	@include textfield.core-styles;
 	@include helper-text.helper-text-core-styles;
+
+	.mdc-text-field-helper-line {
+		text-align: center;
+	}
+
+	.mdc-text-field-helper-text {
+		width: 100%;
+	}
 </style>
