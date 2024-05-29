@@ -4,7 +4,8 @@
 	import { isSimpleError } from "+/rest"
 
 	import ReactiveProgressBar from "$/utility/reactive_progress_bar.svelte"
-	import ShortParagraph from "$/typography/short_paragraph.svelte";
+	import ShortParagraph from "$/typography/short_paragraph.svelte"
+	import TextContainer from "$/typography/text_container.svelte"
 
 	export let errors: GeneralError[]
 	export let id: string|null
@@ -32,9 +33,11 @@
 	{/if}
 	{#if hasSimpleErrors}
 		<div class="mdc-card__content">
-			<ShortParagraph>
-				{simpleErrors}
-			</ShortParagraph>
+			<TextContainer>
+				<ShortParagraph>
+					{simpleErrors}
+				</ShortParagraph>
+			</TextContainer>
 		</div>
 	{/if}
 	<div class="mdc-card__content">
