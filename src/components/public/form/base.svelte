@@ -56,4 +56,8 @@
 	@use "@material/card";
 
 	@include card.core-styles;
+
+	.mdc-card__action-buttons {
+		padding: 0rem 0.5rem;
+	}
 </style>
