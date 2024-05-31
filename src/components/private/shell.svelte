@@ -47,7 +47,7 @@
 	</main>
 	<footer class="mdc-typography">
 		<p class="mdc-typography--body2">
-			Copyright © 2023 by Kenneth Trecy Tobias.
+			Copyright © 2024 by Kenneth Trecy Tobias.
 		</p>
 	</footer>
 </div>
