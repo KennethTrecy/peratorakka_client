@@ -3,7 +3,7 @@
 import { describe, it, expect } from "vitest"
 import { render, cleanup } from "@testing-library/svelte"
 
-import type { Entity } from "%/currencies/types"
+import type { Currency } from "@/types/entity"
 
 import Component from "./data_table.svelte"
 
@@ -11,11 +11,12 @@ describe("Data table behavior", () => {
 	it("can show loading state", async () => {
 		const collectiveName = "Currencies"
 		const isConnecting = true
-		const data: Entity[] = []
+		const data: Currency[] = []
 		const { container, getAllByRole } = render(Component, {
 			collectiveName,
 			isConnecting,
-			data
+			data,
+			"progressRate": 0
 		})
 
 		const progress = getAllByRole("progressbar")
@@ -28,16 +29,17 @@ describe("Data table behavior", () => {
 	it("can hide loading state", async () => {
 		const collectiveName = "Currencies"
 		const isConnecting = false
-		const data: Entity[] = []
+		const data: Currency[] = []
 		const { container } = render(Component, {
 			collectiveName,
 			isConnecting,
-			data
+			data,
+			"progressRate": 1
 		})
 
 		const progress = container.querySelector(".mdc-linear-progress--closed")
 
-		expect(progress).not.toBeNull()
+		expect(progress).toBeNull()
 
 		cleanup()
 	})
@@ -45,11 +47,12 @@ describe("Data table behavior", () => {
 	it("can show empty state", async () => {
 		const collectiveName = "Currencies"
 		const isConnecting = false
-		const data: Entity[] = []
+		const data: Currency[] = []
 		const { container } = render(Component, {
 			collectiveName,
 			isConnecting,
-			data
+			data,
+			"progressRate": 0
 		})
 
 		const paragraph = container.querySelector("p")
@@ -62,7 +65,7 @@ describe("Data table behavior", () => {
 	it("can show filled state", async () => {
 		const collectiveName = "Currencies"
 		const isConnecting = false
-		const data: Entity[] = [
+		const data: Currency[] = [
 			{
 				"id": 1,
 				"name": "Hello World",
@@ -81,7 +84,8 @@ describe("Data table behavior", () => {
 		const { container, getAllByRole } = render(Component, {
 			collectiveName,
 			isConnecting,
-			data
+			data,
+			"progressRate": 0
 		})
 
 		const table = getAllByRole("table")
