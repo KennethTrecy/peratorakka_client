@@ -8,6 +8,8 @@
 		FlowCalculation
 	} from "+/entity"
 
+	import { ACCOUNT_KIND_AGGREGATED_LIST_PRIOITY } from "#/entity"
+
 	import BalanceSheet from "%/frozen_periods/financial_statements/balance_sheet.svelte"
 	import CashFlowStatement from "%/frozen_periods/financial_statements/cash_flow_statement.svelte"
 	import ElementalParagraph from "$/typography/elemental_paragraph.svelte"
@@ -28,10 +30,36 @@
 	$: allowedAccountIDs = allowedAccounts.map(account => account.id)
 	$: allowedSummaryCalculations = summaryCalculations.filter(
 		calculation => allowedAccountIDs.indexOf(calculation.account_id) > -1
-	)
+	).sort((left, right) => {
+		const leftAccount = allowedAccounts.find(account => account.id === left.account_id) as Account
+		const rightAccount = allowedAccounts.find(
+			account => account.id === right.account_id
+		) as Account
+
+		const leftAccountKindImportance = ACCOUNT_KIND_AGGREGATED_LIST_PRIOITY[leftAccount.kind]
+		const rightAccountKindImportance = ACCOUNT_KIND_AGGREGATED_LIST_PRIOITY[rightAccount.kind]
+		return leftAccountKindImportance < rightAccountKindImportance
+			? -1
+			: leftAccountKindImportance > rightAccountKindImportance
+				? 1
+				: leftAccount.name.localeCompare(rightAccount.name)
+	})
 	$: allowedFlowCalculations = flowCalculations.filter(
 		calculation => allowedAccountIDs.indexOf(calculation.account_id) > -1
-	)
+	).sort((left, right) => {
+		const leftAccount = allowedAccounts.find(account => account.id === left.account_id) as Account
+		const rightAccount = allowedAccounts.find(
+			account => account.id === right.account_id
+		) as Account
+
+		const leftAccountKindImportance = ACCOUNT_KIND_AGGREGATED_LIST_PRIOITY[leftAccount.kind]
+		const rightAccountKindImportance = ACCOUNT_KIND_AGGREGATED_LIST_PRIOITY[rightAccount.kind]
+		return leftAccountKindImportance < rightAccountKindImportance
+			? -1
+			: leftAccountKindImportance > rightAccountKindImportance
+				? 1
+				: leftAccount.name.localeCompare(rightAccount.name)
+	})
 	$: hasAcceptableCashFlowActivities = cashFlowActivities.length > 1
 </script>
 
