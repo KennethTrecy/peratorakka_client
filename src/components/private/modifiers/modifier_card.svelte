@@ -237,7 +237,7 @@
 				</ShortParagraph>
 			{/if}
 			<ShortParagraph>
-				The {friendlyKind} modifier {friendlyAction}
+				The {friendlyKind} {friendlyAction} modifier
 				the debited “{debitAccount.name}”
 				{#if hasDebitCashFlowActivity}
 					(debited cash flow is considered under “{friendlyDebitActivityName}”)
