@@ -60,7 +60,7 @@
 				? 1
 				: leftAccount.name.localeCompare(rightAccount.name)
 	})
-	$: hasAcceptableCashFlowActivities = cashFlowActivities.length > 1
+	$: hasAcceptableCashFlowActivities = cashFlowActivities.length > 0
 </script>
 
 <GridCell kind="triad">
@@ -92,7 +92,7 @@
 				flowCalculations={allowedFlowCalculations}/>
 		{:else}
 			<ElementalParagraph>
-				Note: There are no or few accounts that belongs to cash flows activities. At least one account must belong to a cash flow activity.
+				Note: There are no accounts that belongs to cash flows activities. At least one account must belong to a cash flow activity.
 			</ElementalParagraph>
 		{/if}
 	</Flex>
