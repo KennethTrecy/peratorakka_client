@@ -21,7 +21,7 @@ export const NO_CASH_FLOW_ACTIVITY: CashFlowActivity = {
 	"updated_at": ""
 }
 
-export const EMPTY_AMOUNT = ""
+export const EMPTY_AMOUNT = "0.00"
 
 export const DEFAULT_MINIMUM_FRACTION_DIGITS = 2
 export const DEFAULT_MAXIMUM_FRACTION_DIGITS = 12

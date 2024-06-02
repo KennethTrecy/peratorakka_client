@@ -2,6 +2,7 @@
 	import type { Currency, Account, SummaryCalculation } from "+/entity"
 	import type { FinancialStatementGroup } from "+/rest"
 
+	import { EMPTY_AMOUNT } from "#/component"
 	import {
 		DEPRECIATIVE_ASSET_ACCOUNT_KIND,
 		EQUITY_ACCOUNT_KIND,
@@ -61,7 +62,7 @@
 			rowName="Total Assets"
 			{currency}
 			rawDebitAmount={statement.balance_sheet.total_assets}
-			rawCreditAmount="0.00"
+			rawCreditAmount={EMPTY_AMOUNT}
 			hasEmptyTrailingRow={true}/>
 
 		{#each liabilityCalculations as calculation(calculation.account_id)}
@@ -74,7 +75,7 @@
 		<CustomTrialRow
 			rowName="Total Liabilities"
 			{currency}
-			rawDebitAmount="0.00"
+			rawDebitAmount={EMPTY_AMOUNT}
 			rawCreditAmount={statement.balance_sheet.total_liabilities}
 			hasEmptyTrailingRow={true}/>
 
@@ -88,12 +89,12 @@
 		<CustomTrialRow
 			rowName="Net Income"
 			{currency}
-			rawDebitAmount="0.00"
+			rawDebitAmount={EMPTY_AMOUNT}
 			rawCreditAmount={statement.income_statement.net_total}/>
 		<CustomTrialRow
 			rowName="Total Equities"
 			{currency}
-			rawDebitAmount="0.00"
+			rawDebitAmount={EMPTY_AMOUNT}
 			rawCreditAmount={statement.balance_sheet.total_equities}/>
 	</svelte:fragment>
 </UnitDataTable>

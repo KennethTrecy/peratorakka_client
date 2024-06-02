@@ -15,6 +15,7 @@
 	export let rawCreditAmount: string
 	export let hasEmptyTrailingRow: boolean = false
 
+	$: emptyAmount = formatAmount(currency, EMPTY_AMOUNT)
 	$: friendlyDebitAmount = formatAmount(
 		currency,
 		rawDebitAmount
@@ -23,8 +24,8 @@
 		currency,
 		rawCreditAmount
 	)
-	$: isPossiblyDebitAccount = friendlyDebitAmount !== EMPTY_AMOUNT
-	$: isPossiblyCreditAccount = friendlyCreditAmount !== EMPTY_AMOUNT
+	$: isPossiblyDebitAccount = friendlyDebitAmount !== emptyAmount
+	$: isPossiblyCreditAccount = friendlyCreditAmount !== emptyAmount
 	$: hasFilled = isPossiblyDebitAccount || isPossiblyCreditAccount
 
 	$: shownDebitAmount = isPossiblyDebitAccount ? friendlyDebitAmount : ""
