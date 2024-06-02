@@ -8,7 +8,6 @@ export const UNKNOWN_ACCOUNT: Account = {
 	"name": "Unknown",
 	"description": "Either the associated account is still loading or not yet created.",
 	"currency_id": 0,
-	"cash_flow_activity_id": 0,
 	"kind": "unknown",
 	"created_at": "",
 	"updated_at": ""
@@ -21,6 +20,8 @@ export const NO_CASH_FLOW_ACTIVITY: CashFlowActivity = {
 	"created_at": "",
 	"updated_at": ""
 }
+
+export const EMPTY_AMOUNT = ""
 
 export const DEFAULT_MINIMUM_FRACTION_DIGITS = 2
 export const DEFAULT_MAXIMUM_FRACTION_DIGITS = 12

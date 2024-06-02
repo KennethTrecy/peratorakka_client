@@ -1,6 +1,8 @@
 <script lang="ts">
 	import type { Currency } from "+/entity"
 
+	import { EMPTY_AMOUNT } from "#/component"
+
 	import formatAmount from "$/utility/format_amount"
 
 	import DataTableCell from "$/catalog/data_table_cell.svelte"
@@ -13,10 +15,6 @@
 	export let rawCreditAmount: string
 	export let hasEmptyTrailingRow: boolean = false
 
-	$: emptyAmount = formatAmount(
-		currency,
-		"0"
-	)
 	$: friendlyDebitAmount = formatAmount(
 		currency,
 		rawDebitAmount
@@ -25,8 +23,8 @@
 		currency,
 		rawCreditAmount
 	)
-	$: isPossiblyDebitAccount = friendlyDebitAmount !== emptyAmount
-	$: isPossiblyCreditAccount = friendlyCreditAmount !== emptyAmount
+	$: isPossiblyDebitAccount = friendlyDebitAmount !== EMPTY_AMOUNT
+	$: isPossiblyCreditAccount = friendlyCreditAmount !== EMPTY_AMOUNT
 	$: hasFilled = isPossiblyDebitAccount || isPossiblyCreditAccount
 
 	$: shownDebitAmount = isPossiblyDebitAccount ? friendlyDebitAmount : ""
