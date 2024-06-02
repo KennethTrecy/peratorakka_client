@@ -7,7 +7,10 @@
 		DEPRECIATIVE_ASSET_ACCOUNT_KIND,
 		EQUITY_ACCOUNT_KIND,
 		GENERAL_ASSET_ACCOUNT_KIND,
-		LIABILITY_ACCOUNT_KIND
+		LIABILITY_ACCOUNT_KIND,
+
+		LIQUID_ASSET_ACCOUNT_KIND
+
 	} from "#/entity"
 
 	import CustomTrialRow from "%/frozen_periods/financial_statements/custom_trial_row.svelte"
@@ -23,7 +26,7 @@
 
 	$: assetAccounts = accounts.filter(account => [
 		GENERAL_ASSET_ACCOUNT_KIND,
-		LIABILITY_ACCOUNT_KIND,
+		LIQUID_ASSET_ACCOUNT_KIND,
 		DEPRECIATIVE_ASSET_ACCOUNT_KIND
 	].indexOf(account.kind) > -1)
 	$: assetAccountIDs = assetAccounts.map(account => account.id)
