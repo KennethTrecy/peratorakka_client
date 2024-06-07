@@ -34,7 +34,7 @@
 	export let creditCashFlowActivityID: string
 	export let name: string
 	export let description: string
-	export let kind: AcceptableModifierKind
+	export const kind: AcceptableModifierKind = ACCEPTABLE_MODIFIER_KINDS[0]
 	export let action: AcceptableModifierAction
 	export let forceDisabledFields: (keyof Modifier)[] = []
 
@@ -81,14 +81,6 @@
 			bind:value={creditCashFlowActivityID}
 			rawChoices={cashFlowActivities}
 			choiceConverter={transformCashFlowActivity}
-			{IDPrefix}
-			{errors}/>
-		<ChoiceListField
-			fieldName="Kind"
-			disabled={isConnecting || forceDisabledFields.includes("kind")}
-			bind:value={kind}
-			rawChoices={ACCEPTABLE_MODIFIER_KINDS}
-			choiceConverter={transformString}
 			{IDPrefix}
 			{errors}/>
 		<ChoiceListField
