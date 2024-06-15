@@ -25,9 +25,9 @@
 	export let flowCalculations: Omit<FlowCalculation, "frozen_period_id">[]
 
 	$: subtotals = statement.cash_flow_statement.subtotals
-	$: friendlyClosedLiquidAmount = formatAmount(
+	$: friendlyLiquidAmountDifference = formatAmount(
 		currency,
-		statement.cash_flow_statement.closed_liquid_amount
+		statement.cash_flow_statement.liquid_amount_difference
 	)
 </script>
 
@@ -39,10 +39,6 @@
 		<DataTableHeader scope="column" kind="numeric">Amount</DataTableHeader>
 	</svelte:fragment>
 	<svelte:fragment slot="table_rows">
-		<TotalAmountRow
-			rowName="Opened Liquid Balance"
-			currency={currency}
-			rawAmount={statement.cash_flow_statement.opened_liquid_amount}/>
 		{#each cashFlowActivities as cashFlowActivity}
 			<CategorizedSection
 				cashFlowActivity={cashFlowActivity}
@@ -50,10 +46,18 @@
 				{currency}
 				{accounts}
 				{flowCalculations}/>
-			{/each}
+		{/each}
+		<TotalAmountRow
+			rowName="Opened Liquid Balance"
+			currency={currency}
+			rawAmount={statement.cash_flow_statement.opened_liquid_amount}/>
+		<TotalAmountRow
+			rowName="Closed Liquid Balance"
+			currency={currency}
+			rawAmount={statement.cash_flow_statement.closed_liquid_amount}/>
 	</svelte:fragment>
 	<svelte:fragment slot="table_footer_cells">
-		<DataTableHeader scope="row" columnSpan={2}>Closed Liquid Amount</DataTableHeader>
-		<DataTableCell kind="numeric">{friendlyClosedLiquidAmount}</DataTableCell>
+		<DataTableHeader scope="row" columnSpan={2}>Difference</DataTableHeader>
+		<DataTableCell kind="numeric">{friendlyLiquidAmountDifference}</DataTableCell>
 	</svelte:fragment>
 </UnitDataTable>
