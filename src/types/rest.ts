@@ -71,6 +71,7 @@ export interface FinancialStatementGroup {
 	cash_flow_statement: {
 		opened_liquid_amount: string
 		closed_liquid_amount: string
+		liquid_amount_difference: string
 		subtotals: CashFlowActivitySubtotal[]
 	}
 	adjusted_trial_balance: TrialBalance
