@@ -134,6 +134,8 @@
 							creditCashFlowActivityID === `${NO_CASH_FLOW_ACTIVITY.id}`
 								? null
 								: parseInt(creditCashFlowActivityID),
+						"debit_account_id": parseInt(debitAccountID),
+						"credit_account_id": parseInt(creditAccountID),
 						name,
 						description
 					}
