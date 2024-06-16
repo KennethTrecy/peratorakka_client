@@ -240,11 +240,11 @@
 			{/if}
 			<ShortParagraph>
 				The {friendlyKind} {friendlyAction} modifier
-				the debited “{debitAccount.name}”
+				debits “{debitAccount.name}”
 				{#if hasDebitCashFlowActivity}
 					(debited cash flow is considered under “{friendlyDebitActivityName}”)
 				{/if}
-				and credited “{creditAccount.name}”
+				and credits “{creditAccount.name}”
 				{#if hasCreditCashFlowActivity}
 					(credited cash flow is considered under “{friendlyCreditActivityName}”)
 				{/if}.
