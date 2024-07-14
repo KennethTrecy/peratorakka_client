@@ -51,6 +51,12 @@ export interface TrialBalance {
 	credit_total: string
 }
 
+export interface ProxyRequest {
+	targetURL: string,
+	method: "GET"|"POST"|"PATCH"|"DELETE",
+	body: Record<string, any>|null
+}
+
 export interface CashFlowActivitySubtotal {
 	cash_flow_activity_id: number
 	subtotal: string
