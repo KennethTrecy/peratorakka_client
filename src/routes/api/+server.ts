@@ -6,12 +6,9 @@ import { ofetch } from "ofetch"
 export async function POST(event: RequestEvent) {
 	const proxyRequest = await event.request.json() as ProxyRequest
 
-	const { targetURL, method, body } = proxyRequest
+	const { targetURL, requestInformation } = proxyRequest
 
-	const response = await ofetch(targetURL, {
-		method,
-		body
-	})
+	const response = await ofetch(targetURL, requestInformation)
 
-	return response
+	return new Response(JSON.stringify(response))
 }

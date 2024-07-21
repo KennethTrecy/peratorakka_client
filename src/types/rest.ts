@@ -53,8 +53,7 @@ export interface TrialBalance {
 
 export interface ProxyRequest {
 	targetURL: string,
-	method: "GET"|"POST"|"PATCH"|"DELETE",
-	body: Record<string, any>|null
+	requestInformation: Partial<RequestInit>
 }
 
 export interface CashFlowActivitySubtotal {

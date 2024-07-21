@@ -9,7 +9,7 @@ import { GLOBAL_CONTEXT } from "#/contexts"
 import sendJSONRequest from "$/rest/send_json_request"
 
 export default function makeJSONRequester(constraints: RequesterConstraints): RequesterInfo {
-	const globalContext = getContext(GLOBAL_CONTEXT)
+	const globalContext: ContextBundle = getContext(GLOBAL_CONTEXT)
 	let isConnecting = writable(false)
 	let errors = writable<GeneralError[]>([])
 
