@@ -12,10 +12,8 @@
 	import Item from "%/shell/navigation_drawer/item.svelte"
 
 	const {
-		serverURL,
 		userEmail
 	} = getContext(GLOBAL_CONTEXT) as ContextBundle as {
-		serverURL: Readable<string>,
 		userEmail: Readable<string>
 	}
 
