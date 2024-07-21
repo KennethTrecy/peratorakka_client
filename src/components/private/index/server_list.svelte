@@ -8,6 +8,8 @@
 	import { GLOBAL_CONTEXT } from "#/contexts"
 	import { PUBLIC_PRODUCTION_SERVER_CHOICES } from "$env/static/public"
 
+	import makeJSONRequester from "$/rest/make_json_requester"
+
 	import ChoiceListField from "$/form/choice_list_field.svelte"
 	import GridCell from "$/layout/grid_cell.svelte"
 	import ShortParagraph from "$/typography/short_paragraph.svelte"
@@ -66,6 +68,23 @@
 
 	let isConnecting = false
 	let didConnectionFail = false
+
+	const { send } = makeJSONRequester({
+		"path": "/",
+		"defaultRequestConfiguration": {},
+		"manualResponseHandlers": [
+			{
+				"statusCode": 200,
+				"action": async function(response) {
+					didConnectionFail = false
+					const responseDocument = await response.json()
+					CSRFToken.set(responseDocument.data.csrf_token)
+				},
+			}
+		],
+		expectedErrorStatusCodes: [ 403 ],
+	})
+
 	async function connect(event: SubmitEvent) {
 		event.preventDefault()
 		isConnecting = true
@@ -73,19 +92,7 @@
 		serverURL.set(resolvedSelectedServer)
 
 		try {
-			const response = await fetch(`${resolvedSelectedServer}/`, {
-				"method": "GET",
-				"mode": "cors",
-				"credentials": "include"
-			})
-
-			if (response.status === 200) {
-				didConnectionFail = false
-				const responseDocument = await response.json()
-				CSRFToken.set(responseDocument.data.csrf_token)
-			} else {
-				throw new Error()
-			}
+			await send({})
 		} catch (error) {
 			didConnectionFail = true
 			serverURL.set("")
