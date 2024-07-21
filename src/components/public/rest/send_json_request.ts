@@ -36,9 +36,7 @@ export default async function sendJSONRequest(
 		if (get(hasAccessToken)) {
 			headers["Authorization"] = `Bearer ${get(accessToken)}`
 			accessTokenMetadata.update(currentAccessTokenMetadata => {
-				const newAccessTokenMetadata = new Map(
-					currentAccessTokenMetadata as [string, string|Date][]
-				)
+				const newAccessTokenMetadata = new Map(currentAccessTokenMetadata)
 				newAccessTokenMetadata.set("lastUsedAt", new Date())
 				return newAccessTokenMetadata
 			})
@@ -47,19 +45,11 @@ export default async function sendJSONRequest(
 		const endpoint = typeof constraints.path === "string"
 			? constraints.path
 			: get(constraints.path)
-		const targetURL = `${currentServerURL}${endpoint}`
-		const requestInformation = {
+		const response = await fetch(`${currentServerURL}${endpoint}`, {
+			"mode": "cors",
 			headers,
 			...constraints.defaultRequestConfiguration,
 			...specialRequestInfo
-		}
-
-		const response = await fetch("/api", {
-			method: "POST",
-			body: JSON.stringify({
-				targetURL,
-				requestInformation
-			})
 		})
 
 		const statusCode = response.status
