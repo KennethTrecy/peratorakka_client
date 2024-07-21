@@ -8,30 +8,36 @@
 # Peratorakka Client
 A client for any Peratorakka server.
 
-Peratorakka is a software system aimed to manage and track the finances, personal or commercial. It
-is made up of a client and [server]. In this repository, it has an implementation of the client which allows the users to interact with server. The server may be implemented in different programming language as long as it has compatible API.
+Peratorakka is a software system aimed to manage and track the personal
+finances. It is made up of a client and [server]. In this repository, it has
+an implementation of the client which allows the users to interact with
+server. The server may be implemented in different programming language as
+long as it has compatible API.
 
-Screenshots of this project can be found in [author's post]. Currently, there is no server available
-to access by common people. Yet, the instructions how to start the system can be found below.
+Screenshots of this project can be found in [author's post]. Currently, there
+is no server available to access by common people. Yet, the instructions how
+to start the system can be found below.
 
 ## Origin
-Some parts of the repository was based from [`sveltekit`] branch of [Web Template].
+Some parts of the repository was based from [`sveltekit`] branch of [Web
+Template].
 
 The template has been specialized for front-end development.
 
 ## Usage
 
 ### Initialization (for developers)
-If you want to contribute, the repository should be initialized to adhere in [Conventional Commits
-specification] for organize commits and automated generation of change log.
+If you want to contribute, the repository should be initialized to adhere in
+[Conventional Commits specification] for organize commits and automated
+generation of change log.
 
 #### Prerequisites
 - [Node.js environment]
 - [pnpm] (optional)
 
 #### Instructions
-1. By running the command below, all your commits will be linted to follow the [Conventional Commits
-specification].
+1. By running the command below, all your commits will be linted to follow the
+   [Conventional Commits specification].
    ```
    $ npm install
    ```
@@ -48,13 +54,24 @@ specification].
 ## Notes
 
 ### Want to contribute?
-Read the [contributing guide] for different ways to contribute in the project.
+
+Please read the [contributing guide] for different ways to contribute in the
+project.
+
+You can also make a financial contribution, no matter how small, to support
+its development and maintenance.
+
+[![Donate
+badge](https://img.shields.io/badge/PayPal-_?logo=paypal&label=Donate%20via&color=%23003087&link=https%3A%2F%2Fpaypal.me%2FKennethTrecy)](https://www.paypal.me/KennethTrecy)
 
 ### Author
 Coded by Kenneth Trecy Tobias.
 
 ### Disclaimer
-This personal project may contain references to trademarks, which are included in good faith. However, it is important to note that such references do not indicate any endorsement, affiliation, or sponsorship by the respective trademark holders unless explicitly stated.
+This personal project may contain references to trademarks, which are included
+in good faith. However, it is important to note that such references do not
+indicate any endorsement, affiliation, or sponsorship by the respective
+trademark holders unless explicitly stated.
 
 [`sveltekit`]: https://github.com/KennethTrecy/web_template/tree/sveltekit
 [Web Template]: https://github.com/KennethTrecy/web_template/
