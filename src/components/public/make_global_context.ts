@@ -171,12 +171,17 @@ export default function makeGlobalContext(): ContextBundle {
 				if (newServerURL === "") accessTokenMetadata.set(new Map())
 				if (newServerURL === "") hasCompatibleServer.set(false)
 				if (newServerURL !== "") {
-					fetch(newServerURL, {
-						"headers": {
-							"Content-Type": "application/json",
-							"Accept": "application/json"
-						},
-						"mode": "cors"
+					fetch("/api", {
+						"method": "POST",
+						"body": JSON.stringify({
+							"targetURL": newServerURL,
+							"requestInformation": {
+								"headers": {
+									"Content-Type": "application/json",
+									"Accept": "application/json"
+								}
+							}
+						})
 					}).then(async response => {
 						if (response.status === 200) {
 							const serverInfo = await response.json()
