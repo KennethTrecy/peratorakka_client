@@ -8,7 +8,7 @@
 		FlowCalculation
 	} from "+/entity"
 	import type { ContextBundle } from "+/component"
-	import type { GeneralError, FinancialStatementGroup } from "+/rest"
+	import type { GeneralError, FinancialStatementGroup, ExchangeRateInfo } from "+/rest"
 
 	import { get, writable } from "svelte/store"
 	import { onMount, getContext } from "svelte"
@@ -68,6 +68,7 @@
 	let summaryCalculations: SummaryCalculation[] = []
 	let flowCalculations: FlowCalculation[] = []
 	let statements: FinancialStatementGroup[] = []
+	let exchangeRates: ExchangeRateInfo[] = []
 
 	let chosenPeriod: FrozenPeriod|null = null
 	let isConnectingToShow = writable<boolean>(false)
@@ -90,6 +91,7 @@
 							summaryCalculations = document.summary_calculations
 							flowCalculations = document.flow_calculations
 							statements = document["@meta"].statements
+							exchangeRates = document["@meta"].exchange_rates
 
 							showErrors.set([])
 						}
