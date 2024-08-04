@@ -43,7 +43,7 @@ export function multiplyAmount(multiplicand: string, multiplier: string): string
 
 export function divideAmount(dividend: string, divisor: string): string {
 	Fraction.REDUCE = true;
-	return new Fraction(dividend).mul(divisor).toString()
+	return new Fraction(dividend).div(divisor).toFraction()
 }
 
 export function setTheme(filename: string): void {

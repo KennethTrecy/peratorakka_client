@@ -1,9 +1,8 @@
 import type { Currency } from "+/entity"
 import type { ExchangeRateInfo } from "+/rest"
 
-import { multiplyAmount, divideAmount } from "!/index"
+import { multiplyAmount } from "!/index"
 
-import convertAmount from "$/utility/convert_amount"
 import findLightestPath from "$/utility/derive_exchange_rate/find_lightest_path"
 import findPaths from "$/utility/derive_exchange_rate/find_paths"
 
@@ -55,7 +54,7 @@ export default function deriveExchangeRate(
 	)
 	timestamps.sort().reverse()
 
-	return {
+	const exchangeRate = {
 		"source": {
 			"currency_id": sourceCurrency.id,
 			value: lightPath
@@ -74,4 +73,6 @@ export default function deriveExchangeRate(
 		},
 		"updated_at": timestamps[0]
 	}
+
+	return exchangeRate
 }
