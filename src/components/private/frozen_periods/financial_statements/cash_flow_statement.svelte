@@ -8,6 +8,7 @@
 	} from "+/entity"
 
 	import formatAmount from "$/utility/format_amount"
+	import convertAmount from "$/utility/convert_amount"
 
 	import TotalAmountRow
 		from "%/frozen_periods/financial_statements/cash_flow_statement/total_amount_row.svelte"
@@ -26,10 +27,11 @@
 	export let flowCalculations: Omit<FlowCalculation, "frozen_period_id">[]
 
 	$: subtotals = statement.cash_flow_statement.subtotals
-	$: friendlyLiquidAmountDifference = formatAmount(
-		currency,
-		statement.cash_flow_statement.liquid_amount_difference
+	$: convertedAmount = convertAmount(
+		statement.cash_flow_statement.liquid_amount_difference,
+		exchangeRate
 	)
+	$: friendlyLiquidAmountDifference = formatAmount(currency, convertedAmount)
 </script>
 
 <QuarternaryHeading>Cash Flow Statement</QuarternaryHeading>
@@ -51,10 +53,12 @@
 		{/each}
 		<TotalAmountRow
 			rowName="Opened Liquid Balance"
+			{exchangeRate}
 			currency={currency}
 			rawAmount={statement.cash_flow_statement.opened_liquid_amount}/>
 		<TotalAmountRow
 			rowName="Closed Liquid Balance"
+			{exchangeRate}
 			currency={currency}
 			rawAmount={statement.cash_flow_statement.closed_liquid_amount}/>
 	</svelte:fragment>

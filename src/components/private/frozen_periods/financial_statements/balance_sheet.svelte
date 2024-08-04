@@ -8,9 +8,7 @@
 		EQUITY_ACCOUNT_KIND,
 		GENERAL_ASSET_ACCOUNT_KIND,
 		LIABILITY_ACCOUNT_KIND,
-
 		LIQUID_ASSET_ACCOUNT_KIND
-
 	} from "#/entity"
 
 	import CustomTrialRow from "%/frozen_periods/financial_statements/custom_trial_row.svelte"

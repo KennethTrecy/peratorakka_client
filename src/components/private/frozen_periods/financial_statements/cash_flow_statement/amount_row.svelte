@@ -3,6 +3,7 @@
 	import type { ExchangeRateInfo } from "+/rest"
 
 	import formatAmount from "$/utility/format_amount"
+	import convertAmount from "$/utility/convert_amount"
 
 	import DataTableCell from "$/catalog/data_table_cell.svelte"
 	import DataTableHeader from "$/catalog/data_table_header.svelte"
@@ -16,9 +17,13 @@
 	export let rawAmount: string
 	export let hasEmptyTrailingRow: boolean = false
 
+	$: convertedAmount = convertAmount(
+		rawAmount,
+		exchangeRate
+	)
 	$: friendlyAmount = formatAmount(
 		currency,
-		rawAmount
+		convertedAmount
 	)
 	$: mustSpan = categoryNameRowSpan > 0
 </script>

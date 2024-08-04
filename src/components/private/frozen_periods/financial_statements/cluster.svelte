@@ -11,6 +11,7 @@
 	import { ACCOUNT_KIND_AGGREGATED_LIST_PRIOITY } from "#/entity"
 
 	import transformCurrency from "$/form/choice_info_transformer/transform_currency"
+	import deriveExchangeRate from "$/utility/derive_exchange_rate"
 
 	import BalanceSheet from "%/frozen_periods/financial_statements/balance_sheet.svelte"
 	import CashFlowStatement from "%/frozen_periods/financial_statements/cash_flow_statement.svelte"
@@ -80,22 +81,22 @@
 		}
 	}
 
-	$: targetExchangeRate = exchangeRates.find(
-		exchangeRate => `${exchangeRate.destination.currency_id}` === targetCurrencyID
-	) ?? {
-		"source": {
-			"currency_id": currency?.id ?? 0,
-			value: "1"
-		},
-		"destination": {
-			"currency_id": currency?.id ?? 0,
-			value: "1"
-		},
-		"updated_at": (new Date()).toDateString()
-	}
 	$: targetCurrency = currencies.find(
 		currency => `${currency.id}` === targetCurrencyID
 	)
+	$: targetExchangeRate = typeof currency !== "undefined" && typeof targetCurrency !== "undefined"
+		? deriveExchangeRate(currency, targetCurrency, exchangeRates)
+		: {
+			"source": {
+				"currency_id": currency?.id ?? 0,
+				"value": "0"
+			},
+			"destination": {
+				"currency_id": targetCurrency?.id ?? 0,
+				"value": "0"
+			},
+			"updated_at": (new Date()).toDateString()
+		}
 </script>
 
 <GridCell kind="full">

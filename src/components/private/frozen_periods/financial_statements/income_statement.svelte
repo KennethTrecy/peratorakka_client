@@ -5,6 +5,7 @@
 	import { INCOME_ACCOUNT_KIND, EXPENSE_ACCOUNT_KIND } from "#/entity"
 
 	import formatAmount from "$/utility/format_amount"
+	import convertAmount from "$/utility/convert_amount"
 
 	import DataTableCell from "$/catalog/data_table_cell.svelte"
 	import DataTableHeader from "$/catalog/data_table_header.svelte"
@@ -29,10 +30,11 @@
 	$: expenseCalculations = data.filter(
 		calculation => expenseAccountIDs.indexOf(calculation.account_id) > -1
 	)
-	$: friendlyNetAmount = formatAmount(
-		currency,
-		statement.income_statement.net_total
+	$: convertedNetAmount = convertAmount(
+		statement.income_statement.net_total,
+		exchangeRate
 	)
+	$: friendlyNetAmount = formatAmount(currency, convertedNetAmount)
 </script>
 
 <QuarternaryHeading>Income Statement</QuarternaryHeading>

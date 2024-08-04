@@ -4,6 +4,7 @@
 	import type { TrialBalanceKind } from "+/component"
 
 	import formatAmount from "$/utility/format_amount"
+	import convertAmount from "$/utility/convert_amount"
 
 	import DataTableCell from "$/catalog/data_table_cell.svelte"
 	import DataTableHeader from "$/catalog/data_table_header.svelte"
@@ -19,18 +20,20 @@
 	export let data: Omit<SummaryCalculation, "frozen_period_id">[]
 
 	$: headingAdjective = kind === "adjusted" ? "Adjusted" : "Unadjusted"
-	$: friendlyTotalDebitAmount = formatAmount(
-		currency,
+	$: convertedTotalDebitAmount = convertAmount(
 		kind === "adjusted"
 			? statement.adjusted_trial_balance.debit_total
-			: statement.unadjusted_trial_balance.debit_total
+			: statement.unadjusted_trial_balance.debit_total,
+		exchangeRate
 	)
-	$: friendlyTotalCreditAmount = formatAmount(
-		currency,
+	$: friendlyTotalDebitAmount = formatAmount(currency, convertedTotalDebitAmount)
+	$: convertedTotalCreditAmount = convertAmount(
 		kind === "adjusted"
 			? statement.adjusted_trial_balance.credit_total
-			: statement.unadjusted_trial_balance.credit_total
+			: statement.unadjusted_trial_balance.credit_total,
+		exchangeRate
 	)
+	$: friendlyTotalCreditAmount = formatAmount(currency, convertedTotalCreditAmount)
 </script>
 
 <QuarternaryHeading>{headingAdjective} Trial Balance</QuarternaryHeading>
