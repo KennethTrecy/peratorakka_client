@@ -30,14 +30,14 @@ interface RequesterCase {
 }
 
 export interface RequesterConstraints {
-	path: string|Readable<string>,
-	defaultRequestConfiguration: Partial<RequestInit>,
-	manualResponseHandlers: RequesterCase[],
+	path: string|Readable<string>
+	defaultRequestConfiguration: Partial<RequestInit>
+	manualResponseHandlers: RequesterCase[]
 	expectedErrorStatusCodes: number[]
 }
 
 export interface RequesterDependencies {
-	globalContext: ContextBundle,
+	globalContext: ContextBundle
 	isConnecting: Writable<boolean>
 	errors: Writable<GeneralError[]>
 }
@@ -47,13 +47,13 @@ export interface RequesterInfo extends RequesterDependencies {
 }
 
 export interface TrialBalance {
-	debit_total: string,
+	debit_total: string
 	credit_total: string
 }
 
 export interface ProxyRequest {
-	targetURL: string,
-	method: "GET"|"POST"|"PATCH"|"DELETE",
+	targetURL: string
+	method: "GET"|"POST"|"PATCH"|"DELETE"
 	body: Record<string, any>|null
 }
 
@@ -81,6 +81,17 @@ export interface FinancialStatementGroup {
 		subtotals: CashFlowActivitySubtotal[]
 	}
 	adjusted_trial_balance: TrialBalance
+}
+
+interface CurrencyInfo {
+	currency_id: number
+	value: string
+}
+
+export interface ExchangeRateInfo {
+	source: CurrencyInfo
+	destination: CurrencyInfo
+	updated_at: string
 }
 
 export type SearchMode = typeof SEARCH_MODES[number]
