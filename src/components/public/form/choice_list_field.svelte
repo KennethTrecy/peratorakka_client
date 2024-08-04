@@ -20,6 +20,7 @@
 	export let IDPrefix: string = ""
 	export let errors: GeneralError[]
 	export let rawChoices: unknown[]
+	export let mustExpand: boolean = false
 	export let choiceConverter: (choice: any) => ChoiceInfo
 
 	let select: MDCSelect|null = null
@@ -55,6 +56,10 @@
 		"mdc-select--outlined",
 		disabled ? "mdc-select--disabled" : false
 	].filter(Boolean).join(" ")
+	$: anchorClasses = [
+		"mdc-select__anchor",
+		mustExpand ? "mdc-select__anchor--expanded" : false
+	].filter(Boolean).join(" ")
 
 	let selectElement: any = null
 	let menuElement: any = null
@@ -73,7 +78,7 @@
 
 <div class={selectClasses} bind:this={selectElement}>
 	<div
-		class="mdc-select__anchor"
+		class={anchorClasses}
 		aria-labelledby={labelID}
 		aria-controls={helperID}
 		aria-describedby={helperID}
@@ -162,6 +167,10 @@
 
 	@include list.deprecated-core-styles;
 	@include helper-text.helper-text-core-styles;
+
+	.mdc-select__anchor--expanded {
+		width: initial;
+	}
 
 	.mdc-select__dropdown-icon {
 		font-size: 1.5rem;
