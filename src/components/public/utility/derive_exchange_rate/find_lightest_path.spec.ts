@@ -18,7 +18,7 @@ describe("Find lightest exchange rate path function behavior", () => {
 					"currency_id": 2,
 					"value": "3"
 				},
-				"updated_at": (new Date(currentTime)).toJSON()
+				"updated_at": (new Date(currentTime)).toISOString()
 			},
 			{
 				"source": {
@@ -29,7 +29,7 @@ describe("Find lightest exchange rate path function behavior", () => {
 					"currency_id": 3,
 					"value": "3"
 				},
-				"updated_at": (new Date(currentTime)).toJSON()
+				"updated_at": (new Date(currentTime)).toISOString()
 			}
 		]
 
@@ -52,7 +52,7 @@ describe("Find lightest exchange rate path function behavior", () => {
 					"currency_id": 2,
 					"value": "3"
 				},
-				"updated_at": (new Date(currentTime - 200)).toJSON()
+				"updated_at": (new Date(currentTime - 200)).toISOString()
 			},
 			{
 				"source": {
@@ -63,7 +63,7 @@ describe("Find lightest exchange rate path function behavior", () => {
 					"currency_id": 2,
 					"value": "3"
 				},
-				"updated_at": (new Date(currentTime)).toJSON()
+				"updated_at": (new Date(currentTime)).toISOString()
 			}
 		]
 
@@ -89,7 +89,7 @@ describe("Find lightest exchange rate path function behavior", () => {
 					"currency_id": 3,
 					"value": "3"
 				},
-				"updated_at": (new Date(currentTime)).toJSON()
+				"updated_at": (new Date(currentTime)).toISOString()
 			},
 			{
 				"source": {
@@ -100,7 +100,7 @@ describe("Find lightest exchange rate path function behavior", () => {
 					"currency_id": 2,
 					"value": "3"
 				},
-				"updated_at": (new Date(currentTime)).toJSON()
+				"updated_at": (new Date(currentTime)).toISOString()
 			},
 			{
 				"source": {
@@ -111,7 +111,7 @@ describe("Find lightest exchange rate path function behavior", () => {
 					"currency_id": 4,
 					"value": "3"
 				},
-				"updated_at": (new Date(currentTime)).toJSON()
+				"updated_at": (new Date(currentTime)).toISOString()
 			},
 			{
 				"source": {
@@ -122,7 +122,7 @@ describe("Find lightest exchange rate path function behavior", () => {
 					"currency_id": 2,
 					"value": "3"
 				},
-				"updated_at": (new Date(currentTime)).toJSON()
+				"updated_at": (new Date(currentTime)).toISOString()
 			}
 		]
 
@@ -148,7 +148,7 @@ describe("Find lightest exchange rate path function behavior", () => {
 					"currency_id": 3,
 					"value": "3"
 				},
-				"updated_at": (new Date(currentTime)).toJSON()
+				"updated_at": (new Date(currentTime)).toISOString()
 			},
 			{
 				"source": {
@@ -159,7 +159,7 @@ describe("Find lightest exchange rate path function behavior", () => {
 					"currency_id": 2,
 					"value": "3"
 				},
-				"updated_at": (new Date(currentTime - 100)).toJSON()
+				"updated_at": (new Date(currentTime - 100)).toISOString()
 			},
 			{
 				"source": {
@@ -170,7 +170,7 @@ describe("Find lightest exchange rate path function behavior", () => {
 					"currency_id": 4,
 					"value": "3"
 				},
-				"updated_at": (new Date(currentTime - 50)).toJSON()
+				"updated_at": (new Date(currentTime - 50)).toISOString()
 			},
 			{
 				"source": {
@@ -181,7 +181,7 @@ describe("Find lightest exchange rate path function behavior", () => {
 					"currency_id": 2,
 					"value": "3"
 				},
-				"updated_at": (new Date(currentTime - 50)).toJSON()
+				"updated_at": (new Date(currentTime - 50)).toISOString()
 			}
 		]
 
