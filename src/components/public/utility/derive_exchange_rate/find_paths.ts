@@ -1,7 +1,7 @@
 import type { Currency } from "+/entity"
 import type { ExchangeRateInfo } from "+/rest"
 
-export default function findExchangeRatePaths(
+export default function findPaths(
 	destinationCurrency: Currency,
 	exchangeRates: ExchangeRateInfo[],
 	currentPath: ExchangeRateInfo[]

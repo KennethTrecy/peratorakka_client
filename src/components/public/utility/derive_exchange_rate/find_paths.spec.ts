@@ -3,7 +3,7 @@ import type { ExchangeRateInfo } from "+/rest"
 
 import { describe, it, expect } from "vitest"
 
-import topicFunction from "./find_exchange_rate_path"
+import topicFunction from "./find_paths"
 
 describe("Find exchange rate path function behavior", () => {
 	it("can find direct rates", async () => {
