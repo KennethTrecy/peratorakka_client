@@ -120,8 +120,8 @@
 	<Flex direction="column" mustPad={false}>
 		<BalanceSheet
 			{statement}
-			currency={targetCurrency}
 			exchangeRate={targetExchangeRate}
+			currency={targetCurrency}
 			accounts={allowedAccounts}
 			data={allowedSummaryCalculations}/>
 	</Flex>
@@ -130,7 +130,8 @@
 	<Flex direction="column" mustPad={false}>
 		<IncomeStatement
 			{statement}
-			{currency}
+			exchangeRate={targetExchangeRate}
+			currency={targetCurrency}
 			accounts={allowedAccounts}
 			data={allowedSummaryCalculations}/>
 	</Flex>
@@ -140,7 +141,8 @@
 		{#if hasAcceptableCashFlowActivities}
 			<CashFlowStatement
 				{statement}
-				{currency}
+				exchangeRate={targetExchangeRate}
+				currency={targetCurrency}
 				{cashFlowActivities}
 				accounts={allowedAccounts}
 				flowCalculations={allowedFlowCalculations}/>
@@ -156,7 +158,8 @@
 		<TrialBalance
 			kind="unadjusted"
 			{statement}
-			{currency}
+			exchangeRate={targetExchangeRate}
+			currency={targetCurrency}
 			accounts={allowedAccounts}
 			data={allowedSummaryCalculations}/>
 	</Flex>
@@ -166,7 +169,8 @@
 		<TrialBalance
 			kind="adjusted"
 			{statement}
-			{currency}
+			exchangeRate={targetExchangeRate}
+			currency={targetCurrency}
 			accounts={allowedAccounts}
 			data={allowedSummaryCalculations}/>
 	</Flex>

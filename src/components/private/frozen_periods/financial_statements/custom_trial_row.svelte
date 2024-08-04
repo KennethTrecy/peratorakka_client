@@ -5,6 +5,7 @@
 	import { EMPTY_AMOUNT } from "#/component"
 
 	import formatAmount from "$/utility/format_amount"
+	import convertAmount from "$/utility/convert_amount"
 
 	import DataTableCell from "$/catalog/data_table_cell.svelte"
 	import DataTableHeader from "$/catalog/data_table_header.svelte"
@@ -18,13 +19,15 @@
 	export let hasEmptyTrailingRow: boolean = false
 
 	$: emptyAmount = formatAmount(currency, EMPTY_AMOUNT)
+	$: convertedDebitAmount = convertAmount(rawDebitAmount, exchangeRate)
 	$: friendlyDebitAmount = formatAmount(
 		currency,
-		rawDebitAmount
+		convertedDebitAmount
 	)
+	$: convertedCreditAmount = convertAmount(rawCreditAmount, exchangeRate)
 	$: friendlyCreditAmount = formatAmount(
 		currency,
-		rawCreditAmount
+		convertedCreditAmount
 	)
 	$: isPossiblyDebitAccount = friendlyDebitAmount !== emptyAmount
 	$: isPossiblyCreditAccount = friendlyCreditAmount !== emptyAmount

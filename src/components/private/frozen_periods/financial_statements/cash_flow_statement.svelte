@@ -1,11 +1,11 @@
 <script lang="ts">
+	import type { FinancialStatementGroup, ExchangeRateInfo } from "+/rest"
 	import type {
 		Currency,
 		CashFlowActivity,
 		Account,
 		FlowCalculation
 	} from "+/entity"
-	import type { FinancialStatementGroup } from "+/rest"
 
 	import formatAmount from "$/utility/format_amount"
 
@@ -19,6 +19,7 @@
 	import UnitDataTable from "$/catalog/unit_data_table.svelte"
 
 	export let statement: FinancialStatementGroup
+	export let exchangeRate: ExchangeRateInfo
 	export let currency: Currency|undefined
 	export let cashFlowActivities: CashFlowActivity[]
 	export let accounts: Account[]
@@ -44,6 +45,7 @@
 				cashFlowActivity={cashFlowActivity}
 				cashFlowSubtotals={subtotals}
 				{currency}
+				{exchangeRate}
 				{accounts}
 				{flowCalculations}/>
 		{/each}

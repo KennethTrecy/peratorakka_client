@@ -1,11 +1,11 @@
 <script lang="ts">
+	import type { CashFlowActivitySubtotal, ExchangeRateInfo } from "+/rest"
 	import type {
 		Currency,
 		CashFlowActivity,
 		Account,
 		FlowCalculation
 	} from "+/entity"
-	import type { CashFlowActivitySubtotal } from "+/rest"
 
 	import { UNKNOWN_ACCOUNT } from "#/component"
 	import { acceptableAccountKinds } from "#/entity"
@@ -13,6 +13,7 @@
 	import AmountRow
 		from "%/frozen_periods/financial_statements/cash_flow_statement/amount_row.svelte"
 
+	export let exchangeRate: ExchangeRateInfo
 	export let currency: Currency|undefined
 	export let cashFlowActivity: CashFlowActivity
 	export let cashFlowSubtotals: CashFlowActivitySubtotal[]
@@ -52,6 +53,7 @@
 			categoryName={cashFlowActivity.name}
 			categoryNameRowSpan={firstRowSpan}
 			currency={currency}
+			{exchangeRate}
 			accountName="Net income"
 			rawAmount={matchedSubtotal.net_income}/>
 	{/if}
@@ -60,6 +62,7 @@
 			categoryName={cashFlowActivity.name}
 			categoryNameRowSpan={i + rowCountBeforeAccounts === 0 ? firstRowSpan : 0}
 			currency={currency}
+			{exchangeRate}
 			accountName={flowCalculation["@meta"].account.name}
 			rawAmount={flowCalculation.net_amount}/>
 	{/each}
@@ -67,6 +70,7 @@
 		categoryName={cashFlowActivity.name}
 		categoryNameRowSpan={0}
 		currency={currency}
+		{exchangeRate}
 		accountName="Balance"
 		rawAmount={matchedSubtotal.subtotal}/>
 {/if}

@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { Currency, Account, SummaryCalculation } from "+/entity"
-	import type { FinancialStatementGroup } from "+/rest"
+	import type { FinancialStatementGroup, ExchangeRateInfo } from "+/rest"
 
 	import { INCOME_ACCOUNT_KIND, EXPENSE_ACCOUNT_KIND } from "#/entity"
 
@@ -13,6 +13,7 @@
 	import UnitDataTable from "$/catalog/unit_data_table.svelte"
 
 	export let statement: FinancialStatementGroup
+	export let exchangeRate: ExchangeRateInfo
 	export let currency: Currency|undefined
 	export let accounts: Account[]
 	export let data: Omit<SummaryCalculation, "frozen_period_id">[]
@@ -45,6 +46,7 @@
 		{#each incomeCalculations as calculation(calculation.account_id)}
 			<TrialRow
 				{currency}
+				{exchangeRate}
 				{accounts}
 				data={calculation}
 				kind="unadjusted"/>
@@ -52,6 +54,7 @@
 		{#each expenseCalculations as calculation(calculation.account_id)}
 			<TrialRow
 				{currency}
+				{exchangeRate}
 				{accounts}
 				data={calculation}
 				kind="unadjusted"/>

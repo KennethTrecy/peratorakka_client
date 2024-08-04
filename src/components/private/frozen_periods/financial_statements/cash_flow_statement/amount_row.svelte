@@ -1,5 +1,6 @@
 <script lang="ts">
 	import type { Currency } from "+/entity"
+	import type { ExchangeRateInfo } from "+/rest"
 
 	import formatAmount from "$/utility/format_amount"
 
@@ -9,6 +10,7 @@
 
 	export let categoryName: string
 	export let categoryNameRowSpan: number
+	export let exchangeRate: ExchangeRateInfo
 	export let currency: Currency|undefined
 	export let accountName: string
 	export let rawAmount: string
