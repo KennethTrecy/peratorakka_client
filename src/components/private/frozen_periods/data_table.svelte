@@ -9,7 +9,7 @@
 	export let data: FrozenPeriod[]
 </script>
 
-<DataTable collectiveName="Frozen Periods" {isConnecting} {data}>
+<DataTable collectiveName="Frozen Periods" {isConnecting} {data} progressRate={0}>
 	<svelte:fragment slot="filled_collection_description">
 		Below are the frozen periods that you have added on to your profile.
 		Freezing certain periods is a feature to optimize the calculation of

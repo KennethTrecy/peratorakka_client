@@ -38,13 +38,9 @@
 		statement => `${statement.currency_id}` === selectedCurrencyID
 	)
 
-	$: targetExchangeRates = exchangeRates.filter(
-		exchangeRate => `${exchangeRate.source.currency_id}` === selectedCurrencyID
-	)
-
 	$: data = [
 		...summaryCalculations,
-		...targetExchangeRates,
+		...exchangeRates,
 		...flowCalculations
 	]
 </script>
@@ -68,7 +64,7 @@
 		{#if selectedStatement}
 			<Cluster
 				statement={selectedStatement}
-				exchangeRates={targetExchangeRates}
+				{exchangeRates}
 				{currencies}
 				{cashFlowActivities}
 				{accounts}
