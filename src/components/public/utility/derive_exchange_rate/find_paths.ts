@@ -34,7 +34,7 @@ export default function findPaths(
 			const newPath = [ ...currentPath, exchangeRate ];
 			foundPaths = [
 				...foundPaths,
-				...findExchangeRatePaths(destinationCurrency, exchangeRates, newPath)
+				...findPaths(destinationCurrency, exchangeRates, newPath)
 			]
 		}
 	}
