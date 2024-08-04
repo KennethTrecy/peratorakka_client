@@ -1,4 +1,5 @@
 <script lang="ts">
+	import type { ExchangeRateInfo } from "+/rest"
 	import type { Currency } from "+/entity"
 
 	import { EMPTY_AMOUNT } from "#/component"
@@ -11,6 +12,7 @@
 
 	export let rowName: string
 	export let currency: Currency|undefined
+	export let exchangeRate: ExchangeRateInfo
 	export let rawDebitAmount: string
 	export let rawCreditAmount: string
 	export let hasEmptyTrailingRow: boolean = false

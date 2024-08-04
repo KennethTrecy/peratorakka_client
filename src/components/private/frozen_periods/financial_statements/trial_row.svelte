@@ -1,4 +1,5 @@
 <script lang="ts">
+	import type { ExchangeRateInfo } from "+/rest"
 	import type { Currency, Account, SummaryCalculation } from "+/entity"
 	import type { TrialBalanceKind } from "+/component"
 
@@ -9,6 +10,7 @@
 	import CustomTrialRow from "%/frozen_periods/financial_statements/custom_trial_row.svelte"
 
 	export let currency: Currency|undefined
+	export let exchangeRate: ExchangeRateInfo
 	export let accounts: Account[]
 	export let data: Omit<SummaryCalculation, "frozen_period_id">
 	export let kind: TrialBalanceKind
@@ -27,5 +29,6 @@
 <CustomTrialRow
 	rowName={account.name}
 	{currency}
+	{exchangeRate}
 	{rawDebitAmount}
 	{rawCreditAmount}/>

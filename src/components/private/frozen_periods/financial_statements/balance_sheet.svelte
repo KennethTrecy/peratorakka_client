@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { Currency, Account, SummaryCalculation } from "+/entity"
-	import type { FinancialStatementGroup } from "+/rest"
+	import type { FinancialStatementGroup, ExchangeRateInfo } from "+/rest"
 
 	import { EMPTY_AMOUNT } from "#/component"
 	import {
@@ -20,6 +20,7 @@
 	import UnitDataTable from "$/catalog/unit_data_table.svelte"
 
 	export let statement: FinancialStatementGroup
+	export let exchangeRate: ExchangeRateInfo
 	export let currency: Currency|undefined
 	export let accounts: Account[]
 	export let data: Omit<SummaryCalculation, "frozen_period_id">[]
@@ -57,6 +58,7 @@
 		{#each assetCalculations as calculation(calculation.account_id)}
 			<TrialRow
 				{currency}
+				{exchangeRate}
 				{accounts}
 				data={calculation}
 				kind="unadjusted"/>
@@ -64,6 +66,7 @@
 		<CustomTrialRow
 			rowName="Total Assets"
 			{currency}
+			{exchangeRate}
 			rawDebitAmount={statement.balance_sheet.total_assets}
 			rawCreditAmount={EMPTY_AMOUNT}
 			hasEmptyTrailingRow={true}/>
@@ -71,6 +74,7 @@
 		{#each liabilityCalculations as calculation(calculation.account_id)}
 			<TrialRow
 				{currency}
+				{exchangeRate}
 				{accounts}
 				data={calculation}
 				kind="unadjusted"/>
@@ -78,6 +82,7 @@
 		<CustomTrialRow
 			rowName="Total Liabilities"
 			{currency}
+			{exchangeRate}
 			rawDebitAmount={EMPTY_AMOUNT}
 			rawCreditAmount={statement.balance_sheet.total_liabilities}
 			hasEmptyTrailingRow={true}/>
@@ -85,6 +90,7 @@
 		{#each equityCalculations as calculation(calculation.account_id)}
 			<TrialRow
 				{currency}
+				{exchangeRate}
 				{accounts}
 				data={calculation}
 				kind="unadjusted"/>
@@ -92,11 +98,13 @@
 		<CustomTrialRow
 			rowName="Net Income"
 			{currency}
+			{exchangeRate}
 			rawDebitAmount={EMPTY_AMOUNT}
 			rawCreditAmount={statement.income_statement.net_total}/>
 		<CustomTrialRow
 			rowName="Total Equities"
 			{currency}
+			{exchangeRate}
 			rawDebitAmount={EMPTY_AMOUNT}
 			rawCreditAmount={statement.balance_sheet.total_equities}/>
 	</svelte:fragment>

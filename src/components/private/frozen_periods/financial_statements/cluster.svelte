@@ -82,7 +82,20 @@
 
 	$: targetExchangeRate = exchangeRates.find(
 		exchangeRate => `${exchangeRate.destination.currency_id}` === (currency?.id ?? "")
-	) ?? { source: { value: "1" }, destination: { value: "1" } }
+	) ?? {
+		"source": {
+			"currency_id": currency?.id ?? 0,
+			value: "1"
+		},
+		"destination": {
+			"currency_id": currency?.id ?? 0,
+			value: "1"
+		},
+		"updated_at": (new Date()).toDateString()
+	}
+	$: targetCurrency = currencies.find(
+		currency => currency.id === targetExchangeRate.destination.currency_id
+	)
 </script>
 
 <GridCell kind="full">
@@ -107,7 +120,8 @@
 	<Flex direction="column" mustPad={false}>
 		<BalanceSheet
 			{statement}
-			{currency}
+			currency={targetCurrency}
+			exchangeRate={targetExchangeRate}
 			accounts={allowedAccounts}
 			data={allowedSummaryCalculations}/>
 	</Flex>
