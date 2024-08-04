@@ -7,6 +7,7 @@ import topicFunction from "./weigh_path"
 
 describe("Grade path function behavior", () => {
 	it("can weigh direct rates", async () => {
+		const currentTime = (new Date(Date.now())).getTime()
 		const currentPath: ExchangeRateInfo[] = [
 			{
 				"source": {
@@ -17,16 +18,17 @@ describe("Grade path function behavior", () => {
 					"currency_id": 2,
 					"value": "3"
 				},
-				"updated_at": (new Date(Date.now() - 1000)).toDateString()
+				"updated_at": (new Date(currentTime - 1000)).toISOString()
 			}
 		]
 
-		const result = topicFunction(currentPath)
+		const result = topicFunction(currentPath, currentTime)
 
 		expect(result).toBe(1000)
 	})
 
 	it("can weigh indirect rates", async () => {
+		const currentTime = (new Date(Date.now())).getTime()
 		const currentPath: ExchangeRateInfo[] = [
 			{
 				"source": {
@@ -37,7 +39,7 @@ describe("Grade path function behavior", () => {
 					"currency_id": 2,
 					"value": "3"
 				},
-				"updated_at": (new Date(Date.now() - 1000)).toDateString()
+				"updated_at": (new Date(currentTime - 1000)).toISOString()
 			},
 			{
 				"source": {
@@ -48,16 +50,17 @@ describe("Grade path function behavior", () => {
 					"currency_id": 3,
 					"value": "3"
 				},
-				"updated_at": (new Date(Date.now() - 500)).toDateString()
+				"updated_at": (new Date(currentTime - 500)).toISOString()
 			}
 		]
 
-		const result = topicFunction(currentPath)
+		const result = topicFunction(currentPath, currentTime)
 
 		expect(result).toBe(1500)
 	})
 
 	it("can weigh multiple indirect rates", async () => {
+		const currentTime = (new Date(Date.now())).getTime()
 		const currentPath: ExchangeRateInfo[] = [
 			{
 				"source": {
@@ -68,7 +71,7 @@ describe("Grade path function behavior", () => {
 					"currency_id": 2,
 					"value": "3"
 				},
-				"updated_at": (new Date(Date.now() - 1000)).toDateString()
+				"updated_at": (new Date(currentTime - 1000)).toISOString()
 			},
 			{
 				"source": {
@@ -79,7 +82,7 @@ describe("Grade path function behavior", () => {
 					"currency_id": 3,
 					"value": "3"
 				},
-				"updated_at": (new Date(Date.now() - 500)).toDateString()
+				"updated_at": (new Date(currentTime - 500)).toISOString()
 			},
 			{
 				"source": {
@@ -90,11 +93,11 @@ describe("Grade path function behavior", () => {
 					"currency_id": 4,
 					"value": "3"
 				},
-				"updated_at": (new Date(Date.now() - 200)).toDateString()
+				"updated_at": (new Date(currentTime - 200)).toISOString()
 			}
 		]
 
-		const result = topicFunction(currentPath)
+		const result = topicFunction(currentPath, currentTime)
 
 		expect(result).toBe(1700)
 	})
