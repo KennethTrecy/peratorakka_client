@@ -89,6 +89,7 @@
 					fieldName="Target Currency"
 					errorFieldName="currency_id"
 					disabled={false}
+					mustExpand={true}
 					bind:value={targetCurrencyID}
 					rawChoices={currencies}
 					choiceConverter={transformCurrency}
