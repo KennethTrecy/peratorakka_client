@@ -42,7 +42,7 @@ describe("Find exchange rate path function behavior", () => {
 
 		const result = topicFunction(destinationCurrency, exchangeRates, currentPath)
 
-		expect(result).toStrictEqual([ [ exchangeRates[0] ] ])
+		expect(result).toStrictEqual([ [ exchangeRates[0], exchangeRates[1] ] ])
 	})
 
 	it("can find indirect rates", async () => {
@@ -137,7 +137,7 @@ describe("Find exchange rate path function behavior", () => {
 		expect(result).toStrictEqual([ [ exchangeRates[0] ] ])
 	})
 
-	it("can find skip loops", async () => {
+	it("can skip loops", async () => {
 		const destinationCurrency: Currency = {
 			"id": 2,
 			"name": "Currency B",
