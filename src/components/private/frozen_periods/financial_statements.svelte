@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { FinancialStatementGroup } from "+/rest"
+	import type { FinancialStatementGroup, ExchangeRateInfo } from "+/rest"
 	import type {
 		Currency,
 		CashFlowActivity,
@@ -20,6 +20,7 @@
 	export let startedAt: string
 	export let finishedAt: string
 	export let statements: FinancialStatementGroup[]
+	export let exchangeRates: ExchangeRateInfo[]
 	export let currencies: Currency[]
 	export let cashFlowActivities: CashFlowActivity[]
 	export let accounts: Account[]
@@ -37,8 +38,13 @@
 		statement => `${statement.currency_id}` === selectedCurrencyID
 	)
 
+	$: targetExchangeRates = exchangeRates.filter(
+		exchangeRate => `${exchangeRate.source.currency_id}` === selectedCurrencyID
+	)
+
 	$: data = [
 		...summaryCalculations,
+		...targetExchangeRates,
 		...flowCalculations
 	]
 </script>
@@ -62,6 +68,7 @@
 		{#if selectedStatement}
 			<Cluster
 				statement={selectedStatement}
+				exchangeRates={targetExchangeRates}
 				{currencies}
 				{cashFlowActivities}
 				{accounts}

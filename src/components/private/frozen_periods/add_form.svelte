@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { FinancialStatementGroup } from "+/rest"
+	import type { FinancialStatementGroup, ExchangeRateInfo } from "+/rest"
 	import type {
 		Currency,
 		CashFlowActivity,
@@ -35,6 +35,7 @@
 
 	let hasAttemptedDryRun = false
 	let statements: FinancialStatementGroup[] = []
+	let exchangeRates: ExchangeRateInfo[] = []
 	let summaryCalculations: SummaryCalculation[] = []
 	let flowCalculations: FlowCalculation[] = []
 	let currencies: Currency[] = []
@@ -101,6 +102,7 @@
 					currencies = document.currencies
 					cashFlowActivities = document.cash_flow_activities
 					statements = document["@meta"].statements
+					exchangeRates = document["@meta"].exchange_rates
 
 					dryRunCreateErrors.set([])
 					hasAttemptedDryRun = true
@@ -161,6 +163,7 @@
 		startedAt={startedAt}
 		finishedAt={finishedAt}
 		{statements}
+		{exchangeRates}
 		{accounts}
 		{currencies}
 		{cashFlowActivities}

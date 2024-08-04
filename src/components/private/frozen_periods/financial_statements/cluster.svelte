@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { FinancialStatementGroup } from "+/rest"
+	import type { FinancialStatementGroup, ExchangeRateInfo } from "+/rest"
 	import type {
 		Currency,
 		CashFlowActivity,
@@ -24,6 +24,7 @@
 	import TrialBalance from "%/frozen_periods/financial_statements/trial_balance.svelte"
 
 	export let statement: FinancialStatementGroup
+	export let exchangeRates: ExchangeRateInfo[]
 	export let currencies: Currency[]
 	export let cashFlowActivities: CashFlowActivity[]
 	export let accounts: Account[]
@@ -78,6 +79,10 @@
 			targetCurrencyID = oldShownCurrencyID
 		}
 	}
+
+	$: targetExchangeRate = exchangeRates.find(
+		exchangeRate => `${exchangeRate.destination.currency_id}` === (currency?.id ?? "")
+	) ?? { source: { value: "1" }, destination: { value: "1" } }
 </script>
 
 <GridCell kind="full">

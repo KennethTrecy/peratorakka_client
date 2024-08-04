@@ -166,6 +166,7 @@
 				startedAt={startedAt}
 				finishedAt={finishedAt}
 				{statements}
+				{exchangeRates}
 				{accounts}
 				{currencies}
 				{cashFlowActivities}
