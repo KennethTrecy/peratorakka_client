@@ -81,7 +81,7 @@
 	}
 
 	$: targetExchangeRate = exchangeRates.find(
-		exchangeRate => `${exchangeRate.destination.currency_id}` === (currency?.id ?? "")
+		exchangeRate => `${exchangeRate.destination.currency_id}` === targetCurrencyID
 	) ?? {
 		"source": {
 			"currency_id": currency?.id ?? 0,
@@ -94,7 +94,7 @@
 		"updated_at": (new Date()).toDateString()
 	}
 	$: targetCurrency = currencies.find(
-		currency => currency.id === targetExchangeRate.destination.currency_id
+		currency => `${currency.id}` === targetCurrencyID
 	)
 </script>
 
