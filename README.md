@@ -8,11 +8,11 @@
 # Peratorakka Client
 A client for any Peratorakka server.
 
-Peratorakka is a software system aimed to manage and track the personal
-finances. It is made up of a client and [server]. In this repository, it has
-an implementation of the client which allows the users to interact with
-server. The server may be implemented in different programming language as
-long as it has compatible API.
+Peratorakka is a software system aimed to manage and track personal finances.
+It is made up of a client and [server]. In this repository, it has an
+implementation of the client which allows the users to interact with server.
+The server may be implemented in different programming language as long as it
+has compatible API.
 
 Screenshots of this project can be found in [author's post]. Currently, there
 is no server available to access by common people. Yet, the instructions how
