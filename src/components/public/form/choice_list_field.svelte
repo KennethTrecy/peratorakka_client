@@ -28,9 +28,9 @@
 	$: {
 		if (value === UNKNOWN_OPTION && rawChoices.length > 0) {
 			value = choiceConverter(rawChoices[0]).data
-
-			if (select !== null) select.setValue(value)
 		}
+
+		if (select !== null) select.setValue(value)
 	}
 
 	$: normalizedFieldName = errorFieldName === null
