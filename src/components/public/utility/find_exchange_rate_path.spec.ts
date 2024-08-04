@@ -16,22 +16,22 @@ describe("Find exchange rate path function behavior", () => {
 		const exchangeRates: ExchangeRateInfo[] = [
 			{
 				"source": {
-					"id": 1,
+					"currency_id": 1,
 					"value": "2"
 				},
 				"destination": {
-					"id": 2,
+					"currency_id": 2,
 					"value": "3"
 				},
 				"updated_at": (new Date()).toDateString()
 			},
 			{
 				"source": {
-					"id": 2,
+					"currency_id": 2,
 					"value": "2"
 				},
 				"destination": {
-					"id": 3,
+					"currency_id": 3,
 					"value": "3"
 				},
 				"updated_at": (new Date()).toDateString()
@@ -42,7 +42,7 @@ describe("Find exchange rate path function behavior", () => {
 
 		const result = topicFunction(destinationCurrency, exchangeRates, currentPath)
 
-		expect(result).toBe([ [ exchangeRates[0] ] ])
+		expect(result).toStrictEqual([ [ exchangeRates[0] ] ])
 	})
 
 	it("can find indirect rates", async () => {
@@ -55,44 +55,44 @@ describe("Find exchange rate path function behavior", () => {
 		const exchangeRates: ExchangeRateInfo[] = [
 			{
 				"source": {
-					"id": 1,
+					"currency_id": 1,
 					"value": "2"
 				},
 				"destination": {
-					"id": 3,
+					"currency_id": 3,
 					"value": "3"
 				},
 				"updated_at": (new Date()).toDateString()
 			},
 			{
 				"source": {
-					"id": 3,
+					"currency_id": 3,
 					"value": "2"
 				},
 				"destination": {
-					"id": 2,
+					"currency_id": 2,
 					"value": "3"
 				},
 				"updated_at": (new Date()).toDateString()
 			},
 			{
 				"source": {
-					"id": 3,
+					"currency_id": 3,
 					"value": "2"
 				},
 				"destination": {
-					"id": 4,
+					"currency_id": 4,
 					"value": "3"
 				},
 				"updated_at": (new Date()).toDateString()
 			},
 			{
 				"source": {
-					"id": 4,
+					"currency_id": 4,
 					"value": "2"
 				},
 				"destination": {
-					"id": 2,
+					"currency_id": 2,
 					"value": "3"
 				},
 				"updated_at": (new Date()).toDateString()
@@ -103,7 +103,7 @@ describe("Find exchange rate path function behavior", () => {
 
 		const result = topicFunction(destinationCurrency, exchangeRates, currentPath)
 
-		expect(result).toBe([
+		expect(result).toStrictEqual([
 			[ exchangeRates[0], exchangeRates[1] ],
 			[ exchangeRates[0], exchangeRates[2], exchangeRates[3] ]
 		])
@@ -119,11 +119,11 @@ describe("Find exchange rate path function behavior", () => {
 		const exchangeRates: ExchangeRateInfo[] = [
 			{
 				"source": {
-					"id": 1,
+					"currency_id": 1,
 					"value": "2"
 				},
 				"destination": {
-					"id": 2,
+					"currency_id": 2,
 					"value": "3"
 				},
 				"updated_at": (new Date()).toDateString()
@@ -134,7 +134,7 @@ describe("Find exchange rate path function behavior", () => {
 
 		const result = topicFunction(destinationCurrency, exchangeRates, currentPath)
 
-		expect(result).toBe([ [ exchangeRates[0] ] ])
+		expect(result).toStrictEqual([ [ exchangeRates[0] ] ])
 	})
 
 	it("can find skip loops", async () => {
@@ -147,55 +147,55 @@ describe("Find exchange rate path function behavior", () => {
 		const exchangeRates: ExchangeRateInfo[] = [
 			{
 				"source": {
-					"id": 1,
+					"currency_id": 1,
 					"value": "2"
 				},
 				"destination": {
-					"id": 3,
+					"currency_id": 3,
 					"value": "3"
 				},
 				"updated_at": (new Date()).toDateString()
 			},
 			{
 				"source": {
-					"id": 3,
+					"currency_id": 3,
 					"value": "2"
 				},
 				"destination": {
-					"id": 2,
+					"currency_id": 2,
 					"value": "3"
 				},
 				"updated_at": (new Date()).toDateString()
 			},
 			{
 				"source": {
-					"id": 3,
+					"currency_id": 3,
 					"value": "2"
 				},
 				"destination": {
-					"id": 4,
+					"currency_id": 4,
 					"value": "3"
 				},
 				"updated_at": (new Date()).toDateString()
 			},
 			{
 				"source": {
-					"id": 4,
+					"currency_id": 4,
 					"value": "2"
 				},
 				"destination": {
-					"id": 2,
+					"currency_id": 2,
 					"value": "3"
 				},
 				"updated_at": (new Date()).toDateString()
 			},
 			{
 				"source": {
-					"id": 4,
+					"currency_id": 4,
 					"value": "2"
 				},
 				"destination": {
-					"id": 3,
+					"currency_id": 3,
 					"value": "3"
 				},
 				"updated_at": (new Date()).toDateString()
@@ -206,7 +206,7 @@ describe("Find exchange rate path function behavior", () => {
 
 		const result = topicFunction(destinationCurrency, exchangeRates, currentPath)
 
-		expect(result).toBe([
+		expect(result).toStrictEqual([
 			[ exchangeRates[0], exchangeRates[1] ],
 			[ exchangeRates[0], exchangeRates[2], exchangeRates[3] ]
 		])
