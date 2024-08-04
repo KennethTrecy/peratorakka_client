@@ -135,4 +135,63 @@ describe("Find lightest exchange rate path function behavior", () => {
 
 		expect(result).toStrictEqual(paths[0])
 	})
+
+	it("can compare almost same weight paths", async () => {
+		const currentTime = (new Date(Date.now())).getTime()
+		const exchangeRates: ExchangeRateInfo[] = [
+			{
+				"source": {
+					"currency_id": 1,
+					"value": "2"
+				},
+				"destination": {
+					"currency_id": 3,
+					"value": "3"
+				},
+				"updated_at": (new Date(currentTime)).toJSON()
+			},
+			{
+				"source": {
+					"currency_id": 3,
+					"value": "2"
+				},
+				"destination": {
+					"currency_id": 2,
+					"value": "3"
+				},
+				"updated_at": (new Date(currentTime - 100)).toJSON()
+			},
+			{
+				"source": {
+					"currency_id": 3,
+					"value": "2"
+				},
+				"destination": {
+					"currency_id": 4,
+					"value": "3"
+				},
+				"updated_at": (new Date(currentTime - 50)).toJSON()
+			},
+			{
+				"source": {
+					"currency_id": 4,
+					"value": "2"
+				},
+				"destination": {
+					"currency_id": 2,
+					"value": "3"
+				},
+				"updated_at": (new Date(currentTime - 50)).toJSON()
+			}
+		]
+
+		const paths = [
+			[ exchangeRates[0], exchangeRates[1] ],
+			[ exchangeRates[0], exchangeRates[2], exchangeRates[3] ]
+		]
+
+		const result = topicFunction(paths, currentTime)
+
+		expect(result).toStrictEqual(paths[1])
+	})
 })
