@@ -36,6 +36,11 @@ export function subtractAmount(subtrahend: string, minuend: string): string {
 	return new Fraction(subtrahend).sub(minuend).toString()
 }
 
+export function multiplyAmount(multiplicand: string, multiplier: string): string {
+	Fraction.REDUCE = true;
+	return new Fraction(multiplicand).mul(multiplier).toString()
+}
+
 export function setTheme(filename: string): void {
 
 }
