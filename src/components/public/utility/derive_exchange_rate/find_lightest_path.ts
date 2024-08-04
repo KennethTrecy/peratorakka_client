@@ -16,18 +16,18 @@ export default function findLightestPath(
 		}
 
 		if (weight === lastWeight) {
-			const timeStampsInLastPath = lastPath.map(
+			const timestampsInLastPath = lastPath.map(
 				exchangeRate => new Date(exchangeRate.updated_at)
 			)
-			const timeStampsInCurrentPath = path.map(
+			const timestampsInCurrentPath = path.map(
 				exchangeRate => new Date(exchangeRate.updated_at)
 			)
 
-			timeStampsInLastPath.sort().reverse()
-			timeStampsInCurrentPath.sort().reverse()
+			timestampsInLastPath.sort().reverse()
+			timestampsInCurrentPath.sort().reverse()
 
 			// Get path with latest timestamp
-			if (timeStampsInCurrentPath[0] > timeStampsInLastPath[0]) {
+			if (timestampsInCurrentPath[0] > timestampsInLastPath[0]) {
 				lastPath = path
 			}
 		}
