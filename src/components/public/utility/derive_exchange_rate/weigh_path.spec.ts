@@ -1,4 +1,3 @@
-import type { Currency } from "+/entity"
 import type { ExchangeRateInfo } from "+/rest"
 
 import { describe, it, expect } from "vitest"
