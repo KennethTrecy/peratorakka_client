@@ -10,12 +10,17 @@
 
 	import { ACCOUNT_KIND_AGGREGATED_LIST_PRIOITY } from "#/entity"
 
+	import transformCurrency from "$/form/choice_info_transformer/transform_currency"
+
 	import BalanceSheet from "%/frozen_periods/financial_statements/balance_sheet.svelte"
 	import CashFlowStatement from "%/frozen_periods/financial_statements/cash_flow_statement.svelte"
+	import ChoiceListField from "$/form/choice_list_field.svelte"
 	import ElementalParagraph from "$/typography/elemental_paragraph.svelte"
 	import Flex from "$/layout/flex.svelte"
 	import GridCell from "$/layout/grid_cell.svelte"
 	import IncomeStatement from "%/frozen_periods/financial_statements/income_statement.svelte"
+	import ShortParagraph from "$/typography/short_paragraph.svelte"
+	import TextContainer from "$/typography/text_container.svelte"
 	import TrialBalance from "%/frozen_periods/financial_statements/trial_balance.svelte"
 
 	export let statement: FinancialStatementGroup
@@ -61,8 +66,37 @@
 				: leftAccount.name.localeCompare(rightAccount.name)
 	})
 	$: hasAcceptableCashFlowActivities = cashFlowActivities.length > 0
+
+	let targetCurrencyID = ""
+	let oldShownCurrencyID = ""
+	$: {
+		if (
+			typeof currency !== "undefined"
+			&& `${currency.id}` !== oldShownCurrencyID
+		) {
+			oldShownCurrencyID = `${currency.id}`
+			targetCurrencyID = oldShownCurrencyID
+		}
+	}
 </script>
 
+<GridCell kind="full">
+	<Flex direction="column" mustPad={false}>
+		<TextContainer>
+			<ShortParagraph>
+				Amounts are viewed in
+				<ChoiceListField
+					fieldName="Target Currency"
+					errorFieldName="currency_id"
+					disabled={false}
+					bind:value={targetCurrencyID}
+					rawChoices={currencies}
+					choiceConverter={transformCurrency}
+					errors={[]}/> currency.
+			</ShortParagraph>
+		</TextContainer>
+	</Flex>
+</GridCell>
 <GridCell kind="triad">
 	<Flex direction="column" mustPad={false}>
 		<BalanceSheet
