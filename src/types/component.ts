@@ -9,6 +9,11 @@ export type DataTableCellKind =
 	| "normal"
 	| "numeric"
 	| "descriptive"
+	| "representative"
+
+export type DataTableCellStatus =
+	| "present"
+	| "archived"
 
 export type DataTableCellScope =
 	| "row"

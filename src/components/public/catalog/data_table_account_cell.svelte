@@ -4,7 +4,9 @@
 	import DataTableCell from "$/catalog/data_table_cell.svelte"
 
 	export let kind: DataTableCellKind = "normal"
+	export let rawDebitExistence: boolean[]
 	export let rawDebit: any[]
+	export let rawCreditExistence: boolean[]
 	export let rawCredit: any[]
 
 	$: debits = kind === "normal" ? (rawDebit as string[]) : (rawDebit as number[])
@@ -21,15 +23,15 @@
 
 <DataTableCell {kind}>
 	<ul class={debitClasses}>
-		{#each debits as debit}
-			<li>
+		{#each debits as debit, i}
+			<li data-exists={rawDebitExistence[i]}>
 				{debit}
 			</li>
 		{/each}
 	</ul>
 	<ul class={creditClasses}>
-		{#each credits as credit}
-			<li>
+		{#each credits as credit, i}
+			<li data-exists={rawCreditExistence[i]}>
 				{credit}
 			</li>
 		{/each}
@@ -43,10 +45,18 @@
 
 	.debit {
 		text-align: left;
+
+		li[data-exists=false] {
+			text-decoration: line-through;
+		}
 	}
 
 	.credit {
 		text-align: right;
+
+		li[data-exists=false] {
+			text-decoration: line-through;
+		}
 	}
 
 	.debit.normal {

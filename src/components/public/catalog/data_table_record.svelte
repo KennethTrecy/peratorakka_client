@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { GeneralError } from "+/rest"
-	import type { CardStatus } from "+/component"
+	import type { CardStatus, DataTableCellStatus } from "+/component"
 	import type { Writable } from "svelte/store"
 	import type { Account } from "+/entity"
 
@@ -24,6 +24,7 @@
 	export let isConnectingToDelete: boolean
 	export let deleteErrors: Writable<GeneralError[]>
 	export let requestDelete: () => Promise<void>
+	export let headerStatus: DataTableCellStatus = "present"
 
 	const dispatch = createEventDispatcher<{
 		"delete": void
@@ -35,6 +36,8 @@
 	$: isConfirmingDeletion = status === "confirming_deletion"
 	$: debitAccountName = debitAccount.name
 	$: creditAccountName = creditAccount.name
+	$: debitExistence = debitAccount.deleted_at === null
+	$: creditExistence = creditAccount.deleted_at === null
 
 	function startReading() {
 		status = "reading"
@@ -70,9 +73,13 @@
 
 <DataTableRow>
 	<slot name="leading_cells"/>
-	<DataTableHeader scope="row" kind="descriptive">{label}</DataTableHeader>
+	<DataTableHeader scope="row" kind="representative" status={headerStatus}>
+		{label}
+	</DataTableHeader>
 	<DataTableAccountCell
+		rawDebitExistence={[ debitExistence ]}
 		rawDebit={[ debitAccountName ]}
+		rawCreditExistence={[ creditExistence ]}
 		rawCredit={[ creditAccountName ]}/>
 	<slot name="trailing_cells"/>
 	<DataTableCell>
