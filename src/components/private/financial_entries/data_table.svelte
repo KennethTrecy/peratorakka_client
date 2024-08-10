@@ -15,6 +15,8 @@
 	export let modifiers: Modifier[]
 	export let data: FinancialEntry[]
 
+	export let selectedAccountID: string
+	export let selectedModifierID: string
 	export let beginDate: string
 	export let endDate: string
 	export let searchMode: SearchMode
@@ -31,8 +33,13 @@
 	</svelte:fragment>
 	<ListSpecifier
 		slot="list_specifier"
+		{currencies}
+		{accounts}
+		{modifiers}
 		bind:beginDate={beginDate}
 		bind:endDate={endDate}
+		bind:selectedAccountID={selectedAccountID}
+		bind:selectedModifierID={selectedModifierID}
 		bind:searchMode={searchMode}
 		bind:sortCriterion={sortCriterion}
 		bind:sortOrder={sortOrder}
@@ -41,6 +48,7 @@
 	<DataTableRecordHeader slot="table_headers">
 		<DataTableHeader slot="leading_headers">Transacted Date</DataTableHeader>
 		<svelte:fragment slot="trailing_headers">
+			<DataTableHeader>Action</DataTableHeader>
 			<DataTableHeader>Amounts</DataTableHeader>
 			<DataTableHeader>Remarks</DataTableHeader>
 		</svelte:fragment>

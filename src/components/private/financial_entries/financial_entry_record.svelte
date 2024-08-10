@@ -1,4 +1,5 @@
 <script lang="ts">
+	import type { DataTableCellStatus } from "+/component"
 	import type { GeneralError } from "+/rest"
 	import type {
 		Currency,
@@ -12,6 +13,7 @@
 
 	import { UNKNOWN_OPTION, UNKNOWN_ACCOUNT } from "#/component"
 
+	import convertSnakeCaseToProperCase from "$/utility/convert_snake_case_to_proper_case"
 	import formatAmount from "$/utility/format_amount"
 	import makeJSONRequester from "$/rest/make_json_requester"
 
@@ -43,6 +45,7 @@
 	$: chosenModifier = modifiers.find(
 		modifier => `${modifier.id}` === modifierID
 	)
+	$: friendlyAction = convertSnakeCaseToProperCase(chosenModifier?.action ?? "unknown")
 	$: debitAccount = (
 		chosenModifier
 		&& accounts.find(
@@ -134,6 +137,11 @@
 		deleteErrors = requesterInfo.errors
 		requestDelete = async () => await requesterInfo.send({})
 	}
+	$: headerStatus = (
+		chosenModifier?.deleted_at === null
+			? "present"
+			: "archived"
+	) as DataTableCellStatus
 
 	function resetDraft() {
 		modifierID = `${data.modifier_id}`
@@ -146,6 +154,7 @@
 
 <DataTableRecord
 	label={chosenModifier?.name ?? UNKNOWN_OPTION}
+	{headerStatus}
 	{debitAccount}
 	{creditAccount}
 	{updateErrors}
@@ -181,9 +190,14 @@
 		{transactedAt}
 	</DataTableCell>
 	<svelte:fragment slot="trailing_cells">
+		<DataTableCell>
+			{friendlyAction}
+		</DataTableCell>
 		<DataTableAccountCell
 			kind="numeric"
+			rawDebitExistence={[ true ]}
 			rawDebit={[ friendlyDebitAmount ]}
+			rawCreditExistence={[ true ]}
 			rawCredit={[ friendlyCreditAmount ]}/>
 		<DataTableCell kind="descriptive">
 			{resolveRemarks}
