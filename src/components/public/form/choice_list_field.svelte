@@ -3,9 +3,9 @@
 	import type { GeneralError } from "+/rest"
 
 	import { onMount } from "svelte"
-	import { MDCSelect } from "@material/select";
-	import { MDCMenu } from "@material/menu";
-	import { MDCMenuSurface } from "@material/menu-surface";
+	import { MDCSelect } from "@material/select"
+	import { MDCMenu } from "@material/menu"
+	import { MDCMenuSurface } from "@material/menu-surface"
 
 	import { UNKNOWN_OPTION } from "#/component"
 

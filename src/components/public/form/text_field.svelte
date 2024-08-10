@@ -28,7 +28,7 @@
 	$: helperID = `${fieldID}_helper`
 	$: isActive = Boolean(value)
 	$: message = errors.filter(
-		error => isFieldError(error) && error.field.endsWith(normalizedFieldName)
+		error => isFieldError(error) && error.field.endsWith(errorFieldName)
 	).map(error => error.message).join(" ")
 	$: textfieldClass = [
 		"mdc-text-field",

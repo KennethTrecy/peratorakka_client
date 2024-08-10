@@ -1,9 +1,9 @@
 // @vitest-environment jsdom
 
-import { cleanup, render } from "@testing-library/svelte";
-import { expect, it } from "vitest";
+import { cleanup, render } from "@testing-library/svelte"
+import { expect, it } from "vitest"
 
-import App from "@/routes/+page.svelte";
+import App from "@/routes/+page.svelte"
 
 it("can test", () => {
 	const { container } = render(App, {
