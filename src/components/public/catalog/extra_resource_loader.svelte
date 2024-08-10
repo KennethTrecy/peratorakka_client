@@ -76,7 +76,7 @@
 		})
 	}
 
-	const reloadFully = debounce(() => dispatch("reloadFully"), 500)
+	const reloadFully = debounce(() => dispatch("reloadFully"), 2000)
 	$: {
 		if (isConnectingForInitialList) {
 			oldParameters = parameters
