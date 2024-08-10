@@ -13,8 +13,9 @@
 	import AmountRow
 		from "%/frozen_periods/financial_statements/cash_flow_statement/amount_row.svelte"
 
-	export let exchangeRate: ExchangeRateInfo
-	export let currency: Currency
+	export let exchangeRates: ExchangeRateInfo[]
+	export let viewedCurrency: Currency
+	export let currencies: Currency[]
 	export let cashFlowActivity: CashFlowActivity
 	export let cashFlowSubtotals: CashFlowActivitySubtotal[]
 	export let accounts: Account[]
@@ -52,8 +53,10 @@
 		<AmountRow
 			categoryName={cashFlowActivity.name}
 			categoryNameRowSpan={firstRowSpan}
-			currency={currency}
-			{exchangeRate}
+			{viewedCurrency}
+			{exchangeRates}
+			{currencies}
+			baseCurrencyID={viewedCurrency.id}
 			accountName="Net income"
 			rawAmount={matchedSubtotal.net_income}/>
 	{/if}
@@ -61,16 +64,20 @@
 		<AmountRow
 			categoryName={cashFlowActivity.name}
 			categoryNameRowSpan={i + rowCountBeforeAccounts === 0 ? firstRowSpan : 0}
-			currency={currency}
-			{exchangeRate}
+			{viewedCurrency}
+			{exchangeRates}
+			{currencies}
+			baseCurrencyID={flowCalculation["@meta"].account.currency_id}
 			accountName={flowCalculation["@meta"].account.name}
 			rawAmount={flowCalculation.net_amount}/>
 	{/each}
 	<AmountRow
 		categoryName={cashFlowActivity.name}
 		categoryNameRowSpan={0}
-		currency={currency}
-		{exchangeRate}
+		{viewedCurrency}
+		{exchangeRates}
+		{currencies}
+		baseCurrencyID={viewedCurrency.id}
 		accountName="Balance"
 		rawAmount={matchedSubtotal.subtotal}/>
 {/if}

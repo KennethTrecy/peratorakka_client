@@ -55,8 +55,9 @@
 			<CategorizedSection
 				cashFlowActivity={cashFlowActivity}
 				cashFlowSubtotals={subtotals}
-				currency={viewedCurrency}
-				{exchangeRate}
+				{viewedCurrency}
+				{exchangeRates}
+				{currencies}
 				{accounts}
 				{flowCalculations}/>
 		{/each}
