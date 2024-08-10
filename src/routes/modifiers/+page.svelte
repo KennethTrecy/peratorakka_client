@@ -9,7 +9,12 @@
 
 	import { DEFAULT_MINIMUM_PROGRESS_RATE, NO_CASH_FLOW_ACTIVITY } from "#/component"
 	import { GLOBAL_CONTEXT } from "#/contexts"
-	import { SEARCH_NORMALLY, ASCENDING_ORDER, MAXIMUM_PAGINATED_LIST_LENGTH } from "#/rest"
+	import {
+		SEARCH_NORMALLY,
+		SEARCH_WITH_DELETED,
+		ASCENDING_ORDER,
+		MAXIMUM_PAGINATED_LIST_LENGTH
+	} from "#/rest"
 
 	import assertAuthentication from "$/page_requirement/assert_authentication"
 	import makeJSONRequester from "$/rest/make_json_requester"
@@ -95,6 +100,7 @@
 	})
 
 	const dependencyPathParameters = [
+		[ "filter[search_mode]", SEARCH_WITH_DELETED ],
 		[ "sort[0][0]", "name" ],
 		[ "sort[0][1]", "ascending" ],
 		[ "sort[1][0]", "created_at" ],
