@@ -29,6 +29,7 @@
 	export let errors: GeneralError[]
 	export let id: string|null = null
 
+	$: availableModifiers = modifiers.filter(modifier => modifier.deleted_at === null)
 	$: chosenModifier = modifiers.find(
 		modifier => `${modifier.id}` === modifierID
 	)
@@ -48,6 +49,17 @@
 	$: {
 		if (hasSameCurrency) creditAmount = debitAmount
 	}
+
+	$: debitLabel = `${
+		hasSameCurrency
+			? "Debit and Credit Amount"
+			: "Debit Amount"
+		} (${debitCurrency?.code ?? ""})`
+	$: creditLabel = `${
+		hasSameCurrency
+			? "Debit and Credit Amount"
+			: "Credit Amount"
+		} (${debitCurrency?.code ?? ""})`
 </script>
 
 <BasicForm {id} {isConnecting} {errors} on:submit>
@@ -57,7 +69,7 @@
 			errorFieldName="modifier_id"
 			disabled={isConnecting || forceDisabledFields.includes("modifier_id")}
 			bind:value={modifierID}
-			rawChoices={modifiers}
+			rawChoices={availableModifiers}
 			choiceConverter={transformModifier}
 			{IDPrefix}
 			{errors}/>
@@ -71,8 +83,8 @@
 			{errors}/>
 		{#if hasSameCurrency}
 			<TextField
-				fieldName="Debit and Credit Amount"
-				errorFieldName="amount"
+				fieldName={debitLabel}
+				errorFieldName="debit_amount"
 				disabled={
 					isConnecting
 					|| forceDisabledFields.includes("debit_amount")
@@ -83,13 +95,15 @@
 				{errors}/>
 		{:else}
 			<TextField
-				fieldName="Debit Amount"
+				fieldName={debitLabel}
+				errorFieldName="debit_amount"
 				disabled={isConnecting || forceDisabledFields.includes("debit_amount")}
 				bind:value={debitAmount}
 				{IDPrefix}
 				{errors}/>
 			<TextField
-				fieldName="Credit Amount"
+				fieldName={creditLabel}
+				errorFieldName="credit_amount"
 				disabled={isConnecting || forceDisabledFields.includes("credit_amount")}
 				bind:value={creditAmount}
 				{IDPrefix}
@@ -97,6 +111,7 @@
 		{/if}
 		<TextField
 			fieldName="Remarks"
+			errorFieldName="remarks"
 			disabled={isConnecting || forceDisabledFields.includes("remarks")}
 			bind:value={remarks}
 			{IDPrefix}
