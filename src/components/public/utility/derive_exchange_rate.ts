@@ -8,17 +8,17 @@ import findPaths from "$/utility/derive_exchange_rate/find_paths"
 
 export default function deriveExchangeRate(
 	sourceCurrency: Currency,
-	destinationCurrency: Currency,
+	viewedCurrency: Currency,
 	exchangeRates: ExchangeRateInfo[]
 ): ExchangeRateInfo {
-	if (sourceCurrency.id === destinationCurrency.id) {
+	if (sourceCurrency.id === viewedCurrency.id) {
 		return {
 			"source": {
 				"currency_id": sourceCurrency.id,
 				value: "1"
 			},
 			"destination": {
-				"currency_id": destinationCurrency.id,
+				"currency_id": viewedCurrency.id,
 				value: "1"
 			},
 			"updated_at": (new Date()).toDateString()
@@ -40,7 +40,7 @@ export default function deriveExchangeRate(
 		exchangeRate => exchangeRate.source.currency_id === sourceCurrency.id
 	).map(foundExchangeRate => [ foundExchangeRate ])
 	const paths = initialPaths
-		.map(path => findPaths(destinationCurrency, exchangeRates, path))
+		.map(path => findPaths(viewedCurrency, exchangeRates, path))
 		.reduce((previousPaths, currentPathCollection) => {
 			return [
 				...previousPaths,
@@ -64,7 +64,7 @@ export default function deriveExchangeRate(
 				}, "1")
 		},
 		"destination": {
-			"currency_id": destinationCurrency.id,
+			"currency_id": viewedCurrency.id,
 			value: lightPath
 			.map(exchangeRate => exchangeRate.destination.value)
 			.reduce((previousValue, currentValue) => {
