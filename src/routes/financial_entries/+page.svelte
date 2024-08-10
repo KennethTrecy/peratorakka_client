@@ -7,9 +7,14 @@
 	import { onMount, getContext } from "svelte"
 	import { afterNavigate, beforeNavigate, goto } from "$app/navigation"
 
-	import { DEFAULT_MINIMUM_PROGRESS_RATE } from "#/component"
+	import { ANY_ACCOUNT, ANY_MODIFIER, DEFAULT_MINIMUM_PROGRESS_RATE } from "#/component"
 	import { GLOBAL_CONTEXT } from "#/contexts"
-	import { SEARCH_NORMALLY, DESCENDING_ORDER, MAXIMUM_PAGINATED_LIST_LENGTH } from "#/rest"
+	import {
+		SEARCH_NORMALLY,
+		SEARCH_WITH_DELETED,
+		DESCENDING_ORDER,
+		MAXIMUM_PAGINATED_LIST_LENGTH
+	} from "#/rest"
 
 	import assertAuthentication from "$/page_requirement/assert_authentication"
 	import makeDateFieldValue from "$/utility/make_date_field_value"
@@ -46,6 +51,8 @@
 
 	let beginDate: string = lastTransactedDate
 	let endDate: string = currentTransactedDate
+	let selectedAccountID: string = `${ANY_ACCOUNT.id}`
+	let selectedModifierID: string = `${ANY_MODIFIER.id}`
 	let searchMode: SearchMode = SEARCH_NORMALLY
 	let sortCriterion: string = "transacted_at"
 	let sortOrder: SortOrder = DESCENDING_ORDER
@@ -73,6 +80,14 @@
 			[ "sort[1][0]", "created_at" ],
 			[ "sort[1][1]", sortOrder as string ]
 		]
+
+		if (selectedAccountID !== `${ANY_ACCOUNT.id}`) {
+			parameters.push([ "filter[account_id]", selectedAccountID as string ])
+		}
+
+		if (selectedModifierID !== `${ANY_MODIFIER.id}`) {
+			parameters.push([ "filter[modifier_id]", selectedModifierID as string ])
+		}
 
 		completePath.set(`${partialPath}?${
 			new URLSearchParams([
@@ -108,6 +123,7 @@
 
 	const partialDependencyPath = "/api/v1/modifiers"
 	const dependencyPathParameters = [
+		[ "filter[search_mode]", SEARCH_WITH_DELETED ],
 		[ "sort[0][0]", "name" ],
 		[ "sort[0][1]", "ascending" ],
 		[ "sort[1][0]", "created_at" ],
@@ -240,6 +256,8 @@
 			data={financialEntries}
 			bind:beginDate={beginDate}
 			bind:endDate={endDate}
+			bind:selectedAccountID={selectedAccountID}
+			bind:selectedModifierID={selectedModifierID}
 			bind:searchMode={searchMode}
 			bind:sortCriterion={sortCriterion}
 			bind:sortOrder={sortOrder}
