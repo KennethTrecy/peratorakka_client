@@ -7,8 +7,9 @@
 		FlowCalculation
 	} from "+/entity"
 
-	import formatAmount from "$/utility/format_amount"
 	import convertAmount from "$/utility/convert_amount"
+	import deriveExchangeRateQuickly from "$/utility/derive_exchange_rate_quickly"
+	import formatAmount from "$/utility/format_amount"
 
 	import TotalAmountRow
 		from "%/frozen_periods/financial_statements/cash_flow_statement/total_amount_row.svelte"
@@ -20,18 +21,26 @@
 	import UnitDataTable from "$/catalog/unit_data_table.svelte"
 
 	export let statement: FinancialStatementGroup
-	export let exchangeRate: ExchangeRateInfo
-	export let currency: Currency|undefined
+	export let exchangeRates: ExchangeRateInfo[]
+	export let viewedCurrency: Currency
+	export let currencies: Currency[]
 	export let cashFlowActivities: CashFlowActivity[]
 	export let accounts: Account[]
 	export let flowCalculations: Omit<FlowCalculation, "frozen_period_id">[]
+
+	$: exchangeRate = deriveExchangeRateQuickly(
+		statement.currency_id,
+		viewedCurrency.id,
+		currencies,
+		exchangeRates
+	)
 
 	$: subtotals = statement.cash_flow_statement.subtotals
 	$: convertedAmount = convertAmount(
 		statement.cash_flow_statement.liquid_amount_difference,
 		exchangeRate
 	)
-	$: friendlyLiquidAmountDifference = formatAmount(currency, convertedAmount)
+	$: friendlyLiquidAmountDifference = formatAmount(viewedCurrency, convertedAmount)
 </script>
 
 <QuarternaryHeading>Cash Flow Statement</QuarternaryHeading>
@@ -46,7 +55,7 @@
 			<CategorizedSection
 				cashFlowActivity={cashFlowActivity}
 				cashFlowSubtotals={subtotals}
-				{currency}
+				currency={viewedCurrency}
 				{exchangeRate}
 				{accounts}
 				{flowCalculations}/>
@@ -54,12 +63,12 @@
 		<TotalAmountRow
 			rowName="Opened Liquid Balance"
 			{exchangeRate}
-			currency={currency}
+			currency={viewedCurrency}
 			rawAmount={statement.cash_flow_statement.opened_liquid_amount}/>
 		<TotalAmountRow
 			rowName="Closed Liquid Balance"
 			{exchangeRate}
-			currency={currency}
+			currency={viewedCurrency}
 			rawAmount={statement.cash_flow_statement.closed_liquid_amount}/>
 	</svelte:fragment>
 	<svelte:fragment slot="table_footer_cells">

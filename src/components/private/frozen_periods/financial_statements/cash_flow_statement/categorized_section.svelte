@@ -14,7 +14,7 @@
 		from "%/frozen_periods/financial_statements/cash_flow_statement/amount_row.svelte"
 
 	export let exchangeRate: ExchangeRateInfo
-	export let currency: Currency|undefined
+	export let currency: Currency
 	export let cashFlowActivity: CashFlowActivity
 	export let cashFlowSubtotals: CashFlowActivitySubtotal[]
 	export let accounts: Account[]

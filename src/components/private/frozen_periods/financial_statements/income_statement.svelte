@@ -4,8 +4,9 @@
 
 	import { INCOME_ACCOUNT_KIND, EXPENSE_ACCOUNT_KIND } from "#/entity"
 
-	import formatAmount from "$/utility/format_amount"
 	import convertAmount from "$/utility/convert_amount"
+	import deriveExchangeRateQuickly from "$/utility/derive_exchange_rate_quickly"
+	import formatAmount from "$/utility/format_amount"
 
 	import DataTableCell from "$/catalog/data_table_cell.svelte"
 	import DataTableHeader from "$/catalog/data_table_header.svelte"
@@ -14,8 +15,9 @@
 	import UnitDataTable from "$/catalog/unit_data_table.svelte"
 
 	export let statement: FinancialStatementGroup
-	export let exchangeRate: ExchangeRateInfo
-	export let currency: Currency|undefined
+	export let exchangeRates: ExchangeRateInfo[]
+	export let viewedCurrency: Currency
+	export let currencies: Currency[]
 	export let accounts: Account[]
 	export let data: Omit<SummaryCalculation, "frozen_period_id">[]
 
@@ -30,11 +32,18 @@
 	$: expenseCalculations = data.filter(
 		calculation => expenseAccountIDs.indexOf(calculation.account_id) > -1
 	)
+
+	$: exchangeRate = deriveExchangeRateQuickly(
+		statement.currency_id,
+		viewedCurrency.id,
+		currencies,
+		exchangeRates
+	)
 	$: convertedNetAmount = convertAmount(
 		statement.income_statement.net_total,
 		exchangeRate
 	)
-	$: friendlyNetAmount = formatAmount(currency, convertedNetAmount)
+	$: friendlyNetAmount = formatAmount(viewedCurrency, convertedNetAmount)
 </script>
 
 <QuarternaryHeading>Income Statement</QuarternaryHeading>
@@ -47,16 +56,18 @@
 	<svelte:fragment slot="table_rows">
 		{#each incomeCalculations as calculation(calculation.account_id)}
 			<TrialRow
-				{currency}
-				{exchangeRate}
+				{viewedCurrency}
+				{exchangeRates}
+				{currencies}
 				{accounts}
 				data={calculation}
 				kind="unadjusted"/>
 		{/each}
 		{#each expenseCalculations as calculation(calculation.account_id)}
 			<TrialRow
-				{currency}
-				{exchangeRate}
+				{viewedCurrency}
+				{exchangeRates}
+				{currencies}
 				{accounts}
 				data={calculation}
 				kind="unadjusted"/>

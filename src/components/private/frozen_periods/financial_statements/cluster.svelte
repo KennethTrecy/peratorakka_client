@@ -8,6 +8,7 @@
 		FlowCalculation
 	} from "+/entity"
 
+	import { ANY_CURRENCY } from "#/component"
 	import { ACCOUNT_KIND_AGGREGATED_LIST_PRIOITY } from "#/entity"
 
 	import transformCurrency from "$/form/choice_info_transformer/transform_currency"
@@ -32,8 +33,13 @@
 	export let summaryCalculations: Omit<SummaryCalculation, "frozen_period_id">[]
 	export let flowCalculations: Omit<FlowCalculation, "frozen_period_id">[]
 
-	$: currency = currencies.find(currency => currency.id === statement.currency_id)
-	$: allowedAccounts = accounts.filter(account => account.currency_id === statement.currency_id)
+	$: currency = currencies.find(
+		currency => currency.id === statement.currency_id
+	) ?? ANY_CURRENCY
+	$: allowAnyItem = currency.id === ANY_CURRENCY.id
+	$: allowedAccounts = accounts.filter(
+		account => allowAnyItem || account.currency_id === statement.currency_id
+	)
 	$: allowedAccountIDs = allowedAccounts.map(account => account.id)
 	$: allowedSummaryCalculations = summaryCalculations.filter(
 		calculation => allowedAccountIDs.indexOf(calculation.account_id) > -1
@@ -72,31 +78,23 @@
 	let targetCurrencyID = ""
 	let oldShownCurrencyID = ""
 	$: {
-		if (
-			typeof currency !== "undefined"
-			&& `${currency.id}` !== oldShownCurrencyID
-		) {
+		if (oldShownCurrencyID !== `${currency.id}`) {
 			oldShownCurrencyID = `${currency.id}`
-			targetCurrencyID = oldShownCurrencyID
+
+			let oldTargetCurrencyID = targetCurrencyID
+			if (oldShownCurrencyID === `${ANY_CURRENCY.id}`) {
+				targetCurrencyID = oldTargetCurrencyID === ""
+					? `${currencies[0].id}`
+					: oldTargetCurrencyID
+			} else {
+				targetCurrencyID = oldShownCurrencyID
+			}
 		}
 	}
 
-	$: targetCurrency = currencies.find(
+	$: viewedCurrency = currencies.find(
 		currency => `${currency.id}` === targetCurrencyID
-	)
-	$: targetExchangeRate = typeof currency !== "undefined" && typeof targetCurrency !== "undefined"
-		? deriveExchangeRate(currency, targetCurrency, exchangeRates)
-		: {
-			"source": {
-				"currency_id": currency?.id ?? 0,
-				"value": "0"
-			},
-			"destination": {
-				"currency_id": targetCurrency?.id ?? 0,
-				"value": "0"
-			},
-			"updated_at": (new Date()).toDateString()
-		}
+	) ?? currencies[0]
 </script>
 
 <GridCell kind="full">
@@ -121,8 +119,9 @@
 	<Flex direction="column" mustPad={false}>
 		<BalanceSheet
 			{statement}
-			exchangeRate={targetExchangeRate}
-			currency={targetCurrency}
+			{viewedCurrency}
+			{exchangeRates}
+			{currencies}
 			accounts={allowedAccounts}
 			data={allowedSummaryCalculations}/>
 	</Flex>
@@ -131,8 +130,9 @@
 	<Flex direction="column" mustPad={false}>
 		<IncomeStatement
 			{statement}
-			exchangeRate={targetExchangeRate}
-			currency={targetCurrency}
+			{viewedCurrency}
+			{exchangeRates}
+			{currencies}
 			accounts={allowedAccounts}
 			data={allowedSummaryCalculations}/>
 	</Flex>
@@ -142,8 +142,9 @@
 		{#if hasAcceptableCashFlowActivities}
 			<CashFlowStatement
 				{statement}
-				exchangeRate={targetExchangeRate}
-				currency={targetCurrency}
+				{viewedCurrency}
+				{exchangeRates}
+				{currencies}
 				{cashFlowActivities}
 				accounts={allowedAccounts}
 				flowCalculations={allowedFlowCalculations}/>
@@ -159,8 +160,9 @@
 		<TrialBalance
 			kind="unadjusted"
 			{statement}
-			exchangeRate={targetExchangeRate}
-			currency={targetCurrency}
+			{viewedCurrency}
+			{exchangeRates}
+			{currencies}
 			accounts={allowedAccounts}
 			data={allowedSummaryCalculations}/>
 	</Flex>
@@ -170,8 +172,9 @@
 		<TrialBalance
 			kind="adjusted"
 			{statement}
-			exchangeRate={targetExchangeRate}
-			currency={targetCurrency}
+			{viewedCurrency}
+			{exchangeRates}
+			{currencies}
 			accounts={allowedAccounts}
 			data={allowedSummaryCalculations}/>
 	</Flex>

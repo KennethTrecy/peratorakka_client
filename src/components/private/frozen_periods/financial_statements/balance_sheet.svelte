@@ -11,6 +11,8 @@
 		LIQUID_ASSET_ACCOUNT_KIND
 	} from "#/entity"
 
+	import deriveExchangeRateQuickly from "$/utility/derive_exchange_rate_quickly"
+
 	import CustomTrialRow from "%/frozen_periods/financial_statements/custom_trial_row.svelte"
 	import DataTableHeader from "$/catalog/data_table_header.svelte"
 	import QuarternaryHeading from "$/typography/quarternary_heading.svelte"
@@ -18,8 +20,9 @@
 	import UnitDataTable from "$/catalog/unit_data_table.svelte"
 
 	export let statement: FinancialStatementGroup
-	export let exchangeRate: ExchangeRateInfo
-	export let currency: Currency|undefined
+	export let exchangeRates: ExchangeRateInfo[]
+	export let viewedCurrency: Currency
+	export let currencies: Currency[]
 	export let accounts: Account[]
 	export let data: Omit<SummaryCalculation, "frozen_period_id">[]
 
@@ -43,6 +46,13 @@
 	$: equityCalculations = data.filter(
 		calculation => equityAccountIDs.indexOf(calculation.account_id) > -1
 	)
+
+	$: exchangeRate = deriveExchangeRateQuickly(
+		statement.currency_id,
+		viewedCurrency.id,
+		currencies,
+		exchangeRates
+	)
 </script>
 
 <QuarternaryHeading>Balance Sheet</QuarternaryHeading>
@@ -55,15 +65,16 @@
 	<svelte:fragment slot="table_rows">
 		{#each assetCalculations as calculation(calculation.account_id)}
 			<TrialRow
-				{currency}
-				{exchangeRate}
+				{viewedCurrency}
+				{exchangeRates}
+				{currencies}
 				{accounts}
 				data={calculation}
 				kind="unadjusted"/>
 		{/each}
 		<CustomTrialRow
 			rowName="Total Assets"
-			{currency}
+			currency={viewedCurrency}
 			{exchangeRate}
 			rawDebitAmount={statement.balance_sheet.total_assets}
 			rawCreditAmount={EMPTY_AMOUNT}
@@ -71,15 +82,16 @@
 
 		{#each liabilityCalculations as calculation(calculation.account_id)}
 			<TrialRow
-				{currency}
-				{exchangeRate}
+				{viewedCurrency}
+				{exchangeRates}
+				{currencies}
 				{accounts}
 				data={calculation}
 				kind="unadjusted"/>
 		{/each}
 		<CustomTrialRow
 			rowName="Total Liabilities"
-			{currency}
+			currency={viewedCurrency}
 			{exchangeRate}
 			rawDebitAmount={EMPTY_AMOUNT}
 			rawCreditAmount={statement.balance_sheet.total_liabilities}
@@ -87,21 +99,22 @@
 
 		{#each equityCalculations as calculation(calculation.account_id)}
 			<TrialRow
-				{currency}
-				{exchangeRate}
+				{viewedCurrency}
+				{exchangeRates}
+				{currencies}
 				{accounts}
 				data={calculation}
 				kind="unadjusted"/>
 		{/each}
 		<CustomTrialRow
 			rowName="Net Income"
-			{currency}
+			currency={viewedCurrency}
 			{exchangeRate}
 			rawDebitAmount={EMPTY_AMOUNT}
 			rawCreditAmount={statement.income_statement.net_total}/>
 		<CustomTrialRow
 			rowName="Total Equities"
-			{currency}
+			currency={viewedCurrency}
 			{exchangeRate}
 			rawDebitAmount={EMPTY_AMOUNT}
 			rawCreditAmount={statement.balance_sheet.total_equities}/>

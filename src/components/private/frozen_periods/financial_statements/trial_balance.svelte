@@ -3,8 +3,9 @@
 	import type { FinancialStatementGroup, ExchangeRateInfo } from "+/rest"
 	import type { TrialBalanceKind } from "+/component"
 
-	import formatAmount from "$/utility/format_amount"
 	import convertAmount from "$/utility/convert_amount"
+	import deriveExchangeRateQuickly from "$/utility/derive_exchange_rate_quickly"
+	import formatAmount from "$/utility/format_amount"
 
 	import DataTableCell from "$/catalog/data_table_cell.svelte"
 	import DataTableHeader from "$/catalog/data_table_header.svelte"
@@ -14,26 +15,33 @@
 
 	export let kind: TrialBalanceKind
 	export let statement: FinancialStatementGroup
-	export let exchangeRate: ExchangeRateInfo
-	export let currency: Currency|undefined
+	export let exchangeRates: ExchangeRateInfo[]
+	export let viewedCurrency: Currency
+	export let currencies: Currency[]
 	export let accounts: Account[]
 	export let data: Omit<SummaryCalculation, "frozen_period_id">[]
 
 	$: headingAdjective = kind === "adjusted" ? "Adjusted" : "Unadjusted"
+	$: exchangeRate = deriveExchangeRateQuickly(
+		statement.currency_id,
+		viewedCurrency.id,
+		currencies,
+		exchangeRates
+	)
 	$: convertedTotalDebitAmount = convertAmount(
 		kind === "adjusted"
 			? statement.adjusted_trial_balance.debit_total
 			: statement.unadjusted_trial_balance.debit_total,
 		exchangeRate
 	)
-	$: friendlyTotalDebitAmount = formatAmount(currency, convertedTotalDebitAmount)
+	$: friendlyTotalDebitAmount = formatAmount(viewedCurrency, convertedTotalDebitAmount)
 	$: convertedTotalCreditAmount = convertAmount(
 		kind === "adjusted"
 			? statement.adjusted_trial_balance.credit_total
 			: statement.unadjusted_trial_balance.credit_total,
 		exchangeRate
 	)
-	$: friendlyTotalCreditAmount = formatAmount(currency, convertedTotalCreditAmount)
+	$: friendlyTotalCreditAmount = formatAmount(viewedCurrency, convertedTotalCreditAmount)
 </script>
 
 <QuarternaryHeading>{headingAdjective} Trial Balance</QuarternaryHeading>
@@ -46,8 +54,9 @@
 	<svelte:fragment slot="table_rows">
 		{#each data as calculation(calculation.account_id)}
 			<TrialRow
-				{currency}
-				{exchangeRate}
+				{viewedCurrency}
+				{exchangeRates}
+				{currencies}
 				{accounts}
 				data={calculation}
 				{kind}/>
