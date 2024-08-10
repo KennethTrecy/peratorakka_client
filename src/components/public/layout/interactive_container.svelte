@@ -36,7 +36,7 @@
 			justify-content: center;
 
 			gap: $gap;
-			max-width: calc(#{$text_container_width * 1.5} + #{$gap});
+			max-width: calc(#{$text_container_width * 1.75} + #{$gap});
 			margin: auto;
 		}
 
