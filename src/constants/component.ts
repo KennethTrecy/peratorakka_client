@@ -1,4 +1,4 @@
-import type { Account, CashFlowActivity } from "+/entity"
+import type { Currency, Account, Modifier, CashFlowActivity } from "+/entity"
 import type { BufferDelayConfiguration } from "+/component"
 
 export const UNKNOWN_OPTION = "unknown"
@@ -9,6 +9,38 @@ export const UNKNOWN_ACCOUNT: Account = {
 	"description": "Either the associated account is still loading or not yet created.",
 	"currency_id": 0,
 	"kind": "unknown",
+	"created_at": "",
+	"updated_at": ""
+}
+
+export const ANY_CURRENCY: Currency = {
+	"id": 0,
+	"name": "Any Currency",
+	"description": "To be used as choice on filtering by currencies.",
+	"created_at": "",
+	"updated_at": ""
+}
+
+export const ANY_ACCOUNT: Account = {
+	"id": 0,
+	"name": "Any Account",
+	"description": "To be used as choice on filtering by accounts.",
+	"currency_id": 0,
+	"kind": "unknown",
+	"created_at": "",
+	"updated_at": ""
+}
+
+export const ANY_MODIFIER: Modifier = {
+	"id": 0,
+	"debit_account_id": 0,
+	"credit_account_id": 0,
+	"debit_cash_flow_activity_id": null,
+	"credit_cash_flow_activity_id": null,
+	"name": "Any Modifier",
+	"description": "To be used as choice on filtering by modifiers",
+	"kind": "unknown",
+	"action": "unknown",
 	"created_at": "",
 	"updated_at": ""
 }
