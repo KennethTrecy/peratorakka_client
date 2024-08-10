@@ -2,13 +2,13 @@ import type { Currency } from "+/entity"
 import type { ExchangeRateInfo } from "+/rest"
 
 export default function findPaths(
-	destinationCurrency: Currency,
+	viewedCurrency: Currency,
 	exchangeRates: ExchangeRateInfo[],
 	currentPath: ExchangeRateInfo[]
 ): ExchangeRateInfo[][] {
 	const lastPathIndex = currentPath.length - 1;
 	const lastExchangeRate = currentPath[lastPathIndex]
-	if (lastExchangeRate.destination.currency_id === destinationCurrency.id) {
+	if (lastExchangeRate.destination.currency_id === viewedCurrency.id) {
 		return [
 			currentPath
 		]
@@ -34,7 +34,7 @@ export default function findPaths(
 			const newPath = [ ...currentPath, exchangeRate ];
 			foundPaths = [
 				...foundPaths,
-				...findPaths(destinationCurrency, exchangeRates, newPath)
+				...findPaths(viewedCurrency, exchangeRates, newPath)
 			]
 		}
 	}

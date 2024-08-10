@@ -7,7 +7,7 @@ import topicFunction from "./find_paths"
 
 describe("Find exchange rate path function behavior", () => {
 	it("can find direct rates", async () => {
-		const destinationCurrency: Currency = {
+		const viewedCurrency: Currency = {
 			"id": 3,
 			"name": "Currency C",
 			"code": "C"
@@ -40,13 +40,13 @@ describe("Find exchange rate path function behavior", () => {
 
 		const currentPath: ExchangeRateInfo = [ exchangeRates[0] ]
 
-		const result = topicFunction(destinationCurrency, exchangeRates, currentPath)
+		const result = topicFunction(viewedCurrency, exchangeRates, currentPath)
 
 		expect(result).toStrictEqual([ [ exchangeRates[0], exchangeRates[1] ] ])
 	})
 
 	it("can find indirect rates", async () => {
-		const destinationCurrency: Currency = {
+		const viewedCurrency: Currency = {
 			"id": 2,
 			"name": "Currency B",
 			"code": "B"
@@ -101,7 +101,7 @@ describe("Find exchange rate path function behavior", () => {
 
 		const currentPath: ExchangeRateInfo = [ exchangeRates[0] ]
 
-		const result = topicFunction(destinationCurrency, exchangeRates, currentPath)
+		const result = topicFunction(viewedCurrency, exchangeRates, currentPath)
 
 		expect(result).toStrictEqual([
 			[ exchangeRates[0], exchangeRates[1] ],
@@ -110,7 +110,7 @@ describe("Find exchange rate path function behavior", () => {
 	})
 
 	it("can stop early", async () => {
-		const destinationCurrency: Currency = {
+		const viewedCurrency: Currency = {
 			"id": 2,
 			"name": "Currency B",
 			"code": "B"
@@ -132,13 +132,13 @@ describe("Find exchange rate path function behavior", () => {
 
 		const currentPath: ExchangeRateInfo = [ exchangeRates[0] ]
 
-		const result = topicFunction(destinationCurrency, exchangeRates, currentPath)
+		const result = topicFunction(viewedCurrency, exchangeRates, currentPath)
 
 		expect(result).toStrictEqual([ [ exchangeRates[0] ] ])
 	})
 
 	it("can skip loops", async () => {
-		const destinationCurrency: Currency = {
+		const viewedCurrency: Currency = {
 			"id": 2,
 			"name": "Currency B",
 			"code": "B"
@@ -204,7 +204,7 @@ describe("Find exchange rate path function behavior", () => {
 
 		const currentPath: ExchangeRateInfo = [ exchangeRates[0] ]
 
-		const result = topicFunction(destinationCurrency, exchangeRates, currentPath)
+		const result = topicFunction(viewedCurrency, exchangeRates, currentPath)
 
 		expect(result).toStrictEqual([
 			[ exchangeRates[0], exchangeRates[1] ],
