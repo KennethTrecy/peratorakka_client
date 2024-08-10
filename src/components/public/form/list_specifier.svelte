@@ -35,13 +35,13 @@
 
 </script>
 
-<!-- <ChoiceListField
+<ChoiceListField
 	fieldName="Presence"
 	disabled={isConnecting}
 	bind:value={searchMode}
 	rawChoices={availableSearchModes}
 	choiceConverter={returnChoiceAgain}
-	{errors}/> -->
+	{errors}/>
 <slot name="after_presence_field"/>
 <ChoiceListField
 	fieldName="Sort Criteria"
