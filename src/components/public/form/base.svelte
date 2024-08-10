@@ -3,6 +3,7 @@
 
 	import { isSimpleError } from "+/rest"
 
+	import Flex from "$/layout/flex.svelte"
 	import ReactiveProgressBar from "$/utility/reactive_progress_bar.svelte"
 	import ShortParagraph from "$/typography/short_paragraph.svelte"
 	import TextContainer from "$/typography/text_container.svelte"
@@ -33,11 +34,13 @@
 	{/if}
 	{#if hasSimpleErrors}
 		<div class="mdc-card__content">
-			<TextContainer>
-				<ShortParagraph>
-					{simpleErrors}
-				</ShortParagraph>
-			</TextContainer>
+			<Flex justifyContent="start">
+				<TextContainer>
+					<ShortParagraph>
+						{simpleErrors}
+					</ShortParagraph>
+				</TextContainer>
+			</Flex>
 		</div>
 	{/if}
 	<div class="mdc-card__content">
