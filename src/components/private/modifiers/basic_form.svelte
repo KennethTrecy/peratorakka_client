@@ -42,6 +42,10 @@
 	export let errors: GeneralError[]
 	export let id: string|null = null
 
+	$: availableAccounts = accounts.filter(account => account.deleted_at === null)
+	$: availableCashFlowActivities = cashFlowActivities.filter(
+		cashFlowActivity => cashFlowActivity.deleted_at === null
+	)
 	$: transformAccount = makeAccountTransformer(currencies)
 </script>
 
@@ -52,7 +56,7 @@
 			errorFieldName="debit_account_id"
 			disabled={isConnecting || forceDisabledFields.includes("debit_account_id")}
 			bind:value={debitAccountID}
-			rawChoices={accounts}
+			rawChoices={availableAccounts}
 			choiceConverter={transformAccount}
 			{IDPrefix}
 			{errors}/>
@@ -61,7 +65,7 @@
 			errorFieldName="cash_flow_activity_id"
 			disabled={isConnecting || forceDisabledFields.includes("debit_cash_flow_activity_id")}
 			bind:value={debitCashFlowActivityID}
-			rawChoices={cashFlowActivities}
+			rawChoices={availableCashFlowActivities}
 			choiceConverter={transformCashFlowActivity}
 			{IDPrefix}
 			{errors}/>
@@ -70,7 +74,7 @@
 			errorFieldName="credit_account_id"
 			disabled={isConnecting || forceDisabledFields.includes("credit_account_id")}
 			bind:value={creditAccountID}
-			rawChoices={accounts}
+			rawChoices={availableAccounts}
 			choiceConverter={transformAccount}
 			{IDPrefix}
 			{errors}/>
@@ -79,7 +83,7 @@
 			errorFieldName="cash_flow_activity_id"
 			disabled={isConnecting || forceDisabledFields.includes("credit_cash_flow_activity_id")}
 			bind:value={creditCashFlowActivityID}
-			rawChoices={cashFlowActivities}
+			rawChoices={availableCashFlowActivities}
 			choiceConverter={transformCashFlowActivity}
 			{IDPrefix}
 			{errors}/>
