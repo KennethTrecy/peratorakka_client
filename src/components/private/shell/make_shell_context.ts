@@ -67,7 +67,7 @@ export default function makeShellContext(globalContext: ContextBundle): ContextB
 					"type": "item",
 					"link": "/accounts",
 					"icon": "category",
-					"label": "Accounts"
+					"label": "Chart of Accounts"
 				} : null,
 				hasTokenCurrently && hasUserCurrently ? {
 					"type": "item",
@@ -79,7 +79,7 @@ export default function makeShellContext(globalContext: ContextBundle): ContextB
 					"type": "item",
 					"link": "/financial_entries",
 					"icon": "receipt_long",
-					"label": "Financial Entries"
+					"label": "General Ledger"
 				} : null,
 				hasTokenCurrently && hasUserCurrently ? {
 					"type": "item",
