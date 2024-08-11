@@ -235,13 +235,13 @@
 </script>
 
 <svelte:head>
-	<title>Financial Entries</title>
+	<title>General Ledger</title>
 </svelte:head>
 
 <ArticleGrid>
 	<InnerGrid>
 		<GridCell kind="full">
-			<PrimaryHeading>Financial Entries</PrimaryHeading>
+			<PrimaryHeading>General Ledger</PrimaryHeading>
 		</GridCell>
 		<AddForm
 			{currencies}

@@ -91,7 +91,7 @@
 			Financial entries may be created manually. In the future, automatic creation of entries may be available in the system.
 		</ElementalParagraph>
 		<ElementalParagraph>
-			To create the manually, choose a manual modifier that would be associated with the entry. The transaction date may be earlier than the current date to track previous entries. Submit the entry after entering the debit and credit amounts and optional remarks.
+			To create an entry manually, choose a manual modifier that would be associated with the entry. The transaction date may be earlier than the current date to track previous entries. Submit the entry after entering the debit and credit amounts and optional remarks.
 		</ElementalParagraph>
 	</TextContainer>
 	<TextContainer slot="requirement">
