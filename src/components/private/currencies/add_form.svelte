@@ -59,7 +59,7 @@
 			crypto. Some people may treat the shares in stocks or units in mutual funds as currency because the price changes over time.
 		</ElementalParagraph>
 		<ElementalParagraph>
-			The limitation is that the application tracks the currency conversions through previous
+			One limitation is that the application tracks the currency conversions through previous
 			financial entries. Therefore, there is no network usage to check for current conversions
 			which is a beneficial effect.
 		</ElementalParagraph>
