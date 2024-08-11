@@ -113,6 +113,8 @@
 				<TextButton
 					label="Load next items"
 					on:click={loadResources}/>
+			{:else}
+				<ShortParagraph>There are no more items beyond this point.</ShortParagraph>
 			{/if}
 		</Flex>
 	</GridCell>
