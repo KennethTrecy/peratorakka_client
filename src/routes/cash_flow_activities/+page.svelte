@@ -44,7 +44,6 @@
 		[ "sort[0][1]", sortOrder as string ]
 	]
 	let completePath = writable(partialPath)
-
 	$: {
 		parameters = [
 			[ "filter[search_mode]", searchMode as string ],
@@ -74,6 +73,7 @@
 					errors.set([])
 					cashFlowActivities = responseDocument[collectiveName]
 					lastOffset = Math.max(0, responseDocument[collectiveName].length - 1)
+					console.log("root", lastOffset)
 				}
 			}
 		],
@@ -117,7 +117,7 @@
 	function removeCashFlowActivities(event: CustomEvent<CashFlowActivity>) {
 		const oldCashFlowActivity = event.detail
 		cashFlowActivities = cashFlowActivities.filter(
-			CashFlowActivity => CashFlowActivity.id !== oldCashFlowActivity.id
+			cashFlowActivity => cashFlowActivity.id !== oldCashFlowActivity.id
 		)
 	}
 </script>

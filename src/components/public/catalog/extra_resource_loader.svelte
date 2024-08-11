@@ -49,12 +49,14 @@
 				"action": async (response: Response) => {
 					let responseDocument = await response.json()
 					errors.set([])
+					const overallFilteredCount = responseDocument.meta.overall_filtered_count
 					const resources = responseDocument[collectiveName]
+					const resourceCount = resources.length
 
-					hasPossibleUnloadedResources = resources.length > 0
+					lastOffset = lastOffset + resourceCount
+					hasPossibleUnloadedResources = lastOffset < overallFilteredCount - 1
 
-					if (resources.length > 0) {
-						lastOffset = lastOffset + resources.length
+					if (resourceCount > 0) {
 						dispatch("addResources", resources)
 					}
 				}
@@ -86,7 +88,7 @@
 
 			if (encodedOldParameters !== encodedCurrentParameters) {
 				if (abortController !== null) abortController.abort()
-				if (lastOffset >= 0) {
+				if (lastOffset > 0) {
 					lastOffset = 0
 					hasPossibleUnloadedResources = true
 					reloadFully()

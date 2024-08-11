@@ -44,7 +44,6 @@
 		[ "sort[0][1]", sortOrder as string ]
 	]
 	let completePath = writable(partialPath)
-
 	$: {
 		parameters = [
 			[ "filter[search_mode]", searchMode as string ],
