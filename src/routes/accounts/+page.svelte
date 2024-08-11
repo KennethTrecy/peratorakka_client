@@ -194,13 +194,13 @@
 </script>
 
 <svelte:head>
-	<title>Financial Accounts</title>
+	<title>Chart of Accounts</title>
 </svelte:head>
 
 <ArticleGrid>
 	<InnerGrid>
 		<GridCell kind="full">
-			<PrimaryHeading>Financial Accounts</PrimaryHeading>
+			<PrimaryHeading>Chart of Accounts</PrimaryHeading>
 		</GridCell>
 		<AddForm
 			{currencies}
