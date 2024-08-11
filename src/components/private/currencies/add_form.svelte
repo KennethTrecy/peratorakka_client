@@ -56,7 +56,7 @@
 		<ElementalParagraph>
 			Currencies are used as symbols for different financial entries and other parts of the
 			application. You have a freedom to add currencies, regardless whether they are physical or
-			crypto.
+			crypto. Some people may treat the shares in stocks or units in mutual funds as currency because the price changes over time.
 		</ElementalParagraph>
 		<ElementalParagraph>
 			The limitation is that the application tracks the currency conversions through previous
