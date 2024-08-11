@@ -12,7 +12,6 @@
 	import { ACCOUNT_KIND_AGGREGATED_LIST_PRIOITY } from "#/entity"
 
 	import transformCurrency from "$/form/choice_info_transformer/transform_currency"
-	import deriveExchangeRate from "$/utility/derive_exchange_rate"
 
 	import BalanceSheet from "%/frozen_periods/financial_statements/balance_sheet.svelte"
 	import CashFlowStatement from "%/frozen_periods/financial_statements/cash_flow_statement.svelte"

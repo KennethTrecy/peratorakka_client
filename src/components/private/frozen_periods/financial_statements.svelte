@@ -34,9 +34,21 @@
 	export let flowCalculations: Omit<FlowCalculation, "frozen_period_id">[]
 
 	let selectedCurrencyID = `${ANY_CURRENCY.id}`
+	let hasSelectedFirstCurrencyAfterLoading = false
+	$: {
+		if (
+			!hasSelectedFirstCurrencyAfterLoading
+			&& selectedCurrencyID === `${ANY_CURRENCY.id}`
+			&& currencies.length > 0
+		) {
+			selectedCurrencyID = `${currencies[0].id}`
+			hasSelectedFirstCurrencyAfterLoading = true
+		}
+	}
+
 	$: availableCurrencies = [
-		ANY_CURRENCY,
-		...currencies
+		...currencies,
+		ANY_CURRENCY
 	]
 
 	$: selectedStatement = selectedCurrencyID === `${ANY_CURRENCY.id}`
@@ -192,6 +204,7 @@
 			fieldName="Currency"
 			errorFieldName="currency_id"
 			disabled={isConnecting}
+			mustExpand={true}
 			bind:value={selectedCurrencyID}
 			rawChoices={availableCurrencies}
 			choiceConverter={transformCurrency}
