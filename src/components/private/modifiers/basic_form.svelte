@@ -9,6 +9,7 @@
 		Modifier
 	} from "+/entity"
 
+	import { NO_CASH_FLOW_ACTIVITY } from "#/component"
 	import { acceptableModifierKinds, acceptableModifierActions } from "#/entity"
 
 	import makeAccountTransformer from "$/form/choice_info_transformer/make_account_transformer"
@@ -43,9 +44,12 @@
 	export let id: string|null = null
 
 	$: availableAccounts = accounts.filter(account => account.deleted_at === null)
-	$: availableCashFlowActivities = cashFlowActivities.filter(
-		cashFlowActivity => cashFlowActivity.deleted_at === null
-	)
+	$: availableCashFlowActivities = [
+		NO_CASH_FLOW_ACTIVITY,
+		...cashFlowActivities.filter(
+			cashFlowActivity => cashFlowActivity.deleted_at === null
+		)
+	]
 	$: transformAccount = makeAccountTransformer(currencies)
 </script>
 
