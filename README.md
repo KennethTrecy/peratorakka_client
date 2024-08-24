@@ -14,9 +14,15 @@ implementation of the client which allows the users to interact with server.
 The server may be implemented in different programming language as long as it
 has compatible API.
 
-Screenshots of this project can be found in [author's post]. Currently, there
-is no server available to access by common people. Yet, the instructions how
-to start the system can be found below.
+Screenshots of this project can be found in [author's post] and in
+[announcements]. Currently, there is a public client available to access by
+common people. The public client can be found on
+`https://peratorakka-client.pages.dev/`. Just connect to the default public
+server found in the client and use `test@example.com` as the email and
+`12345678` as the password. To anyone who uses the public Peratorakka client,
+please use the client responsibly, so others can try it.
+
+Below, I still retained the instructions on how to start the system.
 
 ## Origin
 Some parts of the repository was based from [`sveltekit`] branch of [Web
@@ -82,3 +88,4 @@ trademark holders unless explicitly stated.
 [contributing guide]: ./CONTRIBUTING.md
 [server]: https://github.com/KennethTrecy/peratorakka_server
 [author's post]: https://www.linkedin.com/posts/kenneth-trecy-tobias_good-day-everyone-after-five-months-of-testing-activity-7134037085828616192-Xtvx
+[announcements]: https://github.com/KennethTrecy/peratorakka_client/discussions/categories/announcements
