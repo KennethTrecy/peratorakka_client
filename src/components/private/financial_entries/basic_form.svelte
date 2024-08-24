@@ -59,7 +59,7 @@
 		hasSameCurrency
 			? "Debit and Credit Amount"
 			: "Credit Amount"
-		} (${debitCurrency?.code ?? ""})`
+		} (${creditCurrency?.code ?? ""})`
 </script>
 
 <BasicForm {id} {isConnecting} {errors} on:submit>
