@@ -1,30 +1,30 @@
 <script lang="ts">
-	import type { GeneralError } from "+/rest"
-	import type { Currency, AcceptableAccountKind, Account } from "+/entity"
+import type { GeneralError } from "+/rest"
+import type { Currency, AcceptableAccountKind, Account } from "+/entity"
 
-	import { acceptableAccountKinds } from "#/entity"
+import { acceptableAccountKinds } from "#/entity"
 
-	import transformCurrency from "$/form/choice_info_transformer/transform_currency"
-	import transformString from "$/form/choice_info_transformer/transform_string"
+import transformCurrency from "$/form/choice_info_transformer/transform_currency"
+import transformString from "$/form/choice_info_transformer/transform_string"
 
-	import BasicForm from "$/form/basic_form.svelte"
-	import ChoiceListField from "$/form/choice_list_field.svelte"
-	import TextField from "$/form/text_field.svelte"
+import BasicForm from "$/form/basic_form.svelte"
+import ChoiceListField from "$/form/choice_list_field.svelte"
+import TextField from "$/form/text_field.svelte"
 
-	export const ACCEPTABLE_ACCOUNT_KINDS = [ ...acceptableAccountKinds ]
+export const ACCEPTABLE_ACCOUNT_KINDS = [ ...acceptableAccountKinds ]
 
-	export let IDPrefix: string
-	export let currencies: Currency[]
+export let IDPrefix: string
+export let currencies: Currency[]
 
-	export let currencyID: string
-	export let name: string
-	export let description: string
-	export let kind: AcceptableAccountKind
-	export let forceDisabledFields: (keyof Account)[] = []
+export let currencyID: string
+export let name: string
+export let description: string
+export let kind: AcceptableAccountKind
+export let forceDisabledFields: (keyof Account)[] = []
 
-	export let isConnecting: boolean
-	export let errors: GeneralError[]
-	export let id = ""
+export let isConnecting: boolean
+export let errors: GeneralError[]
+export let id = ""
 </script>
 
 <BasicForm {id} {isConnecting} {errors} on:submit>

@@ -1,70 +1,70 @@
 <script lang="ts">
-	import type { Currency, Account, AcceptableAccountKind } from "+/entity"
+import type { Currency, Account, AcceptableAccountKind } from "+/entity"
 
-	import { createEventDispatcher } from "svelte"
+import { createEventDispatcher } from "svelte"
 
-	import { UNKNOWN_OPTION } from "#/component"
-	import { acceptableAccountKinds } from "#/entity"
+import { UNKNOWN_OPTION } from "#/component"
+import { acceptableAccountKinds } from "#/entity"
 
-	import makeJSONRequester from "$/rest/make_json_requester"
+import makeJSONRequester from "$/rest/make_json_requester"
 
-	import BasicForm from "%/accounts/basic_form.svelte"
-	import DescriptiveForm from "$/form/descriptive_form.svelte"
-	import ElementalParagraph from "$/typography/elemental_paragraph.svelte"
-	import TextCardButton from "$/button/card/text.svelte"
-	import TextContainer from "$/typography/text_container.svelte"
+import BasicForm from "%/accounts/basic_form.svelte"
+import DescriptiveForm from "$/form/descriptive_form.svelte"
+import ElementalParagraph from "$/typography/elemental_paragraph.svelte"
+import TextCardButton from "$/button/card/text.svelte"
+import TextContainer from "$/typography/text_container.svelte"
 
-	const dispatch = createEventDispatcher<{
-		"create": Account
-	}>()
-	const IDPrefix = "new_"
+const dispatch = createEventDispatcher<{
+	"create": Account
+}>()
+const IDPrefix = "new_"
 
-	export let isLoadingInitialData: boolean
-	export let currencies: Currency[]
+export let isLoadingInitialData: boolean
+export let currencies: Currency[]
 
-	export let currencyID: string = UNKNOWN_OPTION
-	export let name: string = ""
-	export let description: string =""
-	export let kind: AcceptableAccountKind = acceptableAccountKinds[0]
+export let currencyID: string = UNKNOWN_OPTION
+export let name: string = ""
+export let description: string =""
+export let kind: AcceptableAccountKind = acceptableAccountKinds[0]
 
-	let { isConnecting, errors, send } = makeJSONRequester({
-		"path": "/api/v1/accounts",
-		"defaultRequestConfiguration": {
-			"method": "POST"
-		},
-		"manualResponseHandlers": [
-			{
-				"statusCode": 201,
-				"action": async (response: Response) => {
-					const document = await response.json()
-					const { account } = document
+let { isConnecting, errors, send } = makeJSONRequester({
+	"path": "/api/v1/accounts",
+	"defaultRequestConfiguration": {
+		"method": "POST"
+	},
+	"manualResponseHandlers": [
+		{
+			"statusCode": 201,
+			"action": async (response: Response) => {
+				const document = await response.json()
+				const { account } = document
 
-					currencyID = UNKNOWN_OPTION
-					name = ""
-					description = ""
-					kind = acceptableAccountKinds[0]
-					errors.set([])
-					dispatch("create", account)
-				}
+				currencyID = UNKNOWN_OPTION
+				name = ""
+				description = ""
+				kind = acceptableAccountKinds[0]
+				errors.set([])
+				dispatch("create", account)
 			}
-		],
-		"expectedErrorStatusCodes": [ 400 ]
-	})
+		}
+	],
+	"expectedErrorStatusCodes": [ 400 ]
+})
 
-	async function createAccount() {
-		await send({
-			"body": JSON.stringify({
-				"account": {
-					"currency_id": parseInt(currencyID),
-					name,
-					description,
-					kind
-				}
-			})
+async function createAccount() {
+	await send({
+		"body": JSON.stringify({
+			"account": {
+				"currency_id": parseInt(currencyID),
+				name,
+				description,
+				kind
+			}
 		})
-	}
+	})
+}
 
-	$: mayShowForm = currencies.length > 0
+$: mayShowForm = currencies.length > 0
 </script>
 
 <DescriptiveForm individualName="Financial Account" {mayShowForm} {isLoadingInitialData}>
