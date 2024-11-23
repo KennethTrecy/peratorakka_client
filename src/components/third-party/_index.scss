@@ -1,44 +1,202 @@
+@use "sass:color";
+
 $primary: #483745;
 $secondary: #2b0011;
 $background: #ac93a7;
 $surface: #e3dbe2;
 $error: #ffb4ab;
-
-@use "@material/theme/theme-color" with (
-	$primary: $primary,
-	$secondary: $secondary,
-	$background: $background,
-	$surface: $surface,
-	$error: $error
-);
-@use "@material/theme/theme";
+$tertiary: color.mix($primary, $secondary, $method: oklch);
 
 @import url("https://fonts.googleapis.com/css2?family=Roboto&family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap");
 
-* {
+:root, html, body {
 	padding: 0em;
 	border: 0em;
 	margin: 0em;
 	box-sizing: border-box;
-}
-
-:root, html, body {
 	font-family: "Roboto";
 }
 
 :root {
 	font-size: 16px;
+
+	/* primary */
+	--md-ref-palette-primary10: #{color.adjust($primary, $lightness: -30%, $space: oklch)};
+	--md-ref-palette-primary20: #{color.adjust($primary, $lightness: -20%, $space: oklch)};
+	--md-ref-palette-primary25: #{color.adjust($primary, $lightness: -15%, $space: oklch)};
+	--md-ref-palette-primary30: #{color.adjust($primary, $lightness: -10%, $space: oklch)};
+	--md-ref-palette-primary35: #{color.adjust($primary, $lightness: -5%, $space: oklch)};
+	--md-ref-palette-primary40: #{$primary};
+	--md-ref-palette-primary50: #{color.adjust($primary, $lightness: 10%, $space: oklch)};
+	--md-ref-palette-primary60: #{color.adjust($primary, $lightness: 20%, $space: oklch)};
+	--md-ref-palette-primary70: #{color.adjust($primary, $lightness: 30%, $space: oklch)};
+	--md-ref-palette-primary80: #{color.adjust($primary, $lightness: 40%, $space: oklch)};
+	--md-ref-palette-primary90: #{color.adjust($primary, $lightness: 50%, $space: oklch)};
+	--md-ref-palette-primary95: #{color.adjust($primary, $lightness: 55%, $space: oklch)};
+	--md-ref-palette-primary98: #{color.adjust($primary, $lightness: 58%, $space: oklch)};
+	--md-ref-palette-primary99: #{color.adjust($primary, $lightness: 59%, $space: oklch)};
+	/* secondary */
+	--md-ref-palette-secondary10: #{color.adjust($secondary, $lightness: -15%, $space: oklch)};
+	--md-ref-palette-secondary20: #{color.adjust($secondary, $lightness: -5%, $space: oklch)};
+	--md-ref-palette-secondary25: #{$secondary};
+	--md-ref-palette-secondary30: #{color.adjust($secondary, $lightness: 5%, $space: oklch)};
+	--md-ref-palette-secondary35: #{color.adjust($secondary, $lightness: 10%, $space: oklch)};
+	--md-ref-palette-secondary40: #{color.adjust($secondary, $lightness: 15%, $space: oklch)};
+	--md-ref-palette-secondary50: #{color.adjust($secondary, $lightness: 25%, $space: oklch)};
+	--md-ref-palette-secondary60: #{color.adjust($secondary, $lightness: 35%, $space: oklch)};
+	--md-ref-palette-secondary70: #{color.adjust($secondary, $lightness: 45%, $space: oklch)};
+	--md-ref-palette-secondary80: #{color.adjust($secondary, $lightness: 55%, $space: oklch)};
+	--md-ref-palette-secondary90: #{color.adjust($secondary, $lightness: 65%, $space: oklch)};
+	--md-ref-palette-secondary95: #{color.adjust($secondary, $lightness: 70%, $space: oklch)};
+	--md-ref-palette-secondary98: #{color.adjust($secondary, $lightness: 73%, $space: oklch)};
+	--md-ref-palette-secondary99: #{color.adjust($secondary, $lightness: 74%, $space: oklch)};
+	/* tertiary */
+	--md-ref-palette-tertiary10: #{color.adjust($tertiary, $lightness: -30%, $space: oklch)};
+	--md-ref-palette-tertiary20: #{color.adjust($tertiary, $lightness: -20%, $space: oklch)};
+	--md-ref-palette-tertiary25: #{color.adjust($tertiary, $lightness: -15%, $space: oklch)};
+	--md-ref-palette-tertiary30: #{color.adjust($tertiary, $lightness: -10%, $space: oklch)};
+	--md-ref-palette-tertiary35: #{color.adjust($tertiary, $lightness: -5%, $space: oklch)};
+	--md-ref-palette-tertiary40: #{$tertiary};
+	--md-ref-palette-tertiary50: #{color.adjust($tertiary, $lightness: 10%, $space: oklch)};
+	--md-ref-palette-tertiary60: #{color.adjust($tertiary, $lightness: 20%, $space: oklch)};
+	--md-ref-palette-tertiary70: #{color.adjust($tertiary, $lightness: 30%, $space: oklch)};
+	--md-ref-palette-tertiary80: #{color.adjust($tertiary, $lightness: 40%, $space: oklch)};
+	--md-ref-palette-tertiary90: #{color.adjust($tertiary, $lightness: 50%, $space: oklch)};
+	--md-ref-palette-tertiary95: #{color.adjust($tertiary, $lightness: 55%, $space: oklch)};
+	--md-ref-palette-tertiary98: #{color.adjust($tertiary, $lightness: 58%, $space: oklch)};
+	--md-ref-palette-tertiary99: #{color.adjust($tertiary, $lightness: 59%, $space: oklch)};
+	/* neutral */
+	--md-ref-palette-neutral10: #{color.adjust($background, $lightness: -60%, $space: oklch)};
+	--md-ref-palette-neutral20: #{color.adjust($background, $lightness: -50%, $space: oklch)};
+	--md-ref-palette-neutral25: #{color.adjust($background, $lightness: -45%, $space: oklch)};
+	--md-ref-palette-neutral30: #{color.adjust($background, $lightness: -40%, $space: oklch)};
+	--md-ref-palette-neutral35: #{color.adjust($background, $lightness: -35%, $space: oklch)};
+	--md-ref-palette-neutral40: #{color.adjust($background, $lightness: -30%, $space: oklch)};
+	--md-ref-palette-neutral50: #{color.adjust($background, $lightness: -20%, $space: oklch)};
+	--md-ref-palette-neutral60: #{color.adjust($background, $lightness: -10%, $space: oklch)};
+	--md-ref-palette-neutral70: #{$background};
+	--md-ref-palette-neutral80: #{color.adjust($background, $lightness: 10%, $space: oklch)};
+	--md-ref-palette-neutral90: #{color.adjust($background, $lightness: 20%, $space: oklch)};
+	--md-ref-palette-neutral95: #{color.adjust($background, $lightness: 25%, $space: oklch)};
+	--md-ref-palette-neutral98: #{color.adjust($background, $lightness: 28%, $space: oklch)};
+	--md-ref-palette-neutral99: #{color.adjust($background, $lightness: 29%, $space: oklch)};
+	/* neutral-variant */
+	--md-ref-palette-neutral-variant10: #{color.adjust($surface, $lightness: -85%, $space: oklch)};
+	--md-ref-palette-neutral-variant20: #{color.adjust($surface, $lightness: -75%, $space: oklch)};
+	--md-ref-palette-neutral-variant25: #{color.adjust($surface, $lightness: -70%, $space: oklch)};
+	--md-ref-palette-neutral-variant30: #{color.adjust($surface, $lightness: -65%, $space: oklch)};
+	--md-ref-palette-neutral-variant35: #{color.adjust($surface, $lightness: -60%, $space: oklch)};
+	--md-ref-palette-neutral-variant40: #{color.adjust($surface, $lightness: -65%, $space: oklch)};
+	--md-ref-palette-neutral-variant50: #{color.adjust($surface, $lightness: -45%, $space: oklch)};
+	--md-ref-palette-neutral-variant60: #{color.adjust($surface, $lightness: -35%, $space: oklch)};
+	--md-ref-palette-neutral-variant70: #{color.adjust($surface, $lightness: -25%, $space: oklch)};
+	--md-ref-palette-neutral-variant80: #{color.adjust($surface, $lightness: -15%, $space: oklch)};
+	--md-ref-palette-neutral-variant90: #{color.adjust($surface, $lightness: -5%, $space: oklch)};
+	--md-ref-palette-neutral-variant95: #{$surface};
+	--md-ref-palette-neutral-variant98: #{color.adjust($surface, $lightness: 3%, $space: oklch)};
+	--md-ref-palette-neutral-variant99: #{color.adjust($surface, $lightness: 4%, $space: oklch)};
+	/* light */
+	--md-sys-color-primary-light: var(--md-ref-palette-primary40);
+	--md-sys-color-on-primary-light: var(--md-ref-palette-primary10);
+	--md-sys-color-primary-container-light: var(--md-ref-palette-primary90);
+	--md-sys-color-on-primary-container-light: var(--md-ref-palette-primary10);
+	--md-sys-color-secondary-light: var(--md-ref-palette-secondary40);
+	--md-sys-color-on-secondary-light: #{color.invert($secondary)};
+	--md-sys-color-secondary-container-light: var(--md-ref-palette-secondary90);
+	--md-sys-color-on-secondary-container-light: var(--md-ref-palette-secondary10);
+	--md-sys-color-tertiary-light: var(--md-ref-palette-tertiary40);
+	--md-sys-color-on-tertiary-light: #{color.invert($tertiary)};
+	--md-sys-color-tertiary-container-light: var(--md-ref-palette-tertiary90);
+	--md-sys-color-on-tertiary-container-light: var(--md-ref-palette-tertiary10);
+	--md-sys-color-error-light: var(--md-ref-palette-error40);
+	--md-sys-color-error-container-light: var(--md-ref-palette-error90);
+	--md-sys-color-on-error-light: #FFFFFF;
+	--md-sys-color-on-error-container-light: var(--md-ref-palette-error10);
+	--md-sys-color-background-light: var(--md-ref-palette-primary99);
+	--md-sys-color-on-background-light: var(--md-ref-palette-neutral10);
+	--md-sys-color-surface-light: var(--md-ref-palette-primary99);
+	--md-sys-color-on-surface-light: var(--md-ref-palette-neutral10);
+	--md-sys-color-surface-variant-light: var(--md-ref-palette-neutral-variant90);
+	--md-sys-color-on-surface-variant-light: var(--md-ref-palette-neutral-variant30);
+	--md-sys-color-outline-light: var(--md-ref-palette-neutral-variant50);
+	--md-sys-color-inverse-on-surface-light: var(--md-ref-palette-neutral95);
+	--md-sys-color-inverse-surface-light: var(--md-ref-palette-neutral20);
+	--md-sys-color-inverse-primary-light: var(--md-ref-palette-primary80);
+	--md-sys-color-shadow-light: #000000;
+	--md-sys-color-surface-tint-light: var(--md-sys-color-primary-light);
+	--md-sys-color-outline-variant-light: var(--md-ref-palette-neutral-variant80);
+	--md-sys-color-scrim-light: #000000;
+	/* dark */
+	--md-sys-color-primary-dark: var(--md-ref-palette-primary80);
+	--md-sys-color-on-primary-dark: var(--md-ref-palette-primary20);
+	--md-sys-color-primary-container-dark: var(--md-ref-palette-primary30);
+	--md-sys-color-on-primary-container-dark: var(--md-ref-palette-primary90);
+	--md-sys-color-secondary-dark: var(--md-ref-palette-secondary80);
+	--md-sys-color-on-secondary-dark: var(--md-ref-palette-secondary20);
+	--md-sys-color-secondary-container-dark: var(--md-ref-palette-secondary30);
+	--md-sys-color-on-secondary-container-dark: var(--md-ref-palette-secondary90);
+	--md-sys-color-tertiary-dark: var(--md-ref-palette-tertiary80);
+	--md-sys-color-on-tertiary-dark: var(--md-ref-palette-tertiary20);
+	--md-sys-color-tertiary-container-dark: var(--md-ref-palette-tertiary30);
+	--md-sys-color-on-tertiary-container-dark: var(--md-ref-palette-tertiary90);
+	--md-sys-color-error-dark: var(--md-ref-palette-error80);
+	--md-sys-color-error-container-dark: var(--md-ref-palette-error30);
+	--md-sys-color-on-error-dark: var(--md-ref-palette-error20);
+	--md-sys-color-on-error-container-dark: var(--md-ref-palette-error90);
+	--md-sys-color-background-dark: var(--md-ref-palette-neutral10);
+	--md-sys-color-on-background-dark: var(--md-ref-palette-neutral90);
+	--md-sys-color-surface-dark: var(--md-ref-palette-neutral10);
+	--md-sys-color-on-surface-dark: var(--md-ref-palette-neutral90);
+	--md-sys-color-surface-variant-dark: var(--md-ref-palette-neutral-variant30);
+	--md-sys-color-on-surface-variant-dark: var(--md-ref-palette-neutral-variant80);
+	--md-sys-color-outline-dark: var(--md-ref-palette-neutral-variant60);
+	--md-sys-color-inverse-on-surface-dark: var(--md-ref-palette-neutral10);
+	--md-sys-color-inverse-surface-dark: var(--md-ref-palette-neutral90);
+	--md-sys-color-inverse-primary-dark: var(--md-sys-color-primary-light);
+	--md-sys-color-shadow-dark: #FFFFFF;
+	--md-sys-color-surface-tint-dark: var(--md-ref-palette-primary80);
+	--md-sys-color-outline-variant-dark: var(--md-ref-palette-neutral-variant30);
+	--md-sys-color-scrim-dark: #FFFFFF;
+
+	--md-source: var(--md-ref-palette-primary40);
+
+	--md-sys-color-primary: var(--md-sys-color-primary-light);
+	--md-sys-color-on-primary: var(--md-sys-color-on-primary-light);
+	--md-sys-color-primary-container: var(--md-sys-color-primary-container-light);
+	--md-sys-color-on-primary-container: var(--md-sys-color-on-primary-container-light);
+	--md-sys-color-secondary: var(--md-sys-color-secondary-light);
+	--md-sys-color-on-secondary: var(--md-sys-color-on-secondary-light);
+	--md-sys-color-secondary-container: var(--md-sys-color-secondary-container-light);
+	--md-sys-color-on-secondary-container: var(--md-sys-color-on-secondary-container-light);
+	--md-sys-color-tertiary: var(--md-sys-color-tertiary-light);
+	--md-sys-color-on-tertiary: var(--md-sys-color-on-tertiary-light);
+	--md-sys-color-tertiary-container: var(--md-sys-color-tertiary-container-light);
+	--md-sys-color-on-tertiary-container: var(--md-sys-color-on-tertiary-container-light);
+	--md-sys-color-error: var(--md-sys-color-error-light);
+	--md-sys-color-error-container: var(--md-sys-color-error-container-light);
+	--md-sys-color-on-error: var(--md-sys-color-on-error-light);
+	--md-sys-color-on-error-container: var(--md-sys-color-on-error-container-light);
+	--md-sys-color-background: var(--md-sys-color-background-light);
+	--md-sys-color-on-background: var(--md-sys-color-on-background-light);
+	--md-sys-color-surface: var(--md-sys-color-surface-light);
+	--md-sys-color-on-surface: var(--md-sys-color-on-surface-light);
+	--md-sys-color-surface-variant: var(--md-sys-color-surface-variant-light);
+	--md-sys-color-on-surface-variant: var(--md-sys-color-on-surface-variant-light);
+	--md-sys-color-outline: var(--md-sys-color-outline-light);
+	--md-sys-color-inverse-on-surface: var(--md-sys-color-inverse-on-surface-light);
+	--md-sys-color-inverse-surface: var(--md-sys-color-inverse-surface-light);
+	--md-sys-color-inverse-primary: var(--md-sys-color-inverse-primary-light);
+	--md-sys-color-shadow: var(--md-sys-color-shadow-light);
+	--md-sys-color-surface-tint: var(--md-sys-color-surface-tint-light);
+	--md-sys-color-outline-variant: var(--md-sys-color-outline-variant-light);
+	--md-sys-color-scrim: var(--md-sys-color-scrim-light);
 }
 
 html, body {
 	font-size: 1rem;
 }
 
-.mdc-icon-button i, .mdc-deprecated-list-item i, .mdc-select__dropdown-icon i {
+.material-icons {
 	font-family: "Material Symbols Rounded";
 	font-style: normal;
-}
-
-.mdc-card {
-	@include theme.property(color, theme-color.$on-surface);
 }
