@@ -30,6 +30,7 @@ interface RequesterCase {
 }
 
 export interface RequesterConstraints {
+	globalContext?: ContextBundle,
 	path: string|Readable<string>
 	defaultRequestConfiguration: Partial<RequestInit>
 	manualResponseHandlers: RequesterCase[]
