@@ -177,7 +177,7 @@ function removeAccount(event: CustomEvent<Account>) {
 			bind:sortCriterion={sortCriterion}
 			bind:sortOrder={sortOrder}
 			isConnecting={$isConnecting || isRequestingDependencies}
-			listError={$allErrors}
+			listErrors={$allErrors}
 			on:remove={removeAccount}/>
 		<ExtraResourceLoader
 			isConnectingForInitialList={$isConnecting || isRequestingDependencies}

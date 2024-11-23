@@ -137,7 +137,7 @@ function removeCurrency(event: CustomEvent<Currency>) {
 			bind:sortCriterion={sortCriterion}
 			bind:sortOrder={sortOrder}
 			isConnecting={$isConnecting}
-			listError={$errors}
+			listErrors={$errors}
 			on:remove={removeCurrency}/>
 		<ExtraResourceLoader
 			isConnectingForInitialList={$isConnecting}

@@ -13,7 +13,7 @@ export let searchMode: SearchMode
 export let sortCriterion: string
 export let sortOrder: SortOrder
 
-export let listError: GeneralError[]
+export let listErrors: GeneralError[]
 
 const availableSortCriteria = [
 	"name",
@@ -39,7 +39,7 @@ $: isArchived = searchMode === "only_deleted" || isPresentAndArchived
 			bind:sortOrder={sortOrder}
 			{isConnecting}
 			{availableSortCriteria}
-			errors={listError}/>
+			errors={listErrors}/>
 	</Flex>
 	<svelte:fragment slot="cards">
 		{#each data as entity(entity.id)}

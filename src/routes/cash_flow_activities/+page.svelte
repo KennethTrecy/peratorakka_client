@@ -139,7 +139,7 @@ function removeCashFlowActivities(event: CustomEvent<CashFlowActivity>) {
 			bind:sortCriterion={sortCriterion}
 			bind:sortOrder={sortOrder}
 			isConnecting={$isConnecting}
-			listError={$errors}
+			listErrors={$errors}
 			on:remove={removeCashFlowActivities}/>
 		<ExtraResourceLoader
 			isConnectingForInitialList={$isConnecting}
