@@ -71,7 +71,7 @@ export default function deriveExchangeRate(
 				return multiplyAmount(previousValue, currentValue)
 			}, "1")
 		},
-		"updated_at": timestamps[0]
+		"updated_at": JSON.stringify(timestamps[0])
 	}
 
 	return exchangeRate

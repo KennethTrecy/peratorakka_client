@@ -1,3 +1,4 @@
+import type { Writable } from "svelte/store"
 import type { ContextBundle } from "+/component"
 
 import applyRequirements from "$/utility/apply_requirements"
@@ -11,8 +12,8 @@ export default function assertAuthentication(
 	}
 ): void {
 	applyRequirements(globalContext, [
-		globalContext.mustHaveToken,
-		globalContext.mustHaveAccessToken,
-		globalContext.mustBeAuthenticatedUser
+		globalContext.mustHaveToken as Writable<boolean>,
+		globalContext.mustHaveAccessToken as Writable<boolean>,
+		globalContext.mustBeAuthenticatedUser as Writable<boolean>
 	], methods)
 }

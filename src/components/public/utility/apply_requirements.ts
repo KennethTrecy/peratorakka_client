@@ -1,9 +1,9 @@
-import type { Subcriber, Readable } from "svelte"
+import type { Writable } from "svelte/store"
 import type { ContextBundle } from "+/component"
 
 export default function applyRequirements(
 	globalContext: ContextBundle,
-	guards: Readable[],
+	guards: Writable<boolean>[],
 	methods: {
 		goto: (url: string|URL) => void,
 		afterNavigate: (navigate: any) => void
@@ -13,7 +13,10 @@ export default function applyRequirements(
 	const {
 		hasRequirements,
 		redirectPath
-	} = globalContext
+	} = globalContext as {
+		hasRequirements: Writable<boolean>,
+		redirectPath: Writable<string>
+	}
 
 	methods.afterNavigate(() => {
 		hasRequirements.set(guards.length > 0)

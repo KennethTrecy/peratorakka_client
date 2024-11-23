@@ -9,11 +9,11 @@ import { GLOBAL_CONTEXT } from "#/contexts"
 import sendJSONRequest from "$/rest/send_json_request"
 
 export default function makeJSONRequester(constraints: RequesterConstraints): RequesterInfo {
-	const globalContext = getContext(GLOBAL_CONTEXT)
+	const globalContext = getContext(GLOBAL_CONTEXT) as ContextBundle
 	let isConnecting = writable(false)
 	let errors = writable<GeneralError[]>([])
 
-	async function send(specialRequestInfo: Partial<Request>) {
+	async function send(specialRequestInfo: Partial<RequestInit>): Promise<void> {
 		await sendJSONRequest(specialRequestInfo, constraints, {
 			isConnecting,
 			errors,
@@ -21,6 +21,7 @@ export default function makeJSONRequester(constraints: RequesterConstraints): Re
 		})
 	}
 	return {
+		globalContext,
 		isConnecting,
 		errors,
 		send
