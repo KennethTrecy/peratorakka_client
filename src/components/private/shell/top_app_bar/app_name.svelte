@@ -1,15 +1,4 @@
-<script lang="ts">
-	export let shouldCenterAlign: boolean = true
-
-	const basicClasses = [ "mdc-top-app-bar__title" ]
-	$: resolvedClasses = (
-		shouldCenterAlign
-			? [ ...basicClasses, "center-align" ]
-			: [ ...basicClasses ]
-	).join(" ")
-</script>
-
-<span class={resolvedClasses}>
+<span class="brand-logo">
 	<img src="logo.png" alt="Peratorakka logo"/>
 	<span data-app-name>
 		Peratorakka
@@ -17,26 +6,28 @@
 </span>
 
 <style lang="scss">
-	@use "@/components/third-party/index";
-	@use "@material/theme/theme-color";
-	@use "@material/top-app-bar/mdc-top-app-bar";
+@use "@/components/third-party/index";
 
-	.mdc-top-app-bar__title {
-		display: flex;
-		flex-flow: row wrap;
-		align-items: center;
-		justify-content: center;
-		gap: 1rem;
+.brand-logo {
+	display: flex;
+	flex-flow: row wrap;
+	align-items: center;
+	justify-content: center;
+	gap: 1rem;
 
-		> img {
-			height: 3rem;
-			width: auto;
-			border: 1px #{theme-color.$surface} solid;
-			border-radius: 6px;
-		}
-
-		> [data-app-name] {
-			font-size: 2rem;
-		}
+	> img {
+		height: 3rem;
+		width: auto;
+		border: 1px index.$surface solid;
+		border-radius: 6px;
 	}
+
+	// Attempted to use the third-party variable but does not work due to compatibility issues.
+	// For that reason, third-party variables are not available and needs to be hard-coded.
+	// Permalink: https://github.com/materializecss/materialize/blob/c1f64765acf74c65e5e471c1884be7713ffde5fa/sass/components/_variables.scss#L30C1-L30C14
+	@media only screen and (min-width: 993px) {
+		padding-left: 1rem;
+		padding-right: 1rem;
+	}
+}
 </style>
