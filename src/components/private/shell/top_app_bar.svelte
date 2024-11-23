@@ -1,38 +1,41 @@
 <script lang="ts">
-	import { onMount } from "svelte"
-	import { MDCTopAppBar } from "@material/top-app-bar"
+import AppName from "%/shell/top_app_bar/app_name.svelte"
+import NavigationButton from "%/shell/top_app_bar/navigation_button.svelte"
+import NavigationListCollection from "%/shell/navigation_list_collection.svelte"
 
-	import AppName from "%/shell/top_app_bar/app_name.svelte"
-	import NavigationButton from "%/shell/top_app_bar/navigation.svelte"
+export let isMenuShown: boolean
 
-	export let isMenuShown: boolean
-
-	let topAppBar: HTMLElement|null = null
-	let topAppBarInstance: MDCTopAppBar
-
-	function toggleMenu() {
-		isMenuShown = !isMenuShown
-	}
-
-	onMount(() => {
-		topAppBarInstance = new MDCTopAppBar(topAppBar as HTMLElement)
-	})
+function toggleMenu() {
+	isMenuShown = !isMenuShown
+}
 </script>
 
-<header class="mdc-top-app-bar" bind:this={topAppBar}>
-	<div class="mdc-top-app-bar__row">
-		<section class="mdc-top-app-bar__section mdc-top-app-bar__section--align-start">
-			<NavigationButton
-				label="Open navigation menu"
-				icon="menu"
-				on:click={toggleMenu}/>
-			<AppName/>
-		</section>
+<nav>
+	<div class="nav-wrapper">
+		<AppName/>
+		<NavigationButton
+			label="Open navigation menu"
+			icon="menu"
+			on:click={toggleMenu}/>
+		<ul class="right hide-on-med-and-down">
+			<NavigationListCollection bind:isMenuShown={isMenuShown}/>
+		</ul>
 	</div>
-</header>
+</nav>
 
 <style lang="scss">
-	@use "@/components/third-party/index";
+@use "@/components/third-party/index";
 
-	@use "@material/top-app-bar/mdc-top-app-bar";
+ul {
+	display: flex;
+	flex-flow: row nowrap;
+
+	> :global(li:nth-child(2)) {
+		order: 1;
+	}
+
+	> :global(li:nth-child(3)) {
+		order: 1;
+	}
+}
 </style>

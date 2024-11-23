@@ -1,0 +1,41 @@
+<script lang="ts">
+import type { Readable } from "svelte/store"
+import type { MenuItemInfo } from "%/shell/types"
+import type { ContextBundle } from "+/component"
+
+import { onDestroy, getContext } from "svelte"
+import { afterNavigate } from "$app/navigation"
+
+import { SHELL_CONTEXT } from "#/contexts"
+
+import NavigationItem from "%/shell/navigation_item.svelte"
+
+const shell = getContext(SHELL_CONTEXT) as ContextBundle
+const menuItemInfos = shell.menuItemInfos as Readable<MenuItemInfo[]>
+
+export let isMenuShown: boolean
+
+function close() {
+	isMenuShown = false
+}
+
+afterNavigate(close)
+
+let lastMenuItemInfos: MenuItemInfo[] = []
+onDestroy(menuItemInfos.subscribe(newMenuItemInfos => {
+	lastMenuItemInfos = newMenuItemInfos as MenuItemInfo[]
+}))
+</script>
+
+{#each lastMenuItemInfos as info}
+	{#if info.type === "item"}
+		<NavigationItem
+			address={info.link}
+			icon={info.icon}
+			label={info.label}/>
+	{/if}
+{/each}
+
+<style lang="scss">
+@use "@/components/third-party/index";
+</style>
