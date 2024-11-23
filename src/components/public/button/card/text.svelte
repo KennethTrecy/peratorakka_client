@@ -1,20 +1,19 @@
 <script lang="ts">
-	import type { ButtonKind } from "+/component"
+import type { ButtonKind } from "+/component"
 
-	import TextButton from "$/button/text.svelte"
+import TextButton from "$/button/text.svelte"
 
-	export let label: string
-	export let kind: ButtonKind = "button"
-	export let disabled: boolean = false
-	let otherClasses: string = ""
+export let label: string
+export let kind: ButtonKind = "button"
+export let disabled: boolean = false
+let otherClasses: string = ""
 
-	export { otherClasses as class }
+export { otherClasses as class }
 
-	$: buttonClasses = [
-		"card_action",
-		"card_action--button",
-		...otherClasses.split(" ")
-	].filter(Boolean).join(" ")
+$: buttonClasses = [
+	"text",
+	...otherClasses.split(" ")
+].filter(Boolean).join(" ")
 </script>
 
 <TextButton
@@ -25,17 +24,5 @@
 	on:click/>
 
 <style lang="scss">
-	@use "@/components/third-party/index";
-
-	@use "@material/card";
-
-	@include card.core-styles;
-
-	:global(.card_action) {
-		@extend .mdc-card__action;
-	}
-
-	:global(.card_action--button) {
-		@extend .mdc-card__action--button;
-	}
+@use "@/components/third-party/index";
 </style>

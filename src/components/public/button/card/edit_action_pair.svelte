@@ -1,17 +1,17 @@
 <script lang="ts">
-	import { createEventDispatcher } from "svelte"
+import { createEventDispatcher } from "svelte"
 
-	import TextCardButton from "$/button/card/text.svelte"
+import TextCardButton from "$/button/card/text.svelte"
 
-	export let disabled: boolean
+export let disabled: boolean
 
-	const dispatch = createEventDispatcher<{
-		"cancelEdit": void
-	}>()
+const dispatch = createEventDispatcher<{
+	"cancelEdit": void
+}>()
 
-	function cancelEdit() {
-		dispatch("cancelEdit")
-	}
+function cancelEdit() {
+	dispatch("cancelEdit")
+}
 </script>
 
 <TextCardButton
