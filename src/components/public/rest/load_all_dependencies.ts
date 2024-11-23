@@ -1,4 +1,4 @@
-import type { ContextBundle, ResourceDependencyInfo } from "+/component"
+import type { ContextBundle, ResourceDependencyInfo, HighResourceDependencyInfo } from "+/component"
 import type { GeneralError } from "+/rest"
 import type { Readable } from "svelte/store"
 import type { RestorableEntity } from "+/entity"
@@ -7,12 +7,13 @@ import { get, writable, derived } from "svelte/store"
 
 import { SEARCH_WITH_DELETED, MAXIMUM_PAGINATED_LIST_LENGTH } from "#/rest"
 
+import { isHighResourceDependencyInfo } from "+/component"
 import makeJSONRequester from "$/rest/make_json_requester"
 import mergeUniqueResources from "$/utility/merge_unique_resources"
 
 export default async function loadAllDependencies<T extends RestorableEntity>(
 	globalContext: ContextBundle,
-	dependencyInfos: ResourceDependencyInfo<T>[],
+	dependencyInfos: (ResourceDependencyInfo<T>|HighResourceDependencyInfo<T>)[],
 	actions: {
 		updateProgressRate: (rate: number) => void
 		updateErrors: (errors: GeneralError[]) => void
@@ -74,6 +75,15 @@ export default async function loadAllDependencies<T extends RestorableEntity>(
 							dependencyInfo.getResources(),
 							resources
 						))
+						if (isHighResourceDependencyInfo(dependencyInfo)) {
+							const linkedResources = dependencyInfo.getLinkedResources()
+							dependencyInfo.setLinkedResources(linkedResources.map(
+								({ resourceKey, resources }) => mergeUniqueResources(
+									responseDocument[resourceKey],
+									resources
+								)
+							))
+						}
 						dependencyOffset.update(lastDependencyOffset => {
 							return lastDependencyOffset + resources.length
 						})
