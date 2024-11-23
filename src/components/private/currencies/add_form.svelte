@@ -1,54 +1,56 @@
 <script lang="ts">
-	import type { Currency } from "+/entity"
+import type { Currency } from "+/entity"
 
-	import { createEventDispatcher } from "svelte"
+import { createEventDispatcher } from "svelte"
 
-	import makeJSONRequester from "$/rest/make_json_requester"
+import makeJSONRequester from "$/rest/make_json_requester"
 
-	import BasicForm from "%/currencies/basic_form.svelte"
-	import DescriptiveForm from "$/form/descriptive_form.svelte"
-	import ElementalParagraph from "$/typography/elemental_paragraph.svelte"
-	import TextCardButton from "$/button/card/text.svelte"
-	import TextContainer from "$/typography/text_container.svelte"
+import BasicForm from "%/currencies/basic_form.svelte"
+import DescriptiveForm from "$/form/descriptive_form.svelte"
+import ElementalParagraph from "$/typography/elemental_paragraph.svelte"
+import TextCardButton from "$/button/card/text.svelte"
+import TextContainer from "$/typography/text_container.svelte"
 
-	const dispatch = createEventDispatcher<{
-		"create": Currency
-	}>()
-	const IDPrefix = "new_"
-	let code = ""
-	let name = ""
-	let { isConnecting, errors, send } = makeJSONRequester({
-		"path": "/api/v1/currencies",
-		"defaultRequestConfiguration": {
-			"method": "POST"
-		},
-		"manualResponseHandlers": [
-			{
-				"statusCode": 201,
-				"action": async (response: Response) => {
-					const document = await response.json()
-					const { currency } = document
+const dispatch = createEventDispatcher<{
+	"create": Currency
+}>()
+const IDPrefix = "new_"
+let code = ""
+let name = ""
+let presentationalPrecision = 12
+let { isConnecting, errors, send } = makeJSONRequester({
+	"path": "/api/v1/currencies",
+	"defaultRequestConfiguration": {
+		"method": "POST"
+	},
+	"manualResponseHandlers": [
+		{
+			"statusCode": 201,
+			"action": async (response: Response) => {
+				const document = await response.json()
+				const { currency } = document
 
-					code = ""
-					name = ""
-					errors.set([])
-					dispatch("create", currency)
-				}
+				code = ""
+				name = ""
+				errors.set([])
+				dispatch("create", currency)
 			}
-		],
-		"expectedErrorStatusCodes": [ 400 ]
-	})
+		}
+	],
+	"expectedErrorStatusCodes": [ 400 ]
+})
 
-	async function createCurrency() {
-		await send({
-			"body": JSON.stringify({
-				"currency": {
-					code,
-					name
-				}
-			})
+async function createCurrency() {
+	await send({
+		"body": JSON.stringify({
+			"currency": {
+				code,
+				name,
+				"presentational_precision": presentationalPrecision
+			}
 		})
-	}
+	})
+}
 </script>
 
 <DescriptiveForm individualName="Currency" mayShowForm>
@@ -68,6 +70,7 @@
 		slot="form"
 		bind:code={code}
 		bind:name={name}
+		bind:presentationalPrecision={presentationalPrecision}
 		isConnecting={$isConnecting}
 		{IDPrefix}
 		errors={$errors}
