@@ -1,101 +1,105 @@
 <script lang="ts">
-	import { createEventDispatcher } from "svelte"
-	import { writable } from "svelte/store"
-	import debounce from "lodash.debounce"
+import { createEventDispatcher } from "svelte"
+import { writable } from "svelte/store"
+import debounce from "lodash.debounce"
 
-	import { MAXIMUM_PAGINATED_LIST_LENGTH } from "#/rest"
+import { MAXIMUM_PAGINATED_LIST_LENGTH } from "#/rest"
 
-	import makeJSONRequester from "$/rest/make_json_requester"
+import makeJSONRequester from "$/rest/make_json_requester"
 
-	import Flex from "$/layout/flex.svelte"
-	import GridCell from "$/layout/grid_cell.svelte"
-	import ShortParagraph from "$/typography/short_paragraph.svelte"
-	import TextButton from "$/button/text.svelte"
+import Flex from "$/layout/flex.svelte"
+import GridCell from "$/layout/grid_cell.svelte"
+import ShortParagraph from "$/typography/short_paragraph.svelte"
+import TextButton from "$/button/text.svelte"
 
-	const dispatch = createEventDispatcher<{
-		"reloadFully": void
-		"addResources": unknown[]
-	}>()
+const dispatch = createEventDispatcher<{
+	"reloadFully": void
+	"addResources": unknown[]
+}>()
 
-	export let isConnectingForInitialList: boolean
-	export let partialPath: string
-	export let collectiveName: string
-	export let parameters: [string, string][]
-	export let lastOffset: number
-	let hasPossibleUnloadedResources = true
+export let isConnectingForInitialList: boolean
+export let partialPath: string
+export let collectiveName: string
+export let parameters: [string, string][]
+export let lastOffset: number
+let lastOverallFilteredCount = Infinity
 
-	let nextPath = writable(partialPath)
+let nextPath = writable(partialPath)
 
-	$: {
-		const newPath = `${partialPath}?${
-			new URLSearchParams([
-				...parameters,
-				[ "page[offset]", `${lastOffset + 1}` ],
-				[ "page[limit]", MAXIMUM_PAGINATED_LIST_LENGTH ]
-			]).toString()
-		}`
+$: {
+	const newPath = `${partialPath}?${
+		new URLSearchParams([
+			...parameters,
+			[ "page[offset]", `${lastOffset + 1}` ],
+			[ "page[limit]", MAXIMUM_PAGINATED_LIST_LENGTH ]
+		]).toString()
+	}`
 
-		nextPath.set(newPath)
-	}
+	nextPath.set(newPath)
+}
 
-	let { isConnecting, errors, send } = makeJSONRequester({
-		"path": nextPath,
-		"defaultRequestConfiguration": {
-			"method": "GET"
-		},
-		"manualResponseHandlers": [
-			{
-				"statusCode": 200,
-				"action": async (response: Response) => {
-					let responseDocument = await response.json()
-					errors.set([])
-					const overallFilteredCount = responseDocument.meta.overall_filtered_count
-					const resources = responseDocument[collectiveName]
-					const resourceCount = resources.length
+let { isConnecting, errors, send } = makeJSONRequester({
+	"path": nextPath,
+	"defaultRequestConfiguration": {
+		"method": "GET"
+	},
+	"manualResponseHandlers": [
+		{
+			"statusCode": 200,
+			"action": async (response: Response) => {
+				let responseDocument = await response.json()
+				errors.set([])
+				const overallFilteredCount = responseDocument.meta.overall_filtered_count
+				const resources = responseDocument[collectiveName]
+				const resourceCount = resources.length
 
+				lastOverallFilteredCount = overallFilteredCount
+
+				if (resourceCount > 0) {
 					lastOffset = lastOffset + resourceCount
-					hasPossibleUnloadedResources = lastOffset < overallFilteredCount - 1
-
-					if (resourceCount > 0) {
-						dispatch("addResources", resources)
-					}
-				}
-			}
-		],
-		"expectedErrorStatusCodes": [ 401 ]
-	})
-
-	let oldParameters: string[][] = []
-	let abortController: AbortController|null = null
-
-	async function loadResources() {
-		if (abortController !== null) abortController.abort()
-
-		abortController = new AbortController()
-
-		await send({
-			"signal": abortController.signal
-		})
-	}
-
-	const reloadFully = debounce(() => dispatch("reloadFully"), 2000)
-	$: {
-		if (isConnectingForInitialList) {
-			oldParameters = parameters
-		} else {
-			const encodedOldParameters = JSON.stringify(oldParameters)
-			const encodedCurrentParameters = JSON.stringify(parameters)
-
-			if (encodedOldParameters !== encodedCurrentParameters) {
-				if (abortController !== null) abortController.abort()
-				if (lastOffset > 0) {
-					lastOffset = 0
-					hasPossibleUnloadedResources = true
-					reloadFully()
+					dispatch("addResources", resources)
 				}
 			}
 		}
+	],
+	"expectedErrorStatusCodes": [ 401 ]
+})
+
+let oldParameters: string[][] = []
+let abortController: AbortController|null = null
+
+async function loadResources() {
+	if (abortController !== null) abortController.abort()
+
+	abortController = new AbortController()
+
+	await send({
+		"signal": abortController.signal
+	})
+}
+
+const reloadFully = debounce(() => dispatch("reloadFully"), 2000)
+$: {
+	if (isConnectingForInitialList) {
+		oldParameters = parameters
+	} else {
+		const encodedOldParameters = JSON.stringify(oldParameters)
+		const encodedCurrentParameters = JSON.stringify(parameters)
+
+		if (encodedOldParameters !== encodedCurrentParameters) {
+			if (abortController !== null) abortController.abort()
+			if (lastOffset > 0) {
+				lastOffset = 0
+			}
+
+			oldParameters = parameters
+			lastOverallFilteredCount = Infinity
+			reloadFully()
+		}
 	}
+}
+
+$: hasPossibleUnloadedResources = lastOffset !== 0 && lastOffset + 1 < lastOverallFilteredCount
 </script>
 
 {#if isConnectingForInitialList}
