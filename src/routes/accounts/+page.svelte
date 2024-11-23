@@ -1,9 +1,9 @@
 <script lang="ts">
 import type { Account, Currency } from "+/entity"
 import type { ContextBundle } from "+/component"
-import type { SearchMode, SortOrder } from "+/rest"
+import type { GeneralError, SearchMode, SortOrder } from "+/rest"
 
-import { get, writable } from "svelte/store"
+import { get, writable, derived } from "svelte/store"
 import { onMount, getContext } from "svelte"
 import { afterNavigate, beforeNavigate, goto } from "$app/navigation"
 
@@ -52,7 +52,7 @@ let parameters: [string, string][] = [
 	[ "sort[0][0]", sortCriterion ],
 	[ "sort[0][1]", sortOrder as string ]
 ]
-let completePath = writable(partialPath)
+const completePath = writable(partialPath)
 $: {
 	parameters = [
 		[ "filter[search_mode]", searchMode as string ],
@@ -68,6 +68,8 @@ $: {
 		]).toString()
 	}`)
 }
+
+const dependencyErrors = writable([] as GeneralError[])
 
 let {
 	isConnecting,
@@ -90,6 +92,11 @@ let {
 	],
 	"expectedErrorStatusCodes": [ 401 ]
 })
+
+const allErrors = derived([ dependencyErrors, errors ], ([ dependencyErrors, errors ]) => [
+	...dependencyErrors,
+	...errors
+])
 
 async function reloadAccounts() {
 	accounts = []
@@ -116,7 +123,7 @@ async function loadList() {
 		}
 	], {
 		"updateProgressRate": newProgressRate => { progressRate = newProgressRate },
-		"updateErrors": newErrors => { errors.set(newErrors) }
+		"updateErrors": newErrors => { dependencyErrors.set(newErrors) }
 	})
 
 	isRequestingDependencies = false
@@ -170,7 +177,7 @@ function removeAccount(event: CustomEvent<Account>) {
 			bind:sortCriterion={sortCriterion}
 			bind:sortOrder={sortOrder}
 			isConnecting={$isConnecting || isRequestingDependencies}
-			listError={$errors}
+			listError={$allErrors}
 			on:remove={removeAccount}/>
 		<ExtraResourceLoader
 			isConnectingForInitialList={$isConnecting || isRequestingDependencies}
