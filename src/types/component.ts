@@ -92,6 +92,7 @@ export interface RestorableItemOptions {
 export interface ResourceDependencyInfo<T extends RestorableEntity> {
 	partialPath: string,
 	mainSortCriterion: string,
+	resourceKey: string,
 	getResources: () => T[],
 	setResources: (resources: T[]) => void
 }
