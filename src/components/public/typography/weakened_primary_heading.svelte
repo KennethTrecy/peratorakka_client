@@ -1,9 +1,7 @@
-<h1 class="mdc-typography--headline6">
+<h1 class="headline-small">
 	<slot/>
 </h1>
 
 <style lang="scss">
-	@use "@/components/third-party/index";
-
-	@use "@material/typography/mdc-typography";
+@use "@/components/third-party/index";
 </style>

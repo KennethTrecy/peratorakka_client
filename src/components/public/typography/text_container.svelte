@@ -1,17 +1,15 @@
-<div class="mdc-typography">
+<div class="container">
 	<slot/>
 </div>
 
 <style lang="scss">
-	@use "@/components/third-party/index";
+@use "@/components/third-party/index";
 
-	@use "@material/typography/mdc-typography";
+.container {
+	max-width: 70ch;
 
-	.mdc-typography > :global(*) {
+	> .container {
 		margin-top: 1rem;
 	}
-
-	.mdc-typography {
-		max-width: 70ch;
-	}
+}
 </style>

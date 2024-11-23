@@ -1,14 +1,33 @@
-<p class="mdc-typography--body1">
+<script lang="ts">
+import type { TextAlignment } from "+/component"
+
+export let alignment: TextAlignment = "left"
+
+$: paragraphClasses = [
+	"body-normal",
+	alignment
+].filter(Boolean).join(" ")
+</script>
+
+<p class={paragraphClasses}>
 	<slot/>
 </p>
 
 
 <style lang="scss">
-	@use "@/components/third-party/index";
+@use "@/components/third-party/index";
 
-	@use "@material/typography/mdc-typography";
+.body-normal {
+	&.left {
+		text-align: left;
+	}
 
-	p + :global(p) {
+	&.center {
+		text-align: center;
+	}
+
+ 	+ .body-normal {
 		margin-top: 1rem;
 	}
+}
 </style>

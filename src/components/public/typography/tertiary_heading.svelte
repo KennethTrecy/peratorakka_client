@@ -1,13 +1,11 @@
-<h3 class="mdc-typography--headline4">
+<h3 class="title-large">
 	<slot/>
 </h3>
 
 <style lang="scss">
-	@use "@/components/third-party/index";
+@use "@/components/third-party/index";
 
-	@use "@material/typography/mdc-typography";
-
-	h3 {
-		text-align: center;
-	}
+h3 {
+	text-align: center;
+}
 </style>
