@@ -13,14 +13,14 @@ export let errors: GeneralError[]
 export let variant: TextFieldVariant = "text"
 </script>
 
-<GeneralField {fieldName} {errorFieldName} {IDPrefix} {errors} let:fieldID let:helperID>
+<GeneralField {fieldName} {errorFieldName} {IDPrefix} {errors} let:fieldID let:labelID let:helperID>
 	{#if variant === "text"}
 		<input
 			id={fieldID}
 			type="text"
 			bind:value={value}
 			disabled={disabled}
-			aria-labelledby={fieldID}
+			aria-labelledby={labelID}
 			aria-controls={helperID}
 			aria-describedby={helperID}/>
 	{:else if variant === "date"}
@@ -29,7 +29,7 @@ export let variant: TextFieldVariant = "text"
 			type="date"
 			bind:value={value}
 			disabled={disabled}
-			aria-labelledby={fieldID}
+			aria-labelledby={labelID}
 			aria-controls={helperID}
 			aria-describedby={helperID}/>
 	{:else}
@@ -38,7 +38,7 @@ export let variant: TextFieldVariant = "text"
 			type="email"
 			bind:value={value}
 			disabled={disabled}
-			aria-labelledby={fieldID}
+			aria-labelledby={labelID}
 			aria-controls={helperID}
 			aria-describedby={helperID}/>
 	{/if}

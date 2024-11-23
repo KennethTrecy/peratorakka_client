@@ -13,17 +13,16 @@ export let IDPrefix: string = ""
 export let errors: GeneralError[]
 </script>
 
-<GeneralField {fieldName} {errorFieldName} {IDPrefix} {errors} let:fieldID let:helperID>
+<GeneralField {fieldName} {errorFieldName} {IDPrefix} {errors} let:fieldID let:labelID let:helperID>
 	<input
 		id={fieldID}
 		role="textbox"
 		type="password"
 		bind:value={value}
 		disabled={disabled}
-		aria-labelledby={fieldID}
+		aria-labelledby={labelID}
 		aria-controls={helperID}
 		aria-describedby={helperID}/>
-	<label for={fieldID}>{fieldName}</label>
 </GeneralField>
 
 <style lang="scss">

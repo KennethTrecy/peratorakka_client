@@ -14,7 +14,7 @@ export let IDPrefix: string = ""
 export let errors: GeneralError[]
 </script>
 
-<GeneralField {fieldName} {errorFieldName} {IDPrefix} {errors} let:fieldID let:helperID>
+<GeneralField {fieldName} {errorFieldName} {IDPrefix} {errors} let:fieldID let:labelID let:helperID>
 	<input
 		id={fieldID}
 		type="number"
@@ -23,7 +23,7 @@ export let errors: GeneralError[]
 		{min}
 		{step}
 		disabled={disabled}
-		aria-labelledby={fieldID}
+		aria-labelledby={labelID}
 		aria-controls={helperID}
 		aria-describedby={helperID}/>
 </GeneralField>

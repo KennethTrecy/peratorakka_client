@@ -4,7 +4,7 @@ import type { GeneralError } from "+/rest"
 import { isFieldError } from "+/rest"
 
 export let fieldName: string
-export let errorFieldName
+export let errorFieldName: string
 export let IDPrefix: string
 export let errors: GeneralError[]
 
@@ -16,6 +16,7 @@ $: fieldID = errorFieldName === ""
 			: `${IDPrefix}_`
 	) + normalizedFieldName
 	: errorFieldName
+$: labelID = `${fieldID}_label`
 $: helperID = `${fieldID}_helper`
 $: message = errors.filter(
 	error => isFieldError(error) && error.field.endsWith(errorFieldName)
@@ -23,8 +24,8 @@ $: message = errors.filter(
 </script>
 
 <div class="input-field">
-	<slot {fieldID} {helperID}></slot>
-	<label for={fieldID}>{fieldName}</label>
+	<slot {fieldID} {labelID} {helperID}></slot>
+	<label for={fieldID} id={labelID}>{fieldName}</label>
 	{#if message !== ""}
 		<span class="supporting-text" id={helperID}>{message}</span>
 	{/if}
