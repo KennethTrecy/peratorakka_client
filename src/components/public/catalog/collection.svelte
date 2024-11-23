@@ -1,11 +1,11 @@
 <script lang="ts">
-	import CatalogBase from "$/catalog/base.svelte"
-	import SecondaryHeading from "$/typography/secondary_heading.svelte"
+import CatalogBase from "$/catalog/base.svelte"
+import SecondaryHeading from "$/typography/secondary_heading.svelte"
 
-	export let isConnecting: boolean
-	export let progressRate: number
-	export let collectiveName: string
-	export let data: unknown[]
+export let isConnecting: boolean
+export let progressRate: number
+export let collectiveName: string
+export let data: unknown[]
 </script>
 
 <CatalogBase
