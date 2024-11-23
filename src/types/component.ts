@@ -96,3 +96,20 @@ export interface ResourceDependencyInfo<T extends RestorableEntity> {
 	getResources: () => T[],
 	setResources: (resources: T[]) => void
 }
+
+interface LinkedResource {
+	resourceKey: string,
+	resources: RestorableEntity[]
+}
+
+export interface HighResourceDependencyInfo<T extends RestorableEntity>
+extends ResourceDependencyInfo<T> {
+	getLinkedResources: () => LinkedResource[],
+	setLinkedResources: (resources: RestorableEntity[][]) => void,
+}
+
+export function isHighResourceDependencyInfo<T extends RestorableEntity>(error: any)
+: error is HighResourceDependencyInfo<T> {
+	const keys = Object.keys(error)
+	return keys.includes("getLinkedResources")
+}
