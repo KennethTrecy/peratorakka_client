@@ -11,15 +11,19 @@ interface Entity {
 	id: number
 	created_at: string
 	updated_at: string
+}
+
+export interface RestorableEntity extends Entity {
 	deleted_at: string|null
 }
 
-export interface Currency extends Entity {
+export interface Currency extends RestorableEntity {
 	name: string
 	code: string
+	presentational_precision: number
 }
 
-export interface CashFlowActivity extends Entity {
+export interface CashFlowActivity extends RestorableEntity {
 	name: string
 	description: string
 }
@@ -28,7 +32,7 @@ type AccountKind = typeof accountKinds[number]
 
 export type AcceptableAccountKind = typeof acceptableAccountKinds[number]
 
-export interface Account extends Entity{
+export interface Account extends RestorableEntity {
 	currency_id: number
 	name: string
 	description: string
@@ -43,7 +47,7 @@ type ModifierAction = typeof modifierActions[number]
 
 export type AcceptableModifierAction = typeof acceptableModifierActions[number]
 
-export interface Modifier extends Entity {
+export interface Modifier extends RestorableEntity {
 	debit_account_id: number
 	credit_account_id: number
 	debit_cash_flow_activity_id: number|null
@@ -54,7 +58,7 @@ export interface Modifier extends Entity {
 	action: ModifierAction
 }
 
-export interface FinancialEntry extends Entity {
+export interface FinancialEntry extends RestorableEntity {
 	modifier_id: number
 	transacted_at: string
 	debit_amount: string
