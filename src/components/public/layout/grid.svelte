@@ -1,10 +1,8 @@
-<div class="mdc-layout-grid">
+<div class="container">
 	<slot/>
 </div>
 
 
 <style lang="scss">
-	@use "@/components/third-party/index";
-
-	@use "@material/layout-grid/mdc-layout-grid";
+@use "@/components/third-party/index";
 </style>
