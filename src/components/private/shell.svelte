@@ -1,31 +1,25 @@
 <script lang="ts">
-	import { onMount, onDestroy, setContext } from "svelte"
+import { onMount, onDestroy, setContext } from "svelte"
 
-	import makeGlobalContext from "$/make_global_context"
-	import makeShellContext from "%/shell/make_shell_context"
-	import { GLOBAL_CONTEXT, SHELL_CONTEXT } from "#/contexts"
+import makeGlobalContext from "$/make_global_context"
+import makeShellContext from "%/shell/make_shell_context"
+import { GLOBAL_CONTEXT, SHELL_CONTEXT } from "#/contexts"
 
-	import TopAppBar from "%/shell/top_app_bar.svelte"
-	import NavigationDrawer from "%/shell/navigation_drawer.svelte"
+import TopAppBar from "%/shell/top_app_bar.svelte"
+import NavigationDrawer from "%/shell/navigation_drawer.svelte"
 
-	const globalContext = makeGlobalContext()
+const globalContext = makeGlobalContext()
 
-	export let isMenuShown = false
+export let isMenuShown = false
 
-	setContext(GLOBAL_CONTEXT, globalContext)
-	setContext(SHELL_CONTEXT, makeShellContext(globalContext))
+setContext(GLOBAL_CONTEXT, globalContext)
+setContext(SHELL_CONTEXT, makeShellContext(globalContext))
 
-	onMount(() => {
-		(globalContext.initializeGlobalStates as () => void)()
-	})
+onMount(() => {
+	(globalContext.initializeGlobalStates as () => void)()
+})
 
-	onDestroy(globalContext.unsubscribeWatchedGlobalStates as () => void)
-
-	/**
-	 * Previous main
-	 * <InnerShell {isMenuShown} on:toggleMenu={toggleMenu}>
-	 * </InnerShell>
-	 */
+onDestroy(globalContext.unsubscribeWatchedGlobalStates as () => void)
 </script>
 
 <svelte:head>
@@ -44,31 +38,26 @@
 	</main>
 	<footer class="mdc-typography">
 		<p class="mdc-typography--body2">
-			Copyright © 2024 by Kenneth Trecy Tobias.
+			Copyright © 2023 - 2025 by Kenneth Trecy Tobias.
 		</p>
 	</footer>
 </div>
 
 <style lang="scss">
-	@use "@/components/third-party/index";
+.shell {
+	width: 100%;
+	min-height: 100%;
 
-	@use "@material/typography/mdc-typography";
-	@use "@material/top-app-bar/mdc-top-app-bar";
+	display: flex;
+	flex-flow: column nowrap;
 
-	.shell {
-		width: 100%;
-		min-height: 100%;
-
-		display: flex;
-		flex-flow: column nowrap;
-
-		> main {
-			flex: 1;
-		}
+	> main {
+		flex: 1;
 	}
+}
 
-	footer {
-		padding: 1rem;
-		text-align: center;
-	}
+footer {
+	padding: 1rem;
+	text-align: center;
+}
 </style>
