@@ -36,7 +36,7 @@ export const SORT_ORDERS = [
 	DESCENDING_ORDER
 ] as const
 
-export const MAXIMUM_PAGINATED_LIST_LENGTH = "15"
+export const MAXIMUM_PAGINATED_LIST_LENGTH = "20"
 
 export const SUPPORTED_TOKEN_EXPIRATION_TYPES = {
 	"expiration_types": [ MAINTENANCE_EXPIRATION_MECHANISM ]
