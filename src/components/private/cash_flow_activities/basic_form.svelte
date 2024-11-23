@@ -1,19 +1,19 @@
 <script lang="ts">
-	import type { GeneralError } from "+/rest"
-	import type { CashFlowActivity } from "+/entity"
+import type { GeneralError } from "+/rest"
+import type { CashFlowActivity } from "+/entity"
 
-	import BasicForm from "$/form/basic_form.svelte"
-	import TextField from "$/form/text_field.svelte"
+import BasicForm from "$/form/basic_form.svelte"
+import TextField from "$/form/text_field.svelte"
 
-	export let IDPrefix: string
+export let IDPrefix: string
 
-	export let name: string
-	export let description: string
-	export let forceDisabledFields: (keyof CashFlowActivity)[] = []
+export let name: string
+export let description: string
+export let forceDisabledFields: (keyof CashFlowActivity)[] = []
 
-	export let isConnecting: boolean
-	export let errors: GeneralError[]
-	export let id: string|null = null
+export let isConnecting: boolean
+export let errors: GeneralError[]
+export let id: string|null = null
 </script>
 
 <BasicForm {id} {isConnecting} {errors} on:submit>
