@@ -29,14 +29,11 @@
 </script>
 
 <svelte:head>
-	<style>
-		* {
-			box-sizing: border-box;
-			padding: 0em;
-			border: 0em;
-			margin: 0em;
-		}
-	</style>
+	<link
+		rel="stylesheet"
+		href="https://cdn.jsdelivr.net/npm/@materializecss/materialize@2.1.1/dist/css/materialize.min.css"/>
+	<script
+		src="https://cdn.jsdelivr.net/npm/@materializecss/materialize@2.1.1/dist/js/materialize.min.js"></script>
 </svelte:head>
 
 <div class="shell">
