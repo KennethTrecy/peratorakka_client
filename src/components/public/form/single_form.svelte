@@ -1,14 +1,14 @@
 <script lang="ts">
-	import type { GeneralError } from "+/rest"
+import type { GeneralError } from "+/rest"
 
-	import Flex from "$/layout/flex.svelte"
-	import FormBase from "$/form/base.svelte"
-	import Grid from "$/layout/grid.svelte"
-	import GridCell from "$/layout/grid_cell.svelte"
-	import InnerGrid from "$/layout/inner_grid.svelte"
+import Flex from "$/layout/flex.svelte"
+import FormBase from "$/form/base.svelte"
+import Grid from "$/layout/grid.svelte"
+import GridCell from "$/layout/grid_cell.svelte"
+import InnerGrid from "$/layout/inner_grid.svelte"
 
-	export let errors: GeneralError[]
-	export let isConnecting: boolean
+export let errors: GeneralError[]
+export let isConnecting: boolean
 </script>
 
 <Grid>
@@ -22,11 +22,9 @@
 							<img src="logo.png" alt="Peratorakka logo"/>
 							<slot name="description_layer"/>
 						</svelte:fragment>
-						<Grid slot="field_content">
-							<InnerGrid>
-								<slot name="field_layer"/>
-							</InnerGrid>
-						</Grid>
+						<InnerGrid slot="field_content">
+							<slot name="field_layer"/>
+						</InnerGrid>
 						<slot slot="action_buttons" name="action_layer"/>
 					</FormBase>
 				</div>
@@ -37,26 +35,15 @@
 </Grid>
 
 <style lang="scss">
-	@use "@/components/third-party/index";
+@use "@/components/third-party/index";
 
-	@use "@material/card";
+.single_form {
+	text-align: center;
+	padding-top: 1rem;
+	width: 100%;
 
-	@include card.core-styles;
-
-	:global(.single_form .mdc-card__content) {
-		text-align: center;
-		padding: 1rem;
-
-		&:first-child > img {
-			margin-bottom: 1rem;
-		}
-
-		& + & {
-			padding-top: 0rem;
-		}
+	:global(.card-content) {
+		min-height: 25rem;
 	}
-
-	:global(.single_form .mdc-card__actions) {
-		justify-content: center;
-	}
+}
 </style>
