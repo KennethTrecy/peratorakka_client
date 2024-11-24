@@ -7,7 +7,7 @@ import { get, writable, derived } from "svelte/store"
 import { onMount, getContext } from "svelte"
 import { afterNavigate, beforeNavigate, goto } from "$app/navigation"
 
-import { DEFAULT_MINIMUM_PROGRESS_RATE, NO_CASH_FLOW_ACTIVITY } from "#/component"
+import { NO_CASH_FLOW_ACTIVITY } from "#/component"
 import { GLOBAL_CONTEXT } from "#/contexts"
 import {
 	SEARCH_NORMALLY,

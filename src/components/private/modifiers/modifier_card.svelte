@@ -47,6 +47,8 @@ let action = fallbackToAceptableAction(data.action)
 const forceDisabledFields: (keyof Modifier)[] = [
 	"debit_account_id",
 	"credit_account_id",
+	"debit_cash_flow_activity_id",
+	"credit_cash_flow_activity_id",
 	"kind",
 	"action"
 ]
