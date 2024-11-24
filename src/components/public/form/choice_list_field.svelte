@@ -50,6 +50,7 @@ onMount(() => {
 		aria-controls={helperID}
 		aria-describedby={helperID}
 		aria-disabled={disabled}
+		{disabled}
 		title={selectedLabel}>
 		{#each choices as { label, data }(data)}
 			<option
