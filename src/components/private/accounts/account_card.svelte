@@ -1,5 +1,4 @@
 <script lang="ts">
-import type { GeneralError } from "+/rest"
 import type { Currency, Account, AcceptableAccountKind } from "+/entity"
 
 import { createEventDispatcher } from "svelte"
