@@ -1,97 +1,97 @@
 <script lang="ts">
-	import type {
-		Currency,
-		CashFlowActivity,
-		Account,
-		AcceptableModifierKind,
-		AcceptableModifierAction,
-		Modifier
-	} from "+/entity"
+import type {
+	Currency,
+	CashFlowActivity,
+	Account,
+	AcceptableModifierKind,
+	AcceptableModifierAction,
+	Modifier
+} from "+/entity"
 
-	import { createEventDispatcher } from "svelte"
+import { createEventDispatcher } from "svelte"
 
-	import { NO_CASH_FLOW_ACTIVITY, UNKNOWN_OPTION } from "#/component"
-	import { acceptableModifierKinds, acceptableModifierActions } from "#/entity"
+import { NO_CASH_FLOW_ACTIVITY, UNKNOWN_OPTION } from "#/component"
+import { acceptableModifierKinds, acceptableModifierActions } from "#/entity"
 
-	import makeJSONRequester from "$/rest/make_json_requester"
+import makeJSONRequester from "$/rest/make_json_requester"
 
-	import BasicForm from "%/modifiers/basic_form.svelte"
-	import DescriptiveForm from "$/form/descriptive_form.svelte"
-	import ElementalParagraph from "$/typography/elemental_paragraph.svelte"
-	import TextCardButton from "$/button/card/text.svelte"
-	import TextContainer from "$/typography/text_container.svelte"
+import BasicForm from "%/modifiers/basic_form.svelte"
+import DescriptiveForm from "$/form/descriptive_form.svelte"
+import ElementalParagraph from "$/typography/elemental_paragraph.svelte"
+import TextCardButton from "$/button/card/text.svelte"
+import TextContainer from "$/typography/text_container.svelte"
 
-	const dispatch = createEventDispatcher<{
-		"create": Modifier
-	}>()
-	const IDPrefix = "new_"
+const dispatch = createEventDispatcher<{
+	"create": Modifier
+}>()
+const IDPrefix = "new_"
 
-	export let isLoadingInitialData: boolean
-	export let currencies: Currency[]
-	export let accounts: Account[]
-	export let cashFlowActivities: CashFlowActivity[]
+export let isLoadingInitialData: boolean
+export let currencies: Currency[]
+export let accounts: Account[]
+export let cashFlowActivities: CashFlowActivity[]
 
-	export let debitAccountID: string = UNKNOWN_OPTION
-	export let creditAccountID: string = UNKNOWN_OPTION
-	export let debitCashFlowActivityID: string = `${NO_CASH_FLOW_ACTIVITY.id}`
-	export let creditCashFlowActivityID: string = `${NO_CASH_FLOW_ACTIVITY.id}`
-	export let name: string = ""
-	export let description: string =""
-	export let kind: AcceptableModifierKind = acceptableModifierKinds[0]
-	export let action: AcceptableModifierAction = acceptableModifierActions[0]
+export let debitAccountID: string = UNKNOWN_OPTION
+export let creditAccountID: string = UNKNOWN_OPTION
+export let debitCashFlowActivityID: string = `${NO_CASH_FLOW_ACTIVITY.id}`
+export let creditCashFlowActivityID: string = `${NO_CASH_FLOW_ACTIVITY.id}`
+export let name: string = ""
+export let description: string =""
+export let kind: AcceptableModifierKind = acceptableModifierKinds[0]
+export let action: AcceptableModifierAction = acceptableModifierActions[0]
 
-	let { isConnecting, errors, send } = makeJSONRequester({
-		"path": "/api/v1/modifiers",
-		"defaultRequestConfiguration": {
-			"method": "POST"
-		},
-		"manualResponseHandlers": [
-			{
-				"statusCode": 201,
-				"action": async (response: Response) => {
-					const document = await response.json()
-					const { modifier } = document
+let { isConnecting, errors, send } = makeJSONRequester({
+	"path": "/api/v1/modifiers",
+	"defaultRequestConfiguration": {
+		"method": "POST"
+	},
+	"manualResponseHandlers": [
+		{
+			"statusCode": 201,
+			"action": async (response: Response) => {
+				const document = await response.json()
+				const { modifier } = document
 
-					debitAccountID = UNKNOWN_OPTION
-					creditAccountID = UNKNOWN_OPTION
-					debitCashFlowActivityID = `${NO_CASH_FLOW_ACTIVITY.id}`
-					creditCashFlowActivityID = `${NO_CASH_FLOW_ACTIVITY.id}`
-					name = ""
-					description = ""
-					kind = acceptableModifierKinds[0]
-					action = acceptableModifierActions[0]
-					errors.set([])
-					dispatch("create", modifier)
-				}
+				debitAccountID = UNKNOWN_OPTION
+				creditAccountID = UNKNOWN_OPTION
+				debitCashFlowActivityID = `${NO_CASH_FLOW_ACTIVITY.id}`
+				creditCashFlowActivityID = `${NO_CASH_FLOW_ACTIVITY.id}`
+				name = ""
+				description = ""
+				kind = acceptableModifierKinds[0]
+				action = acceptableModifierActions[0]
+				errors.set([])
+				dispatch("create", modifier)
 			}
-		],
-		"expectedErrorStatusCodes": [ 400 ]
-	})
+		}
+	],
+	"expectedErrorStatusCodes": [ 400 ]
+})
 
-	async function createModifier() {
-		await send({
-			"body": JSON.stringify({
-				"modifier": {
-					"debit_account_id": parseInt(debitAccountID),
-					"credit_account_id": parseInt(creditAccountID),
-					"debit_cash_flow_activity_id":
-						debitCashFlowActivityID === `${NO_CASH_FLOW_ACTIVITY.id}`
-							? null
-							: parseInt(debitCashFlowActivityID),
-					"credit_cash_flow_activity_id":
-						creditCashFlowActivityID === `${NO_CASH_FLOW_ACTIVITY.id}`
-							? null
-							: parseInt(creditCashFlowActivityID),
-					name,
-					description,
-					kind,
-					action
-				}
-			})
+async function createModifier() {
+	await send({
+		"body": JSON.stringify({
+			"modifier": {
+				"debit_account_id": parseInt(debitAccountID),
+				"credit_account_id": parseInt(creditAccountID),
+				"debit_cash_flow_activity_id":
+					debitCashFlowActivityID === `${NO_CASH_FLOW_ACTIVITY.id}`
+						? null
+						: parseInt(debitCashFlowActivityID),
+				"credit_cash_flow_activity_id":
+					creditCashFlowActivityID === `${NO_CASH_FLOW_ACTIVITY.id}`
+						? null
+						: parseInt(creditCashFlowActivityID),
+				name,
+				description,
+				kind,
+				action
+			}
 		})
-	}
+	})
+}
 
-	$: mayShowForm = accounts.length >= 2
+$: mayShowForm = accounts.length >= 2
 </script>
 
 <DescriptiveForm individualName="Modifier" {mayShowForm} {isLoadingInitialData}>
