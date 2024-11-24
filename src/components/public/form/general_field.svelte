@@ -4,22 +4,25 @@ import type { GeneralError } from "+/rest"
 import { isFieldError } from "+/rest"
 
 export let fieldName: string
-export let errorFieldName: string
+export let errorFieldID: string
 export let IDPrefix: string
 export let errors: GeneralError[]
 
 $: normalizedFieldName = fieldName.replace(" ", "_").toLocaleLowerCase()
-$: fieldID = errorFieldName === ""
-	? (
+$: fieldID = fieldName === ""
+	? errorFieldID
+	: (
 		IDPrefix === ""
 			? ""
 			: `${IDPrefix}_`
 	) + normalizedFieldName
-	: errorFieldName
+$: resolvedErrorFieldID = errorFieldID === ""
+	? normalizedFieldName
+	: errorFieldID
 $: labelID = `${fieldID}_label`
 $: helperID = `${fieldID}_helper`
 $: message = errors.filter(
-	error => isFieldError(error) && error.field.endsWith(errorFieldName)
+	error => isFieldError(error) && error.field.endsWith(resolvedErrorFieldID)
 ).map(error => error.message).join(" ")
 </script>
 

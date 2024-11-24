@@ -9,12 +9,12 @@ export let value: number
 export let min: number
 export let max: number
 export let step: number
-export let errorFieldName = ""
+export let errorFieldID = ""
 export let IDPrefix: string = ""
 export let errors: GeneralError[]
 </script>
 
-<GeneralField {fieldName} {errorFieldName} {IDPrefix} {errors} let:fieldID let:labelID let:helperID>
+<GeneralField {fieldName} {errorFieldID} {IDPrefix} {errors} let:fieldID let:labelID let:helperID>
 	<input
 		id={fieldID}
 		type="number"

@@ -57,7 +57,7 @@ $: transformAccount = makeAccountTransformer(currencies)
 	<svelte:fragment slot="fields">
 		<ChoiceListField
 			fieldName="Debit Account"
-			errorFieldName="debit_account_id"
+			errorFieldID="debit_account_id"
 			disabled={isConnecting || forceDisabledFields.includes("debit_account_id")}
 			bind:value={debitAccountID}
 			rawChoices={availableAccounts}
@@ -66,7 +66,7 @@ $: transformAccount = makeAccountTransformer(currencies)
 			{errors}/>
 		<ChoiceListField
 			fieldName="Debit Cash Flow Activity"
-			errorFieldName="debit_cash_flow_activity_id"
+			errorFieldID="debit_cash_flow_activity_id"
 			disabled={isConnecting || forceDisabledFields.includes("debit_cash_flow_activity_id")}
 			bind:value={debitCashFlowActivityID}
 			rawChoices={availableCashFlowActivities}
@@ -75,7 +75,7 @@ $: transformAccount = makeAccountTransformer(currencies)
 			{errors}/>
 		<ChoiceListField
 			fieldName="Credit Account"
-			errorFieldName="credit_account_id"
+			errorFieldID="credit_account_id"
 			disabled={isConnecting || forceDisabledFields.includes("credit_account_id")}
 			bind:value={creditAccountID}
 			rawChoices={availableAccounts}
@@ -84,7 +84,7 @@ $: transformAccount = makeAccountTransformer(currencies)
 			{errors}/>
 		<ChoiceListField
 			fieldName="Credit Cash Flow Activity"
-			errorFieldName="credit_cash_flow_activity_id"
+			errorFieldID="credit_cash_flow_activity_id"
 			disabled={isConnecting || forceDisabledFields.includes("credit_cash_flow_activity_id")}
 			bind:value={creditCashFlowActivityID}
 			rawChoices={availableCashFlowActivities}

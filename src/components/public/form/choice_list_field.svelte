@@ -11,7 +11,7 @@ import GeneralField from "@/components/public/form/general_field.svelte"
 const UNKNOWN_OPTION_LABEL = "Please select one of the choices..."
 
 export let fieldName: string
-export let errorFieldName: string = ""
+export let errorFieldID: string = ""
 export let disabled: boolean
 export let value: string
 export let IDPrefix: string = ""
@@ -41,7 +41,7 @@ onMount(() => {
 })
 </script>
 
-<GeneralField {fieldName} {errorFieldName} {IDPrefix} {errors} let:fieldID let:labelID let:helperID>
+<GeneralField {fieldName} {errorFieldID} {IDPrefix} {errors} let:fieldID let:labelID let:helperID>
 	<select
 		id={fieldID}
 		bind:value={value}

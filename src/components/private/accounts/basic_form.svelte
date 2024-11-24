@@ -31,7 +31,7 @@ export let id = ""
 	<svelte:fragment slot="fields">
 		<ChoiceListField
 			fieldName="Currency"
-			errorFieldName="currency_id"
+			errorFieldID="currency_id"
 			disabled={isConnecting || forceDisabledFields.includes("currency_id")}
 			bind:value={currencyID}
 			rawChoices={currencies}

@@ -8,12 +8,12 @@ import GeneralField from "@/components/public/form/general_field.svelte"
 export let fieldName: string
 export let disabled: boolean
 export let value: string
-export let errorFieldName = ""
+export let errorFieldID = ""
 export let IDPrefix: string = ""
 export let errors: GeneralError[]
 </script>
 
-<GeneralField {fieldName} {errorFieldName} {IDPrefix} {errors} let:fieldID let:labelID let:helperID>
+<GeneralField {fieldName} {errorFieldID} {IDPrefix} {errors} let:fieldID let:labelID let:helperID>
 	<input
 		id={fieldID}
 		role="textbox"
