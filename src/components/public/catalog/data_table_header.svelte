@@ -1,21 +1,23 @@
 <script lang="ts">
-	import type { DataTableCellKind, DataTableCellScope, DataTableCellStatus } from "+/component"
+import type { DataTableCellKind, DataTableCellScope, DataTableCellStatus } from "+/component"
 
-	export let kind: DataTableCellKind = "normal"
-	export let status: DataTableCellStatus = "present"
-	export let scope: DataTableCellScope = "row"
-	export let columnSpan: number = 1
-	export let rowSpan: number = 1
+export let kind: DataTableCellKind = "normal"
+export let status: DataTableCellStatus = "present"
+export let scope: DataTableCellScope = "row"
+export let columnSpan: number = 1
+export let rowSpan: number = 1
 
-	$: headerClasses = [
-		"mdc-data-table__header-cell",
-		kind === "numeric" ? "mdc-data-table__header-cell--numeric" : false,
-		kind === "descriptive" ? "mdc-data-table__header-cell--descriptive" : false,
-		kind === "representative" ? "mdc-data-table__cell--representative" : false,
-		status === "archived" ? "mdc-data-table__cell--archived" : false
-	].filter(Boolean).join(" ")
-	$: resolvedScope = scope === "column" ? "col" : "row"
-	$: role = scope === "column" ? "columnheader" : null
+$: headerClasses = [
+	kind === "numeric" ? "cell--numeric" : false,
+	kind === "descriptive" ? "cell--descriptive" : false,
+	kind === "representative" ? "cell--representative" : false,
+	status === "archived" ? "cell--archived" : false
+].filter(Boolean).join(" ")
+$: resolvedScope = scope === "column" ? "col" : "row"
+$: role = scope === "column" ? "columnheader" : null
+
+let element: HTMLElement
+$: title = element?.innerHTML ?? "Loading..."
 </script>
 
 <th
@@ -23,35 +25,35 @@
 	{role}
 	scope={resolvedScope}
 	colspan={columnSpan}
-	rowspan={rowSpan}>
+	rowspan={rowSpan}
+	{title}
+	bind:this={element}>
 	<slot/>
 </th>
 
 <style lang="scss">
-	@use "@/components/third-party/index";
+@use "@/components/third-party/index";
 
-	@use "@material/data-table/data-table";
+.cell--numeric {
+	text-align: right;
+}
 
-	@include data-table.theme-baseline;
-	@include data-table.core-styles;
+.cell--representative {
+	max-width: 20ch;
+	overflow: visible;
+	text-overflow: ellipsis;
+	white-space: normal;
+}
 
-	.mdc-data-table__cell--representative {
-		max-width: 35ch;
-		overflow: visible;
-		text-overflow: initial;
-		white-space: normal;
-		text-align: justify;
-	}
+.cell--descriptive {
+	max-width: 70ch;
+	overflow: visible;
+	text-overflow: initial;
+	white-space: normal;
+	text-align: justify;
+}
 
-	.mdc-data-table__cell--descriptive {
-		max-width: 70ch;
-		overflow: visible;
-		text-overflow: initial;
-		white-space: normal;
-		text-align: justify;
-	}
-
-	.mdc-data-table__cell--archived {
-		text-decoration: line-through;
-	}
+.cell--archived {
+	text-decoration: line-through;
+}
 </style>
