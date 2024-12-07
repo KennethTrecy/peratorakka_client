@@ -1,13 +1,11 @@
-<h4 class="mdc-typography--headline5">
+<h4 class="title-medium">
 	<slot/>
 </h4>
 
 <style lang="scss">
-	@use "@/components/third-party/index";
+@use "@/components/third-party/index";
 
-	@use "@material/typography/mdc-typography";
-
-	h4 {
-		text-align: center;
-	}
+h4 {
+	text-align: center;
+}
 </style>
