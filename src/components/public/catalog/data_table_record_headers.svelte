@@ -1,9 +1,11 @@
 <script lang="ts">
-	import DataTableHeader from "$/catalog/data_table_header.svelte"
+import DataTableHeader from "$/catalog/data_table_header.svelte"
+
+export let mainCellLabel = "Name"
+export let actionCellLabel = "Actions"
 </script>
 
 <slot name="leading_headers"/>
-<DataTableHeader scope="column">Name</DataTableHeader>
-<DataTableHeader scope="column">Debit/Credit</DataTableHeader>
+<DataTableHeader scope="column">{mainCellLabel}</DataTableHeader>
 <slot name="trailing_headers"/>
-<DataTableHeader scope="column">Actions</DataTableHeader>
+<DataTableHeader scope="column">{actionCellLabel}</DataTableHeader>
