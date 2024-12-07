@@ -2,9 +2,11 @@
 import type { CardStatus, GridCellKind, RestorableItemOptions } from "+/component"
 
 import { createEventDispatcher } from "svelte"
+import { get } from "svelte/store"
 
 import Flex from "$/layout/flex.svelte"
 import GridCell from "$/layout/grid_cell.svelte"
+import ShortParagraph from "$/typography/short_paragraph.svelte"
 import TextCardButton from "$/button/card/text.svelte"
 import WeakenedTertiaryHeading from "$/typography/weakened_tertiary_heading.svelte"
 
@@ -59,8 +61,10 @@ async function confirmEdit(event: SubmitEvent) {
 	event.preventDefault()
 
 	updateErrors.set([])
-	await requestUpdate()
-	startReading()
+	if (get(updateErrors).length === 0) {
+		await requestUpdate()
+		startReading()
+	}
 }
 
 async function confirmDelete() {
@@ -115,16 +119,31 @@ $: confirmAction = isConfirmingDeletion
 							Delete {label}?
 						</WeakenedTertiaryHeading>
 						<slot name="delete_confirmation_message"/>
+						{#each $deleteErrors as error}
+							<ShortParagraph>
+								{error.message}
+							</ShortParagraph>
+						{/each}
 					{:else if isConfirmingRestoration}
 						<WeakenedTertiaryHeading>
 							Restore {label}?
 						</WeakenedTertiaryHeading>
 						<slot name="restore_confirmation_message"/>
+						{#each $restoreErrors as error}
+							<ShortParagraph>
+								{error.message}
+							</ShortParagraph>
+						{/each}
 					{:else if isConfirmingForceDeletion}
 						<WeakenedTertiaryHeading>
 							Force delete {label}?
 						</WeakenedTertiaryHeading>
 						<slot name="force_delete_confirmation_message"/>
+						{#each $forceDeleteErrors as error}
+							<ShortParagraph>
+								{error.message}
+							</ShortParagraph>
+						{/each}
 					{:else}
 						<WeakenedTertiaryHeading>
 							{label}
