@@ -1,15 +1,15 @@
 <script lang="ts">
-	import InteractiveContainer from "$/layout/interactive_container.svelte"
-	import Flex from "$/layout/flex.svelte"
-	import GridCell from "$/layout/grid_cell.svelte"
-	import ReactiveProgressBar from "$/utility/reactive_progress_bar.svelte"
-	import SecondaryHeading from "$/typography/secondary_heading.svelte"
-	import ShortParagraph from "$/typography/short_paragraph.svelte"
-	import TextContainer from "$/typography/text_container.svelte"
+import ElementalParagraph from "$/typography/elemental_paragraph.svelte"
+import Flex from "$/layout/flex.svelte"
+import GridCell from "$/layout/grid_cell.svelte"
+import InteractiveContainer from "$/layout/interactive_container.svelte"
+import ReactiveProgressBar from "$/utility/reactive_progress_bar.svelte"
+import SecondaryHeading from "$/typography/secondary_heading.svelte"
+import TextContainer from "$/typography/text_container.svelte"
 
-	export let individualName: string
-	export let mayShowForm: boolean
-	export let isLoadingInitialData: boolean = false
+export let individualName: string
+export let mayShowForm: boolean
+export let isLoadingInitialData: boolean = false
 </script>
 
 <GridCell kind="full">
@@ -25,9 +25,9 @@
 			{#if isLoadingInitialData}
 				<Flex direction="column" mustPad={false}>
 					<TextContainer>
-						<ShortParagraph>
+						<ElementalParagraph alignment="center">
 							Initial data for the form is loading...
-						</ShortParagraph>
+						</ElementalParagraph>
 					</TextContainer>
 				</Flex>
 			{:else if mayShowForm}
