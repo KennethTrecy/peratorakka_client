@@ -1,19 +1,19 @@
 <script lang="ts">
-	import ElementalParagraph from "$/typography/elemental_paragraph.svelte"
-	import Flex from "$/layout/flex.svelte"
-	import GridCell from "$/layout/grid_cell.svelte"
-	import ReactiveProgressBar from "$/utility/reactive_progress_bar.svelte"
-	import TextContainer from "$/typography/text_container.svelte"
+import ElementalParagraph from "$/typography/elemental_paragraph.svelte"
+import Flex from "$/layout/flex.svelte"
+import GridCell from "$/layout/grid_cell.svelte"
+import ReactiveProgressBar from "$/utility/reactive_progress_bar.svelte"
+import TextContainer from "$/typography/text_container.svelte"
 
-	export let isConnecting: boolean
-	export let progressRate: number
-	export let collectiveName: string
-	export let data: unknown[]
+export let isConnecting: boolean
+export let progressRate: number
+export let collectiveName: string
+export let data: unknown[]
 
-	$: hasData = data.length > 0
-	$: progressBarLabel = isConnecting
-		? `Loading ${collectiveName.toLocaleLowerCase()}...`
-		: `Finished attempt on loading ${collectiveName.toLocaleLowerCase()}.`
+$: hasData = data.length > 0
+$: progressBarLabel = isConnecting
+	? `Loading ${collectiveName.toLocaleLowerCase()}...`
+	: `Finished attempt on loading ${collectiveName.toLocaleLowerCase()}.`
 </script>
 
 <GridCell kind="full">
