@@ -19,7 +19,7 @@
 		<TextField
 			variant="date"
 			fieldName="Started Date"
-			errorFieldName="started_at"
+			errorFieldID="started_at"
 			disabled={isConnecting}
 			bind:value={startedAt}
 			{IDPrefix}
@@ -27,7 +27,7 @@
 		<TextField
 			variant="date"
 			fieldName="Finished Date"
-			errorFieldName="finished_at"
+			errorFieldID="finished_at"
 			disabled={isConnecting}
 			bind:value={finishedAt}
 			{IDPrefix}

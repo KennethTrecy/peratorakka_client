@@ -1,51 +1,51 @@
 <script lang="ts">
-	import type { CashFlowActivitySubtotal, ExchangeRateInfo } from "+/rest"
-	import type {
-		Currency,
-		CashFlowActivity,
-		Account,
-		FlowCalculation
-	} from "+/entity"
+import type { CashFlowActivitySubtotal, ExchangeRateInfo } from "+/rest"
+import type {
+	Currency,
+	CashFlowActivity,
+	Account,
+	FlowCalculation
+} from "+/entity"
 
-	import { UNKNOWN_ACCOUNT } from "#/component"
-	import { acceptableAccountKinds } from "#/entity"
+import { UNKNOWN_ACCOUNT } from "#/component"
+import { acceptableAccountKinds } from "#/entity"
 
-	import AmountRow
-		from "%/frozen_periods/financial_statements/cash_flow_statement/amount_row.svelte"
+import AmountRow
+	from "%/frozen_periods/financial_statements/cash_flow_statement/amount_row.svelte"
 
-	export let exchangeRates: ExchangeRateInfo[]
-	export let viewedCurrency: Currency
-	export let currencies: Currency[]
-	export let cashFlowActivity: CashFlowActivity
-	export let cashFlowSubtotals: CashFlowActivitySubtotal[]
-	export let accounts: Account[]
-	export let flowCalculations: Omit<FlowCalculation, "frozen_period_id">[]
+export let exchangeRates: ExchangeRateInfo[]
+export let viewedCurrency: Currency
+export let currencies: Currency[]
+export let cashFlowActivity: CashFlowActivity
+export let cashFlowSubtotals: CashFlowActivitySubtotal[]
+export let accounts: Account[]
+export let flowCalculations: Omit<FlowCalculation, "frozen_period_id">[]
 
-	$: matchedSubtotal = cashFlowSubtotals.find(
-		subtotal => subtotal.cash_flow_activity_id === cashFlowActivity.id
-	) as CashFlowActivitySubtotal|undefined
-	$: matchedFlowCalculations = flowCalculations.filter(
-		flowCalculation => flowCalculation.cash_flow_activity_id === cashFlowActivity.id
-	)
-	$: accountedFlowCalculations = matchedFlowCalculations.map(flowCalculation => {
-		const account = accounts.find(
-			account => account.id === flowCalculation.account_id
-		) ?? UNKNOWN_ACCOUNT
+$: matchedSubtotal = cashFlowSubtotals.find(
+	subtotal => subtotal.cash_flow_activity_id === cashFlowActivity.id
+) as CashFlowActivitySubtotal|undefined
+$: matchedFlowCalculations = flowCalculations.filter(
+	flowCalculation => flowCalculation.cash_flow_activity_id === cashFlowActivity.id
+)
+$: accountedFlowCalculations = matchedFlowCalculations.map(flowCalculation => {
+	const account = accounts.find(
+		account => account.id === flowCalculation.account_id
+	) ?? UNKNOWN_ACCOUNT
 
-		return {
-			...flowCalculation,
-			"@meta": {
-				account
-			}
+	return {
+		...flowCalculation,
+		"@meta": {
+			account
 		}
-	}).filter(flowCalculation => {
-		return flowCalculation["@meta"].account.kind !== acceptableAccountKinds[3]
-			&& flowCalculation["@meta"].account.kind !== acceptableAccountKinds[4]
-			&& flowCalculation.net_amount !== "0"
-	})
-	$: hasNetIncome = matchedSubtotal?.net_income !== "0"
-	$: rowCountBeforeAccounts = hasNetIncome ? 1 : 0
-	$: firstRowSpan = accountedFlowCalculations.length + 1 + rowCountBeforeAccounts
+	}
+}).filter(flowCalculation => {
+	return flowCalculation["@meta"].account.kind !== acceptableAccountKinds[3]
+		&& flowCalculation["@meta"].account.kind !== acceptableAccountKinds[4]
+		&& flowCalculation.net_amount !== "0"
+})
+$: hasNetIncome = matchedSubtotal?.net_income !== "0"
+$: rowCountBeforeAccounts = hasNetIncome ? 1 : 0
+$: firstRowSpan = accountedFlowCalculations.length + 1 + rowCountBeforeAccounts
 </script>
 
 {#if typeof matchedSubtotal !== "undefined"}

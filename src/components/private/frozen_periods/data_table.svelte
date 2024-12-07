@@ -1,12 +1,12 @@
 <script lang="ts">
-	import type { FrozenPeriod } from "+/entity"
+import type { FrozenPeriod } from "+/entity"
 
-	import DataTable from "$/catalog/data_table.svelte"
-	import DataTableHeader from "$/catalog/data_table_header.svelte"
-	import FrozenPeriodRecord from "%/frozen_periods/frozen_period_record.svelte"
+import DataTable from "$/catalog/data_table.svelte"
+import DataTableHeader from "$/catalog/data_table_header.svelte"
+import FrozenPeriodRecord from "%/frozen_periods/frozen_period_record.svelte"
 
-	export let isConnecting: boolean
-	export let data: FrozenPeriod[]
+export let isConnecting: boolean
+export let data: FrozenPeriod[]
 </script>
 
 <DataTable collectiveName="Frozen Periods" {isConnecting} {data} progressRate={0}>
@@ -26,7 +26,7 @@
 		{#each data as entity(entity.id)}
 			<FrozenPeriodRecord
 				bind:data={entity}
-				on:delete
+				on:remove
 				on:check/>
 		{/each}
 	</svelte:fragment>
