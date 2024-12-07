@@ -88,13 +88,13 @@ $: {
 
 		if (encodedOldParameters !== encodedCurrentParameters) {
 			if (abortController !== null) abortController.abort()
-			if (lastOffset > 0) {
-				lastOffset = 0
-			}
-
 			oldParameters = parameters
 			lastOverallFilteredCount = Infinity
-			reloadFully()
+
+			if (lastOffset > 0) {
+				lastOffset = 0
+				reloadFully()
+			}
 		}
 	}
 }
