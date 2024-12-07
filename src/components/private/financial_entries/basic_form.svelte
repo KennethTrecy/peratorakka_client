@@ -1,72 +1,72 @@
 <script lang="ts">
-	import type { GeneralError } from "+/rest"
-	import type {
-		Account,
-		Currency,
-		Modifier,
-		FinancialEntry
-	} from "+/entity"
+import type { GeneralError } from "+/rest"
+import type {
+	Account,
+	Currency,
+	Modifier,
+	FinancialEntry
+} from "+/entity"
 
-	import transformModifier from "$/form/choice_info_transformer/transform_modifier"
+import transformModifier from "$/form/choice_info_transformer/transform_modifier"
 
-	import BasicForm from "$/form/basic_form.svelte"
-	import ChoiceListField from "$/form/choice_list_field.svelte"
-	import TextField from "$/form/text_field.svelte"
+import BasicForm from "$/form/basic_form.svelte"
+import ChoiceListField from "$/form/choice_list_field.svelte"
+import TextField from "$/form/text_field.svelte"
 
-	export let IDPrefix: string
-	export let currencies: Currency[]
-	export let accounts: Account[]
-	export let modifiers: Modifier[]
+export let IDPrefix: string
+export let currencies: Currency[]
+export let accounts: Account[]
+export let modifiers: Modifier[]
 
-	export let modifierID: string
-	export let transactedAt: string
-	export let debitAmount: string
-	export let creditAmount: string
-	export let remarks: string
-	export let forceDisabledFields: (keyof FinancialEntry)[] = []
+export let modifierID: string
+export let transactedAt: string
+export let debitAmount: string
+export let creditAmount: string
+export let remarks: string
+export let forceDisabledFields: (keyof FinancialEntry)[] = []
 
-	export let isConnecting: boolean
-	export let errors: GeneralError[]
-	export let id: string|null = null
+export let isConnecting: boolean
+export let errors: GeneralError[]
+export let id: string|null = null
 
-	$: availableModifiers = modifiers.filter(modifier => modifier.deleted_at === null)
-	$: chosenModifier = modifiers.find(
-		modifier => `${modifier.id}` === modifierID
-	)
-	$: debitAccount = chosenModifier && accounts.find(
-		account => account.id === chosenModifier?.debit_account_id
-	)
-	$: creditAccount = chosenModifier && accounts.find(
-		account => account.id === chosenModifier?.credit_account_id
-	)
-	$: debitCurrency = debitAccount && currencies.find(
-		currency => currency.id === debitAccount?.currency_id
-	)
-	$: creditCurrency = creditAccount && currencies.find(
-		currency => currency.id === creditAccount?.currency_id
-	)
-	$: hasSameCurrency = debitCurrency === creditCurrency
-	$: {
-		if (hasSameCurrency) creditAmount = debitAmount
-	}
+$: availableModifiers = modifiers.filter(modifier => modifier.deleted_at === null)
+$: chosenModifier = modifiers.find(
+	modifier => `${modifier.id}` === modifierID
+)
+$: debitAccount = chosenModifier && accounts.find(
+	account => account.id === chosenModifier?.debit_account_id
+)
+$: creditAccount = chosenModifier && accounts.find(
+	account => account.id === chosenModifier?.credit_account_id
+)
+$: debitCurrency = debitAccount && currencies.find(
+	currency => currency.id === debitAccount?.currency_id
+)
+$: creditCurrency = creditAccount && currencies.find(
+	currency => currency.id === creditAccount?.currency_id
+)
+$: hasSameCurrency = debitCurrency === creditCurrency
+$: {
+	if (hasSameCurrency) creditAmount = debitAmount
+}
 
-	$: debitLabel = `${
-		hasSameCurrency
-			? "Debit and Credit Amount"
-			: "Debit Amount"
-		} (${debitCurrency?.code ?? ""})`
-	$: creditLabel = `${
-		hasSameCurrency
-			? "Debit and Credit Amount"
-			: "Credit Amount"
-		} (${creditCurrency?.code ?? ""})`
+$: debitLabel = `${
+	hasSameCurrency
+		? "Debit and Credit Amount"
+		: "Debit Amount"
+	} (${debitCurrency?.code ?? ""})`
+$: creditLabel = `${
+	hasSameCurrency
+		? "Debit and Credit Amount"
+		: "Credit Amount"
+	} (${creditCurrency?.code ?? ""})`
 </script>
 
 <BasicForm {id} {isConnecting} {errors} on:submit>
 	<svelte:fragment slot="fields">
 		<ChoiceListField
 			fieldName="Modifier"
-			errorFieldName="modifier_id"
+			errorFieldID="modifier_id"
 			disabled={isConnecting || forceDisabledFields.includes("modifier_id")}
 			bind:value={modifierID}
 			rawChoices={availableModifiers}
@@ -76,7 +76,7 @@
 		<TextField
 			variant="date"
 			fieldName="Transaction Date"
-			errorFieldName="transacted_at"
+			errorFieldID="transacted_at"
 			disabled={isConnecting || forceDisabledFields.includes("transacted_at")}
 			bind:value={transactedAt}
 			{IDPrefix}
@@ -84,7 +84,7 @@
 		{#if hasSameCurrency}
 			<TextField
 				fieldName={debitLabel}
-				errorFieldName="debit_amount"
+				errorFieldID="debit_amount"
 				disabled={
 					isConnecting
 					|| forceDisabledFields.includes("debit_amount")
@@ -96,14 +96,14 @@
 		{:else}
 			<TextField
 				fieldName={debitLabel}
-				errorFieldName="debit_amount"
+				errorFieldID="debit_amount"
 				disabled={isConnecting || forceDisabledFields.includes("debit_amount")}
 				bind:value={debitAmount}
 				{IDPrefix}
 				{errors}/>
 			<TextField
 				fieldName={creditLabel}
-				errorFieldName="credit_amount"
+				errorFieldID="credit_amount"
 				disabled={isConnecting || forceDisabledFields.includes("credit_amount")}
 				bind:value={creditAmount}
 				{IDPrefix}
@@ -111,7 +111,7 @@
 		{/if}
 		<TextField
 			fieldName="Remarks"
-			errorFieldName="remarks"
+			errorFieldID="remarks"
 			disabled={isConnecting || forceDisabledFields.includes("remarks")}
 			bind:value={remarks}
 			{IDPrefix}
