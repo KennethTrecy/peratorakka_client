@@ -1,14 +1,14 @@
 <script lang="ts">
-	import CatalogBase from "$/catalog/base.svelte"
-	import Flex from "$/layout/flex.svelte"
-	import GridCell from "$/layout/grid_cell.svelte"
-	import SecondaryHeading from "$/typography/secondary_heading.svelte"
-	import UnitDataTable from "$/catalog/unit_data_table.svelte"
+import CatalogBase from "$/catalog/base.svelte"
+import Flex from "$/layout/flex.svelte"
+import GridCell from "$/layout/grid_cell.svelte"
+import SecondaryHeading from "$/typography/secondary_heading.svelte"
+import UnitDataTable from "$/catalog/unit_data_table.svelte"
 
-	export let isConnecting: boolean
-	export let progressRate: number
-	export let collectiveName: string
-	export let data: unknown[]
+export let isConnecting: boolean
+export let progressRate: number
+export let collectiveName: string
+export let data: unknown[]
 </script>
 
 <CatalogBase
