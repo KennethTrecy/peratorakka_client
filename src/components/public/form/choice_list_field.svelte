@@ -43,7 +43,7 @@ onMount(() => {
 })
 
 $: {
-	if (!disabled && selectElement !== null) {
+	if (selectElement !== null && (!disabled || value !== UNKNOWN_OPTION)) {
 		setTimeout(() => {
 			// @ts-ignore
 			M.FormSelect.getInstance(selectElement).destroy()
@@ -52,7 +52,7 @@ $: {
 			M.FormSelect.init([ selectElement ], {
 				// specify options here
 			});
-		}, 1_000)
+		}, 250)
 	}
 }
 </script>
