@@ -86,6 +86,24 @@ export default function makeShellContext(globalContext: ContextBundle): ContextB
 					"link": "/frozen_periods",
 					"icon": "weather_snowy",
 					"label": "Frozen Periods"
+				} : null,
+				hasTokenCurrently && hasUserCurrently ? {
+					"type": "item",
+					"link": "/collections",
+					"icon": "view_comfy_alt",
+					"label": "Collections"
+				} : null,
+				hasTokenCurrently && hasUserCurrently ? {
+					"type": "item",
+					"link": "/formulae",
+					"icon": "rule_settings",
+					"label": "Formulae"
+				} : null,
+				hasTokenCurrently && hasUserCurrently ? {
+					"type": "item",
+					"link": "/numerical_tools",
+					"icon": "browse_activity",
+					"label": "Numerical Tools"
 				} : null
 			].filter(Boolean)
 		}
