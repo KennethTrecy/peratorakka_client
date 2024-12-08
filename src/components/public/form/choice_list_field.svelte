@@ -31,17 +31,19 @@ $: {
 	}
 }
 
-let selectElement: HTMLSelectElement
+let selectElement: HTMLSelectElement|null = null
 
 onMount(() => {
-	// @ts-ignore
-	M.FormSelect.init([ selectElement ], {
-		// specify options here
-	});
+	if (selectElement !== null) {
+		// @ts-ignore
+		M.FormSelect.init([ selectElement ], {
+			// specify options here
+		});
+	}
 })
 
 $: {
-	if (!disabled && Boolean(selectElement)) {
+	if (!disabled && selectElement !== null) {
 		setTimeout(() => {
 			// @ts-ignore
 			M.FormSelect.getInstance(selectElement).destroy()
