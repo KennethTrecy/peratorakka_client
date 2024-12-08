@@ -9,6 +9,7 @@ import { afterNavigate } from "$app/navigation"
 import { SHELL_CONTEXT } from "#/contexts"
 
 import NavigationItem from "%/shell/navigation_item.svelte"
+import NavigationGroup from "%/shell/navigation_group.svelte"
 
 const shell = getContext(SHELL_CONTEXT) as ContextBundle
 const menuItemInfos = shell.menuItemInfos as Readable<MenuItemInfo[]>
@@ -31,6 +32,10 @@ onDestroy(menuItemInfos.subscribe(newMenuItemInfos => {
 	{#if info.type === "item"}
 		<NavigationItem
 			address={info.link}
+			icon={info.icon}
+			label={info.label}/>
+	{:else if info.type === "group"}
+		<NavigationGroup
 			icon={info.icon}
 			label={info.label}/>
 	{/if}
