@@ -6,7 +6,7 @@ export let justifyContent: FlexJustifyContent = "start"
 export let mustPad = true
 
 $: flexClasses = [
-	direction,
+	`${direction}-direction`,
 	justifyContent,
 	mustPad && "pad"
 ].filter(Boolean).join(" ")
@@ -28,11 +28,11 @@ div {
 	align-items: center;
 	gap: 1rem;
 
-	&.row {
+	&.row-direction {
 		flex-flow: row wrap;
 	}
 
-	&.column {
+	&.column-direction {
 		flex-flow: column wrap;
 	}
 
