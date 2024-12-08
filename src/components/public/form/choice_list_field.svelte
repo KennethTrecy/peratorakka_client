@@ -45,6 +45,8 @@ onMount(() => {
 $: {
 	if (selectElement !== null && (!disabled || value !== UNKNOWN_OPTION)) {
 		setTimeout(() => {
+			if (selectElement === null) return
+
 			// @ts-ignore
 			M.FormSelect.getInstance(selectElement).destroy()
 
