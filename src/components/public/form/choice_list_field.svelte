@@ -35,10 +35,24 @@ let selectElement: HTMLSelectElement
 
 onMount(() => {
 	// @ts-ignore
-	var instances = M.FormSelect.init([ selectElement ], {
+	M.FormSelect.init([ selectElement ], {
 		// specify options here
 	});
 })
+
+$: {
+	if (!disabled && Boolean(selectElement)) {
+		setTimeout(() => {
+			// @ts-ignore
+			M.FormSelect.getInstance(selectElement).destroy()
+
+			// @ts-ignore
+			M.FormSelect.init([ selectElement ], {
+				// specify options here
+			});
+		}, 1_000)
+	}
+}
 </script>
 
 <GeneralField {fieldName} {errorFieldID} {IDPrefix} {errors} let:fieldID let:labelID let:helperID>
