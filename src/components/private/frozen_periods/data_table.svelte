@@ -32,6 +32,6 @@ export let data: FrozenPeriod[]
 	</svelte:fragment>
 	<svelte:fragment slot="empty_collection_description">
 		There are no available frozen periods at the moment.
-		Create a financial entry to view.
+		Create a frozen period to view.
 	</svelte:fragment>
 </DataTable>

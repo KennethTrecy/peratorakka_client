@@ -62,8 +62,8 @@ $: viewedCurrency = currencies.find(
 ) ?? currencies[0] ?? ANY_CURRENCY
 
 $: availableCurrencies = [
-	ANY_CURRENCY,
 	...currencies,
+	ANY_CURRENCY
 ]
 
 let selectedStatement: FinancialStatementGroup|null = null
@@ -96,7 +96,7 @@ const {
 $: {
 	if (!get(isConnectingForRecalculation)) {
 		try {
-			selectedStatement = selectedCurrencyID === `${ANY_CURRENCY.id}`
+			selectedStatement = statements.length > 0 && selectedCurrencyID === `${ANY_CURRENCY.id}`
 				? statements.reduce((compiledGroup, currentGroup) => {
 					const currentCurrency = currencies.find(
 						currency => currency.id === currentGroup.currency_id
@@ -234,7 +234,7 @@ $: {
 				} as FinancialStatementGroup)
 				: statements.find(
 					statement => `${statement.currency_id}` === selectedCurrencyID
-				) as FinancialStatementGroup
+				) ?? null
 		} catch (e) {
 			selectedStatement = null
 
@@ -257,14 +257,12 @@ $: data = [
 	...summaryCalculations,
 	...exchangeRates,
 	...flowCalculations
-]
-
-$: hasOffsetCalculation = selectedStatement === null
+].filter(data => data !== null)
 </script>
 
 <CatalogBase
 	collectiveName="Financial Statements"
-	isConnecting={isConnecting || hasOffsetCalculation || $isConnectingForRecalculation}
+	isConnecting={isConnecting || $isConnectingForRecalculation}
 	{data}
 	progressRate={0}>
 	<TertiaryHeading slot="name">Financial Statements</TertiaryHeading>
