@@ -102,8 +102,16 @@ export default async function loadAllDependencies<T extends RestorableEntity>(
 		})
 
 		async function loadRemainingResources(): Promise<void> {
-			if (get(individualProgressRate) < 1 && !get(hasEncounteredErrors)) {
-				return await send({}).then(loadRemainingResources)
+			if (
+				get(individualProgressRate) < 1
+				&& !get(hasEncounteredErrors)
+				&& get(individualTotalDependencyCount) > 0
+			) {
+				await send({})
+
+				if (get(dependencyOffset) < get(individualTotalDependencyCount)) {
+					await loadRemainingResources()
+				}
 			}
 
 			return
