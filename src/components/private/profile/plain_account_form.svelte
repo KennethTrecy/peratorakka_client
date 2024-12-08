@@ -1,58 +1,56 @@
 <script lang="ts">
-	import type { Writable } from "svelte/store"
-	import type { ContextBundle } from "+/component"
+import type { Writable } from "svelte/store"
+import type { ContextBundle } from "+/component"
 
-	import { getContext } from "svelte"
+import { getContext } from "svelte"
 
-	import { GLOBAL_CONTEXT } from "#/contexts"
+import { GLOBAL_CONTEXT } from "#/contexts"
 
-	import makeJSONRequester from "$/rest/make_json_requester"
+import makeJSONRequester from "$/rest/make_json_requester"
 
-	import GridCell from "$/layout/grid_cell.svelte"
-	import ServerDisplay from "$/utility/server_display.svelte"
-	import ShortParagraph from "$/typography/short_paragraph.svelte"
-	import CardForm from "$/form/card_form.svelte"
-	import InnerGrid from "$/layout/inner_grid.svelte"
-	import TextField from "$/form/text_field.svelte"
+import ServerDisplay from "$/utility/server_display.svelte"
+import ShortParagraph from "$/typography/short_paragraph.svelte"
+import CardForm from "$/form/card_form.svelte"
+import TextField from "$/form/text_field.svelte"
 
-	const {
-		serverURL,
-		userEmail
-	} = getContext(GLOBAL_CONTEXT) as ContextBundle as {
-		serverURL: Writable<string>
-		userEmail: Writable<string>
-	}
+const {
+	serverURL,
+	userEmail
+} = getContext(GLOBAL_CONTEXT) as ContextBundle as {
+	serverURL: Writable<string>
+	userEmail: Writable<string>
+}
 
-	let email = ""
-	let username = ""
-	let { isConnecting, errors, send } = makeJSONRequester({
-		"path": "/api/v1/user",
-		"defaultRequestConfiguration": {
-			"method": "PATCH",
-			"credentials": "include"
-		},
-		"manualResponseHandlers": [
-			{
-				"statusCode": 204,
-				"action": async (_response: Response) => {
-					errors.set([])
-					userEmail.set(email)
-				}
+let email = ""
+let username = ""
+let { isConnecting, errors, send } = makeJSONRequester({
+	"path": "/api/v1/user",
+	"defaultRequestConfiguration": {
+		"method": "PATCH",
+		"credentials": "include"
+	},
+	"manualResponseHandlers": [
+		{
+			"statusCode": 204,
+			"action": async (_response: Response) => {
+				errors.set([])
+				userEmail.set(email)
 			}
-		],
-		"expectedErrorStatusCodes": [ 400, 422 ]
-	})
+		}
+	],
+	"expectedErrorStatusCodes": [ 400, 422 ]
+})
 
-	async function update() {
-		await send({
-			"body": JSON.stringify({
-				"user": {
-					username,
-					email
-				}
-			})
+async function update() {
+	await send({
+		"body": JSON.stringify({
+			"user": {
+				username,
+				email
+			}
 		})
-	}
+	})
+}
 </script>
 
 <CardForm
