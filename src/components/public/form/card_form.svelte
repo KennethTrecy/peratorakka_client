@@ -1,22 +1,22 @@
 <script lang="ts">
-	import type { GeneralError } from "+/rest"
+import type { GeneralError } from "+/rest"
 
-	import Flex from "$/layout/flex.svelte"
-	import FormBase from "$/form/base.svelte"
-	import TextCardButton from "$/button/card/text.svelte"
-	import TextContainer from "$/typography/text_container.svelte"
+import Flex from "$/layout/flex.svelte"
+import FormBase from "$/form/base.svelte"
+import TextCardButton from "$/button/card/text.svelte"
+import TextContainer from "$/typography/text_container.svelte"
 
-	export let errors: GeneralError[]
-	export let id: string|null
-	export let isConnecting: boolean
-	export let actionLabel: string
+export let errors: GeneralError[]
+export let id: string|null
+export let isConnecting: boolean
+export let actionLabel: string
 </script>
 
 <div class="card_form">
 	<FormBase {id} {isConnecting} {errors} on:submit>
-		<TextContainer slot="lead_content">
+		<svelte:fragment slot="lead_content">
 			<slot name="text_description"/>
-		</TextContainer>
+		</svelte:fragment>
 		<Flex slot="field_content" mustPad={false} justifyContent="stretch">
 			<slot name="fields"/>
 		</Flex>
@@ -30,17 +30,5 @@
 </div>
 
 <style lang="scss">
-	@use "@/components/third-party/index";
-
-	@use "@material/card";
-
-	@include card.core-styles;
-
-	:global(.card_form .mdc-card__content) {
-		padding: 1rem;
-
-		& + .mdc-card__content {
-			padding-top: 0rem;
-		}
-	}
+@use "@/components/third-party/index";
 </style>
