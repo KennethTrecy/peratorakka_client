@@ -1,7 +1,7 @@
 import type { Readable } from "svelte/store"
 import type { ContextBundle } from "+/component"
 
-import { derived, writable } from "svelte/store"
+import { derived } from "svelte/store"
 
 export default function makeShellContext(globalContext: ContextBundle): ContextBundle {
 	const {
@@ -88,23 +88,30 @@ export default function makeShellContext(globalContext: ContextBundle): ContextB
 					"label": "Frozen Periods"
 				} : null,
 				hasTokenCurrently && hasUserCurrently ? {
-					"type": "item",
-					"link": "/collections",
-					"icon": "view_comfy_alt",
-					"label": "Collections"
+					"type": "group",
+					"icon": "borg",
+					"label": "Advance",
+					"items": [
+						{
+							"type": "item",
+							"link": "/collections",
+							"icon": "view_comfy_alt",
+							"label": "Collections"
+						},
+						{
+							"type": "item",
+							"link": "/formulae",
+							"icon": "rule_settings",
+							"label": "Formulae"
+						},
+						{
+							"type": "item",
+							"link": "/numerical_tools",
+							"icon": "browse_activity",
+							"label": "Numerical Tools"
+						}
+					]
 				} : null,
-				hasTokenCurrently && hasUserCurrently ? {
-					"type": "item",
-					"link": "/formulae",
-					"icon": "rule_settings",
-					"label": "Formulae"
-				} : null,
-				hasTokenCurrently && hasUserCurrently ? {
-					"type": "item",
-					"link": "/numerical_tools",
-					"icon": "browse_activity",
-					"label": "Numerical Tools"
-				} : null
 			].filter(Boolean)
 		}
 	)

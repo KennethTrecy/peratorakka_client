@@ -12,3 +12,10 @@ export interface MenuItemInfo extends AbstractMenuComponentInfo {
 	icon: string
 	label: string
 }
+
+export interface MenuGroupInfo extends AbstractMenuComponentInfo {
+	type: "group"
+	icon: string
+	label: string,
+	items: AbstractMenuComponentInfo[]
+}
