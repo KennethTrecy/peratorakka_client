@@ -129,9 +129,6 @@ $: {
 									compiledSubtotal.net_income,
 									convertAmount(currentSubtotal.net_income, exchangeRate)
 								)
-								if (compiledSubtotal.cash_flow_activity_id === 1) {
-									console.log(compiledSubtotal.net_income, JSON.stringify(cashFlowActivities.find(activity => activity.id === 1)))
-								}
 								compiledSubtotal.subtotal = addAmount(
 									compiledSubtotal.subtotal,
 									convertAmount(currentSubtotal.subtotal, exchangeRate)
