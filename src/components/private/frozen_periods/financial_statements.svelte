@@ -37,19 +37,27 @@ export let summaryCalculations: Omit<SummaryCalculation, "frozen_period_id">[]
 export let flowCalculations: Omit<FlowCalculation, "frozen_period_id">[]
 
 let selectedCurrencyID = `${ANY_CURRENCY.id}`
+let previousSelectedCurrencyID = `${ANY_CURRENCY.id}`
 let targetCurrencyID = `${ANY_CURRENCY.id}`
 let hasSelectedFirstCurrencyAfterLoading = false
 $: {
-	if (
-		!hasSelectedFirstCurrencyAfterLoading
-		&& selectedCurrencyID === `${ANY_CURRENCY.id}`
-		&& currencies.length > 0
-	) {
-		selectedCurrencyID = `${currencies[0].id}`
-		targetCurrencyID = `${currencies[0].id}`
-		hasSelectedFirstCurrencyAfterLoading = true
+	if (currencies.length > 0) {
+		if (selectedCurrencyID === `${ANY_CURRENCY.id}` && !hasSelectedFirstCurrencyAfterLoading) {
+			selectedCurrencyID = `${currencies[0].id}`
+			hasSelectedFirstCurrencyAfterLoading = true
+		}
+
+		if (previousSelectedCurrencyID !== selectedCurrencyID) {
+			previousSelectedCurrencyID = selectedCurrencyID
+			if (selectedCurrencyID === `${ANY_CURRENCY.id}`) {
+				targetCurrencyID = `${currencies[0].id}`
+			} else {
+				targetCurrencyID = selectedCurrencyID
+			}
+		}
 	}
 }
+
 $: hasGoodDependencies = statements.length > 0
 	|| exchangeRates.length > 0
 	|| currencies.length > 0
@@ -85,7 +93,7 @@ const {
 				const newStatement = responseDocument["@meta"].statement
 				selectedStatement = {
 					...newStatement,
-					"currency_id": viewedCurrency.id
+					"currency_id": ANY_CURRENCY.id
 				}
 			}
 		}
