@@ -5,7 +5,7 @@ export let icon: string
 
 <a
 	href="#!"
-	data-target="mobile-navigator"
+	data-target="mobile-dropdown"
 	class="sidenav-trigger"
 	aria-label={label}>
 	<i class="material-icons">{icon}</i>

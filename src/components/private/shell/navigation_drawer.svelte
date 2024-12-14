@@ -31,7 +31,7 @@ let sideNavigator: HTMLUListElement
 onMount(() => {
 	// @ts-ignore
 	var instances = window.M.Sidenav.init([ sideNavigator ], {
-	// specify options here
+		// specify options here
 	});
 })
 let lastMenuItemInfos: MenuItemInfo[] = []
@@ -40,7 +40,7 @@ onDestroy(menuItemInfos.subscribe(newMenuItemInfos => {
 }))
 </script>
 
-<ul class="sidenav" id="mobile-navigator" bind:this={sideNavigator}>
+<ul class="sidenav" id="mobile-dropdown" bind:this={sideNavigator}>
 	<li>
 		<div class="user-view">
 			<span class="name">Current User</span>
