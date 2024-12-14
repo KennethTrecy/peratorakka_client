@@ -88,3 +88,13 @@ export interface FlowCalculation extends Entity {
 	account_id: number
 	net_amount: string
 }
+
+export interface Collection extends RestorableEntity {
+	name: string
+	description: string
+}
+
+export interface AccountCollection extends RestorableEntity {
+	collection_id: number
+	account_id: number
+}
