@@ -1,6 +1,6 @@
 <script lang="ts">
 import type { Readable } from "svelte/store"
-import type { MenuItemInfo } from "%/shell/types"
+import type { MenuItemInfo, MenuGroupInfo } from "%/shell/types"
 import type { ContextBundle } from "+/component"
 
 import { onDestroy, getContext } from "svelte"
@@ -22,7 +22,7 @@ function close() {
 
 afterNavigate(close)
 
-let lastMenuItemInfos: MenuItemInfo[] = []
+let lastMenuItemInfos: (MenuItemInfo|MenuGroupInfo)[] = []
 onDestroy(menuItemInfos.subscribe(newMenuItemInfos => {
 	lastMenuItemInfos = newMenuItemInfos as MenuItemInfo[]
 }))
@@ -37,7 +37,8 @@ onDestroy(menuItemInfos.subscribe(newMenuItemInfos => {
 	{:else if info.type === "group"}
 		<NavigationGroup
 			icon={info.icon}
-			label={info.label}/>
+			label={info.label}
+			items={info.items}/>
 	{/if}
 {/each}
 

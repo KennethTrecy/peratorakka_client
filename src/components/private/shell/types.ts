@@ -17,5 +17,5 @@ export interface MenuGroupInfo extends AbstractMenuComponentInfo {
 	type: "group"
 	icon: string
 	label: string,
-	items: AbstractMenuComponentInfo[]
+	items: (MenuItemInfo|MenuGroupInfo)[]
 }
