@@ -1,6 +1,6 @@
 <script lang="ts">
 import type { ContextBundle } from "+/component"
-import type { Currency } from "+/entity"
+import type { Collection } from "+/entity"
 import type { SearchMode, SortOrder } from "+/rest"
 
 import { get, writable } from "svelte/store"
@@ -13,9 +13,9 @@ import { SEARCH_NORMALLY, ASCENDING_ORDER, MAXIMUM_PAGINATED_LIST_LENGTH } from 
 import assertAuthentication from "$/page_requirement/assert_authentication"
 import makeJSONRequester from "$/rest/make_json_requester"
 
-import AddForm from "%/currencies/add_form.svelte"
+import AddForm from "%/collections/add_form.svelte"
 import ArticleGrid from "$/layout/article_grid.svelte"
-import Collection from "%/currencies/collection.svelte"
+import CollectionCollection from "%/collections/collection.svelte"
 import ExtraResourceLoader from "$/catalog/extra_resource_loader.svelte"
 import GridCell from "$/layout/grid_cell.svelte"
 import InnerGrid from "$/layout/inner_grid.svelte"
@@ -29,14 +29,14 @@ assertAuthentication(globalContext, {
 	goto
 })
 
-let currencies: Currency[] = []
+let collection: Collection[] = []
 
 let searchMode: SearchMode = SEARCH_NORMALLY
 let sortCriterion: string = "name"
 let sortOrder: SortOrder = ASCENDING_ORDER
 let lastOffset: number = 0
 
-const collectiveName = "currencies"
+const collectiveName = "collections"
 const partialPath = `/api/v1/${collectiveName}`
 let parameters: [string, string][] = [
 	[ "filter[search_mode]", searchMode as string ],
@@ -71,7 +71,7 @@ let { isConnecting, errors, send } = makeJSONRequester({
 			"action": async (response: Response) => {
 				let responseDocument = await response.json()
 				errors.set([])
-				currencies = responseDocument[collectiveName]
+				collection = responseDocument[collectiveName]
 				lastOffset = Math.max(0, responseDocument[collectiveName].length - 1)
 			}
 		}
@@ -79,8 +79,8 @@ let { isConnecting, errors, send } = makeJSONRequester({
 	"expectedErrorStatusCodes": [ 401 ]
 })
 
-async function reloadCurrencies() {
-	currencies = []
+async function reloadCollections() {
+	collection = []
 	await send({})
 }
 
@@ -92,32 +92,32 @@ async function loadList() {
 		return
 	}
 
-	await reloadCurrencies()
+	await reloadCollections()
 }
 
 onMount(loadList)
 
-function addCurrency(event: CustomEvent<Currency>) {
+function addCollection(event: CustomEvent<Collection>) {
 	if (searchMode === "only_deleted") return
 
-	const newCurrency = event.detail
-	currencies = [
-		newCurrency,
-		...currencies
+	const newCollection = event.detail
+	collection = [
+		newCollection,
+		...collection
 	]
 }
 
-function addCurrencies(event: CustomEvent<unknown[]>) {
-	const newCurrencies = event.detail as Currency[]
-	currencies = [
-		...currencies,
-		...newCurrencies
+function addCollections(event: CustomEvent<unknown[]>) {
+	const newCollections = event.detail as Collection[]
+	collection = [
+		...collection,
+		...newCollections
 	]
 }
 
-function removeCurrency(event: CustomEvent<Currency>) {
-	const oldCurrency = event.detail
-	currencies = currencies.filter(currency => currency.id !== oldCurrency.id)
+function removeCollection(event: CustomEvent<Collection>) {
+	const oldCollection = event.detail
+	collection = collection.filter(currency => currency.id !== oldCollection.id)
 }
 </script>
 
@@ -130,22 +130,22 @@ function removeCurrency(event: CustomEvent<Currency>) {
 		<GridCell kind="full">
 			<PrimaryHeading>Collections</PrimaryHeading>
 		</GridCell>
-		<AddForm on:create={addCurrency}/>
-		<Collection
-			data={currencies}
+		<AddForm on:create={addCollection}/>
+		<CollectionCollection
+			data={collection}
 			bind:searchMode={searchMode}
 			bind:sortCriterion={sortCriterion}
 			bind:sortOrder={sortOrder}
 			isConnecting={$isConnecting}
 			listErrors={$errors}
-			on:remove={removeCurrency}/>
+			on:remove={removeCollection}/>
 		<ExtraResourceLoader
 			isConnectingForInitialList={$isConnecting}
 			{partialPath}
 			{parameters}
 			{collectiveName}
 			bind:lastOffset={lastOffset}
-			on:reloadFully={reloadCurrencies}
-			on:addResources={addCurrencies}/>
+			on:reloadFully={reloadCollections}
+			on:addResources={addCollections}/>
 	</InnerGrid>
 </ArticleGrid>
