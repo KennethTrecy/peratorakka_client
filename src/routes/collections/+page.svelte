@@ -110,13 +110,24 @@ async function loadList() {
 
 	isRequestingDependencies = true
 
-	await loadAllDependencies<Account>(globalContext, [
+	await loadAllDependencies<Account|AccountCollection>(globalContext, [
+		{
+			"partialPath": "/api/v1/account_collections",
+			"mainSortCriterion": "name",
+			"resourceKey": "account_collections",
+			"getResources": () => accountCollections,
+			"setResources": (
+				(newResources: AccountCollection[]) => { accountCollections = newResources }
+			) as (newResources: (Account|AccountCollection)[]) => void
+		},
 		{
 			"partialPath": "/api/v1/accounts",
 			"mainSortCriterion": "name",
 			"resourceKey": "accounts",
 			"getResources": () => accounts,
-			"setResources": (newResources: Account[]) => { accounts = newResources },
+			"setResources": (
+				(newResources: Account[]) => { accounts = newResources }
+			) as (newResources: (Account|AccountCollection)[]) => void,
 			"getLinkedResources": () => [
 				{
 					"resourceKey": "currencies",
@@ -187,6 +198,7 @@ $: linkedAccounts = accounts.filter(account => linkedAccountCollectionIDs.includ
 			bind:sortCriterion={sortCriterion}
 			bind:sortOrder={sortOrder}
 			isConnecting={$isConnecting}
+			{progressRate}
 			listErrors={$allErrors}
 			on:remove={removeCollection}/>
 		<ExtraResourceLoader

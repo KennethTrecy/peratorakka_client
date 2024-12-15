@@ -8,6 +8,7 @@ import Flex from "$/layout/flex.svelte"
 import ListSpecifier from "$/form/list_specifier.svelte"
 
 export let isConnecting: boolean
+export let progressRate: number
 export let data: Collection[]
 export let searchMode: SearchMode
 export let sortCriterion: string
@@ -27,7 +28,7 @@ $: isPresent = searchMode === "normal" || isPresentAndArchived
 $: isArchived = searchMode === "only_deleted" || isPresentAndArchived
 </script>
 
-<CollectionCatalog collectiveName="Collection" {isConnecting} {data} progressRate={0}>
+<CollectionCatalog collectiveName="Collection" {isConnecting} {data} {progressRate}>
 	<svelte:fragment slot="filled_collection_description">
 		Below are the collection that you have added on to your profile.
 		They may have several financial accounts.
