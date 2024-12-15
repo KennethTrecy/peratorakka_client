@@ -34,7 +34,7 @@ assertAuthentication(globalContext, {
 let isRequestingDependencies = true
 
 let selectedCollection: Collection|null
-let collection: Collection[] = []
+let collections: Collection[] = []
 let currencies: Currency[] = []
 let accounts: Account[] = []
 let accountCollections: AccountCollection[] = []
@@ -82,7 +82,7 @@ let { isConnecting, errors, send } = makeJSONRequester({
 			"action": async (response: Response) => {
 				let responseDocument = await response.json()
 				errors.set([])
-				collection = responseDocument[collectiveName]
+				collections = responseDocument[collectiveName]
 				lastOffset = Math.max(0, responseDocument[collectiveName].length - 1)
 			}
 		}
@@ -96,7 +96,7 @@ const allErrors = derived([ dependencyErrors, errors ], ([ dependencyErrors, err
 ])
 
 async function reloadCollections() {
-	collection = []
+	collections = []
 	await send({})
 }
 
@@ -153,23 +153,38 @@ function addCollection(event: CustomEvent<Collection>) {
 	if (searchMode === "only_deleted") return
 
 	const newCollection = event.detail
-	collection = [
+	collections = [
 		newCollection,
-		...collection
+		...collections
 	]
 }
 
 function addCollections(event: CustomEvent<unknown[]>) {
 	const newCollections = event.detail as Collection[]
-	collection = [
-		...collection,
+	collections = [
+		...collections,
 		...newCollections
 	]
 }
 
 function removeCollection(event: CustomEvent<Collection>) {
 	const oldCollection = event.detail
-	collection = collection.filter(currency => currency.id !== oldCollection.id)
+	collections = collections.filter(collection => collection.id !== oldCollection.id)
+}
+
+function addAccountCollection(event: CustomEvent<AccountCollection>) {
+	const newAccountCollection = event.detail
+	accountCollections = [
+		newAccountCollection,
+		...accountCollections
+	]
+}
+
+function removeAccountCollection(event: CustomEvent<Collection>) {
+	const oldAccountCollection = event.detail
+	accountCollections = accountCollections.filter(
+		accountCollection => accountCollection.id !== oldAccountCollection.id
+	)
 }
 
 $: linkedAccountCollectionIDs = (
@@ -193,7 +208,7 @@ $: linkedAccounts = accounts.filter(account => linkedAccountCollectionIDs.includ
 		</GridCell>
 		<AddForm on:create={addCollection}/>
 		<CollectionCollection
-			data={collection}
+			data={collections}
 			bind:searchMode={searchMode}
 			bind:sortCriterion={sortCriterion}
 			bind:sortOrder={sortOrder}
@@ -215,7 +230,8 @@ $: linkedAccounts = accounts.filter(account => linkedAccountCollectionIDs.includ
 				{currencies}
 				{accounts}
 				{linkedAccounts}
-				isLoadingInitialData={isRequestingDependencies}/>
+				isLoadingInitialData={isRequestingDependencies}
+				on:create={addAccountCollection}/>
 		{/if}
 	</InnerGrid>
 </ArticleGrid>

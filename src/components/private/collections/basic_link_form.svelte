@@ -1,13 +1,6 @@
 <script lang="ts">
 import type { GeneralError } from "+/rest"
-import type {
-	AcceptableModifierKind,
-	AcceptableModifierAction,
-	Account,
-	CashFlowActivity,
-	Collection,
-	Currency
-} from "+/entity"
+import type { Account, Collection, Currency } from "+/entity"
 
 import makeAccountTransformer from "$/form/choice_info_transformer/make_account_transformer"
 import transformCollection from "$/form/choice_info_transformer/transform_collection"
