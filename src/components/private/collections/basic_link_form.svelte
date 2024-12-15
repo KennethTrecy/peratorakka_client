@@ -14,7 +14,6 @@ import transformCollection from "$/form/choice_info_transformer/transform_collec
 
 import BasicForm from "$/form/basic_form.svelte"
 import ChoiceListField from "$/form/choice_list_field.svelte"
-import TextField from "$/form/text_field.svelte"
 
 export let IDPrefix: string
 export let collection: Collection
