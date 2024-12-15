@@ -1,9 +1,9 @@
 <script lang="ts">
 import type { ContextBundle } from "+/component"
-import type { Collection } from "+/entity"
-import type { SearchMode, SortOrder } from "+/rest"
+import type { Account, AccountCollection, Currency, Collection } from "+/entity"
+import type { GeneralError, SearchMode, SortOrder } from "+/rest"
 
-import { get, writable } from "svelte/store"
+import { get, writable, derived } from "svelte/store"
 import { onMount, getContext } from "svelte"
 import { afterNavigate, beforeNavigate, goto } from "$app/navigation"
 
@@ -11,9 +11,11 @@ import { GLOBAL_CONTEXT } from "#/contexts"
 import { SEARCH_NORMALLY, ASCENDING_ORDER, MAXIMUM_PAGINATED_LIST_LENGTH } from "#/rest"
 
 import assertAuthentication from "$/page_requirement/assert_authentication"
+import loadAllDependencies from "$/rest/load_all_dependencies"
 import makeJSONRequester from "$/rest/make_json_requester"
 
 import AddForm from "%/collections/add_form.svelte"
+import AddLinkForm from "%/collections/add_link_form.svelte"
 import ArticleGrid from "$/layout/article_grid.svelte"
 import CollectionCollection from "%/collections/collection.svelte"
 import ExtraResourceLoader from "$/catalog/extra_resource_loader.svelte"
@@ -29,12 +31,19 @@ assertAuthentication(globalContext, {
 	goto
 })
 
+let isRequestingDependencies = true
+
+let selectedCollection: Collection|null
 let collection: Collection[] = []
+let currencies: Currency[] = []
+let accounts: Account[] = []
+let accountCollections: AccountCollection[] = []
 
 let searchMode: SearchMode = SEARCH_NORMALLY
 let sortCriterion: string = "name"
 let sortOrder: SortOrder = ASCENDING_ORDER
 let lastOffset: number = 0
+let progressRate = 0
 
 const collectiveName = "collections"
 const partialPath = `/api/v1/${collectiveName}`
@@ -60,6 +69,8 @@ $: {
 	}`)
 }
 
+const dependencyErrors = writable([] as GeneralError[])
+
 let { isConnecting, errors, send } = makeJSONRequester({
 	"path": completePath,
 	"defaultRequestConfiguration": {
@@ -79,6 +90,11 @@ let { isConnecting, errors, send } = makeJSONRequester({
 	"expectedErrorStatusCodes": [ 401 ]
 })
 
+const allErrors = derived([ dependencyErrors, errors ], ([ dependencyErrors, errors ]) => [
+	...dependencyErrors,
+	...errors
+])
+
 async function reloadCollections() {
 	collection = []
 	await send({})
@@ -92,6 +108,31 @@ async function loadList() {
 		return
 	}
 
+	isRequestingDependencies = true
+
+	await loadAllDependencies<Account>(globalContext, [
+		{
+			"partialPath": "/api/v1/accounts",
+			"mainSortCriterion": "name",
+			"resourceKey": "accounts",
+			"getResources": () => accounts,
+			"setResources": (newResources: Account[]) => { accounts = newResources },
+			"getLinkedResources": () => [
+				{
+					"resourceKey": "currencies",
+					"resources": currencies
+				}
+			],
+			"setLinkedResources": newResources => {
+				currencies = newResources[0] as Currency[]
+			}
+		}
+	], {
+		"updateProgressRate": newProgressRate => { progressRate = newProgressRate },
+		"updateErrors": newErrors => { dependencyErrors.set(newErrors) }
+	})
+
+	isRequestingDependencies = false
 	await reloadCollections()
 }
 
@@ -119,6 +160,15 @@ function removeCollection(event: CustomEvent<Collection>) {
 	const oldCollection = event.detail
 	collection = collection.filter(currency => currency.id !== oldCollection.id)
 }
+
+$: linkedAccountCollectionIDs = (
+	selectedCollection === null
+		? []
+		: accountCollections.filter(
+			accountCollection => accountCollection.collection_id === selectedCollection.id
+		)
+).map(accountCollection => accountCollection.account_id)
+$: linkedAccounts = accounts.filter(account => linkedAccountCollectionIDs.includes(account.id))
 </script>
 
 <svelte:head>
@@ -137,7 +187,7 @@ function removeCollection(event: CustomEvent<Collection>) {
 			bind:sortCriterion={sortCriterion}
 			bind:sortOrder={sortOrder}
 			isConnecting={$isConnecting}
-			listErrors={$errors}
+			listErrors={$allErrors}
 			on:remove={removeCollection}/>
 		<ExtraResourceLoader
 			isConnectingForInitialList={$isConnecting}
@@ -147,5 +197,13 @@ function removeCollection(event: CustomEvent<Collection>) {
 			bind:lastOffset={lastOffset}
 			on:reloadFully={reloadCollections}
 			on:addResources={addCollections}/>
+		{#if selectedCollection !== null}
+			<AddLinkForm
+				collection={selectedCollection}
+				{currencies}
+				{accounts}
+				{linkedAccounts}
+				isLoadingInitialData={isRequestingDependencies}/>
+		{/if}
 	</InnerGrid>
 </ArticleGrid>
