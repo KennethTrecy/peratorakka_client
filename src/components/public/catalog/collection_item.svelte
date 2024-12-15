@@ -189,6 +189,7 @@ $: confirmAction = isConfirmingDeletion
 							on:click={confirmDeletion}/>
 					{/if}
 				{/if}
+				<slot name="extra_buttons"/>
 			</div>
 		</article>
 	{/if}
