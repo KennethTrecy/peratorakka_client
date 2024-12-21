@@ -1,21 +1,26 @@
 <script lang="ts">
+import type { Formula, Currency } from "+/entity"
 import type { ContextBundle } from "+/component"
-import type { Currency } from "+/entity"
-import type { SearchMode, SortOrder } from "+/rest"
+import type { GeneralError, SearchMode, SortOrder } from "+/rest"
 
-import { get, writable } from "svelte/store"
+import { get, writable, derived } from "svelte/store"
 import { onMount, getContext } from "svelte"
 import { afterNavigate, beforeNavigate, goto } from "$app/navigation"
 
 import { GLOBAL_CONTEXT } from "#/contexts"
-import { SEARCH_NORMALLY, ASCENDING_ORDER, MAXIMUM_PAGINATED_LIST_LENGTH } from "#/rest"
+import {
+	SEARCH_NORMALLY,
+	ASCENDING_ORDER,
+	MAXIMUM_PAGINATED_LIST_LENGTH
+} from "#/rest"
 
 import assertAuthentication from "$/page_requirement/assert_authentication"
+import loadAllDependencies from "$/rest/load_all_dependencies"
 import makeJSONRequester from "$/rest/make_json_requester"
 
-import AddForm from "%/currencies/add_form.svelte"
+import AddForm from "%/formulae/add_form.svelte"
 import ArticleGrid from "$/layout/article_grid.svelte"
-import Collection from "%/currencies/collection.svelte"
+import Collection from "%/formulae/collection.svelte"
 import ExtraResourceLoader from "$/catalog/extra_resource_loader.svelte"
 import GridCell from "$/layout/grid_cell.svelte"
 import InnerGrid from "$/layout/inner_grid.svelte"
@@ -29,26 +34,30 @@ assertAuthentication(globalContext, {
 	goto
 })
 
+let isRequestingDependencies = true
+
 let currencies: Currency[] = []
+let formulae: Formula[] = []
 
 let searchMode: SearchMode = SEARCH_NORMALLY
 let sortCriterion: string = "name"
 let sortOrder: SortOrder = ASCENDING_ORDER
 let lastOffset: number = 0
+let progressRate = 0
 
-const collectiveName = "currencies"
+const collectiveName = "formulae"
 const partialPath = `/api/v1/${collectiveName}`
 let parameters: [string, string][] = [
 	[ "filter[search_mode]", searchMode as string ],
 	[ "sort[0][0]", sortCriterion ],
 	[ "sort[0][1]", sortOrder as string ]
 ]
-let completePath = writable(partialPath)
+const completePath = writable(partialPath)
 $: {
 	parameters = [
 		[ "filter[search_mode]", searchMode as string ],
 		[ "sort[0][0]", sortCriterion ],
-		[ "sort[0][1]", sortOrder as string ],
+		[ "sort[0][1]", sortOrder as string ]
 	]
 
 	completePath.set(`${partialPath}?${
@@ -60,7 +69,13 @@ $: {
 	}`)
 }
 
-let { isConnecting, errors, send } = makeJSONRequester({
+const dependencyErrors = writable([] as GeneralError[])
+
+let {
+	isConnecting,
+	errors,
+	send
+} = makeJSONRequester({
 	"path": completePath,
 	"defaultRequestConfiguration": {
 		"method": "GET"
@@ -70,8 +85,7 @@ let { isConnecting, errors, send } = makeJSONRequester({
 			"statusCode": 200,
 			"action": async (response: Response) => {
 				let responseDocument = await response.json()
-				errors.set([])
-				currencies = responseDocument[collectiveName]
+				formulae = responseDocument[collectiveName]
 				lastOffset = Math.max(0, responseDocument[collectiveName].length - 1)
 			}
 		}
@@ -79,8 +93,13 @@ let { isConnecting, errors, send } = makeJSONRequester({
 	"expectedErrorStatusCodes": [ 401 ]
 })
 
-async function reloadCurrencies() {
-	currencies = []
+const allErrors = derived([ dependencyErrors, errors ], ([ dependencyErrors, errors ]) => [
+	...dependencyErrors,
+	...errors
+])
+
+async function reloadFormulae() {
+	formulae = []
 	await send({})
 }
 
@@ -92,60 +111,81 @@ async function loadList() {
 		return
 	}
 
-	await reloadCurrencies()
+	isRequestingDependencies = true
+
+	await loadAllDependencies(globalContext, [
+		{
+			"partialPath": "/api/v1/currencies",
+			"mainSortCriterion": "name",
+			"resourceKey": "currencies",
+			"getResources": () => currencies,
+			"setResources": newResources => { currencies = newResources }
+		}
+	], {
+		"updateProgressRate": newProgressRate => { progressRate = newProgressRate },
+		"updateErrors": newErrors => { dependencyErrors.set(newErrors) }
+	})
+
+	isRequestingDependencies = false
+	await reloadFormulae()
 }
 
 onMount(loadList)
 
-function addCurrency(event: CustomEvent<Currency>) {
+function addFormula(event: CustomEvent<Formula>) {
 	if (searchMode === "only_deleted") return
 
-	const newCurrency = event.detail
-	currencies = [
-		newCurrency,
-		...currencies
+	const newFormula = event.detail
+	formulae = [
+		newFormula,
+		...formulae
 	]
 }
 
-function addCurrencies(event: CustomEvent<unknown[]>) {
-	const newCurrencies = event.detail as Currency[]
-	currencies = [
-		...currencies,
-		...newCurrencies
+function addFormulae(event: CustomEvent<unknown[]>) {
+	const newFormulae = event.detail as Formula[]
+	formulae = [
+		...formulae,
+		...newFormulae
 	]
 }
 
-function removeCurrency(event: CustomEvent<Currency>) {
-	const oldCurrency = event.detail
-	currencies = currencies.filter(currency => currency.id !== oldCurrency.id)
+function removeFormula(event: CustomEvent<Formula>) {
+	const oldFormula = event.detail
+	formulae = formulae.filter(account => account.id !== oldFormula.id)
 }
+
 </script>
 
 <svelte:head>
-	<title>Collections</title>
+	<title>Formulae</title>
 </svelte:head>
 
 <ArticleGrid>
 	<InnerGrid>
 		<GridCell kind="full">
-			<PrimaryHeading>Collections</PrimaryHeading>
+			<PrimaryHeading>Formulae</PrimaryHeading>
 		</GridCell>
-		<AddForm on:create={addCurrency}/>
+		<AddForm
+			{currencies}
+			isLoadingInitialData={isRequestingDependencies}
+			on:create={addFormula}/>
 		<Collection
-			data={currencies}
+			{currencies}
+			data={formulae}
 			bind:searchMode={searchMode}
 			bind:sortCriterion={sortCriterion}
 			bind:sortOrder={sortOrder}
-			isConnecting={$isConnecting}
-			listErrors={$errors}
-			on:remove={removeCurrency}/>
+			isConnecting={$isConnecting || isRequestingDependencies}
+			listErrors={$allErrors}
+			on:remove={removeFormula}/>
 		<ExtraResourceLoader
-			isConnectingForInitialList={$isConnecting}
+			isConnectingForInitialList={$isConnecting || isRequestingDependencies}
 			{partialPath}
 			{parameters}
 			{collectiveName}
 			bind:lastOffset={lastOffset}
-			on:reloadFully={reloadCurrencies}
-			on:addResources={addCurrencies}/>
+			on:reloadFully={reloadFormulae}
+			on:addResources={addFormulae}/>
 	</InnerGrid>
 </ArticleGrid>
