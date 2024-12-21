@@ -9,6 +9,14 @@ import {
 	formulaOutputFormats,
 	acceptableExchangeRateBases,
 	exchangeRateBases,
+	acceptableNumericalToolKinds,
+	numericalToolKinds,
+	acceptableNumericalToolRecurrencePeriods,
+	numericalToolRecurrencePeriods,
+	acceptableAmountSideBases,
+	amountSideBases,
+	acceptableAmountStageBases,
+	amountStageBases
 } from "#/entity"
 
 interface Entity {
@@ -119,4 +127,58 @@ export interface Formula extends RestorableEntity {
 	exchange_rate_basis: ExchangeRateBasis
 	presentational_precision: number
 	formula: string
+}
+
+type NumericalToolKind = typeof numericalToolKinds[number]
+
+export type AcceptableNumericalToolKind = typeof acceptableNumericalToolKinds[number]
+
+type NumericalToolRecurrencePeriod = typeof numericalToolRecurrencePeriods[number]
+
+export type AcceptableNumericalToolRecurrencePeriod
+	= typeof acceptableNumericalToolRecurrencePeriods[number]
+
+interface NumericalToolSource {
+	type: string
+}
+
+export type AcceptableAmountStageBasis = typeof acceptableAmountStageBases[number]
+
+type AmountStageBasis = typeof amountStageBases[number]
+
+export type AcceptableAmountSideBasis = typeof acceptableAmountSideBases[number]
+
+type AmountSideBasis = typeof amountSideBases[number]
+
+export interface CollectionSource extends NumericalToolSource {
+	type: "collection"
+	collection_id: number
+	currency_id: number
+	exchange_rate_basis: ExchangeRateBasis
+	stage_basis: AmountStageBasis
+	side_basis: AmountSideBasis
+	must_show_individual_amounts: boolean
+	must_show_collective_sum: boolean
+	must_show_collective_average: boolean
+}
+
+export interface FormulaSource extends NumericalToolSource {
+	type: "formula"
+	formula_id: number
+}
+
+export type AcceptableSource = CollectionSource|FormulaSource
+
+interface NumericalToolConfiguration {
+	sources: AcceptableSource[]
+}
+
+export interface NumericalTool extends RestorableEntity {
+	name: string
+	kind: NumericalToolKind
+	recurrence: NumericalToolRecurrencePeriod
+	recency: number
+	order: number
+	notes: string
+	configuration: NumericalToolConfiguration
 }
