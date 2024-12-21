@@ -21,6 +21,7 @@ import CollectionCollection from "%/collections/collection.svelte"
 import ExtraResourceLoader from "$/catalog/extra_resource_loader.svelte"
 import GridCell from "$/layout/grid_cell.svelte"
 import InnerGrid from "$/layout/inner_grid.svelte"
+import LinkCollection from "%/collections/link_collection.svelte"
 import PrimaryHeading from "$/typography/primary_heading.svelte"
 
 const globalContext = getContext(GLOBAL_CONTEXT) as ContextBundle
@@ -33,7 +34,7 @@ assertAuthentication(globalContext, {
 
 let isRequestingDependencies = true
 
-let selectedCollection: Collection|null
+let selectedCollection: Collection|null = null
 let collections: Collection[] = []
 let currencies: Currency[] = []
 let accounts: Account[] = []
@@ -113,7 +114,7 @@ async function loadList() {
 	await loadAllDependencies<Account|AccountCollection>(globalContext, [
 		{
 			"partialPath": "/api/v1/account_collections",
-			"mainSortCriterion": "name",
+			"mainSortCriterion": "id",
 			"resourceKey": "account_collections",
 			"getResources": () => accountCollections,
 			"setResources": (
@@ -159,6 +160,10 @@ function addCollection(event: CustomEvent<Collection>) {
 	]
 }
 
+function viewCollection(event: CustomEvent<Collection>) {
+	selectedCollection = event.detail
+}
+
 function addCollections(event: CustomEvent<unknown[]>) {
 	const newCollections = event.detail as Collection[]
 	collections = [
@@ -180,20 +185,20 @@ function addAccountCollection(event: CustomEvent<AccountCollection>) {
 	]
 }
 
-function removeAccountCollection(event: CustomEvent<Collection>) {
+function removeAccountCollection(event: CustomEvent<AccountCollection>) {
 	const oldAccountCollection = event.detail
 	accountCollections = accountCollections.filter(
 		accountCollection => accountCollection.id !== oldAccountCollection.id
 	)
 }
 
-$: linkedAccountCollectionIDs = (
-	selectedCollection === null
-		? []
-		: accountCollections.filter(
-			accountCollection => accountCollection.collection_id === selectedCollection.id
-		)
-).map(accountCollection => accountCollection.account_id)
+$: linkedAccountCollections = accountCollections.filter(
+	accountCollection => selectedCollection !== null
+		&& accountCollection.collection_id === selectedCollection.id
+)
+$: linkedAccountCollectionIDs = linkedAccountCollections.map(
+	accountCollection => accountCollection.account_id
+)
 $: linkedAccounts = accounts.filter(account => linkedAccountCollectionIDs.includes(account.id))
 </script>
 
@@ -215,7 +220,8 @@ $: linkedAccounts = accounts.filter(account => linkedAccountCollectionIDs.includ
 			isConnecting={$isConnecting}
 			{progressRate}
 			listErrors={$allErrors}
-			on:remove={removeCollection}/>
+			on:remove={removeCollection}
+			on:view={viewCollection}/>
 		<ExtraResourceLoader
 			isConnectingForInitialList={$isConnecting}
 			{partialPath}
@@ -232,6 +238,14 @@ $: linkedAccounts = accounts.filter(account => linkedAccountCollectionIDs.includ
 				{linkedAccounts}
 				isLoadingInitialData={isRequestingDependencies}
 				on:create={addAccountCollection}/>
+			<LinkCollection
+				{selectedCollection}
+				data={linkedAccountCollections}
+				{currencies}
+				{accounts}
+				isConnecting={isRequestingDependencies}
+				{progressRate}
+				on:remove={removeAccountCollection}/>
 		{/if}
 	</InnerGrid>
 </ArticleGrid>

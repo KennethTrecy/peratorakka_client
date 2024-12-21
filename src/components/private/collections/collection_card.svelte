@@ -9,12 +9,14 @@ import makeRestorableItemOptions from "$/rest/make_restorable_item_options"
 import BasicForm from "%/collections/basic_form.svelte"
 import CollectionItem from "$/catalog/collection_item.svelte"
 import EditActionCardButtonPair from "$/button/card/edit_action_pair.svelte"
+import TextCardButton from "$/button/card/text.svelte"
 import ShortParagraph from "$/typography/short_paragraph.svelte"
 
 export let data: Collection
 
 const dispatch = createEventDispatcher<{
 	"remove": Collection
+	"view": Collection
 }>()
 let name = data.name
 let description = data.description
@@ -45,6 +47,10 @@ $: restorableItemOptions = makeRestorableItemOptions(
 function resetDraft() {
 	name = data.name
 	description = data.description
+}
+
+function viewDetail() {
+	dispatch("view", data)
 }
 </script>
 
@@ -84,5 +90,13 @@ function resetDraft() {
 		<ShortParagraph>
 			{data.description}
 		</ShortParagraph>
+		<ShortParagraph>
+			The collection ID is {data.id}.
+		</ShortParagraph>
 	</svelte:fragment>
+	<TextCardButton
+		slot="extra_buttons"
+		kind="button"
+		label="View"
+		on:click={viewDetail}/>
 </CollectionItem>

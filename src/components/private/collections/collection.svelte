@@ -44,7 +44,7 @@ $: isArchived = searchMode === "only_deleted" || isPresentAndArchived
 	</Flex>
 	<svelte:fragment slot="cards">
 		{#each data as entity(entity.id)}
-			<CollectionCard bind:data={entity} on:remove/>
+			<CollectionCard bind:data={entity} on:remove on:view/>
 		{/each}
 	</svelte:fragment>
 	<svelte:fragment slot="empty_collection_description">

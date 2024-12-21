@@ -23,7 +23,7 @@ export let accounts: Account[]
 export let linkedAccounts: Account[]
 
 const IDPrefix = "link_"
-let collectionID = ""
+let collectionID = `${collection.id}`
 let accountID = UNKNOWN_OPTION
 
 let { isConnecting, errors, send } = makeJSONRequester({
@@ -36,11 +36,11 @@ let { isConnecting, errors, send } = makeJSONRequester({
 			"statusCode": 201,
 			"action": async (response: Response) => {
 				const document = await response.json()
-				const { collection } = document
+				const { account_collection } = document
 
 				accountID = ""
 				errors.set([])
-				dispatch("create", collection)
+				dispatch("create", account_collection)
 			}
 		}
 	],
@@ -51,15 +51,15 @@ async function createAccountCollection() {
 	await send({
 		"body": JSON.stringify({
 			"account_collection": {
-				"collection_id": collectionID,
-				"account_id": accountID
+				"collection_id": +collectionID,
+				"account_id": +accountID
 			}
 		})
 	})
 }
 </script>
 
-<DescriptiveForm individualName="Collection" mayShowForm {isLoadingInitialData}>
+<DescriptiveForm individualName="Accounts" mayShowForm {isLoadingInitialData}>
 	<TextContainer slot="description">
 		<ElementalParagraph>
 			Collections are used to group multiple financial accounts. They help in calculating a formula or presenting data.

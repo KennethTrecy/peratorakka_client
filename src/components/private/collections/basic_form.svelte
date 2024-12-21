@@ -23,7 +23,7 @@ export let id: string|null = null
 			{IDPrefix}
 			{errors}/>
 		<TextField
-			fieldName="Name"
+			fieldName="Description"
 			disabled={isConnecting}
 			bind:value={description}
 			{IDPrefix}

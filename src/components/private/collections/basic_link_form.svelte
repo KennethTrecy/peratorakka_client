@@ -20,9 +20,20 @@ export let isConnecting: boolean
 export let errors: GeneralError[]
 export let id: string|null = null
 
+let oldUnlinkedAccounts: Account[] = []
+
 $: linkedAccountIDs = linkedAccounts.map(account => account.id)
-$: availableAccounts = accounts.filter(account => linkedAccountIDs.indexOf(account.id) === -1)
+$: unlinkedAccounts = accounts.filter(account => !linkedAccountIDs.includes(account.id))
 $: transformAccount = makeAccountTransformer(currencies)
+
+$: {
+	if (unlinkedAccounts.length !== oldUnlinkedAccounts.length) {
+		oldUnlinkedAccounts = unlinkedAccounts
+		if (unlinkedAccounts.length > 0) {
+			accountID = `${unlinkedAccounts[0].id}`
+		}
+	}
+}
 </script>
 
 <BasicForm {id} {isConnecting} {errors} on:submit>
@@ -41,7 +52,7 @@ $: transformAccount = makeAccountTransformer(currencies)
 			errorFieldID="account_id"
 			disabled={isConnecting}
 			bind:value={accountID}
-			rawChoices={availableAccounts}
+			rawChoices={unlinkedAccounts}
 			choiceConverter={transformAccount}
 			{IDPrefix}
 			{errors}/>
