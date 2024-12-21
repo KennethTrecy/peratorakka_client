@@ -30,8 +30,6 @@ export default async function loadAllDependencies<T extends RestorableEntity>(
 			[ "filter[search_mode]", SEARCH_WITH_DELETED ],
 			[ "sort[0][0]", dependencyInfo.mainSortCriterion ],
 			[ "sort[0][1]", "ascending" ],
-			[ "sort[1][0]", "created_at" ],
-			[ "sort[1][1]", "ascending" ],
 			[ "page[limit]", MAXIMUM_PAGINATED_LIST_LENGTH ]
 		]
 		const dependencyOffset = writable(-1)
@@ -117,7 +115,7 @@ export default async function loadAllDependencies<T extends RestorableEntity>(
 			return
 		}
 
-		const resourceLoadPromise = loadRemainingResources()
+		const resourceLoadPromise = send({}).then(loadRemainingResources)
 		individualProgressRates.push(individualProgressRate)
 		individualErrors.push(localErrors)
 		resourceLoadPromises.push(resourceLoadPromise)

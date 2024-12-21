@@ -28,7 +28,6 @@ function hasActiveAddress(infos: (MenuItemInfo|MenuGroupInfo)[], currentAddress:
 	return false
 }
 
-$: console.log(items)
 $: isActive = hasActiveAddress(items, currentAddress)
 $: current = (isActive ? "page" : null) as "page"|null
 $: itemClass = [
