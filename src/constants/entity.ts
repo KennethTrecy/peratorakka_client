@@ -72,3 +72,16 @@ export const formulaOutputFormats = [
 	...acceptableFormulaOutputFormats
 ] as const
 
+const UNKNOWN_EXCHANGE_RATE_BASIS = "unknown"
+const PERIODIC_EXCHANGE_RATE_BASIS = "periodic"
+const LATEST_EXCHANGE_RATE_BASIS = "latest"
+
+export const acceptableExchangeRateBases = [
+	PERIODIC_EXCHANGE_RATE_BASIS,
+	LATEST_EXCHANGE_RATE_BASIS
+] as const
+
+export const exchangeRateBases = [
+	UNKNOWN_EXCHANGE_RATE_BASIS,
+	...acceptableExchangeRateBases
+] as const
