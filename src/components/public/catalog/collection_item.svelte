@@ -173,10 +173,12 @@ $: confirmAction = isConfirmingDeletion
 						label="Force Delete"
 						on:click={confirmForceDeletion}/>
 				{:else}
-					<TextCardButton
-						kind="submit"
-						label="Edit"
-						on:click={startEditing}/>
+					{#if $$slots.edit_form}
+						<TextCardButton
+							kind="submit"
+							label="Edit"
+							on:click={startEditing}/>
+					{/if}
 					{#if !$$slots.delete_confirmation_message && !$$slots.restore_confirmation_message}
 						<TextCardButton
 							kind="button"
