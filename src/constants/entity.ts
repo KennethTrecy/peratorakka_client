@@ -45,7 +45,6 @@ export const modifierKinds = [
 	...acceptableModifierKinds
 ] as const
 
-
 export const ACCOUNT_KIND_AGGREGATED_LIST_PRIOITY = {
 	[LIQUID_ASSET_ACCOUNT_KIND]: 0,
 	[GENERAL_ASSET_ACCOUNT_KIND]: 1,
@@ -56,3 +55,20 @@ export const ACCOUNT_KIND_AGGREGATED_LIST_PRIOITY = {
 	[DEPRECIATIVE_ASSET_ACCOUNT_KIND]: 6,
 	[UNKNOWN_ACCOUNT_KIND]: 9
 }
+
+const UNKNOWN_FORMULA_OUTPUT_FORMAT = "unknown"
+const RAW_FORMULA_OUTPUT_FORMAT = "raw"
+const PERCENTAGE_FORMULA_OUTPUT_FORMAT = "percentage"
+const CURRENCY_FORMULA_OUTPUT_FORMAT = "currency"
+
+export const acceptableFormulaOutputFormats = [
+	RAW_FORMULA_OUTPUT_FORMAT,
+	PERCENTAGE_FORMULA_OUTPUT_FORMAT,
+	CURRENCY_FORMULA_OUTPUT_FORMAT
+] as const
+
+export const formulaOutputFormats = [
+	UNKNOWN_FORMULA_OUTPUT_FORMAT,
+	...acceptableFormulaOutputFormats
+] as const
+
