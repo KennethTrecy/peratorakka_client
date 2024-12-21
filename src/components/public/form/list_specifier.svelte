@@ -16,7 +16,7 @@ import ChoiceListField from "$/form/choice_list_field.svelte"
 import ShortParagraph from "$/typography/short_paragraph.svelte"
 import TextContainer from "$/typography/text_container.svelte"
 
-export let searchMode: SearchMode
+export let searchMode: SearchMode|null
 export let sortCriterion: string
 export let sortOrder: SortOrder
 
@@ -40,13 +40,15 @@ $: simpleErrors = errors.filter(isSimpleError)
 $: hasSimpleErrors = simpleErrors.length > 1
 </script>
 
-<ChoiceListField
-	fieldName="Presence"
-	disabled={isConnecting}
-	bind:value={searchMode}
-	rawChoices={availableSearchModes}
-	choiceConverter={returnChoiceAgain}
-	{errors}/>
+{#if searchMode !== null}
+	<ChoiceListField
+		fieldName="Presence"
+		disabled={isConnecting}
+		bind:value={searchMode}
+		rawChoices={availableSearchModes}
+		choiceConverter={returnChoiceAgain}
+		{errors}/>
+{/if}
 <slot name="after_presence_field"/>
 <ChoiceListField
 	fieldName="Sort Criteria"
