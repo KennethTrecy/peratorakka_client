@@ -4,7 +4,11 @@ import {
 	acceptableModifierKinds,
 	modifierKinds,
 	acceptableModifierActions,
-	modifierActions
+	modifierActions,
+	acceptableFormulaOutputFormats,
+	formulaOutputFormats,
+	acceptableExchangeRateBases,
+	exchangeRateBases,
 } from "#/entity"
 
 interface Entity {
@@ -97,4 +101,22 @@ export interface Collection extends RestorableEntity {
 export interface AccountCollection extends RestorableEntity {
 	collection_id: number
 	account_id: number
+}
+
+type FormulaOutputFormat = typeof formulaOutputFormats[number]
+
+export type AcceptableFormulaOutputFormat = typeof acceptableFormulaOutputFormats[number]
+
+type ExchangeRateBasis = typeof exchangeRateBases[number]
+
+export type AcceptableExchangeRateBasis = typeof acceptableExchangeRateBases[number]
+
+export interface Formula extends RestorableEntity {
+	currency_id: number
+	name: string
+	description: string
+	output_format: FormulaOutputFormat
+	exchange_rate_basis: ExchangeRateBasis
+	presentational_precision: number
+	formula: string
 }
