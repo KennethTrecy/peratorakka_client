@@ -21,8 +21,8 @@ import BasicForm from "$/form/basic_form.svelte"
 import ChoiceListField from "$/form/choice_list_field.svelte"
 import TextField from "$/form/text_field.svelte"
 
-export const ACCEPTABLE_MODIFIER_KINDS = [ ...acceptableModifierKinds ]
-export const ACCEPTABLE_MODIFIER_ACTIONS = [ ...acceptableModifierActions ]
+const ACCEPTABLE_MODIFIER_KINDS = [ ...acceptableModifierKinds ]
+const ACCEPTABLE_MODIFIER_ACTIONS = [ ...acceptableModifierActions ]
 
 export let IDPrefix: string
 export let currencies: Currency[]
@@ -35,7 +35,7 @@ export let debitCashFlowActivityID: string
 export let creditCashFlowActivityID: string
 export let name: string
 export let description: string
-export const kind: AcceptableModifierKind = ACCEPTABLE_MODIFIER_KINDS[0] as AcceptableModifierKind
+const kind: AcceptableModifierKind = ACCEPTABLE_MODIFIER_KINDS[0] as AcceptableModifierKind
 export let action: AcceptableModifierAction
 export let forceDisabledFields: (keyof Modifier)[] = []
 
