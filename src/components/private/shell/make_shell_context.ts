@@ -109,6 +109,12 @@ export default function makeShellContext(globalContext: ContextBundle): ContextB
 							"link": "/numerical_tools",
 							"icon": "browse_activity",
 							"label": "Numerical Tools"
+						},
+						{
+							"type": "item",
+							"link": "/numerical_tools",
+							"icon": "dashboard",
+							"label": "Dashboard"
 						}
 					]
 				} : null,
