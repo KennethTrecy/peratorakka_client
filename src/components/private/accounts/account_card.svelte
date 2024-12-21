@@ -34,7 +34,7 @@ $: IDPrefix = `old_account_${data.id}`
 $: formID = `${IDPrefix}_update_form`
 $: associatedCurrency = currencies.find(
 	currency => currency.id === parseInt(currencyID)
-) as Currency
+)
 $: friendlyKind = convertSnakeCaseToProperCase(data.kind).toLocaleLowerCase()
 $: restorableItemOptions = makeRestorableItemOptions(
 	`/api/v1/accounts/${data.id}`,
@@ -108,7 +108,7 @@ function isAcceptable(kind: string): kind is AcceptableAccountKind {
 			Deleting this account may prevent related data from being shown temporarily.
 		</ShortParagraph>
 		<ShortParagraph>
-			This {friendlyKind} account uses {associatedCurrency.code} as its currency.
+			This {friendlyKind} account uses {associatedCurrency?.code ?? "???"} as its currency.
 		</ShortParagraph>
 	</svelte:fragment>
 	<svelte:fragment slot="restore_confirmation_message">
@@ -116,7 +116,7 @@ function isAcceptable(kind: string): kind is AcceptableAccountKind {
 			Restoring this account may show related data.
 		</ShortParagraph>
 		<ShortParagraph>
-			This {friendlyKind} account uses {associatedCurrency.code} as its currency.
+			This {friendlyKind} account uses {associatedCurrency?.code ?? "???"} as its currency.
 		</ShortParagraph>
 	</svelte:fragment>
 	<svelte:fragment slot="force_delete_confirmation_message">
@@ -124,13 +124,13 @@ function isAcceptable(kind: string): kind is AcceptableAccountKind {
 			Deleting this account may prevent related data from being shown permanently.
 		</ShortParagraph>
 		<ShortParagraph>
-			This {friendlyKind} account uses {associatedCurrency.code} as its currency.
+			This {friendlyKind} account uses {associatedCurrency?.code ?? "???"} as its currency.
 		</ShortParagraph>
 	</svelte:fragment>
 	<svelte:fragment slot="resource_info">
 		<ShortParagraph>{data.description}</ShortParagraph>
 		<ShortParagraph>
-			This {friendlyKind} account uses {associatedCurrency.code} as its currency.
+			This {friendlyKind} account uses {associatedCurrency?.code ?? "???"} as its currency.
 		</ShortParagraph>
 	</svelte:fragment>
 </CollectionItem>

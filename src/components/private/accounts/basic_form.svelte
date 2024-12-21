@@ -11,7 +11,7 @@ import BasicForm from "$/form/basic_form.svelte"
 import ChoiceListField from "$/form/choice_list_field.svelte"
 import TextField from "$/form/text_field.svelte"
 
-export const ACCEPTABLE_ACCOUNT_KINDS = [ ...acceptableAccountKinds ]
+const ACCEPTABLE_ACCOUNT_KINDS = [ ...acceptableAccountKinds ]
 
 export let IDPrefix: string
 export let currencies: Currency[]

@@ -88,7 +88,7 @@ $: mayShowForm = currencies.length > 0
 	</svelte:fragment>
 	<BasicForm
 		slot="form"
-		bind:currencies={currencies}
+		{currencies}
 		bind:currencyID={currencyID}
 		bind:name={name}
 		bind:description={description}
