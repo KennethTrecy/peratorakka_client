@@ -87,10 +87,10 @@ export const exchangeRateBases = [
 ] as const
 
 const UNKNOWN_NUMERICAL_TOOL_KIND = "unknown"
-const NUMBER_NUMERICAL_TOOL_KIND = "number"
-const TABLE_NUMERICAL_TOOL_KIND = "table"
-const PIE_NUMERICAL_TOOL_KIND = "pie"
-const LINE_NUMERICAL_TOOL_KIND = "line"
+export const NUMBER_NUMERICAL_TOOL_KIND = "number"
+export const TABLE_NUMERICAL_TOOL_KIND = "table"
+export const PIE_NUMERICAL_TOOL_KIND = "pie"
+export const LINE_NUMERICAL_TOOL_KIND = "line"
 
 export const acceptableNumericalToolKinds = [
 	NUMBER_NUMERICAL_TOOL_KIND,
