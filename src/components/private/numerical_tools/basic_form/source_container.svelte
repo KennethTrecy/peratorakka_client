@@ -22,7 +22,6 @@ export let currencies: Currency[]
 export let collections: Collection[]
 
 export let source: AcceptableSource
-export let index: number
 
 export let isConnecting: boolean
 export let errors: GeneralError[]
@@ -76,14 +75,14 @@ $: ACCEPTABLE_SOURCES = [
 			{errors}/>
 		{#if source.type === "formula"}
 			<FormulaFieldset
-				formula={source}
+				bind:formula={source}
 				{formulae}
 				{IDPrefix}
 				{isConnecting}
 				{errors}/>
 		{:else if source.type === "collection"}
 			<CollectionFieldset
-				collection={source}
+				bind:collection={source}
 				{currencies}
 				{collections}
 				{IDPrefix}
