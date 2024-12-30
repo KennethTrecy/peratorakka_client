@@ -1,4 +1,5 @@
 import Fraction from "fraction.js"
+import tinycolor from "tinycolor2"
 
 import type { Currency } from "+/entity"
 
@@ -25,7 +26,13 @@ export function formatAmount(
 
 	const formattedAmount = `${whole}${rawFraction}`
 
-	return `${currency?.code ?? "---"} ${formattedAmount}`
+	return makeFormattedAmount(currency, formattedAmount)
+}
+
+export function makeFormattedAmount(currency: Currency | undefined, amount: string): string {
+	return `${currency?.code ?? "---"} ${(+amount).toLocaleString("en-US", {
+		"useGrouping": "true"
+	}).replaceAll(",", " ")}`
 }
 
 export function addAmount(addend: string, adder: string): string {
@@ -44,6 +51,10 @@ export function multiplyAmount(multiplicand: string, multiplier: string): string
 export function divideAmount(dividend: string, divisor: string): string {
 	Fraction.REDUCE = true;
 	return new Fraction(dividend).div(divisor).toFraction()
+}
+
+export function makeHSVColorAsRGBColor(hue: number, saturation: number, value: number): string {
+	return tinycolor({ "h": hue, "s": saturation, "v": value }).toHexString()
 }
 
 export function setTheme(filename: string): void {
