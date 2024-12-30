@@ -6,6 +6,7 @@ export default function formatPercentage(
 	const rawPercentage = rawAmount / maxAmount
 	return rawPercentage.toLocaleString("en-US", {
 		"style": "percent",
+		"minimumFractionDigits": fractionalDigits,
 		"maximumFractionDigits": fractionalDigits
 	})
 }
