@@ -16,6 +16,7 @@ import { ACCEPTABLE_CONSTELLATION_KINDS } from "#/rest"
 
 import convertSnakeCaseToProperCase from "$/utility/convert_snake_case_to_proper_case"
 import formatStar from "$/utility/format_star"
+import formatPercentage from "$/utility/format_percentage"
 import generateColors from "$/utility/generate_colors"
 
 import Flex from "$/layout/flex.svelte"
@@ -88,11 +89,7 @@ $: constellationInfo = constellationCollection.map(collection => {
 								},
 								0
 							)
-							const rawPercentage = rawAmount.numerical_value / sum
-							const percentage = rawPercentage.toLocaleString("en-US", {
-								"style": "percent",
-								"maximumFractionDigits": 2
-							})
+							const percentage = formatPercentage(rawAmount.numerical_value, sum, 2)
 
 							return `${amount} (${percentage})`
 						}
