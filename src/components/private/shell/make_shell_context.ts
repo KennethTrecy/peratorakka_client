@@ -112,7 +112,7 @@ export default function makeShellContext(globalContext: ContextBundle): ContextB
 						},
 						{
 							"type": "item",
-							"link": "/numerical_tools",
+							"link": "/dashboard",
 							"icon": "dashboard",
 							"label": "Dashboard"
 						}
