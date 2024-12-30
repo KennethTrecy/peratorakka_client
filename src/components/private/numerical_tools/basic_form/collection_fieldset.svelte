@@ -27,21 +27,26 @@ export let collection: CollectionSource
 export let isConnecting: boolean
 export let errors: GeneralError[]
 
-let currentCollectionID = `${collection.collection_id}`
-let oldCollectionID = `${collection.collection_id}`
-$: {
-	if (oldCollectionID !== currentCollectionID) {
-		oldCollectionID = currentCollectionID
-		collection = { ...collection, "collection_id": +currentCollectionID }
-	}
-}
+let collectionID = `${collection.collection_id}`
+let currencyID = `${collection.currency_id}`
+let exchangeRateBasis = collection.exchange_rate_basis
+let stageBasis = collection.stage_basis
+let sideBasis = collection.side_basis
+let mustShowIndividualAmounts = collection.must_show_individual_amounts
+let mustShowCollectiveSum = collection.must_show_collective_sum
+let mustShowCollectiveAverage = collection.must_show_collective_average
 
-let currentCurrencyID = `${collection.currency_id}`
-let oldCurrencyID = `${collection.currency_id}`
 $: {
-	if (oldCurrencyID !== currentCurrencyID) {
-		oldCurrencyID = currentCurrencyID
-		collection = { ...collection, "currency_id": +currentCurrencyID }
+	collection = {
+		...collection,
+		"collection_id": +collectionID,
+		"currency_id": +currencyID,
+		"exchange_rate_basis": exchangeRateBasis,
+		"stage_basis": stageBasis,
+		"side_basis": sideBasis,
+		"must_show_individual_amounts": mustShowIndividualAmounts,
+		"must_show_collective_sum": mustShowCollectiveSum,
+		"must_show_collective_average": mustShowCollectiveAverage
 	}
 }
 </script>
@@ -49,7 +54,7 @@ $: {
 <ChoiceListField
 	fieldName="Collection"
 	disabled={isConnecting}
-	bind:value={currentCollectionID}
+	bind:value={collectionID}
 	rawChoices={collections}
 	choiceConverter={transformCollection}
 	{IDPrefix}
@@ -57,7 +62,7 @@ $: {
 <ChoiceListField
 	fieldName="Base Currency"
 	disabled={isConnecting}
-	bind:value={currentCurrencyID}
+	bind:value={currencyID}
 	rawChoices={currencies}
 	choiceConverter={transformCurrency}
 	{IDPrefix}
@@ -65,7 +70,7 @@ $: {
 <ChoiceListField
 	fieldName="Exchange Rate Basis"
 	disabled={isConnecting}
-	bind:value={collection.exchange_rate_basis}
+	bind:value={exchangeRateBasis}
 	rawChoices={ACCEPTABLE_FORMULA_EXCHANGE_RATE_BASES}
 	choiceConverter={transformString}
 	{IDPrefix}
@@ -73,7 +78,7 @@ $: {
 <ChoiceListField
 	fieldName="Amount Stage Basis"
 	disabled={isConnecting}
-	bind:value={collection.stage_basis}
+	bind:value={stageBasis}
 	rawChoices={ACCEPTABLE_AMOUNT_STAGE_BASES}
 	choiceConverter={transformString}
 	{IDPrefix}
@@ -81,7 +86,7 @@ $: {
 <ChoiceListField
 	fieldName="Amount Side Basis"
 	disabled={isConnecting}
-	bind:value={collection.side_basis}
+	bind:value={sideBasis}
 	rawChoices={ACCEPTABLE_AMOUNT_SIDE_BASES}
 	choiceConverter={transformString}
 	{IDPrefix}
@@ -89,18 +94,18 @@ $: {
 <CheckboxField
 	fieldName="Show Individual Amounts"
 	disabled={isConnecting}
-	bind:value={collection.must_show_individual_amounts}
+	bind:value={mustShowIndividualAmounts}
 	{IDPrefix}
 	{errors}/>
 <CheckboxField
 	fieldName="Show Collective Sum"
 	disabled={isConnecting}
-	bind:value={collection.must_show_collective_sum}
+	bind:value={mustShowCollectiveSum}
 	{IDPrefix}
 	{errors}/>
 <CheckboxField
 	fieldName="Show Collective Average"
 	disabled={isConnecting}
-	bind:value={collection.must_show_collective_average}
+	bind:value={mustShowCollectiveAverage}
 	{IDPrefix}
 	{errors}/>
