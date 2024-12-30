@@ -13,10 +13,11 @@ import { SEARCH_NORMALLY, ASCENDING_ORDER, MAXIMUM_PAGINATED_LIST_LENGTH } from 
 import assertAuthentication from "$/page_requirement/assert_authentication"
 import loadAllDependencies from "$/rest/load_all_dependencies"
 import makeJSONRequester from "$/rest/make_json_requester"
+import parseNumericalTool from "$/utility/parse_numerical_tool"
 
 import AddForm from "%/numerical_tools/add_form.svelte"
 import ArticleGrid from "$/layout/article_grid.svelte"
-import CollectionCollection from "%/numerical_tools/collection.svelte"
+import NumericalToolCollection from "%/numerical_tools/collection.svelte"
 import ExtraResourceLoader from "$/catalog/extra_resource_loader.svelte"
 import GridCell from "$/layout/grid_cell.svelte"
 import InnerGrid from "$/layout/inner_grid.svelte"
@@ -80,7 +81,7 @@ let { isConnecting, errors, send } = makeJSONRequester({
 			"action": async (response: Response) => {
 				let responseDocument = await response.json()
 				errors.set([])
-				numericalTools = responseDocument[collectiveName]
+				numericalTools = responseDocument[collectiveName].map(parseNumericalTool)
 				lastOffset = Math.max(0, responseDocument[collectiveName].length - 1)
 			}
 		}
@@ -144,7 +145,7 @@ onMount(loadList)
 function addNumericalTool(event: CustomEvent<NumericalTool>) {
 	if (searchMode === "only_deleted") return
 
-	const newNumericalTool = event.detail
+	const newNumericalTool = parseNumericalTool(event.detail)
 	numericalTools = [
 		newNumericalTool,
 		...numericalTools
@@ -155,7 +156,7 @@ function addNumericalTools(event: CustomEvent<unknown[]>) {
 	const newNumericalTools = event.detail as NumericalTool[]
 	numericalTools = [
 		...numericalTools,
-		...newNumericalTools
+		...newNumericalTools.map(parseNumericalTool)
 	]
 }
 
@@ -180,7 +181,7 @@ function removeNumericalTool(event: CustomEvent<NumericalTool>) {
 			{currencies}
 			isLoadingInitialData={isRequestingDependencies}
 			on:create={addNumericalTool}/>
-		<CollectionCollection
+		<NumericalToolCollection
 			data={numericalTools}
 			{formulae}
 			{currencies}
@@ -190,7 +191,7 @@ function removeNumericalTool(event: CustomEvent<NumericalTool>) {
 			bind:sortOrder={sortOrder}
 			isConnecting={$isConnecting}
 			{progressRate}
-			listErrors={$errors}
+			listErrors={$allErrors}
 			on:remove={removeNumericalTool}/>
 		<ExtraResourceLoader
 			isConnectingForInitialList={$isConnecting}
