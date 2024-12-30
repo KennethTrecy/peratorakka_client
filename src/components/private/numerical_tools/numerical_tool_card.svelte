@@ -10,7 +10,16 @@ import type {
 
 import { createEventDispatcher } from "svelte"
 
-import { acceptableNumericalToolKinds, acceptableNumericalToolRecurrencePeriods } from "#/entity"
+import {
+	NUMBER_NUMERICAL_TOOL_KIND,
+	TABLE_NUMERICAL_TOOL_KIND,
+	PIE_NUMERICAL_TOOL_KIND,
+	LINE_NUMERICAL_TOOL_KIND,
+	PERIODIC_NUMERICAL_TOOL_RECURRENCE_PERIOD,
+	YEARLY_NUMERICAL_TOOL_RECURRENCE_PERIOD,
+	acceptableNumericalToolKinds,
+	acceptableNumericalToolRecurrencePeriods
+} from "#/entity"
 
 import checkArchivedState from "$/utility/check_archived_state"
 import makeRestorableItemOptions from "$/rest/make_restorable_item_options"
@@ -39,31 +48,35 @@ let sources = data.configuration.sources
 $: isArchived = checkArchivedState(data)
 $: IDPrefix = `old_numerical_tool_${data.id}`
 $: formID = `${IDPrefix}_update_form`
-$: friendlyKind = kind === "number"
+$: friendlyKind = kind === NUMBER_NUMERICAL_TOOL_KIND
 	? ( recency === 0 || recency === 1 ? "a number" : "one or more numbers" )
 	: (
-		kind === "line"
+		kind === LINE_NUMERICAL_TOOL_KIND
 			? "a line chart"
-			: kind === "table"
+			: kind === TABLE_NUMERICAL_TOOL_KIND
 				? "a table"
-				: kind === "pie"
+				: kind === PIE_NUMERICAL_TOOL_KIND
 					? "a pie chart"
 					: "an unknown visualizer"
 	)
-$: friendlyRecurrence = recurrence === "periodic"
+$: friendlyRecurrence = recurrence === PERIODIC_NUMERICAL_TOOL_RECURRENCE_PERIOD
 	? "every frozen period"
-	: recurrence === "yearly"
+	: recurrence === YEARLY_NUMERICAL_TOOL_RECURRENCE_PERIOD
 		? "every year"
 		: "unknown time cluster"
 $: friendlyRecency = `${recency} ${Math.abs(recency) === 1
-	? ( recurrence === "periodic" ? "frozen period ago" : "year ago" )
-	: ( recurrence === "periodic" ? "frozen periods ago" : "years ago" )}${
+	? ( recurrence === PERIODIC_NUMERICAL_TOOL_RECURRENCE_PERIOD ? "frozen period ago" : "year ago" )
+	: (
+		recurrence === PERIODIC_NUMERICAL_TOOL_RECURRENCE_PERIOD
+			? "frozen periods ago"
+			: "years ago"
+	)}${
 		recency < 1
 			? ""
-			: ` including ${recurrence === "periodic" ? "current frozen period" : "current year"}`
+			: ` including ${recurrence === PERIODIC_NUMERICAL_TOOL_RECURRENCE_PERIOD ? "current frozen period" : "current year"}`
 	}`
 $: restorableItemOptions = makeRestorableItemOptions(
-	`/api/v1/currencies/${data.id}`,
+	`/api/v1/numerical_tools/${data.id}`,
 	{
 		"updateCacheData": () => {
 			data = {
