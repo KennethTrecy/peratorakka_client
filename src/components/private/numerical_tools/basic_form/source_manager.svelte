@@ -26,7 +26,6 @@ export let errors: GeneralError[]
 	<SourceContainer
 		{isConnecting}
 		bind:source={source}
-		{index}
 		{formulae}
 		{currencies}
 		{collections}

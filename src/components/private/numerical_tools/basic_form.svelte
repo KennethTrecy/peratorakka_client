@@ -11,6 +11,9 @@ import type {
 } from "+/entity"
 
 import {
+	acceptableExchangeRateBases,
+	acceptableAmountStageBases,
+	acceptableAmountSideBases,
 	acceptableNumericalToolKinds,
 	acceptableNumericalToolRecurrencePeriods,
 	PERIODIC_NUMERICAL_TOOL_RECURRENCE_PERIOD,
@@ -72,9 +75,19 @@ $: friendlyUnfrozenRecurrenceFieldName = recurrence === PERIODIC_NUMERICAL_TOOL_
 function addSource() {
 	sources = [
 		...sources,
-		{
+		formulae.length > 0 ? {
 			"type": "formula",
 			"formula_id": formulae[0].id
+		} : {
+			"type": "collection",
+			"collection_id": collections[0].id,
+			"currency_id": currencies[0].id,
+			"exchange_rate_basis": acceptableExchangeRateBases[0],
+			"side_basis": acceptableAmountSideBases[0],
+			"stage_basis": acceptableAmountStageBases[0],
+			"must_show_individual_amounts": true,
+			"must_show_collective_sum": false,
+			"must_show_collective_average": false
 		}
 	]
 }
