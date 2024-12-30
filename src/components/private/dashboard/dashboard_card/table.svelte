@@ -5,7 +5,7 @@ import type { NumericalToolConclusion, AcceptableConstellationKind, Constellatio
 import { ACCEPTABLE_CONSTELLATION_KINDS, ACCOUNT_CONSTELLATION_KIND } from "#/rest"
 
 import formatStar from "$/utility/format_star"
-import generateColors from "$/utility/generate_colors"
+import formatPercentage from "$/utility/format_percentage"
 
 import UnitDataTable from "$/catalog/unit_data_table.svelte"
 import DataTableHeader from "$/catalog/data_table_header.svelte"
@@ -15,7 +15,6 @@ import Flex from "$/layout/flex.svelte"
 import GridCell from "$/layout/grid_cell.svelte"
 import ShortParagraph from "$/typography/short_paragraph.svelte"
 import WeakenedTertiaryHeading from "$/typography/weakened_tertiary_heading.svelte"
-	import formatPercentage from "$/utility/format_percentage";
 
 export let numericalTool: NumericalTool
 export let currency: Currency|null
@@ -30,18 +29,24 @@ $: hasMultipleTimes = timeTags.length > 1
 $: reducedConstellations = constellations.filter(
 	constellation => constellation.stars.some(star => star.numerical_value !== 0)
 )
-$: constellationSums = reducedConstellations.reduce((groups, constellation) => ({
+$: constellationCountAndSums = reducedConstellations.reduce((groups, constellation) => ({
 	...groups,
 	[constellation.kind]: typeof groups[constellation.kind] === "undefined"
-		? constellation.stars.map(star => star.numerical_value)
-		: groups[constellation.kind].map((sum, i) => sum + constellation.stars[i].numerical_value)
-}), {} as Record<AcceptableConstellationKind, number[]>)
+		? constellation.stars.map(star => [ 1, star.numerical_value ])
+		: groups[constellation.kind].map((sum, i) => [
+			sum[0] + 1,
+			sum[1] + constellation.stars[i].numerical_value
+		])
+}), {} as Record<AcceptableConstellationKind, ([number, number])[]>)
 </script>
 
 <GridCell kind="pair">
 	<article class="card">
 		<div class="card-content">
 			<Flex mustPad={false} justifyContent="center">
+				<WeakenedTertiaryHeading>
+					{numericalTool.name}
+				</WeakenedTertiaryHeading>
 				<UnitDataTable>
 					<svelte:fragment slot="table_headers">
 						<DataTableHeader scope="column">Name</DataTableHeader>
@@ -60,7 +65,13 @@ $: constellationSums = reducedConstellations.reduce((groups, constellation) => (
 										{#if constellation.kind === ACCOUNT_CONSTELLATION_KIND}
 											({ formatPercentage(
 												star.numerical_value,
-												constellationSums[constellation.kind][i],
+												constellationCountAndSums[constellation.kind][i][1],
+												2
+											) })
+										{:else if constellationCountAndSums[constellation.kind][i][0] > 1}
+											({ formatPercentage(
+												star.numerical_value,
+												constellationCountAndSums[constellation.kind][i][1],
 												2
 											) })
 										{/if}
@@ -70,7 +81,6 @@ $: constellationSums = reducedConstellations.reduce((groups, constellation) => (
 						{/each}
 					</svelte:fragment>
 				</UnitDataTable>
-
 				<ShortParagraph>
 					The table above shows the data from {timeTags[0]}{#if hasMultipleTimes}&nbsp; to {timeTags[timeTagCount - 1]}{/if}.
 				</ShortParagraph>
