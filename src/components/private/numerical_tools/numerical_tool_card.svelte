@@ -64,7 +64,7 @@ $: friendlyRecurrence = recurrence === PERIODIC_NUMERICAL_TOOL_RECURRENCE_PERIOD
 	: recurrence === YEARLY_NUMERICAL_TOOL_RECURRENCE_PERIOD
 		? "every year"
 		: "unknown time cluster"
-$: friendlyRecency = `${recency} ${Math.abs(recency) === 1
+$: friendlyRecency = `${Math.abs(recency)} ${Math.abs(recency) === 1
 	? ( recurrence === PERIODIC_NUMERICAL_TOOL_RECURRENCE_PERIOD ? "frozen period ago" : "year ago" )
 	: (
 		recurrence === PERIODIC_NUMERICAL_TOOL_RECURRENCE_PERIOD
@@ -72,8 +72,11 @@ $: friendlyRecency = `${recency} ${Math.abs(recency) === 1
 			: "years ago"
 	)}${
 		recency < 1
-			? ""
-			: ` including ${recurrence === PERIODIC_NUMERICAL_TOOL_RECURRENCE_PERIOD ? "current frozen period" : "current year"}`
+			? ` including ${
+				recurrence === PERIODIC_NUMERICAL_TOOL_RECURRENCE_PERIOD
+					? "current frozen period"
+					: "current year"
+			}`: ""
 	}`
 $: restorableItemOptions = makeRestorableItemOptions(
 	`/api/v1/numerical_tools/${data.id}`,
