@@ -79,11 +79,22 @@ $: constellationInfo = constellationCollection.map(collection => {
 							const i = context.datasetIndex
 							const j = context.dataIndex
 
-							return formatStar(
-								outputFormat,
-								currency,
-								collection.group[j].stars[timeTagCount - i - 1]
+							const rawAmount = collection.group[j].stars[timeTagCount - i - 1]
+							const amount = formatStar(outputFormat, currency, rawAmount)
+							const sum = collection.group.reduce(
+								function (previousSum, constellation) {
+									const amount = constellation.stars[timeTagCount - i - 1].numerical_value
+									return previousSum + amount
+								},
+								0
 							)
+							const rawPercentage = rawAmount.numerical_value / sum
+							const percentage = rawPercentage.toLocaleString("en-US", {
+								"style": "percent",
+								"maximumFractionDigits": 2
+							})
+
+							return `${amount} (${percentage})`
 						}
 					}
 				}
