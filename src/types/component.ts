@@ -108,8 +108,8 @@ extends ResourceDependencyInfo<T> {
 	setLinkedResources: (resources: RestorableEntity[][]) => void,
 }
 
-export function isHighResourceDependencyInfo<T extends RestorableEntity>(error: any)
-: error is HighResourceDependencyInfo<T> {
-	const keys = Object.keys(error)
+export function isHighResourceDependencyInfo<T extends RestorableEntity>(data: any)
+: data is HighResourceDependencyInfo<T> {
+	const keys = Object.keys(data)
 	return keys.includes("getLinkedResources")
 }

@@ -111,9 +111,18 @@ export interface AccountCollection extends RestorableEntity {
 	account_id: number
 }
 
-type FormulaOutputFormat = typeof formulaOutputFormats[number]
+type OutputFormat = typeof formulaOutputFormats[number]
 
 export type AcceptableFormulaOutputFormat = typeof acceptableFormulaOutputFormats[number]
+
+export function fallbackToAcceptableFormulaOutputFormat(data: string)
+: AcceptableFormulaOutputFormat {
+	return isAcceptableFormulaOutputFormat(data) ? data : acceptableFormulaOutputFormats[0]
+}
+
+function isAcceptableFormulaOutputFormat(data: string): data is AcceptableFormulaOutputFormat {
+	return (<string[]>[ ...acceptableFormulaOutputFormats ]).indexOf(data) > -1
+}
 
 type ExchangeRateBasis = typeof exchangeRateBases[number]
 
@@ -123,7 +132,7 @@ export interface Formula extends RestorableEntity {
 	currency_id: number
 	name: string
 	description: string
-	output_format: FormulaOutputFormat
+	output_format: OutputFormat
 	exchange_rate_basis: ExchangeRateBasis
 	presentational_precision: number
 	formula: string

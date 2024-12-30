@@ -57,9 +57,9 @@ export const ACCOUNT_KIND_AGGREGATED_LIST_PRIOITY = {
 }
 
 const UNKNOWN_FORMULA_OUTPUT_FORMAT = "unknown"
-const RAW_FORMULA_OUTPUT_FORMAT = "raw"
-const PERCENTAGE_FORMULA_OUTPUT_FORMAT = "percentage"
-const CURRENCY_FORMULA_OUTPUT_FORMAT = "currency"
+export const RAW_FORMULA_OUTPUT_FORMAT = "raw"
+export const PERCENTAGE_FORMULA_OUTPUT_FORMAT = "percentage"
+export const CURRENCY_FORMULA_OUTPUT_FORMAT = "currency"
 
 export const acceptableFormulaOutputFormats = [
 	RAW_FORMULA_OUTPUT_FORMAT,

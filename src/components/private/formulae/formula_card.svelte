@@ -1,15 +1,11 @@
 <script lang="ts">
-	import type {
-		Currency,
-		Formula,
-		AcceptableFormulaOutputFormat,
-		AcceptableExchangeRateBasis
-	} from "+/entity"
+import type { Currency, Formula, AcceptableExchangeRateBasis} from "+/entity"
 
 import { createEventDispatcher } from "svelte"
 
-import { acceptableFormulaOutputFormats, acceptableExchangeRateBases } from "#/entity"
+import {  acceptableExchangeRateBases } from "#/entity"
 
+import { fallbackToAcceptableFormulaOutputFormat } from "+/entity"
 import checkArchivedState from "$/utility/check_archived_state"
 import convertSnakeCaseToProperCase from "$/utility/convert_snake_case_to_proper_case"
 import makeRestorableItemOptions from "$/rest/make_restorable_item_options"
@@ -28,7 +24,7 @@ const dispatch = createEventDispatcher<{
 let currencyID = `${data.currency_id}`
 let name = data.name
 let description = data.description
-let outputFormat = fallbackToAcceptableOutputFormat(data.output_format)
+let outputFormat = fallbackToAcceptableFormulaOutputFormat(data.output_format)
 let exchangeRateBasis = fallbackToAcceptableExchangeRateBasis(data.exchange_rate_basis)
 let presentationalPrecision = data.presentational_precision
 let formula = data.formula
@@ -74,15 +70,7 @@ function resetDraft() {
 	currencyID = `${data.currency_id}`
 	name = data.name
 	description = data.description
-	outputFormat = fallbackToAcceptableOutputFormat(data.output_format)
-}
-
-function fallbackToAcceptableOutputFormat(data: string): AcceptableFormulaOutputFormat {
-	return isAcceptableOutputFormat(data) ? data : acceptableFormulaOutputFormats[0]
-}
-
-function isAcceptableOutputFormat(data: string): data is AcceptableFormulaOutputFormat {
-	return (<string[]>[ ...acceptableFormulaOutputFormats ]).indexOf(data) > -1
+	outputFormat = fallbackToAcceptableFormulaOutputFormat(data.output_format)
 }
 
 function fallbackToAcceptableExchangeRateBasis(data: string): AcceptableExchangeRateBasis {
