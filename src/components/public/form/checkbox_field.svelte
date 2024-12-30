@@ -25,7 +25,7 @@ export let errors: GeneralError[]
 				id={fieldID}
 				type="checkbox"
 				class="filled-in"
-				bind:value={value}
+				bind:checked={value}
 				disabled={disabled}
 				aria-labelledby={labelID}
 				aria-controls={helperID}
