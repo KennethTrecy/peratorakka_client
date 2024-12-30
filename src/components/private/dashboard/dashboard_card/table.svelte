@@ -72,7 +72,7 @@ $: constellationSums = reducedConstellations.reduce((groups, constellation) => (
 				</UnitDataTable>
 
 				<ShortParagraph>
-					The line chart above shows the from {timeTags[0]}{#if hasMultipleTimes}&nbsp; to {timeTags[timeTagCount - 1]}{/if}.
+					The table above shows the data from {timeTags[0]}{#if hasMultipleTimes}&nbsp; to {timeTags[timeTagCount - 1]}{/if}.
 				</ShortParagraph>
 			</Flex>
 		</div>

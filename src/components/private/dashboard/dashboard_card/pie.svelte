@@ -114,7 +114,7 @@ ChartJS.register(Title, Tooltip, Legend, ArcElement, CategoryScale)
 					</WeakenedTertiaryHeading>
 					<Pie data={constellationDatum.chartInfo} options={constellationDatum.options}/>
 					<ShortParagraph>
-						The chart above shows the from {timeTags[0]}{#if hasMultipleTimes}&nbsp;(inner pie) to {timeTags[timeTagCount - 1]} (outer pie){/if}.
+						The chart above shows the data from {timeTags[0]}{#if hasMultipleTimes}&nbsp;(inner pie) to {timeTags[timeTagCount - 1]} (outer pie){/if}.
 					</ShortParagraph>
 				</Flex>
 			</div>

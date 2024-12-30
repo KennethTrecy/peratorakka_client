@@ -86,7 +86,7 @@ ChartJS.register(Title, Tooltip, Legend, LineElement, LinearScale, PointElement,
 				</WeakenedTertiaryHeading>
 				<Line data={constellationInfo} {options}/>
 				<ShortParagraph>
-					The line chart above shows the from {timeTags[0]}{#if hasMultipleTimes}&nbsp; to {timeTags[timeTagCount - 1]}{/if}.
+					The line chart above shows the data from {timeTags[0]}{#if hasMultipleTimes}&nbsp; to {timeTags[timeTagCount - 1]}{/if}.
 				</ShortParagraph>
 			</Flex>
 		</div>
