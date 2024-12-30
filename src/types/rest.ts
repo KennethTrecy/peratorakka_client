@@ -1,7 +1,7 @@
 import type { Writable, Readable } from "svelte/store"
 import type { ContextBundle } from "+/component"
 
-import { SEARCH_MODES, SORT_ORDERS } from "#/rest"
+import { SEARCH_MODES, SORT_ORDERS, ACCEPTABLE_CONSTELLATION_KINDS } from "#/rest"
 
 export interface SimpleError {
 	message: string
@@ -100,3 +100,21 @@ export type SearchMode = typeof SEARCH_MODES[number]
 export type SortOrder = typeof SORT_ORDERS[number]
 
 export type SortOrderInfo = [ string, SortOrder ]
+
+export interface Star {
+	display_value: string
+	numerical_value: number
+}
+
+export type AcceptableConstellationKind = typeof ACCEPTABLE_CONSTELLATION_KINDS[number]
+
+export interface Constellation {
+	name: string
+	kind: AcceptableConstellationKind
+	stars: Star[]
+}
+
+export interface NumericalToolConclusion {
+	time_tags: string[]
+	constellations: Constellation[]
+}
