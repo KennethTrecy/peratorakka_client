@@ -14,7 +14,6 @@ import {
 	CategoryScale
 } from "chart.js"
 
-
 import formatStar from "$/utility/format_star"
 import generateColors from "$/utility/generate_colors"
 
