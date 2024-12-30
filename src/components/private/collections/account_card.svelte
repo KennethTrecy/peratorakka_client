@@ -3,6 +3,8 @@ import type { Account, AccountCollection, Currency } from "+/entity"
 
 import { createEventDispatcher } from "svelte"
 
+import { UNKNOWN_ACCOUNT } from "#/component"
+
 import makeRestorableItemOptions from "$/rest/make_restorable_item_options"
 
 import CollectionItem from "$/catalog/collection_item.svelte"
@@ -12,8 +14,7 @@ export let data: AccountCollection
 export let accounts: Account[]
 export let currencies: Currency[]
 
-$: account = accounts.find(account => account.id === data.account_id)
-$: console.log("card",{account})
+$: account = accounts.find(account => account.id === data.account_id) ?? UNKNOWN_ACCOUNT
 // $: currency = currencies.find(currency => currency.id === account.currency_id) as Currency
 const dispatch = createEventDispatcher<{
 	"remove": AccountCollection
