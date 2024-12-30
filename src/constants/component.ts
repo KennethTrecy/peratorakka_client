@@ -16,7 +16,7 @@ export const UNKNOWN_ACCOUNT: Account = {
 export const ANY_CURRENCY: Currency = {
 	"id": 0,
 	"name": "Any Currency",
-	"description": "To be used as choice on filtering by currencies.",
+	"code": "---",
 	"created_at": "",
 	"updated_at": ""
 }
