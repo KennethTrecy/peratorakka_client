@@ -5,12 +5,14 @@ import { compare } from "semver"
 import { derived, writable } from "svelte/store"
 
 import { RECOMMENDED_API_VERSION, MAINTENANCE_EXPIRATION_MECHANISM } from "#/rest"
+import { LIGHT_MODE, DARK_MODE } from "#/theme"
 import {
 	SERVER_URL_KEY,
 	CSRF_TOKEN_KEY,
 	USER_EMAIL_KEY,
 	ACCESS_TOKEN_KEY,
 	ACCESS_TOKEN_METADATA_KEY,
+	THEME_NAME_KEY,
 
 	USER_EMAIL_KEY_v0_2_1
 } from "#/storage_keys"
@@ -23,6 +25,7 @@ export default function makeGlobalContext(): ContextBundle {
 	const userEmail = writable<string>("")
 	const accessToken = writable<string>("")
 	const accessTokenMetadata = writable<Map<string, string>>(new Map())
+	const themeName = writable<string>(DARK_MODE)
 
 	const hasRequirements = writable<boolean>(false)
 	const mustHaveCompatibleServer = writable<boolean>(false)
@@ -137,12 +140,14 @@ export default function makeGlobalContext(): ContextBundle {
 			return ""
 		}
 	)
+	const mustBeInDarkMode = derived(themeName, mode => mode === DARK_MODE)
 
 	let stopStoringServerURL: Unsubscriber = () => null as unknown as void
 	let stopStoringCSRFToken: Unsubscriber = () => null as unknown as void
 	let stopStoringAccessToken: Unsubscriber = () => null as unknown as void
 	let stopStoringAccessTokenMetadata: Unsubscriber = () => null as unknown as void
 	let stopStoringUserEmail: Unsubscriber = () => null as unknown as void
+	let stopStoringThemeName: Unsubscriber = () => null as unknown as void
 
 	function initializeGlobalStates(): void {
 		const storedServerURL = window.localStorage.getItem(SERVER_URL_KEY) ?? ""
@@ -150,6 +155,8 @@ export default function makeGlobalContext(): ContextBundle {
 		const storedAccessToken = window.localStorage.getItem(ACCESS_TOKEN_KEY) ?? ""
 		const storedAccessTokenMetadata = window.localStorage.getItem(ACCESS_TOKEN_METADATA_KEY)
 			?? "[]"
+		const storedThemeName = window.localStorage.getItem(THEME_NAME_KEY)
+			?? LIGHT_MODE
 		const storedUserEmail = window.localStorage.getItem(USER_EMAIL_KEY_v0_2_1)
 			?? window.localStorage.getItem(USER_EMAIL_KEY)
 			?? ""
@@ -160,6 +167,7 @@ export default function makeGlobalContext(): ContextBundle {
 			accessToken.set(storedAccessToken)
 			accessTokenMetadata.set(new Map(JSON.parse(storedAccessTokenMetadata)))
 			userEmail.set(storedUserEmail)
+			themeName.set(storedThemeName)
 			hasLoadedGlobalStates.set(true)
 		}, 250)
 
@@ -221,6 +229,14 @@ export default function makeGlobalContext(): ContextBundle {
 				window.localStorage.setItem(USER_EMAIL_KEY, newUserEmail)
 			}
 		})
+		stopStoringThemeName = themeName.subscribe(newMode => {
+			if (typeof window !== "undefined") {
+				window.localStorage.setItem(
+					THEME_NAME_KEY,
+					newMode
+				)
+			}
+		})
 	}
 
 	function unsubscribeWatchedGlobalStates(): void {
@@ -230,6 +246,7 @@ export default function makeGlobalContext(): ContextBundle {
 			stopStoringAccessToken()
 			stopStoringAccessTokenMetadata()
 			stopStoringUserEmail()
+			stopStoringThemeName()
 		}
 	}
 
@@ -241,6 +258,8 @@ export default function makeGlobalContext(): ContextBundle {
 		userEmail,
 		accessToken,
 		accessTokenMetadata,
+		mustBeInDarkMode,
+		themeName,
 
 		hasRequirements,
 		mustHaveCompatibleServer,
