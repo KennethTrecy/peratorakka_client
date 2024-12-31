@@ -39,21 +39,21 @@ $: {
 <BasicForm {id} {isConnecting} {errors} on:submit>
 	<svelte:fragment slot="fields">
 		<ChoiceListField
-			fieldName="Collection"
-			errorFieldID="collection_id"
-			disabled={true}
-			value={`${collection.id}`}
-			rawChoices={[ collection ]}
-			choiceConverter={transformCollection}
-			{IDPrefix}
-			{errors}/>
-		<ChoiceListField
 			fieldName="Account"
 			errorFieldID="account_id"
 			disabled={isConnecting}
 			bind:value={accountID}
 			rawChoices={unlinkedAccounts}
 			choiceConverter={transformAccount}
+			{IDPrefix}
+			{errors}/>
+		<ChoiceListField
+			fieldName="Collection"
+			errorFieldID="collection_id"
+			disabled={true}
+			value={`${collection.id}`}
+			rawChoices={[ collection ]}
+			choiceConverter={transformCollection}
 			{IDPrefix}
 			{errors}/>
 	</svelte:fragment>
