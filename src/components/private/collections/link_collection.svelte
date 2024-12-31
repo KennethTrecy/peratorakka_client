@@ -14,7 +14,7 @@ export let currencies: Currency[]
 
 <CollectionCatalog collectiveName="Linked Accounts" {isConnecting} {data} {progressRate}>
 	<svelte:fragment slot="filled_collection_description">
-		Below are the accounts under to collection named "{selectedCollection.name}".
+		Below are the accounts under to collection named "{selectedCollection.name}". Expect some of them to be shown in dashboard if this collection is included in one the numerical tools.
 	</svelte:fragment>
 	<svelte:fragment slot="cards">
 		{#each data as entity(entity.id)}
