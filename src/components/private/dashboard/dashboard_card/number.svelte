@@ -32,7 +32,7 @@ $: reducedConstellations = constellations.filter(
 		rowSpan={
 			constellation.stars.length === 1
 				? 2
-				: 1 + Math.floor(constellation.stars.length / 2)
+				: Math.max(3, Math.ceil(constellation.stars.length / 1.5))
 		}>
 		<article class="card">
 			<div class="card-content">

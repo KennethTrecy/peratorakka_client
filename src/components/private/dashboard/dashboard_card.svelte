@@ -13,6 +13,7 @@ import {
 
 import { fallbackToAcceptableFormulaOutputFormat } from "+/entity"
 
+import GridCell from "$/layout/grid_cell.svelte"
 import LineVisualizer from "%/dashboard/dashboard_card/line.svelte"
 import NumberVisualizer from "%/dashboard/dashboard_card/number.svelte"
 import PieVisualizer from "%/dashboard/dashboard_card/pie.svelte"
@@ -39,7 +40,9 @@ $: outputFormat = data.configuration.sources[0].type === "collection"
 </script>
 
 {#if conclusion === null}
-	<p>Loading..</p>
+	<GridCell kind="hextet" rowSpan={1}>
+		<p>Loading...</p>
+	</GridCell>
 {:else}
 	{#if data.kind === NUMBER_NUMERICAL_TOOL_KIND}
 		<NumberVisualizer
