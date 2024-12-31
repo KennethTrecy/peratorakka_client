@@ -23,9 +23,6 @@ onDestroy(globalContext.unsubscribeWatchedGlobalStates as () => void)
 </script>
 
 <svelte:head>
-	<link
-		rel="stylesheet"
-		href="https://cdn.jsdelivr.net/npm/@materializecss/materialize@2.1.1/dist/css/materialize.min.css"/>
 	<script
 		src="https://cdn.jsdelivr.net/npm/@materializecss/materialize@2.1.1/dist/js/materialize.min.js"></script>
 </svelte:head>
@@ -33,17 +30,19 @@ onDestroy(globalContext.unsubscribeWatchedGlobalStates as () => void)
 <div class="shell">
 	<TopAppBar bind:isMenuShown={isMenuShown}/>
 	<NavigationDrawer bind:isMenuShown={isMenuShown}/>
-	<main class="mdc-top-app-bar--fixed-adjust">
+	<main>
 		<slot name="main"></slot>
 	</main>
-	<footer class="mdc-typography">
-		<p class="mdc-typography--body2">
+	<footer>
+		<p>
 			Copyright © 2023 - 2025 by Kenneth Trecy Tobias.
 		</p>
 	</footer>
 </div>
 
 <style lang="scss">
+@use "@/components/third-party/index";
+
 .shell {
 	width: 100%;
 	min-height: 100%;
