@@ -217,13 +217,13 @@ $: linkedAccounts = accounts.filter(account => linkedAccountCollectionIDs.includ
 			bind:searchMode={searchMode}
 			bind:sortCriterion={sortCriterion}
 			bind:sortOrder={sortOrder}
-			isConnecting={$isConnecting}
+			isConnecting={$isConnecting || isRequestingDependencies}
 			{progressRate}
 			listErrors={$allErrors}
 			on:remove={removeCollection}
 			on:view={viewCollection}/>
 		<ExtraResourceLoader
-			isConnectingForInitialList={$isConnecting}
+			isConnectingForInitialList={$isConnecting || isRequestingDependencies}
 			{partialPath}
 			{parameters}
 			{collectiveName}
