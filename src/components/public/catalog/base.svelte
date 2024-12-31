@@ -9,6 +9,7 @@ export let isConnecting: boolean
 export let progressRate: number
 export let collectiveName: string
 export let data: unknown[]
+export let hasListSpecifier: boolean = false
 
 $: hasData = data.length > 0
 $: progressBarLabel = isConnecting
@@ -21,7 +22,7 @@ $: progressBarLabel = isConnecting
 </GridCell>
 {#if hasData}
 	<slot name="bare_list_specifier"/>
-	{#if $$slots.list_specifier}
+	{#if $$slots.list_specifier && hasListSpecifier}
 		<GridCell kind="full">
 			<Flex direction="row" justifyContent="responsive_stretch" mustPad={false}>
 				<slot name="list_specifier"/>
@@ -40,7 +41,7 @@ $: progressBarLabel = isConnecting
 	<slot name="available_content"/>
 {:else if !isConnecting}
 	<slot name="bare_list_specifier"/>
-	{#if $$slots.list_specifier}
+	{#if $$slots.list_specifier && hasListSpecifier}
 		<GridCell kind="full">
 			<slot name="list_specifier"/>
 		</GridCell>

@@ -12,7 +12,8 @@ export let data: unknown[]
 	{isConnecting}
 	{progressRate}
 	{collectiveName}
-	{data}>
+	{data}
+	hasListSpecifier={$$slots.list_specifier}>
 	<SecondaryHeading slot="name">Available {collectiveName}</SecondaryHeading>
 	<slot slot="filled_collection_description" name="filled_collection_description"/>
 	<slot slot="empty_collection_description" name="empty_collection_description"/>
