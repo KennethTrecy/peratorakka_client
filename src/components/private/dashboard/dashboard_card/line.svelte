@@ -54,10 +54,11 @@ $: options = {
 		"tooltip": {
 			"callbacks": {
 				"title": function(context: any) {
-					const i = context[0].datasetIndex
-					const j = context[0].dataIndex
-
-					return `${reducedConstellations[i].name} (${timeTags[j]})`
+					return context.map((subcontext: any) => {
+						const i = subcontext.datasetIndex
+						const j = subcontext.dataIndex
+						return `${reducedConstellations[i].name} (${timeTags[j]})`
+					})
 				},
 				"label": function(context: any) {
 					const i = context.datasetIndex
