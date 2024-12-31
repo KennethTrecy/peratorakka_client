@@ -10,6 +10,7 @@ import { SHELL_CONTEXT } from "#/contexts"
 
 import NavigationItem from "%/shell/navigation_item.svelte"
 import NavigationGroup from "%/shell/navigation_group.svelte"
+import NavigationThemeToggler from "%/shell/navigation_theme_toggler.svelte"
 
 const shell = getContext(SHELL_CONTEXT) as ContextBundle
 const menuItemInfos = shell.menuItemInfos as Readable<MenuItemInfo[]>
@@ -28,6 +29,7 @@ onDestroy(menuItemInfos.subscribe(newMenuItemInfos => {
 }))
 </script>
 
+<NavigationThemeToggler/>
 {#each lastMenuItemInfos as info}
 	{#if info.type === "item"}
 		<NavigationItem
@@ -41,7 +43,3 @@ onDestroy(menuItemInfos.subscribe(newMenuItemInfos => {
 			items={info.items}/>
 	{/if}
 {/each}
-
-<style lang="scss">
-@use "@/components/third-party/index";
-</style>
