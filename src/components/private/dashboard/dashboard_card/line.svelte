@@ -77,7 +77,7 @@ $: options = {
 ChartJS.register(Title, Tooltip, Legend, LineElement, LinearScale, PointElement, CategoryScale)
 </script>
 
-<GridCell kind="pair" rowSpan={2}>
+<GridCell kind="pair" rowSpan={4}>
 	<article class="card">
 		<div class="card-content">
 			<Flex mustPad={false} justifyContent="center">

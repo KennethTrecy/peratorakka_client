@@ -2,18 +2,18 @@
 import type { Currency, NumericalTool, AcceptableFormulaOutputFormat } from "+/entity"
 import type { NumericalToolConclusion, AcceptableConstellationKind, Constellation } from "+/rest"
 
-import { ACCEPTABLE_CONSTELLATION_KINDS, ACCOUNT_CONSTELLATION_KIND } from "#/rest"
+import { ACCOUNT_CONSTELLATION_KIND } from "#/rest"
 
 import formatStar from "$/utility/format_star"
 import formatPercentage from "$/utility/format_percentage"
 
-import UnitDataTable from "$/catalog/unit_data_table.svelte"
-import DataTableHeader from "$/catalog/data_table_header.svelte"
 import DataTableCell from "$/catalog/data_table_cell.svelte"
+import DataTableHeader from "$/catalog/data_table_header.svelte"
 import DataTableRow from "$/catalog/data_table_row.svelte"
 import Flex from "$/layout/flex.svelte"
 import GridCell from "$/layout/grid_cell.svelte"
 import ShortParagraph from "$/typography/short_paragraph.svelte"
+import UnitDataTable from "$/catalog/unit_data_table.svelte"
 import WeakenedTertiaryHeading from "$/typography/weakened_tertiary_heading.svelte"
 
 export let numericalTool: NumericalTool
@@ -38,7 +38,7 @@ $: constellationCountAndSums = reducedConstellations.reduce((groups, constellati
 			sum[1] + constellation.stars[i].numerical_value
 		])
 }), {} as Record<AcceptableConstellationKind, ([ number, number ])[]>)
-$: rowSpan = Math.ceil(reducedConstellations.length / 3)
+$: rowSpan = Math.ceil(reducedConstellations.length / 1.5)
 </script>
 
 <GridCell kind="pair" {rowSpan}>
