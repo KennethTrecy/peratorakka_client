@@ -74,7 +74,7 @@ $: friendlyRecency = `${Math.abs(recency)} ${Math.abs(recency) === 1
 		recency < 1
 			? ` including ${
 				recurrence === PERIODIC_NUMERICAL_TOOL_RECURRENCE_PERIOD
-					? "current frozen period"
+					? "current unfrozen period"
 					: "current year"
 			}`: ""
 	}`
@@ -184,7 +184,7 @@ function isAcceptableNumericalToolRecurrencePeriod(data: string)
 	</ShortParagraph>
 	<svelte:fragment slot="resource_info">
 		<ShortParagraph>
-			This tool would show {friendlyKind} coming from the source(s) listed below. Data would be grouped by {friendlyRecurrence} showing from up to {friendlyRecency}.
+			This tool would show {friendlyKind} coming from the source(s) listed below. Data would be grouped by {friendlyRecurrence} showing up to {friendlyRecency}.
 		</ShortParagraph>
 		<ShortParagraph>
 			It would be displayed with other numerical tools with an order of {order}.

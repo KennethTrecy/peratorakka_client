@@ -10,6 +10,8 @@ import type {
 	AcceptableSource
 } from "+/entity"
 
+import { onMount, onDestroy } from "svelte"
+
 import {
 	acceptableExchangeRateBases,
 	acceptableAmountStageBases,
@@ -53,9 +55,10 @@ export let isConnecting: boolean
 export let errors: GeneralError[]
 export let id = ""
 
+let isShown = false
 let expectedNewRecency = recency
 $: {
-	if (expectedNewRecency !== recency) recency = expectedNewRecency
+	if (expectedNewRecency !== recency && isShown) recency = expectedNewRecency
 }
 
 let numberOfFrozenCycles = 0
@@ -91,6 +94,16 @@ function addSource() {
 		}
 	]
 }
+
+onMount(() => {
+	numberOfFrozenCycles = Math.abs(recency)
+	mustIncludeLatestUnfrozenCycle = Math.sign(recency) !== 1
+	isShown = true
+})
+
+onDestroy(() => {
+	isShown = false
+})
 </script>
 
 <BasicForm {id} {isConnecting} {errors} on:submit>
@@ -117,22 +130,24 @@ function addSource() {
 			choiceConverter={transformString}
 			{IDPrefix}
 			{errors}/>
-		<NumberField
-			fieldName={friendlyFrozenRecurrenceFieldName}
-			errorFieldID="recurrence"
-			min={0}
-			max={100}
-			step={1}
-			disabled={isConnecting}
-			bind:value={numberOfFrozenCycles}
-			{IDPrefix}
-			{errors}/>
-		<CheckboxField
-			fieldName={friendlyUnfrozenRecurrenceFieldName}
-			disabled={isConnecting}
-			bind:value={mustIncludeLatestUnfrozenCycle}
-			{IDPrefix}
-			{errors}/>
+		{#if isShown}
+			<NumberField
+				fieldName={friendlyFrozenRecurrenceFieldName}
+				errorFieldID="recency"
+				min={0}
+				max={100}
+				step={1}
+				disabled={isConnecting}
+				bind:value={numberOfFrozenCycles}
+				{IDPrefix}
+				{errors}/>
+			<CheckboxField
+				fieldName={friendlyUnfrozenRecurrenceFieldName}
+				disabled={isConnecting}
+				bind:value={mustIncludeLatestUnfrozenCycle}
+				{IDPrefix}
+				{errors}/>
+		{/if}
 		<NumberField
 			fieldName="Dashboard Order"
 			errorFieldID="order"
