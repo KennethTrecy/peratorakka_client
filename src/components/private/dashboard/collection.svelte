@@ -5,6 +5,8 @@ import type { GeneralError, SortOrder, NumericalToolConclusion } from "+/rest"
 import CollectionCatalog from "$/catalog/collection.svelte"
 import DashboardCard from "%/dashboard/dashboard_card.svelte"
 import Flex from "$/layout/flex.svelte"
+import AutoGrid from "$/layout/auto_grid.svelte"
+import GridCell from "$/layout/grid_cell.svelte"
 import ListSpecifier from "$/form/list_specifier.svelte"
 
 export let isConnecting: boolean
@@ -41,15 +43,17 @@ const availableSortCriteria = [
 			{availableSortCriteria}
 			errors={listErrors}/>
 	</Flex>
-	<svelte:fragment slot="cards">
-		{#each data as entity, i}
-			<DashboardCard
-				bind:data={entity}
-				{formulae}
-				currencies={currencies[i]}
-				conclusion={conclusions[i]}/>
-		{/each}
-	</svelte:fragment>
+	<GridCell kind="full" slot="cards">
+		<AutoGrid>
+			{#each data as entity, i}
+				<DashboardCard
+					bind:data={entity}
+					{formulae}
+					currencies={currencies[i]}
+					conclusion={conclusions[i]}/>
+			{/each}
+		</AutoGrid>
+	</GridCell>
 	<svelte:fragment slot="empty_collection_description">
 		There are no available numerical tools at the moment.
 		Create a numerical tools to view summarized information.

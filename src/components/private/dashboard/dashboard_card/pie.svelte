@@ -127,5 +127,9 @@ ChartJS.register(Title, Tooltip, Legend, ArcElement, CategoryScale)
 
 :global(.pie) {
 	grid-row: span 4;
+
+	> .card {
+		height: 100%;
+	}
 }
 </style>

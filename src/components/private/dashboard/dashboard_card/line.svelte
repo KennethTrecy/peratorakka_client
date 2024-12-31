@@ -98,5 +98,9 @@ ChartJS.register(Title, Tooltip, Legend, LineElement, LinearScale, PointElement,
 
 :global(.line) {
 	grid-row: span 3;
+
+	> .card {
+		height: 100%;
+	}
 }
 </style>
