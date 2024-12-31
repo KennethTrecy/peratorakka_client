@@ -77,7 +77,7 @@ $: options = {
 ChartJS.register(Title, Tooltip, Legend, LineElement, LinearScale, PointElement, CategoryScale)
 </script>
 
-<GridCell kind="pair" class="line">
+<GridCell kind="pair" rowSpan={2}>
 	<article class="card">
 		<div class="card-content">
 			<Flex mustPad={false} justifyContent="center">
@@ -96,11 +96,7 @@ ChartJS.register(Title, Tooltip, Legend, LineElement, LinearScale, PointElement,
 <style lang="scss">
 @use "@/components/third-party/index";
 
-:global(.line) {
-	grid-row: span 3;
-
-	> .card {
-		height: 100%;
-	}
+.card {
+	height: 100%;
 }
 </style>

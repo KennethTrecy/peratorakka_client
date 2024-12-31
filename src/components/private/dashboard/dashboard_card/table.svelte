@@ -37,10 +37,11 @@ $: constellationCountAndSums = reducedConstellations.reduce((groups, constellati
 			sum[0] + 1,
 			sum[1] + constellation.stars[i].numerical_value
 		])
-}), {} as Record<AcceptableConstellationKind, ([number, number])[]>)
+}), {} as Record<AcceptableConstellationKind, ([ number, number ])[]>)
+$: rowSpan = Math.ceil(reducedConstellations.length / 3)
 </script>
 
-<GridCell kind="pair" class="table">
+<GridCell kind="pair" {rowSpan}>
 	<article class="card">
 		<div class="card-content">
 			<Flex mustPad={false} justifyContent="center">
@@ -92,11 +93,7 @@ $: constellationCountAndSums = reducedConstellations.reduce((groups, constellati
 <style lang="scss">
 @use "@/components/third-party/index";
 
-:global(.table) {
-	grid-row: span 3;
-
-	> .card {
-		height: 100%;
-	}
+.card {
+	height: 100%;
 }
 </style>

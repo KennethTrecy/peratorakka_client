@@ -42,6 +42,7 @@ export type GridCellKind =
 	| "narrow"
 	| "triad"
 	| "pair"
+	| "hextet"
 
 export type TrialBalanceKind =
 	| "adjusted"

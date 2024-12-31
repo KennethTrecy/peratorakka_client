@@ -104,7 +104,7 @@ ChartJS.register(Title, Tooltip, Legend, ArcElement, CategoryScale)
 </script>
 
 {#each constellationInfo as constellationDatum}
-	<GridCell kind="pair" class="pie">
+	<GridCell kind="pair" rowSpan={3}>
 		<article class="card">
 			<div class="card-content">
 				<Flex mustPad={false} justifyContent="center">
@@ -125,11 +125,7 @@ ChartJS.register(Title, Tooltip, Legend, ArcElement, CategoryScale)
 <style lang="scss">
 @use "@/components/third-party/index";
 
-:global(.pie) {
-	grid-row: span 4;
-
-	> .card {
-		height: 100%;
-	}
+.card {
+	height: 100%;
 }
 </style>

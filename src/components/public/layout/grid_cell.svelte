@@ -2,11 +2,9 @@
 import type { GridCellKind } from "+/component"
 
 export let kind: GridCellKind
-let otherClasses: string = ""
+export let rowSpan: number = 0
 
-export { otherClasses as class }
-
-$: cellClasses =  ((
+$: cellClasses =  (
 	kind === "wide"
 	? [ "s6", "m6", "l6" ]
 	: kind === "narrow"
@@ -23,12 +21,14 @@ $: cellClasses =  ((
 							? [ "s12", "m4", "l4" ]
 							: kind === "pair"
 								? [ "s12", "m6", "l6" ]
-								: []
-	).join(" ")+" "+otherClasses).trim()
+								: kind === "hextet"
+									? [ "s4", "m2", "l2" ]
+									: []
+	).join(" ")
 $: role = kind === "padder" ? "presentation" : null
 </script>
 
-<div class={cellClasses} {role}>
+<div class={cellClasses} {role} style={rowSpan > 0 ? "grid-row: span "+rowSpan : ""}>
 	<slot/>
 </div>
 

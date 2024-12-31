@@ -23,7 +23,7 @@ $: reducedConstellations = constellations.filter(
 </script>
 
 {#each reducedConstellations as constellation, i}
-	<GridCell kind="narrow" class="number">
+	<GridCell kind="hextet" rowSpan={1}>
 		<article class="card">
 			<div class="card-content">
 				<Flex mustPad={false}>
@@ -51,8 +51,7 @@ $: reducedConstellations = constellations.filter(
 
 <style lang="scss">
 @use "@/components/third-party/index";
-
-:global(.number) {
-	grid-row: span 1;
+.card {
+	height: 100%;
 }
 </style>
