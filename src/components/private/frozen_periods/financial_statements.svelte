@@ -40,6 +40,7 @@ let selectedCurrencyID = `${ANY_CURRENCY.id}`
 let previousSelectedCurrencyID = `${ANY_CURRENCY.id}`
 let targetCurrencyID = `${ANY_CURRENCY.id}`
 let hasSelectedFirstCurrencyAfterLoading = false
+$: IDPrefix = `date_${startedAt}_to_${finishedAt}`
 $: {
 	if (currencies.length > 0) {
 		if (selectedCurrencyID === `${ANY_CURRENCY.id}` && !hasSelectedFirstCurrencyAfterLoading) {
@@ -281,6 +282,7 @@ $: data = [
 				bind:value={selectedCurrencyID}
 				rawChoices={availableCurrencies}
 				choiceConverter={transformCurrency}
+				{IDPrefix}
 				errors={[]}/>
 			<ChoiceListField
 				fieldName="Viewed Currency"
@@ -289,6 +291,7 @@ $: data = [
 				bind:value={targetCurrencyID}
 				rawChoices={currencies}
 				choiceConverter={transformCurrency}
+				{IDPrefix}
 				errors={[]}/>
 		{/if}
 	</svelte:fragment>
