@@ -56,11 +56,14 @@ $: restorableItemOptions = makeRestorableItemOptions(
 		},
 		"removeCacheData": () => dispatch("remove", data),
 		"makeUpdatedBody": () => ({
-			"account": {
+			"formula": {
 				"currency_id": parseInt(currencyID),
 				name,
 				description,
-				outputFormat
+				"output_format": outputFormat,
+				"exchange_rate_basis": exchangeRateBasis,
+				"presentational_precision": presentationalPrecision,
+				formula
 			}
 		})
 	}
