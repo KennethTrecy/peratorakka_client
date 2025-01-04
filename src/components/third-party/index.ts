@@ -1,7 +1,11 @@
 import Fraction from "fraction.js"
 import tinycolor from "tinycolor2"
+import { Chart, Chart as ChartJS } from "chart.js"
 
 import type { Currency } from "+/entity"
+
+import { DEFAULT_MINIMUM_FRACTION_DIGITS, DEFAULT_MAXIMUM_FRACTION_DIGITS } from "#/component"
+import { LIGHT_MODE, DARK_MODE } from "#/theme"
 
 export function formatAmount(
 	currency: Currency | undefined,
@@ -31,7 +35,11 @@ export function formatAmount(
 
 export function makeFormattedAmount(currency: Currency | undefined, amount: string): string {
 	return `${currency?.code ?? "---"} ${(+amount).toLocaleString("en-US", {
-		"useGrouping": "true"
+		"useGrouping": "true",
+		"minimumFractionDigits": (
+			currency?.presentational_precision ?? DEFAULT_MINIMUM_FRACTION_DIGITS
+		),
+		"maximumFractionDigits": currency?.presentational_precision ?? DEFAULT_MAXIMUM_FRACTION_DIGITS
 	}).replaceAll(",", " ")}`
 }
 
@@ -62,5 +70,7 @@ export function setTheme(filename: string): void {
 }
 
 export function setMode(modeName: string): void {
-
+	ChartJS.defaults.color = modeName === DARK_MODE
+		? "#FFF"
+		: "#000"
 }

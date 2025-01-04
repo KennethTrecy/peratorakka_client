@@ -17,6 +17,8 @@ import {
 	USER_EMAIL_KEY_v0_2_1
 } from "#/storage_keys"
 
+import { setMode } from "!/index"
+
 export default function makeGlobalContext(): ContextBundle {
 	const hasLoadedGlobalStates = writable<boolean>(false)
 	const serverURL = writable<string>("")
@@ -168,6 +170,7 @@ export default function makeGlobalContext(): ContextBundle {
 			accessTokenMetadata.set(new Map(JSON.parse(storedAccessTokenMetadata)))
 			userEmail.set(storedUserEmail)
 			themeName.set(storedThemeName)
+			setMode(storedThemeName)
 			hasLoadedGlobalStates.set(true)
 		}, 250)
 
@@ -236,6 +239,8 @@ export default function makeGlobalContext(): ContextBundle {
 					newMode
 				)
 			}
+
+			setMode(newMode)
 		})
 	}
 
