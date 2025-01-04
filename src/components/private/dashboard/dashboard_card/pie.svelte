@@ -1,6 +1,7 @@
 <script lang="ts">
 import type { Currency, NumericalTool, AcceptableFormulaOutputFormat } from "+/entity"
 import type { NumericalToolConclusion, AcceptableConstellationKind, Constellation } from "+/rest"
+import type { AutocolorsOptions } from "chartjs-plugin-autocolors"
 
 import autocolors from "chartjs-plugin-autocolors"
 import { Pie } from "svelte-chartjs"
@@ -67,7 +68,7 @@ $: constellationInfo = constellationCollection.map(collection => {
 			"responsive": true,
 			"plugins": {
 				"autocolors": {
-					"mode": "data"
+					"mode": "data" as AutocolorsOptions["mode"]
 				},
 				"tooltip": {
 					"callbacks": {

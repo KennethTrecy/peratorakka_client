@@ -3,6 +3,7 @@ import type { Readable } from "svelte/store"
 import type { Currency, NumericalTool, AcceptableFormulaOutputFormat } from "+/entity"
 import type { NumericalToolConclusion } from "+/rest"
 import type { ContextBundle, GridCellKind } from "+/component"
+import type { AutocolorsOptions } from "chartjs-plugin-autocolors"
 
 import autocolors from "chartjs-plugin-autocolors"
 import { Line } from "svelte-chartjs"
@@ -69,7 +70,7 @@ $: options = derived([ mustBeInDarkMode ], ([ mustBeInDarkMode ]) => ({
 	},
 	"plugins": {
 		"autocolors": {
-			"mode": "dataset"
+			"mode": "dataset" as AutocolorsOptions["mode"]
 		},
 		"tooltip": {
 			"callbacks": {
