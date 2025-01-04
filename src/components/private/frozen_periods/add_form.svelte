@@ -35,6 +35,8 @@ export let isLoadingInitialData: boolean
 
 let startedAt: string = defaultStartedDate
 let finishedAt: string = defaultFinishedDate
+let dryRunStartedAt: string = defaultStartedDate
+let dryRunFinishedAt: string = defaultFinishedDate
 
 let {
 	"isConnecting": isConnectingToCreate,
@@ -106,6 +108,8 @@ let {
 
 				dryRunCreateErrors.set([])
 
+				dryRunStartedAt = startedAt
+				dryRunFinishedAt = finishedAt
 				hasAttemptedDryRun = true
 			}
 		}
@@ -163,8 +167,8 @@ async function dryRunCreateFrozenPeriod() {
 {#if hasAttemptedDryRun || $isConnectingToDryRunCreate}
 	<FinancialStatements
 		isConnecting={$isConnectingToDryRunCreate}
-		startedAt={startedAt}
-		finishedAt={finishedAt}
+		startedAt={dryRunStartedAt}
+		finishedAt={dryRunFinishedAt}
 		{statements}
 		{exchangeRates}
 		{accounts}
