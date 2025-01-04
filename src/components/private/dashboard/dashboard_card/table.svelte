@@ -1,6 +1,7 @@
 <script lang="ts">
 import type { Currency, NumericalTool, AcceptableFormulaOutputFormat } from "+/entity"
-import type { NumericalToolConclusion, AcceptableConstellationKind, Constellation } from "+/rest"
+import type { NumericalToolConclusion, AcceptableConstellationKind } from "+/rest"
+import type { GridCellKind } from "+/component"
 
 import { ACCOUNT_CONSTELLATION_KIND } from "#/rest"
 
@@ -38,10 +39,18 @@ $: constellationCountAndSums = reducedConstellations.reduce((groups, constellati
 			sum[1] + constellation.stars[i].numerical_value
 		])
 }), {} as Record<AcceptableConstellationKind, ([ number, number ])[]>)
-$: rowSpan = Math.ceil(reducedConstellations.length / 1.5)
+
+$: kind = (
+	timeTags.length === 1
+		? "pair"
+		: timeTags.length < 4
+			? "almost_full"
+			: "full"
+) as GridCellKind
+$: rowSpan = 1 + Math.floor(reducedConstellations.length / 2.25)
 </script>
 
-<GridCell kind="pair" {rowSpan}>
+<GridCell {kind} {rowSpan}>
 	<article class="card">
 		<div class="card-content">
 			<Flex mustPad={false} justifyContent="center">
@@ -52,7 +61,7 @@ $: rowSpan = Math.ceil(reducedConstellations.length / 1.5)
 					<svelte:fragment slot="table_headers">
 						<DataTableHeader scope="column">Name</DataTableHeader>
 						{#each timeTags as timeTag}
-							<DataTableHeader scope="column">{timeTag}</DataTableHeader>
+							<DataTableHeader scope="column" kind="numeric">{timeTag}</DataTableHeader>
 						{/each}
 					</svelte:fragment>
 					<svelte:fragment slot="table_rows">
@@ -60,7 +69,7 @@ $: rowSpan = Math.ceil(reducedConstellations.length / 1.5)
 							<DataTableRow>
 								<DataTableHeader scope="row">{constellation.name}</DataTableHeader>
 								{#each constellation.stars as star, i}
-									<DataTableCell>
+									<DataTableCell kind="numeric">
 										{formatStar(outputFormat, currency, star)}
 
 										{#if constellation.kind === ACCOUNT_CONSTELLATION_KIND}
