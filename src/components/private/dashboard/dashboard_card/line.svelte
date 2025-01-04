@@ -1,6 +1,7 @@
 <script lang="ts">
 import type { Currency, NumericalTool, AcceptableFormulaOutputFormat } from "+/entity"
-import type { NumericalToolConclusion, AcceptableConstellationKind, Constellation } from "+/rest"
+import type { NumericalToolConclusion } from "+/rest"
+import type { GridCellKind } from "+/component"
 
 import { Line } from "svelte-chartjs"
 import {
@@ -74,11 +75,13 @@ $: options = {
 		}
 	}
 }
+$: kind = (timeTags.length < 6 ? "pair" : "almost_full") as GridCellKind
+$: rowSpan = timeTags.length < 6 ? 4 : 5
 
 ChartJS.register(Title, Tooltip, Legend, LineElement, LinearScale, PointElement, CategoryScale)
 </script>
 
-<GridCell kind="pair" rowSpan={4}>
+<GridCell {kind} {rowSpan}>
 	<article class="card">
 		<div class="card-content">
 			<Flex mustPad={false} justifyContent="center">
