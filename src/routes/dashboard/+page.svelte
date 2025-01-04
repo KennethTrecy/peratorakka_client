@@ -112,7 +112,7 @@ const { "errors": conclusionErrors, "send": loadConclusion } = makeJSONRequester
 
 				if (currentNumericalToolIndex === -1) return
 
-				newCurrencies[currentNumericalToolIndex] = responseDocument["currencies"]
+				newCurrencies[currentNumericalToolIndex] = responseDocument["currencies"] ?? []
 				newConclusions[currentNumericalToolIndex] = responseDocument["@meta"]
 
 				currencies = newCurrencies
