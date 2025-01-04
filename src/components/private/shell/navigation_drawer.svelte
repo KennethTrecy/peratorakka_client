@@ -51,5 +51,5 @@ onDestroy(menuItemInfos.subscribe(newMenuItemInfos => {
 </ul>
 
 <style lang="scss">
-	@use "@/components/third-party/index";
+@use "@/components/third-party/index";
 </style>

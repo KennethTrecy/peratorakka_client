@@ -30,11 +30,11 @@ ul {
 	display: flex;
 	flex-flow: row nowrap;
 
-	> :global(li:nth-child(2)) {
+	> :global(li:nth-child(3)) {
 		order: 1;
 	}
 
-	> :global(li:nth-child(3)) {
+	> :global(li:nth-child(4)) {
 		order: 1;
 	}
 }
