@@ -43,9 +43,9 @@ $: constellationInfo = {
 		"label": constellation.name,
 		"data": constellation.stars.map(star => star.numerical_value),
 		"backgroundColor": backgroundColor[i],
+		"borderColor": hoverBackgroundColor[i],
 		"pointBackgroundColor": backgroundColor[i],
 		"pointHoverBackgroundColor": hoverBackgroundColor[i],
-		"fill": true,
 		"lineTension": 0.2
 	}))
 }
