@@ -87,7 +87,7 @@ $: mayShowForm = currencies.length > 0
 			To create a formula to be used in the system, choose a base currency which will be used as the basis for calculating amounts from multiple currencies. An output format indicates the type of result after calculation.
 		</ElementalParagraph>
 		<ElementalParagraph>
-			Exchange rate basis may be periodic (which is the latest exchange rate on a paricular period) or latest (which is the lastest overall exchange rate regardless of the time). It also has presentation precision which is used when displayed by a numerical tool.
+			Exchange rate basis may be periodic (which is the latest exchange rate on a paricular period) or latest (which is the latest overall exchange rate regardless of the time). It also has presentation precision which is used when displayed by a numerical tool.
 		</ElementalParagraph>
 	</TextContainer>
 	<svelte:fragment slot="requirement">
