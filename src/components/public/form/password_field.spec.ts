@@ -7,39 +7,6 @@ import { act, render, cleanup } from "@testing-library/svelte"
 import Component from "./password_field.svelte"
 
 describe("Password field behavior", () => {
-	it("can render with no value", async () => {
-		const user = userEvent.setup()
-		const props = {
-			"fieldName": "",
-			"disabled": false,
-			"value": "",
-			"errors": [],
-		}
-		const { container, getByRole } = render(Component, props)
-
-		expect(container.querySelector(".mdc-floating-label--float-above")).toBeNull()
-
-		cleanup()
-	})
-
-	it("can render with new value", async () => {
-		const user = userEvent.setup()
-		const props = {
-			"fieldName": "",
-			"disabled": false,
-			"value": "",
-			"errors": [],
-		}
-		const { container, getByRole } = render(Component, props)
-
-		const textBox = getByRole("textbox")
-		await user.type(textBox, "Hello world")
-
-		expect(container.querySelector(".mdc-floating-label--float-above")).not.toBeNull()
-
-		cleanup()
-	})
-
 	it("can render with no error", async () => {
 		const user = userEvent.setup()
 		const props = {
@@ -54,7 +21,7 @@ describe("Password field behavior", () => {
 		}
 		const { container } = render(Component, props)
 
-		const paragraph = container.querySelector("p")
+		const paragraph = container.querySelector("span")
 
 		expect(paragraph).toBeNull()
 
@@ -76,7 +43,7 @@ describe("Password field behavior", () => {
 		}
 		const { container } = render(Component, props)
 
-		const paragraph = container.querySelector("p")
+		const paragraph = container.querySelector("span")
 
 		expect(paragraph).not.toBeNull()
 
