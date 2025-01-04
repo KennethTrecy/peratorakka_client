@@ -95,7 +95,7 @@ const linkedThirdPartyPackages: ThirdPartyPackage[] = [
 		</GridCell>
 		<GridCell kind="full">
 			<TextContainer>
-				<section>
+				<section id="rationale">
 					<WeakenedTertiaryHeading>🧐 Why Use Peratorakka?</WeakenedTertiaryHeading>
 					<ElementalParagraph>
 						Peratorakka allows you to track your expenses and investments. In this way, you could easily identify which expenses to be reduced or which investments are underperforming.
@@ -153,6 +153,12 @@ const linkedThirdPartyPackages: ThirdPartyPackage[] = [
 						</ElementalParagraph>
 					</section>
 				</section>
+				<section>
+					<WeakenedTertiaryHeading>🙋 Do you have concerns?</WeakenedTertiaryHeading>
+					<ElementalParagraph>
+						You may find the <a href="https://kennethtrecy.pages.dev/about_myself#contact_details">author's contact details</a> in his <a href="https://kennethtrecy.pages.dev">personal website</a>.
+					</ElementalParagraph>
+				</section>
 			</TextContainer>
 		</GridCell>
 	</InnerGrid>
@@ -169,6 +175,10 @@ section {
 	:global(h4) {
 		text-align: left;
 	}
+}
+
+#rationale :global(h3) {
+	margin-top: 0rem;
 }
 
 a {
