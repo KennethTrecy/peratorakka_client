@@ -75,18 +75,14 @@ $: {
 				aria-selected={`${(data === value)}`}
 				data-value={data}
 				value={data}
-				title={label}>
-				{label}
-			</option>
+				title={label}>{label}</option>
 		{/each}
 		{#if value === UNKNOWN_OPTION}
 			<option
 				aria-selected="true"
 				data-value={UNKNOWN_OPTION}
 				value={UNKNOWN_OPTION}
-				title={UNKNOWN_OPTION_LABEL}>
-				{UNKNOWN_OPTION_LABEL}
-			</option>
+				title={UNKNOWN_OPTION_LABEL}>{UNKNOWN_OPTION_LABEL}</option>
 		{/if}
 	</select>
 </GeneralField>
