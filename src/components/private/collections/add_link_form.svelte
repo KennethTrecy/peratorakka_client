@@ -38,7 +38,7 @@ let { isConnecting, errors, send } = makeJSONRequester({
 				const document = await response.json()
 				const { account_collection } = document
 
-				accountID = ""
+				accountID = UNKNOWN_OPTION
 				errors.set([])
 				dispatch("create", account_collection)
 			}
@@ -56,6 +56,13 @@ async function createAccountCollection() {
 			}
 		})
 	})
+}
+
+$: {
+	if (collectionID !== `${collection.id}`) {
+		collectionID = `${collection.id}`
+		accountID = UNKNOWN_OPTION
+	}
 }
 </script>
 
