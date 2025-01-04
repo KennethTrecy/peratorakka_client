@@ -4,6 +4,7 @@ import type { Currency, NumericalTool, AcceptableFormulaOutputFormat } from "+/e
 import type { NumericalToolConclusion } from "+/rest"
 import type { ContextBundle, GridCellKind } from "+/component"
 
+import autocolors from "chartjs-plugin-autocolors"
 import { Line } from "svelte-chartjs"
 import {
 	Chart as ChartJS,
@@ -21,7 +22,6 @@ import { derived } from "svelte/store"
 import { GLOBAL_CONTEXT } from "#/contexts"
 
 import formatStar from "$/utility/format_star"
-import generateColors from "$/utility/generate_colors"
 
 import Flex from "$/layout/flex.svelte"
 import GridCell from "$/layout/grid_cell.svelte"
@@ -45,16 +45,11 @@ $: hasMultipleTimes = timeTags.length > 1
 $: reducedConstellations = constellations.filter(
 	constellation => constellation.stars.some(star => star.numerical_value !== 0)
 )
-$: [ backgroundColor, hoverBackgroundColor ] = generateColors(reducedConstellations.length)
 $: constellationInfo = {
 	"labels": timeTags,
 	"datasets": reducedConstellations.map((constellation, i) => ({
 		"label": constellation.name,
 		"data": constellation.stars.map(star => star.numerical_value),
-		"backgroundColor": backgroundColor[i],
-		"borderColor": hoverBackgroundColor[i],
-		"pointBackgroundColor": backgroundColor[i],
-		"pointHoverBackgroundColor": hoverBackgroundColor[i],
 		"lineTension": 0.2
 	}))
 }
@@ -73,6 +68,9 @@ $: options = derived([ mustBeInDarkMode ], ([ mustBeInDarkMode ]) => ({
 		}
 	},
 	"plugins": {
+		"autocolors": {
+			"mode": "dataset"
+		},
 		"tooltip": {
 			"callbacks": {
 				"title": function(context: any) {
@@ -99,7 +97,9 @@ $: options = derived([ mustBeInDarkMode ], ([ mustBeInDarkMode ]) => ({
 $: kind = (timeTags.length < 6 ? "pair" : "almost_full") as GridCellKind
 $: rowSpan = timeTags.length < 6 ? 4 : 5
 
-ChartJS.register(Title, Tooltip, Legend, LineElement, LinearScale, PointElement, CategoryScale)
+ChartJS.register(
+	Title, Tooltip, Legend, LineElement, LinearScale, PointElement, CategoryScale, autocolors
+)
 </script>
 
 <GridCell {kind} {rowSpan}>

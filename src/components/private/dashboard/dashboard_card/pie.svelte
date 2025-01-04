@@ -2,6 +2,7 @@
 import type { Currency, NumericalTool, AcceptableFormulaOutputFormat } from "+/entity"
 import type { NumericalToolConclusion, AcceptableConstellationKind, Constellation } from "+/rest"
 
+import autocolors from "chartjs-plugin-autocolors"
 import { Pie } from "svelte-chartjs"
 import {
 	Chart as ChartJS,
@@ -17,7 +18,6 @@ import { ACCEPTABLE_CONSTELLATION_KINDS } from "#/rest"
 import convertSnakeCaseToProperCase from "$/utility/convert_snake_case_to_proper_case"
 import formatStar from "$/utility/format_star"
 import formatPercentage from "$/utility/format_percentage"
-import generateColors from "$/utility/generate_colors"
 
 import Flex from "$/layout/flex.svelte"
 import GridCell from "$/layout/grid_cell.svelte"
@@ -52,7 +52,6 @@ $: constellationCollection = ACCEPTABLE_CONSTELLATION_KINDS.map(kind => ({
 	"group": constellationGroups[kind] ?? []
 })).filter(collection => collection.group.length > 0)
 $: constellationInfo = constellationCollection.map(collection => {
-	const [ backgroundColor, hoverBackgroundColor ] = generateColors(collection.group.length)
 	const labels = collection.group.map(constellation => constellation.name)
 	return {
 		"name": collection.kind,
@@ -61,15 +60,15 @@ $: constellationInfo = constellationCollection.map(collection => {
 			"datasets": timeTags.map((tag, i) => ({
 				"data": collection.group.map(
 					constellation => constellation.stars[timeTagCount - i - 1].numerical_value
-				),
-				backgroundColor,
-				hoverBackgroundColor,
-				"parsing": false
+				)
 			}))
 		},
 		"options": {
 			"responsive": true,
 			"plugins": {
+				"autocolors": {
+					"mode": "data"
+				},
 				"tooltip": {
 					"callbacks": {
 						"title": function(context: any) {
@@ -102,7 +101,7 @@ $: constellationInfo = constellationCollection.map(collection => {
 	}
 })
 
-ChartJS.register(Title, Tooltip, Legend, ArcElement, CategoryScale)
+ChartJS.register(Title, Tooltip, Legend, ArcElement, CategoryScale, autocolors)
 </script>
 
 {#each constellationInfo as constellationDatum, i}
