@@ -115,7 +115,9 @@ ChartJS.register(Title, Tooltip, Legend, ArcElement, CategoryScale)
 				"constellations": constellationCollection[i].group
 			}}/>
 	{:else}
-		<GridCell kind="pair" rowSpan={6}>
+		<GridCell
+			kind={constellationCollection[i].group.length < 10 ? "pair" : "almost_full"}
+			rowSpan={constellationCollection[i].group.length < 10 ? 6 : 8}>
 			<article class="card">
 				<div class="card-content">
 					<Flex mustPad={false} justifyContent="center">
@@ -125,7 +127,9 @@ ChartJS.register(Title, Tooltip, Legend, ArcElement, CategoryScale)
 						</WeakenedTertiaryHeading>
 						<Pie data={constellationDatum.chartInfo} options={constellationDatum.options}/>
 						<ShortParagraph>
-							The chart above shows the data from {timeTags[0]}{#if hasMultipleTimes}&nbsp;(inner pie) to {timeTags[timeTagCount - 1]} (outer pie){/if}.
+							The pie chart above shows the data from {timeTags[0]}{#if
+							hasMultipleTimes}&nbsp;(inner pie) to {timeTags[timeTagCount - 1]} (outer
+							pie){/if}.
 						</ShortParagraph>
 					</Flex>
 				</div>
