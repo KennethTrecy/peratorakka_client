@@ -82,16 +82,16 @@ export default function makeShellContext(globalContext: ContextBundle): ContextB
 					"label": "General Ledger"
 				} : null,
 				hasTokenCurrently && hasUserCurrently ? {
-					"type": "item",
-					"link": "/frozen_periods",
-					"icon": "weather_snowy",
-					"label": "Frozen Periods"
-				} : null,
-				hasTokenCurrently && hasUserCurrently ? {
 					"type": "group",
 					"icon": "borg",
-					"label": "Advance",
+					"label": "Analysis",
 					"items": [
+						{
+							"type": "item",
+							"link": "/frozen_periods",
+							"icon": "weather_snowy",
+							"label": "Frozen Periods"
+						},
 						{
 							"type": "item",
 							"link": "/collections",
