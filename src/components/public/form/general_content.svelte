@@ -28,7 +28,7 @@ $: message = errors.filter(
 
 <slot {fieldID} {labelID} {helperID}></slot>
 {#if message !== ""}
-	<span class="supporting-text" id={helperID}>{message}</span>
+	<span class="body-small" id={helperID}>{message}</span>
 {/if}
 
 <style lang="scss">
