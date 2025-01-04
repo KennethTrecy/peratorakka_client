@@ -23,8 +23,17 @@ onDestroy(globalContext.unsubscribeWatchedGlobalStates as () => void)
 </script>
 
 <svelte:head>
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous">
 	<script
 		src="https://cdn.jsdelivr.net/npm/@materializecss/materialize@2.1.1/dist/js/materialize.min.js"></script>
+	<link
+		rel="stylesheet"
+		href="https://fonts.googleapis.com/css2?family=Roboto&display=swap"/>
+	<link
+		rel="stylesheet"
+		href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@400,1&family=Noto+Color+Emoji&display=swap"
+		as="style"/>
 </svelte:head>
 
 <div class="shell">
@@ -35,7 +44,7 @@ onDestroy(globalContext.unsubscribeWatchedGlobalStates as () => void)
 	</main>
 	<footer>
 		<p>
-			Copyright © 2023 - 2025 by Kenneth Trecy Tobias.
+			Copyright © 2025 by Kenneth Trecy Tobias.
 		</p>
 	</footer>
 </div>
