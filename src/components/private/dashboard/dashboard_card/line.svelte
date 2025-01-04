@@ -1,7 +1,8 @@
 <script lang="ts">
+import type { Readable } from "svelte/store"
 import type { Currency, NumericalTool, AcceptableFormulaOutputFormat } from "+/entity"
 import type { NumericalToolConclusion } from "+/rest"
-import type { GridCellKind } from "+/component"
+import type { ContextBundle, GridCellKind } from "+/component"
 
 import { Line } from "svelte-chartjs"
 import {
@@ -14,6 +15,10 @@ import {
 	PointElement,
 	CategoryScale
 } from "chart.js"
+import { getContext } from "svelte"
+import { derived } from "svelte/store"
+
+import { GLOBAL_CONTEXT } from "#/contexts"
 
 import formatStar from "$/utility/format_star"
 import generateColors from "$/utility/generate_colors"
@@ -22,6 +27,10 @@ import Flex from "$/layout/flex.svelte"
 import GridCell from "$/layout/grid_cell.svelte"
 import ShortParagraph from "$/typography/short_paragraph.svelte"
 import WeakenedTertiaryHeading from "$/typography/weakened_tertiary_heading.svelte"
+
+const globalContext = getContext(GLOBAL_CONTEXT) as ContextBundle
+
+$: mustBeInDarkMode = globalContext.mustBeInDarkMode as Readable<boolean>
 
 export let numericalTool: NumericalTool
 export let currency: Currency|null
@@ -49,8 +58,20 @@ $: constellationInfo = {
 		"lineTension": 0.2
 	}))
 }
-$: options = {
+$: options = derived([ mustBeInDarkMode ], ([ mustBeInDarkMode ]) => ({
 	"responsive": true,
+	"scales": {
+		"x": {
+			"grid": {
+				"color": mustBeInDarkMode ? "#AAAAAA40" : "#44444440"
+			}
+		},
+		"y": {
+			"grid": {
+				"color": mustBeInDarkMode ? "#AAAAAA40" : "#44444440"
+			}
+		}
+	},
 	"plugins": {
 		"tooltip": {
 			"callbacks": {
@@ -74,7 +95,7 @@ $: options = {
 			}
 		}
 	}
-}
+}))
 $: kind = (timeTags.length < 6 ? "pair" : "almost_full") as GridCellKind
 $: rowSpan = timeTags.length < 6 ? 4 : 5
 
@@ -88,7 +109,7 @@ ChartJS.register(Title, Tooltip, Legend, LineElement, LinearScale, PointElement,
 				<WeakenedTertiaryHeading>
 					{numericalTool.name} Line Chart
 				</WeakenedTertiaryHeading>
-				<Line data={constellationInfo} {options}/>
+				<Line data={constellationInfo} options={$options}/>
 				<ShortParagraph>
 					The line chart above shows the data from {timeTags[0]}{#if hasMultipleTimes}&nbsp; to {timeTags[timeTagCount - 1]}{/if}.
 				</ShortParagraph>

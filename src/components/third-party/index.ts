@@ -5,7 +5,7 @@ import { Chart, Chart as ChartJS } from "chart.js"
 import type { Currency } from "+/entity"
 
 import { DEFAULT_MINIMUM_FRACTION_DIGITS, DEFAULT_MAXIMUM_FRACTION_DIGITS } from "#/component"
-import { LIGHT_MODE, DARK_MODE } from "#/theme"
+import { DARK_MODE } from "#/theme"
 
 export function formatAmount(
 	currency: Currency | undefined,
@@ -71,6 +71,9 @@ export function setTheme(filename: string): void {
 
 export function setMode(modeName: string): void {
 	ChartJS.defaults.color = modeName === DARK_MODE
-		? "#FFF"
-		: "#000"
+		? "#DDD"
+		: "#222"
+	ChartJS.defaults.borderColor = modeName === DARK_MODE
+		? "#222"
+		: "#DDD"
 }
