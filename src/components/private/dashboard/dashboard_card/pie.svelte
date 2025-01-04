@@ -63,7 +63,8 @@ $: constellationInfo = constellationCollection.map(collection => {
 					constellation => constellation.stars[timeTagCount - i - 1].numerical_value
 				),
 				backgroundColor,
-				hoverBackgroundColor
+				hoverBackgroundColor,
+				"parsing": false
 			}))
 		},
 		"options": {
