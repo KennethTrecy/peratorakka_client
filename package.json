@@ -1,6 +1,6 @@
 {
 	"name": "peratorakka_client",
-	"version": "0.5.0",
+	"version": "0.5.1",
 	"description": "Client for any Peratorakka server.",
 	"homepage": "https://github.com/KennethTrecy/peratorakka_client",
 	"keywords": [
