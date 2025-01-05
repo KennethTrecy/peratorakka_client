@@ -20,9 +20,35 @@ function removeSource(event: CustomEvent<number>) {
 
 	sources = sources.filter((_, i) => i !== index)
 }
+
+function moveSourceUp(event: CustomEvent<number>) {
+	const index = event.detail
+
+	const newSources = [ ...sources ]
+	const currentSource = newSources[index]
+
+	newSources[index] = newSources[index - 1]
+	newSources[index - 1] = currentSource
+
+	sources = newSources
+}
+
+function moveSourceDown(event: CustomEvent<number>) {
+	const index = event.detail
+
+	const newSources = [ ...sources ]
+	const currentSource = newSources[index]
+
+	newSources[index] = newSources[index + 1]
+	newSources[index + 1] = currentSource
+
+	sources = newSources
+}
+
+$: sourceCount = sources.length
 </script>
 
-{#if sources.length === 0}
+{#if sourceCount === 0}
 	<ShortParagraph>
 		Add source of data to be shown first.
 	</ShortParagraph>
@@ -32,11 +58,14 @@ function removeSource(event: CustomEvent<number>) {
 	<SourceContainer
 		{isConnecting}
 		index={index}
+		maxIndex={sourceCount - 1}
 		bind:source={source}
 		{formulae}
 		{currencies}
 		{collections}
 		IDPrefix={`${IDPrefix}_${index}`}
 		{errors}
-		on:remove={removeSource}/>
+		on:remove={removeSource}
+		on:up={moveSourceUp}
+		on:down={moveSourceDown}/>
 {/each}

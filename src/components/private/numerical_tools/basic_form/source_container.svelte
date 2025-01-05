@@ -31,6 +31,7 @@ export let currencies: Currency[]
 export let collections: Collection[]
 
 export let index: number
+export let maxIndex: number
 export let source: AcceptableSource
 
 export let isConnecting: boolean
@@ -101,6 +102,15 @@ $: ACCEPTABLE_SOURCES = [
 		{/if}
 		<TextButton
 			label="Remove"
+			disabled={maxIndex === 0}
 			on:click={() => dispatch("remove", index)}/>
+		<TextButton
+			label="Move Up"
+			disabled={index === 0}
+			on:click={() => dispatch("up", index)}/>
+		<TextButton
+			label="Move Down"
+			disabled={index === maxIndex}
+			on:click={() => dispatch("down", index)}/>
 	</GeneralFieldContainer>
 {/if}
