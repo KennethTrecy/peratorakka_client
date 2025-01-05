@@ -37,10 +37,15 @@ export let source: AcceptableSource
 export let isConnecting: boolean
 export let errors: GeneralError[]
 
+let oldSource = source
 let oldType = source.type
 let currentType = source.type
 $: {
-	if (oldType !== currentType) {
+	if (JSON.stringify(oldSource) !== JSON.stringify(source)) {
+		oldSource = source
+		currentType = source.type
+		oldType = currentType
+	} else if (oldType !== currentType) {
 		oldType = currentType
 		switch (currentType) {
 			case "formula":
