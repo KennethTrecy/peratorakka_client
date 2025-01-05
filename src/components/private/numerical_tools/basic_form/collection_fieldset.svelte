@@ -27,6 +27,7 @@ export let collection: CollectionSource
 export let isConnecting: boolean
 export let errors: GeneralError[]
 
+let oldCollection = collection
 let collectionID = `${collection.collection_id}`
 let currencyID = `${collection.currency_id}`
 let exchangeRateBasis = collection.exchange_rate_basis
@@ -37,16 +38,28 @@ let mustShowCollectiveSum = collection.must_show_collective_sum
 let mustShowCollectiveAverage = collection.must_show_collective_average
 
 $: {
-	collection = {
-		...collection,
-		"collection_id": +collectionID,
-		"currency_id": +currencyID,
-		"exchange_rate_basis": exchangeRateBasis,
-		"stage_basis": stageBasis,
-		"side_basis": sideBasis,
-		"must_show_individual_amounts": mustShowIndividualAmounts,
-		"must_show_collective_sum": mustShowCollectiveSum,
-		"must_show_collective_average": mustShowCollectiveAverage
+	if (JSON.stringify(oldCollection) !== JSON.stringify(collection)) {
+		oldCollection = collection
+		collectionID = `${collection.collection_id}`
+		currencyID = `${collection.currency_id}`
+		exchangeRateBasis = collection.exchange_rate_basis
+		stageBasis = collection.stage_basis
+		sideBasis = collection.side_basis
+		mustShowIndividualAmounts = collection.must_show_individual_amounts
+		mustShowCollectiveSum = collection.must_show_collective_sum
+		mustShowCollectiveAverage = collection.must_show_collective_average
+	} else {
+		collection = {
+			...collection,
+			"collection_id": +collectionID,
+			"currency_id": +currencyID,
+			"exchange_rate_basis": exchangeRateBasis,
+			"stage_basis": stageBasis,
+			"side_basis": sideBasis,
+			"must_show_individual_amounts": mustShowIndividualAmounts,
+			"must_show_collective_sum": mustShowCollectiveSum,
+			"must_show_collective_average": mustShowCollectiveAverage
+		}
 	}
 }
 </script>
