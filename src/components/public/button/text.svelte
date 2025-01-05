@@ -21,7 +21,3 @@ $: buttonClasses = [
 	on:click>
 	<span>{label}</span>
 </button>
-
-<style lang="scss">
-@use "@/components/third-party/index";
-</style>

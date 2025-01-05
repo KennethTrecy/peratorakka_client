@@ -14,6 +14,12 @@ export let sources: AcceptableSource[]
 
 export let isConnecting: boolean
 export let errors: GeneralError[]
+
+function removeSource(event: CustomEvent<number>) {
+	const index = event.detail
+
+	sources = sources.filter((_, i) => i !== index)
+}
 </script>
 
 {#if sources.length === 0}
@@ -25,10 +31,12 @@ export let errors: GeneralError[]
 {#each sources as source, index}
 	<SourceContainer
 		{isConnecting}
+		index={index}
 		bind:source={source}
 		{formulae}
 		{currencies}
 		{collections}
 		IDPrefix={`${IDPrefix}_${index}`}
-		{errors}/>
+		{errors}
+		on:remove={removeSource}/>
 {/each}

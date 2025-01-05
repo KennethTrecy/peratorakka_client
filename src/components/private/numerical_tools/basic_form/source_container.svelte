@@ -2,6 +2,8 @@
 import type { GeneralError } from "+/rest"
 import type { Collection, Currency, Formula, AcceptableSource } from "+/entity"
 
+import { createEventDispatcher } from "svelte"
+
 import {
 	acceptableExchangeRateBases,
 	acceptableAmountStageBases,
@@ -15,12 +17,20 @@ import ChoiceListField from "$/form/choice_list_field.svelte"
 import FormulaFieldset from "%/numerical_tools/basic_form/formula_fieldset.svelte"
 import CollectionFieldset from "%/numerical_tools/basic_form/collection_fieldset.svelte"
 import GeneralFieldContainer from "$/form/general_field_container.svelte"
+import TextButton from "$/button/text.svelte"
+
+const dispatch = createEventDispatcher<{
+	"remove": number
+	"up": number
+	"down": number
+}>()
 
 export let IDPrefix: string
 export let formulae: Formula[]
 export let currencies: Currency[]
 export let collections: Collection[]
 
+export let index: number
 export let source: AcceptableSource
 
 export let isConnecting: boolean
@@ -89,5 +99,8 @@ $: ACCEPTABLE_SOURCES = [
 				{isConnecting}
 				{errors}/>
 		{/if}
+		<TextButton
+			label="Remove"
+			on:click={() => dispatch("remove", index)}/>
 	</GeneralFieldContainer>
 {/if}
