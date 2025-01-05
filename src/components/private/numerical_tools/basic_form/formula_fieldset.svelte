@@ -14,12 +14,14 @@ export let formula: FormulaSource
 export let isConnecting: boolean
 export let errors: GeneralError[]
 
-let currentFormulaID = `${formula.formula_id}`
-let oldFormulaID = `${formula.formula_id}`
+let oldFormula = formula
+let formulaID = `${formula.formula_id}`
 $: {
-	if (oldFormulaID !== currentFormulaID) {
-		oldFormulaID = currentFormulaID
-		formula = { ...formula, "formula_id": +currentFormulaID }
+	if (JSON.stringify(oldFormula) !== JSON.stringify(formula)) {
+		oldFormula = formula
+		formulaID = `${formula.formula_id}`
+	} else {
+		formula = { ...formula, "formula_id": +formulaID }
 	}
 }
 </script>
@@ -27,7 +29,7 @@ $: {
 <ChoiceListField
 	fieldName="Formula"
 	disabled={isConnecting}
-	bind:value={currentFormulaID}
+	bind:value={formulaID}
 	rawChoices={formulae}
 	choiceConverter={transformFormula}
 	{IDPrefix}
