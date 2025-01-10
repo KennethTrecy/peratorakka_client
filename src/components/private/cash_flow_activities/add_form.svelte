@@ -57,7 +57,10 @@ async function createCashFlowActivity() {
 			Cash flow activities are used to classify changes in the current amount of accounts and determine the amount of available liquid cash and cash equivalents. Usual cash flow activities are operating activities, investment activities, and financing activities.
 		</ElementalParagraph>
 		<ElementalParagraph>
-			A liquid financial account is an account that can be converted into cash immediately (e.g. bank deposits or physical cash in wallet). Illiquid financial account means that the account can be converted into cash after a long period or never at all (e.g. land or equipments).
+			A liquid financial account is an account that can be converted into cash immediately (e.g. bank deposits or physical cash in wallet). These are the accounts that do not need to be associated with cash flow activity in modifiers.
+		</ElementalParagraph>
+		<ElementalParagraph>
+			Meanwhile, an illiquid financial account means that the account can be converted into cash after a long period or never at all (e.g. land or equipments). These accounts are required to be associated with a cash flow activity in modifiers.
 		</ElementalParagraph>
 	</TextContainer>
 	<BasicForm
