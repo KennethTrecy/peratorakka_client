@@ -7,16 +7,18 @@ export default function makeShellContext(globalContext: ContextBundle): ContextB
 	const {
 		serverIcon,
 		hasToken,
-		hasUser
+		hasUser,
+		userName
 	} = globalContext as {
 		serverIcon: Readable<string>,
 		hasToken: Readable<boolean>,
 		hasUser: Readable<boolean>,
+		userName: Readable<string>
 	}
 
 	const menuItemInfos = derived(
-		[ serverIcon, hasToken, hasUser ],
-		([ currentServerIcon, hasTokenCurrently, hasUserCurrently ]) => {
+		[ serverIcon, hasToken, hasUser, userName ],
+		([ currentServerIcon, hasTokenCurrently, hasUserCurrently, userName ]) => {
 			return [
 				{
 					"type": "item",
@@ -25,16 +27,23 @@ export default function makeShellContext(globalContext: ContextBundle): ContextB
 					"label": "Server"
 				},
 				hasTokenCurrently && hasUserCurrently ? {
-					"type": "item",
-					"link": "/profile",
-					"icon": "edit",
-					"label": `Profile`
-				} : null,
-				hasTokenCurrently && hasUserCurrently ? {
-					"type": "item",
-					"link": "/log_out",
-					"icon": "logout",
-					"label": "Log out"
+					"type": "group",
+					"icon": "person",
+					"label": userName,
+					"items": [
+						{
+							"type": "item",
+							"link": "/profile",
+							"icon": "edit",
+							"label": `Profile`
+						},
+						{
+							"type": "item",
+							"link": "/log_out",
+							"icon": "logout",
+							"label": "Log out"
+						}
+					]
 				} : null,
 				hasTokenCurrently ? {
 					"type": "divider"

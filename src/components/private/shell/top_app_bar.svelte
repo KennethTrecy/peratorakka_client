@@ -33,9 +33,5 @@ ul {
 	> :global(li:nth-child(3)) {
 		order: 1;
 	}
-
-	> :global(li:nth-child(4)) {
-		order: 1;
-	}
 }
 </style>
