@@ -82,7 +82,7 @@ $: friendlyCreditActivityName = hasCreditCashFlowActivity
 	: null
 
 $: restorableItemOptions = makeRestorableItemOptions(
-	`/api/v1/accounts/${data.id}`,
+	`/api/v1/modifiers/${data.id}`,
 	{
 		"updateCacheData": () => {
 			data = {
