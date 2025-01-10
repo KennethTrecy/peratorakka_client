@@ -45,7 +45,7 @@ const availableSortCriteria = [
 	</Flex>
 	<GridCell kind="full" slot="cards">
 		<AutoGrid>
-			{#each data as entity, i}
+			{#each data as entity, i (entity.id)}
 				<DashboardCard
 					bind:data={entity}
 					{formulae}
