@@ -6,13 +6,13 @@ export let rowSpan: number = 0
 
 $: cellClasses =  (
 	kind === "wide"
-	? [ "s6", "m6", "l6" ]
+	? [ "s12", "m8", "l6" ]
 	: kind === "narrow"
-		? [ "s3", "m3", "l3" ]
+		? [ "s12", "m12", "l3" ]
 		: kind === "padder"
 			? [ "s3", "m3", "l3" ]
 			: kind === "almost_full"
-				? [ "s8", "m10", "l10" ]
+				? [ "s12", "m8", "l8" ]
 				: kind === "full"
 					? [ "s12" ]
 					: kind === "majority"
@@ -24,7 +24,7 @@ $: cellClasses =  (
 								: kind === "pair"
 									? [ "s12", "m6", "l6" ]
 									: kind === "hextet"
-										? [ "s4", "m2", "l2" ]
+										? [ "s4", "m4", "l2" ]
 										: []
 	).join(" ")
 $: role = kind === "padder" ? "presentation" : null
