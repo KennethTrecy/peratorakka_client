@@ -35,7 +35,7 @@ export let debitCashFlowActivityID: string
 export let creditCashFlowActivityID: string
 export let name: string
 export let description: string
-const kind: AcceptableModifierKind = ACCEPTABLE_MODIFIER_KINDS[0] as AcceptableModifierKind
+export const kind: AcceptableModifierKind = ACCEPTABLE_MODIFIER_KINDS[0] as AcceptableModifierKind
 export let action: AcceptableModifierAction
 export let forceDisabledFields: (keyof Modifier)[] = []
 
