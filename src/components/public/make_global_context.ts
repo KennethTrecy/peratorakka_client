@@ -13,8 +13,7 @@ import {
 	ACCESS_TOKEN_KEY,
 	ACCESS_TOKEN_METADATA_KEY,
 	THEME_NAME_KEY,
-
-	USER_EMAIL_KEY_v0_2_1
+	USER_NAME_KEY
 } from "#/storage_keys"
 
 import { setMode } from "!/index"
@@ -25,6 +24,7 @@ export default function makeGlobalContext(): ContextBundle {
 	const hasCompatibleServer = writable<boolean>(true)
 	const CSRFToken = writable<string>("")
 	const userEmail = writable<string>("")
+	const userName = writable<string>("")
 	const accessToken = writable<string>("")
 	const accessTokenMetadata = writable<Map<string, string>>(new Map())
 	const themeName = writable<string>(DARK_MODE)
@@ -149,6 +149,7 @@ export default function makeGlobalContext(): ContextBundle {
 	let stopStoringAccessToken: Unsubscriber = () => null as unknown as void
 	let stopStoringAccessTokenMetadata: Unsubscriber = () => null as unknown as void
 	let stopStoringUserEmail: Unsubscriber = () => null as unknown as void
+	let stopStoringUserName: Unsubscriber = () => null as unknown as void
 	let stopStoringThemeName: Unsubscriber = () => null as unknown as void
 
 	function initializeGlobalStates(): void {
@@ -159,9 +160,8 @@ export default function makeGlobalContext(): ContextBundle {
 			?? "[]"
 		const storedThemeName = window.localStorage.getItem(THEME_NAME_KEY)
 			?? LIGHT_MODE
-		const storedUserEmail = window.localStorage.getItem(USER_EMAIL_KEY_v0_2_1)
-			?? window.localStorage.getItem(USER_EMAIL_KEY)
-			?? ""
+		const storedUserEmail = window.localStorage.getItem(USER_EMAIL_KEY) ?? ""
+		const storedUserName = window.localStorage.getItem(USER_NAME_KEY) ?? ""
 
 		setTimeout(() => {
 			serverURL.set(storedServerURL)
@@ -169,6 +169,7 @@ export default function makeGlobalContext(): ContextBundle {
 			accessToken.set(storedAccessToken)
 			accessTokenMetadata.set(new Map(JSON.parse(storedAccessTokenMetadata)))
 			userEmail.set(storedUserEmail)
+			userName.set(storedUserName)
 			themeName.set(storedThemeName)
 			setMode(storedThemeName)
 			hasLoadedGlobalStates.set(true)
@@ -225,11 +226,14 @@ export default function makeGlobalContext(): ContextBundle {
 		})
 		stopStoringUserEmail = userEmail.subscribe(newUserEmail => {
 			if (typeof window !== "undefined") {
-				if (window.localStorage.getItem(USER_EMAIL_KEY_v0_2_1) !== null) {
-					window.localStorage.removeItem(USER_EMAIL_KEY_v0_2_1);
-				}
-
 				window.localStorage.setItem(USER_EMAIL_KEY, newUserEmail)
+			}
+
+			if (newUserEmail === "") userName.set("")
+		})
+		stopStoringUserName = userName.subscribe(newUserName => {
+			if (typeof window !== "undefined") {
+				window.localStorage.setItem(USER_NAME_KEY, newUserName)
 			}
 		})
 		stopStoringThemeName = themeName.subscribe(newMode => {
@@ -252,6 +256,7 @@ export default function makeGlobalContext(): ContextBundle {
 			stopStoringAccessTokenMetadata()
 			stopStoringUserEmail()
 			stopStoringThemeName()
+			stopStoringUserName()
 		}
 	}
 
@@ -261,6 +266,7 @@ export default function makeGlobalContext(): ContextBundle {
 		hasCompatibleServer,
 		CSRFToken,
 		userEmail,
+		userName,
 		accessToken,
 		accessTokenMetadata,
 		mustBeInDarkMode,
