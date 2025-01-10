@@ -58,7 +58,7 @@ $: constellationInfo = constellationCollection.map(collection => {
 		"name": collection.kind,
 		"chartInfo": {
 			labels,
-			"datasets": timeTags.map((tag, i) => ({
+			"datasets": timeTags.map((_, i) => ({
 				"data": collection.group.map(
 					constellation => constellation.stars[timeTagCount - i - 1].numerical_value
 				)
@@ -66,6 +66,7 @@ $: constellationInfo = constellationCollection.map(collection => {
 		},
 		"options": {
 			"responsive": true,
+			"animation": false,
 			"plugins": {
 				"autocolors": {
 					"mode": "data" as AutocolorsOptions["mode"]
@@ -117,8 +118,8 @@ ChartJS.register(Title, Tooltip, Legend, ArcElement, CategoryScale, autocolors)
 			}}/>
 	{:else}
 		<GridCell
-			kind={constellationCollection[i].group.length < 10 ? "pair" : "almost_full"}
-			rowSpan={constellationCollection[i].group.length < 10 ? 6 : 8}>
+			kind={constellationCollection[i].group.length < 10 ? "triad" : "almost_full"}
+			rowSpan={constellationCollection[i].group.length < 10 ? 3 * 2 : 5 * 2}>
 			<article class="card">
 				<div class="card-content">
 					<Flex mustPad={false} justifyContent="center">

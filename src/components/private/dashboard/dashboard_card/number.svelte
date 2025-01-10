@@ -31,8 +31,8 @@ $: reducedConstellations = constellations.filter(
 		kind={constellation.stars.length === 1 ? "hextet" : "narrow"}
 		rowSpan={
 			constellation.stars.length === 1
-				? 2
-				: Math.max(3, Math.ceil(constellation.stars.length / 1.5))
+				? 1 * 2
+				: Math.max(3, Math.ceil(constellation.stars.length / 1.5)) * 2 - 1
 		}>
 		<article class="card">
 			<div class="card-content">
@@ -45,7 +45,7 @@ $: reducedConstellations = constellations.filter(
 						)}
 					</WeakenedTertiaryHeading>
 					<ShortParagraph>
-						{constellation.name} for {timeTags[constellation.stars.length - 1]}. This card follows instructions from numerical tool named "{numericalTool.name}". {#if hasMultipleTimes}Previous values can be seen below.{/if}
+						{constellation.name} for {timeTags[constellation.stars.length - 1]}. {#if hasMultipleTimes}Previous values can be seen below.{/if}
 					</ShortParagraph>
 					{#if hasMultipleTimes}
 						<UnitDataTable>
@@ -76,7 +76,6 @@ $: reducedConstellations = constellations.filter(
 		</article>
 	</GridCell>
 {/each}
-
 
 <style lang="scss">
 @use "@/components/third-party/index";

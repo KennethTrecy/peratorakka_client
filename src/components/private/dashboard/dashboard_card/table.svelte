@@ -47,7 +47,7 @@ $: kind = (
 			? "almost_full"
 			: "full"
 ) as GridCellKind
-$: rowSpan = 1 + Math.floor(reducedConstellations.length / 2.25)
+$: rowSpan = Math.floor(reducedConstellations.length / 2.25) * 2
 </script>
 
 <GridCell {kind} {rowSpan}>

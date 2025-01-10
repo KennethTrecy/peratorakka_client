@@ -3,6 +3,7 @@ import type { Readable } from "svelte/store"
 import type { Currency, NumericalTool, AcceptableFormulaOutputFormat } from "+/entity"
 import type { NumericalToolConclusion } from "+/rest"
 import type { ContextBundle, GridCellKind } from "+/component"
+import type { ChartOptions } from "chart.js"
 import type { AutocolorsOptions } from "chartjs-plugin-autocolors"
 
 import autocolors from "chartjs-plugin-autocolors"
@@ -56,6 +57,7 @@ $: constellationInfo = {
 }
 $: options = derived([ mustBeInDarkMode ], ([ mustBeInDarkMode ]) => ({
 	"responsive": true,
+	"animation": false as ChartOptions<"line">["animation"],
 	"scales": {
 		"x": {
 			"grid": {
@@ -95,8 +97,16 @@ $: options = derived([ mustBeInDarkMode ], ([ mustBeInDarkMode ]) => ({
 		}
 	}
 }))
-$: kind = (timeTags.length < 6 ? "pair" : "almost_full") as GridCellKind
-$: rowSpan = timeTags.length < 6 ? 4 : 5
+$: kind = (
+	timeTags.length < 7
+		? "pair"
+		: (
+			timeTags.length < 10
+				? "almost_full"
+				: "full"
+			)
+	) as GridCellKind
+$: rowSpan = timeTags.length < 7 ? 3 * 2 - 1 : 4 * 2
 
 ChartJS.register(
 	Title, Tooltip, Legend, LineElement, LinearScale, PointElement, CategoryScale, autocolors
