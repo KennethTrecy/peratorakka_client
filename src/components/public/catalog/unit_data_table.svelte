@@ -2,7 +2,7 @@
 	import DataTableRow from "$/catalog/data_table_row.svelte"
 </script>
 
-<table class="responsive-table body-normal">
+<table class="body-normal">
 	<thead>
 		<DataTableRow>
 			<slot name="table_headers"/>
