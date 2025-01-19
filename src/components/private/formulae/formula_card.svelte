@@ -144,7 +144,7 @@ function isAcceptableExchangeRateBasis(data: string): data is AcceptableExchange
 			It converts financial amounts in {associatedCurrency?.code ?? "???"} before calculation of result using the latest exchange rate {friendlyExchangeRateBasis}. Result is formatted as {friendlyOutputFormat} showing up to {data.presentational_precision} significant digits.
 		</ShortParagraph>
 		<ShortParagraph>
-			Formula is <span>{data.formula}</span>
+			Formula has an assigned ID of {data.id} with the following equation: <span>{data.formula}</span>
 		</ShortParagraph>
 	</svelte:fragment>
 </CollectionItem>
