@@ -128,9 +128,11 @@ function isAcceptable(kind: string): kind is AcceptableAccountKind {
 		</ShortParagraph>
 	</svelte:fragment>
 	<svelte:fragment slot="resource_info">
-		<ShortParagraph>{data.description}</ShortParagraph>
+		{#if data.description}
+			<ShortParagraph>{data.description}</ShortParagraph>
+		{/if}
 		<ShortParagraph>
-			This {friendlyKind} account uses {associatedCurrency?.code ?? "???"} as its currency.
+			This {friendlyKind} account uses {associatedCurrency?.code ?? "???"} as its currency. The account ID is {data.id}.
 		</ShortParagraph>
 	</svelte:fragment>
 </CollectionItem>
