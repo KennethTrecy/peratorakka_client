@@ -80,7 +80,12 @@ function resetDraft() {
 	<ShortParagraph slot="force_delete_confirmation_message">
 		Deleting this cash flow activity may cause inaccuracy of the cash flow statements permanently.
 	</ShortParagraph>
-	<ShortParagraph slot="resource_info">
-		{data.description}
-	</ShortParagraph>
+	<svelte:fragment slot="resource_info">
+		{#if data.description}
+			<ShortParagraph>{data.description}</ShortParagraph>
+		{/if}
+		<ShortParagraph>
+			The cash flow activity ID is {data.id}.
+		</ShortParagraph>
+	</svelte:fragment>
 </CollectionItem>
