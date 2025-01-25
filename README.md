@@ -87,5 +87,5 @@ trademark holders unless explicitly stated.
 [Conventional Commits specification]: https://www.conventionalcommits.org/en/v1.0.0/
 [contributing guide]: ./CONTRIBUTING.md
 [server]: https://github.com/KennethTrecy/peratorakka_server
-[author's post]: https://www.linkedin.com/posts/kenneth-trecy-tobias_good-day-everyone-after-five-months-of-testing-activity-7134037085828616192-Xtvx
+[author's post]: https://www.linkedin.com/feed/update/urn:li:activity:7281521790454046720/
 [announcements]: https://github.com/KennethTrecy/peratorakka_client/discussions/categories/announcements
