@@ -62,6 +62,12 @@ export default function makeShellContext(globalContext: ContextBundle): ContextB
 				} : null,
 				hasTokenCurrently && hasUserCurrently ? {
 					"type": "item",
+					"link": "/precision_formats",
+					"icon": "decimal_increase",
+					"label": "Precision Formats"
+				} : null,
+				hasTokenCurrently && hasUserCurrently ? {
+					"type": "item",
 					"link": "/currencies",
 					"icon": "universal_currency_alt",
 					"label": "Currencies"
