@@ -15,6 +15,7 @@ export let errorFieldID: string = ""
 export let disabled: boolean
 export let value: string
 export let IDPrefix: string = ""
+export let supportText = ""
 export let errors: GeneralError[]
 export let rawChoices: unknown[]
 export let choiceConverter: (choice: any) => ChoiceInfo
@@ -59,7 +60,15 @@ $: {
 }
 </script>
 
-<GeneralField {fieldName} {errorFieldID} {IDPrefix} {errors} let:fieldID let:labelID let:helperID>
+<GeneralField
+	{fieldName}
+	{errorFieldID}
+	{IDPrefix}
+	{errors}
+	{supportText}
+	let:fieldID
+	let:labelID
+	let:helperID>
 	<select
 		id={fieldID}
 		bind:value={value}
