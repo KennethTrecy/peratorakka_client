@@ -3,6 +3,8 @@ import type { Currency, PrecisionFormat } from "+/entity"
 
 import { createEventDispatcher } from "svelte"
 
+import { UNKNOWN_OPTION } from "#/component"
+
 import makeJSONRequester from "$/rest/make_json_requester"
 
 import BasicForm from "%/currencies/basic_form.svelte"
@@ -19,7 +21,7 @@ const IDPrefix = "new_"
 export let isLoadingInitialData: boolean
 export let precisionFormats: PrecisionFormat[]
 
-let precisionFormatID = ""
+let precisionFormatID = UNKNOWN_OPTION
 let code = ""
 let name = ""
 
@@ -58,16 +60,10 @@ async function createCurrency() {
 	})
 }
 
-$: {
-	if (!isLoadingInitialData && precisionFormats.length > 0) {
-		if (precisionFormatID === "") {
-			precisionFormatID = `${precisionFormats[0].id}`
-		}
-	}
-}
+$: mayShowForm = precisionFormats.length > 0
 </script>
 
-<DescriptiveForm individualName="Currency" mayShowForm>
+<DescriptiveForm individualName="Currency" {mayShowForm} {isLoadingInitialData}>
 	<TextContainer slot="description">
 		<ElementalParagraph>
 			Currencies are used as symbols for different financial entries and other parts of the

@@ -3,6 +3,8 @@ import type { Currency, PrecisionFormat } from "+/entity"
 
 import { createEventDispatcher } from "svelte"
 
+import { UNKNOWN_OPTION } from "#/component"
+
 import checkArchivedState from "$/utility/check_archived_state"
 import makeRestorableItemOptions from "$/rest/make_restorable_item_options"
 
@@ -17,7 +19,7 @@ export let data: Currency
 const dispatch = createEventDispatcher<{
 	"remove": Currency
 }>()
-let precisionFormatID = `${data.precision_format_id}`
+let precisionFormatID = UNKNOWN_OPTION
 let code = data.code
 let name = data.name
 
@@ -54,7 +56,7 @@ function resetDraft() {
 
 $: precisionFormat = precisionFormats.find(
 	precisionFormat => `${precisionFormat.id}` === precisionFormatID
-) as PrecisionFormat
+)
 </script>
 
 <CollectionItem
@@ -96,7 +98,7 @@ $: precisionFormat = precisionFormats.find(
 			{data.name}
 		</ShortParagraph>
 		<ShortParagraph>
-			Numbers associated with this currency would be shown in {precisionFormat.name} precision format.
+			Numbers associated with this currency would be shown in {precisionFormat?.name ?? "unknown"} precision format.
 		</ShortParagraph>
 	</svelte:fragment>
 </CollectionItem>
