@@ -1,5 +1,5 @@
 <script lang="ts">
-import type { Currency } from "+/entity"
+import type { Currency, PrecisionFormat } from "+/entity"
 
 import { createEventDispatcher } from "svelte"
 
@@ -11,14 +11,15 @@ import CollectionItem from "$/catalog/collection_item.svelte"
 import EditActionCardButtonPair from "$/button/card/edit_action_pair.svelte"
 import ShortParagraph from "$/typography/short_paragraph.svelte"
 
+export let precisionFormats: PrecisionFormat[]
 export let data: Currency
 
 const dispatch = createEventDispatcher<{
 	"remove": Currency
 }>()
+let precisionFormatID = `${data.precision_format_id}`
 let code = data.code
 let name = data.name
-let presentationalPrecision = data.presentational_precision
 
 $: isArchived = checkArchivedState(data)
 $: IDPrefix = `old_currency_${data.id}`
@@ -29,17 +30,17 @@ $: restorableItemOptions = makeRestorableItemOptions(
 		"updateCacheData": () => {
 			data = {
 				...data,
+				precision_format_id: +precisionFormatID,
 				code,
-				name,
-				"presentational_precision": presentationalPrecision
+				name
 			}
 		},
 		"removeCacheData": () => dispatch("remove", data),
 		"makeUpdatedBody": () => ({
 			"currency": {
+				precision_format_id: precisionFormatID,
 				code,
-				name,
-				"presentational_precision": presentationalPrecision
+				name
 			}
 		})
 	}
@@ -48,8 +49,12 @@ $: restorableItemOptions = makeRestorableItemOptions(
 function resetDraft() {
 	code = data.code
 	name = data.name
-	presentationalPrecision = data.presentational_precision
+	precisionFormatID = `${data.precision_format_id}`
 }
+
+$: precisionFormat = precisionFormats.find(
+	precisionFormat => `${precisionFormat.id}` === precisionFormatID
+) as PrecisionFormat
 </script>
 
 <CollectionItem
@@ -64,10 +69,11 @@ function resetDraft() {
 		let:isConnecting
 		let:errors
 		id={formID}
+		bind:precisionFormatID={precisionFormatID}
 		bind:code={code}
 		bind:name={name}
-		bind:presentationalPrecision={presentationalPrecision}
 		{IDPrefix}
+		{precisionFormats}
 		{isConnecting}
 		{errors}
 		on:submit={confirmEdit}>
@@ -90,7 +96,7 @@ function resetDraft() {
 			{data.name}
 		</ShortParagraph>
 		<ShortParagraph>
-			May show up to {data.presentational_precision} significant digits.
+			Numbers associated with this currency would be shown in {precisionFormat.name} precision format.
 		</ShortParagraph>
 	</svelte:fragment>
 </CollectionItem>
