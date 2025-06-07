@@ -6,7 +6,7 @@ import transformPrecisionFormat from "$/form/choice_info_transformer/transform_p
 
 import BasicForm from "$/form/basic_form.svelte"
 import ChoiceListField from "$/form/choice_list_field.svelte"
-import ElementalParagraph from "$/typography/elemental_paragraph.svelte"
+import ShortParagraph from "$/typography/short_paragraph.svelte"
 import TextContainer from "$/typography/text_container.svelte"
 import TextField from "$/form/text_field.svelte"
 
@@ -23,7 +23,7 @@ export let id: string|null = null
 
 $: precisionFormat = precisionFormats.find(
 	precisionFormat => `${precisionFormat.id}` === precisionFormatID
-) as PrecisionFormat
+)
 </script>
 
 <BasicForm {id} {isConnecting} {errors} on:submit>
@@ -49,19 +49,21 @@ $: precisionFormat = precisionFormats.find(
 			bind:value={name}
 			{IDPrefix}
 			{errors}/>
-		<TextContainer>
-			<ElementalParagraph>
-				Selected precision format may
-				{#if (
-					precisionFormat.minimum_presentational_precision === 0
-					&& precisionFormat.maximum_presentational_precision === 0
-				)}
-					not shown any decimal places.
-				{:else}
-					show {precisionFormat.minimum_presentational_precision === 0 ? "" : `at least ${precisionFormat.minimum_presentational_precision} decimal places and `} {precisionFormat.maximum_presentational_precision} decimal places at most.
-				{/if}
-			</ElementalParagraph>
-		</TextContainer>
+		{#if precisionFormat}
+			<TextContainer>
+				<ShortParagraph>
+					Selected precision format may
+					{#if (
+						precisionFormat.minimum_presentational_precision === 0
+						&& precisionFormat.maximum_presentational_precision === 0
+					)}
+						not shown any decimal places.
+					{:else}
+						show {precisionFormat.minimum_presentational_precision === 0 ? "" : `at least ${precisionFormat.minimum_presentational_precision} decimal places and `} {precisionFormat.maximum_presentational_precision} decimal places at most.
+					{/if}
+				</ShortParagraph>
+			</TextContainer>
+		{/if}
 	</svelte:fragment>
 	<slot slot="button_group" name="button_group"/>
 </BasicForm>
