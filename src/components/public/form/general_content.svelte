@@ -4,6 +4,7 @@ import type { GeneralError } from "+/rest"
 import { isFieldError } from "+/rest"
 
 export let fieldName: string
+export let supportText: string = ""
 export let errorFieldID: string
 export let IDPrefix: string
 export let errors: GeneralError[]
@@ -28,7 +29,9 @@ $: message = errors.filter(
 
 <slot {fieldID} {labelID} {helperID}></slot>
 {#if message !== ""}
-	<span class="body-small" id={helperID}>{message}</span>
+	<span class="supporting-text" id={helperID}>{message}</span>
+{:else if supportText !== ""}
+	<span class="supporting-text" id={helperID}>{supportText}</span>
 {/if}
 
 <style lang="scss">

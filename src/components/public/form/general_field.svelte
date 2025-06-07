@@ -8,11 +8,13 @@ export let fieldName: string
 export let errorFieldID: string
 export let IDPrefix: string
 export let errors: GeneralError[]
+export let supportText: string = ""
 </script>
 
 <GeneralFieldContainer tag="div">
 	<GeneralContent
 		{fieldName}
+		{supportText}
 		{errorFieldID}
 		{IDPrefix}
 		{errors}
