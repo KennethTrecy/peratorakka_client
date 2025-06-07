@@ -1,5 +1,5 @@
 <script lang="ts">
-import type { Currency } from "+/entity"
+import type { Currency, PrecisionFormat } from "+/entity"
 
 import { createEventDispatcher } from "svelte"
 
@@ -15,9 +15,14 @@ const dispatch = createEventDispatcher<{
 	"create": Currency
 }>()
 const IDPrefix = "new_"
+
+export let isLoadingInitialData: boolean
+export let precisionFormats: PrecisionFormat[]
+
+let precisionFormatID = ""
 let code = ""
 let name = ""
-let presentationalPrecision = 12
+
 let { isConnecting, errors, send } = makeJSONRequester({
 	"path": "/api/v1/currencies",
 	"defaultRequestConfiguration": {
@@ -30,6 +35,7 @@ let { isConnecting, errors, send } = makeJSONRequester({
 				const document = await response.json()
 				const { currency } = document
 
+				precisionFormatID = `${precisionFormats[0].id}`
 				code = ""
 				name = ""
 				errors.set([])
@@ -44,12 +50,20 @@ async function createCurrency() {
 	await send({
 		"body": JSON.stringify({
 			"currency": {
+				"precision_format_id": parseInt(precisionFormatID),
 				code,
-				name,
-				"presentational_precision": presentationalPrecision
+				name
 			}
 		})
 	})
+}
+
+$: {
+	if (!isLoadingInitialData && precisionFormats.length > 0) {
+		if (precisionFormatID === "") {
+			precisionFormatID = `${precisionFormats[0].id}`
+		}
+	}
 }
 </script>
 
@@ -63,14 +77,15 @@ async function createCurrency() {
 		<ElementalParagraph>
 			One limitation is that the application tracks the currency conversions through previous
 			financial entries. Therefore, there is no network usage to check for current conversions
-			which is a beneficial effect.
+			which is a beneficial effect if you have a lot of currencies and save data usage.
 		</ElementalParagraph>
 	</TextContainer>
 	<BasicForm
 		slot="form"
+		{precisionFormats}
 		bind:code={code}
 		bind:name={name}
-		bind:presentationalPrecision={presentationalPrecision}
+		bind:precisionFormatID={precisionFormatID}
 		isConnecting={$isConnecting}
 		{IDPrefix}
 		errors={$errors}
