@@ -1,9 +1,9 @@
 <script lang="ts">
 import type { ContextBundle } from "+/component"
-import type { Currency } from "+/entity"
-import type { SearchMode, SortOrder } from "+/rest"
+import type { PrecisionFormat, Currency } from "+/entity"
+import type { GeneralError, SearchMode, SortOrder } from "+/rest"
 
-import { get, writable } from "svelte/store"
+import { get, writable, derived } from "svelte/store"
 import { onMount, getContext } from "svelte"
 import { afterNavigate, beforeNavigate, goto } from "$app/navigation"
 
@@ -11,6 +11,7 @@ import { GLOBAL_CONTEXT } from "#/contexts"
 import { SEARCH_NORMALLY, ASCENDING_ORDER, MAXIMUM_PAGINATED_LIST_LENGTH } from "#/rest"
 
 import assertAuthentication from "$/page_requirement/assert_authentication"
+import loadAllDependencies from "$/rest/load_all_dependencies"
 import makeJSONRequester from "$/rest/make_json_requester"
 
 import AddForm from "%/currencies/add_form.svelte"
@@ -29,15 +30,18 @@ assertAuthentication(globalContext, {
 	goto
 })
 
+let isRequestingDependencies = true
 let currencies: Currency[] = []
+let precisionFormats: PrecisionFormat[] = []
 
 let searchMode: SearchMode = SEARCH_NORMALLY
 let sortCriterion: string = "name"
 let sortOrder: SortOrder = ASCENDING_ORDER
 let lastOffset: number = 0
+let progressRate = 0
 
 const collectiveName = "currencies"
-const partialPath = `/api/v1/${collectiveName}`
+const partialPath = `/api/v2/${collectiveName}`
 let parameters: [string, string][] = [
 	[ "filter[search_mode]", searchMode as string ],
 	[ "sort[0][0]", sortCriterion ],
@@ -60,6 +64,8 @@ $: {
 	}`)
 }
 
+const dependencyErrors = writable([] as GeneralError[])
+
 let { isConnecting, errors, send } = makeJSONRequester({
 	"path": completePath,
 	"defaultRequestConfiguration": {
@@ -79,6 +85,11 @@ let { isConnecting, errors, send } = makeJSONRequester({
 	"expectedErrorStatusCodes": [ 401 ]
 })
 
+const allErrors = derived([ dependencyErrors, errors ], ([ dependencyErrors, errors ]) => [
+	...dependencyErrors,
+	...errors
+])
+
 async function reloadCurrencies() {
 	currencies = []
 	await send({})
@@ -92,6 +103,22 @@ async function loadList() {
 		return
 	}
 
+	isRequestingDependencies = true
+
+	await loadAllDependencies(globalContext, [
+		{
+			"partialPath": "/api/v2/precision_formats",
+			"mainSortCriterion": "name",
+			"resourceKey": "precision_formats",
+			"getResources": () => precisionFormats,
+			"setResources": newResources => { precisionFormats = newResources }
+		}
+	], {
+		"updateProgressRate": newProgressRate => { progressRate = newProgressRate },
+		"updateErrors": newErrors => { dependencyErrors.set(newErrors) }
+	})
+
+	isRequestingDependencies = false
 	await reloadCurrencies()
 }
 
@@ -130,17 +157,22 @@ function removeCurrency(event: CustomEvent<Currency>) {
 		<GridCell kind="full">
 			<PrimaryHeading>Currencies</PrimaryHeading>
 		</GridCell>
-		<AddForm on:create={addCurrency}/>
+		<AddForm
+			{precisionFormats}
+			isLoadingInitialData={isRequestingDependencies}
+			on:create={addCurrency}/>
 		<Collection
+			{precisionFormats}
 			data={currencies}
 			bind:searchMode={searchMode}
 			bind:sortCriterion={sortCriterion}
 			bind:sortOrder={sortOrder}
-			isConnecting={$isConnecting}
+			isConnecting={$isConnecting || isRequestingDependencies}
+			{progressRate}
 			listErrors={$errors}
 			on:remove={removeCurrency}/>
 		<ExtraResourceLoader
-			isConnectingForInitialList={$isConnecting}
+			isConnectingForInitialList={$isConnecting || isRequestingDependencies}
 			{partialPath}
 			{parameters}
 			{collectiveName}
