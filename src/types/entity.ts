@@ -36,9 +36,9 @@ export interface PrecisionFormat extends RestorableEntity {
 }
 
 export interface Currency extends RestorableEntity {
+	precision_format_id: number
 	name: string
 	code: string
-	presentational_precision: number
 }
 
 export interface CashFlowActivity extends RestorableEntity {
