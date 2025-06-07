@@ -44,7 +44,7 @@ let { isConnecting, errors, send } = makeJSONRequester({
 		{
 			"statusCode": 200,
 			"action": async (response: Response) => {
-				const { meta } = await response.json()
+				const { "@meta": meta } = await response.json()
 				const { data, expiration } = meta.token
 				const accessTokenMetadataRaw = new Map([
 					[ "type", expiration.type ],
