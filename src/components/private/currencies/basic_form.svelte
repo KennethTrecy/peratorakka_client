@@ -6,8 +6,6 @@ import transformPrecisionFormat from "$/form/choice_info_transformer/transform_p
 
 import BasicForm from "$/form/basic_form.svelte"
 import ChoiceListField from "$/form/choice_list_field.svelte"
-import ShortParagraph from "$/typography/short_paragraph.svelte"
-import TextContainer from "$/typography/text_container.svelte"
 import TextField from "$/form/text_field.svelte"
 
 export let IDPrefix: string
@@ -24,6 +22,20 @@ export let id: string|null = null
 $: precisionFormat = precisionFormats.find(
 	precisionFormat => `${precisionFormat.id}` === precisionFormatID
 )
+$: supportText = typeof precisionFormat === "undefined"
+	? ""
+	: `Selected precision format may ${
+		precisionFormat.minimum_presentational_precision === 0
+		&& precisionFormat.maximum_presentational_precision === 0
+		? "Selected precision format would not shown any decimal places."
+		: `show ${
+			precisionFormat.minimum_presentational_precision === 0
+				? ""
+				: `at least ${
+					precisionFormat.minimum_presentational_precision
+				} decimal places and `
+		} ${precisionFormat.maximum_presentational_precision} decimal places at most.`
+	}`
 </script>
 
 <BasicForm {id} {isConnecting} {errors} on:submit>
@@ -35,6 +47,7 @@ $: precisionFormat = precisionFormats.find(
 			bind:value={precisionFormatID}
 			rawChoices={precisionFormats}
 			choiceConverter={transformPrecisionFormat}
+			{supportText}
 			{IDPrefix}
 			{errors}/>
 		<TextField
@@ -49,21 +62,6 @@ $: precisionFormat = precisionFormats.find(
 			bind:value={name}
 			{IDPrefix}
 			{errors}/>
-		{#if precisionFormat}
-			<TextContainer>
-				<ShortParagraph>
-					Selected precision format may
-					{#if (
-						precisionFormat.minimum_presentational_precision === 0
-						&& precisionFormat.maximum_presentational_precision === 0
-					)}
-						not shown any decimal places.
-					{:else}
-						show {precisionFormat.minimum_presentational_precision === 0 ? "" : `at least ${precisionFormat.minimum_presentational_precision} decimal places and `} {precisionFormat.maximum_presentational_precision} decimal places at most.
-					{/if}
-				</ShortParagraph>
-			</TextContainer>
-		{/if}
 	</svelte:fragment>
 	<slot slot="button_group" name="button_group"/>
 </BasicForm>
