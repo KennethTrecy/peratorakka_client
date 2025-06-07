@@ -1,5 +1,5 @@
 <script lang="ts">
-import type { Currency } from "+/entity"
+import type { Currency, PrecisionFormat } from "+/entity"
 import type { GeneralError, SearchMode, SortOrder } from "+/rest"
 
 import Collection from "$/catalog/collection.svelte"
@@ -8,7 +8,10 @@ import Flex from "$/layout/flex.svelte"
 import ListSpecifier from "$/form/list_specifier.svelte"
 
 export let isConnecting: boolean
+export let progressRate: number
+export let precisionFormats: PrecisionFormat[]
 export let data: Currency[]
+
 export let searchMode: SearchMode
 export let sortCriterion: string
 export let sortOrder: SortOrder
@@ -27,7 +30,7 @@ $: isPresent = searchMode === "normal" || isPresentAndArchived
 $: isArchived = searchMode === "only_deleted" || isPresentAndArchived
 </script>
 
-<Collection collectiveName="Currencies" {isConnecting} {data} progressRate={0}>
+<Collection collectiveName="Currencies" {isConnecting} {data} {progressRate}>
 	<svelte:fragment slot="filled_collection_description">
 		Below are the currencies that you have added on to your profile.
 		They can be associated to financial accounts.
@@ -43,7 +46,10 @@ $: isArchived = searchMode === "only_deleted" || isPresentAndArchived
 	</Flex>
 	<svelte:fragment slot="cards">
 		{#each data as entity(entity.id)}
-			<CurrencyCard bind:data={entity} on:remove/>
+			<CurrencyCard
+				bind:data={entity}
+				{precisionFormats}
+				on:remove/>
 		{/each}
 	</svelte:fragment>
 	<svelte:fragment slot="empty_collection_description">
