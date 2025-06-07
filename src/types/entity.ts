@@ -29,6 +29,12 @@ export interface RestorableEntity extends Entity {
 	deleted_at: string|null
 }
 
+export interface PrecisionFormat extends RestorableEntity {
+	name: string
+	minimum_presentational_precision: number
+	maximum_presentational_precision: number
+}
+
 export interface Currency extends RestorableEntity {
 	name: string
 	code: string
