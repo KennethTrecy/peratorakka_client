@@ -49,7 +49,7 @@ let { isConnecting, errors, send } = makeJSONRequester({
 			"action": async (response: Response) => {
 				let responseDocument = await response.json()
 				errors.set([])
-				const overallFilteredCount = responseDocument.meta.overall_filtered_count
+				const overallFilteredCount = responseDocument["@meta"].overall_filtered_count
 				const resources = responseDocument[collectiveName]
 				const resourceCount = resources.length
 
@@ -93,8 +93,9 @@ $: {
 
 			if (lastOffset > 0) {
 				lastOffset = 0
-				reloadFully()
 			}
+
+			reloadFully()
 		}
 	}
 }
@@ -119,6 +120,9 @@ $: hasPossibleUnloadedResources = lastOffset !== 0 && lastOffset + 1 < lastOvera
 					on:click={loadResources}/>
 			{:else}
 				<ShortParagraph>There are no more items beyond this point.</ShortParagraph>
+				<TextButton
+					label="Reload"
+					on:click={reloadFully}/>
 			{/if}
 		</Flex>
 	</GridCell>
