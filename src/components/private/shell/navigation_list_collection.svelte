@@ -15,7 +15,9 @@ import NavigationThemeToggler from "%/shell/navigation_theme_toggler.svelte"
 const shell = getContext(SHELL_CONTEXT) as ContextBundle
 const menuItemInfos = shell.menuItemInfos as Readable<MenuItemInfo[]>
 
-export let isMenuShown: boolean
+let { isMenuShown = $bindable() }: {
+	isMenuShown: boolean
+} = $props()
 
 function close() {
 	isMenuShown = false
@@ -23,7 +25,7 @@ function close() {
 
 afterNavigate(close)
 
-let lastMenuItemInfos: (MenuItemInfo|MenuGroupInfo)[] = []
+let lastMenuItemInfos: (MenuItemInfo|MenuGroupInfo)[] = $state([])
 onDestroy(menuItemInfos.subscribe(newMenuItemInfos => {
 	lastMenuItemInfos = newMenuItemInfos as MenuItemInfo[]
 }))
