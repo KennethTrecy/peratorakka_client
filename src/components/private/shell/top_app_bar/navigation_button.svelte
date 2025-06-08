@@ -1,7 +1,8 @@
 <script lang="ts">
-let { label, icon }: {
-	label: string;
-	icon: string;
+let { label, icon, onclick }: {
+	label: string
+	icon: string
+	onclick: () => void
 } = $props();
 </script>
 
@@ -9,7 +10,8 @@ let { label, icon }: {
 	href="#!"
 	data-target="mobile-dropdown"
 	class="sidenav-trigger"
-	aria-label={label}>
+	aria-label={label}
+	{onclick}>
 	<i class="material-icons">{icon}</i>
 </a>
 
