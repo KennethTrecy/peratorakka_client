@@ -2,7 +2,7 @@
 	import type { Currency, Account, SummaryCalculation } from "+/entity"
 	import type { FinancialStatementGroup, ExchangeRateInfo } from "+/rest"
 
-	import { INCOME_ACCOUNT_KIND, EXPENSE_ACCOUNT_KIND } from "#/entity"
+	import { GENERAL_REVENUE_ACCOUNT_KIND, GENERAL_EXPENSE_ACCOUNT_KIND } from "#/entity"
 
 	import convertAmount from "$/utility/convert_amount"
 	import deriveExchangeRateQuickly from "$/utility/derive_exchange_rate_quickly"
@@ -21,9 +21,9 @@
 	export let accounts: Account[]
 	export let data: Omit<SummaryCalculation, "frozen_period_id">[]
 
-	$: incomeAccounts = accounts.filter(account => account.kind === INCOME_ACCOUNT_KIND)
+	$: incomeAccounts = accounts.filter(account => account.kind === GENERAL_REVENUE_ACCOUNT_KIND)
 	$: incomeAccountIDs = incomeAccounts.map(account => account.id)
-	$: expenseAccounts = accounts.filter(account => account.kind === EXPENSE_ACCOUNT_KIND)
+	$: expenseAccounts = accounts.filter(account => account.kind === GENERAL_EXPENSE_ACCOUNT_KIND)
 	$: expenseAccountIDs = expenseAccounts.map(account => account.id)
 
 	$: incomeCalculations = data.filter(
