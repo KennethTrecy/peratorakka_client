@@ -2,7 +2,7 @@
 import type { GeneralError } from "+/rest"
 import type { Currency, AcceptableAccountKind, Account } from "+/entity"
 
-import { acceptableAccountKinds } from "#/entity"
+import { acceptableAccountKinds, ACCOUNT_KIND_DESCRIPTIONS } from "#/entity"
 
 import transformCurrency from "$/form/choice_info_transformer/transform_currency"
 import transformString from "$/form/choice_info_transformer/transform_string"
@@ -24,7 +24,9 @@ export let forceDisabledFields: (keyof Account)[] = []
 
 export let isConnecting: boolean
 export let errors: GeneralError[]
-export let id = ""
+export let id: string|null = null
+
+$: accountKindSupportText = ACCOUNT_KIND_DESCRIPTIONS[kind]
 </script>
 
 <BasicForm {id} {isConnecting} {errors} on:submit>
@@ -44,6 +46,7 @@ export let id = ""
 			bind:value={kind}
 			rawChoices={ACCEPTABLE_ACCOUNT_KINDS}
 			choiceConverter={transformString}
+			supportText={accountKindSupportText}
 			{IDPrefix}
 			{errors}/>
 		<TextField
