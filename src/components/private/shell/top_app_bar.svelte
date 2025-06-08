@@ -3,7 +3,9 @@ import AppName from "%/shell/top_app_bar/app_name.svelte"
 import NavigationButton from "%/shell/top_app_bar/navigation_button.svelte"
 import NavigationListCollection from "%/shell/navigation_list_collection.svelte"
 
-export let isMenuShown: boolean
+let { isMenuShown = $bindable() }: {
+	isMenuShown: boolean;
+} = $props();
 
 function toggleMenu() {
 	isMenuShown = !isMenuShown
@@ -16,7 +18,7 @@ function toggleMenu() {
 		<NavigationButton
 			label="Open navigation menu"
 			icon="menu"
-			on:click={toggleMenu}/>
+			onclick={toggleMenu}/>
 		<ul class="right hide-on-med-and-down">
 			<NavigationListCollection bind:isMenuShown={isMenuShown}/>
 		</ul>
