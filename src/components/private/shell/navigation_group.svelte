@@ -1,18 +1,19 @@
 <script lang="ts">
 import type { MenuItemInfo, MenuGroupInfo } from "%/shell/types"
 
-import { get } from "svelte/store"
-import { page } from "$app/stores"
+import { page } from "$app/state"
 import { afterNavigate } from "$app/navigation"
 import { onMount } from "svelte"
 
 import NavigationItem from "%/shell/navigation_item.svelte"
 import NavigationGroup from "%/shell/navigation_group.svelte"
 
-export let label: string
-export let icon: string
-export let items: (MenuItemInfo|MenuGroupInfo)[]
-let currentAddress = ""
+let { label, icon, items }: {
+	label: string;
+	icon: string;
+	items: (MenuItemInfo|MenuGroupInfo)[];
+} = $props();
+let currentAddress = $state("")
 
 function hasActiveAddress(infos: (MenuItemInfo|MenuGroupInfo)[], currentAddress: string) {
 	for (const info of infos) {
@@ -28,20 +29,24 @@ function hasActiveAddress(infos: (MenuItemInfo|MenuGroupInfo)[], currentAddress:
 	return false
 }
 
-$: isActive = hasActiveAddress(items, currentAddress)
-$: current = (isActive ? "page" : null) as "page"|null
-$: itemClass = [
+let isActive = $derived(hasActiveAddress(items, currentAddress))
+let current = $derived((isActive ? "page" : null) as "page"|null)
+let itemClass = $derived([
 	"dropdown-trigger",
 	isActive ? "active" : "normal"
-].filter(Boolean).join(" ")
-$: id = label.replace(" ", "_").toLocaleLowerCase()+"-dropdown-"+Math.round(Math.random()*1_000_000)
-$: bookmark = `#${id}`
+].filter(Boolean).join(" "))
+let id = $derived(
+	label.replace(" ", "_").toLocaleLowerCase()
+	+ "-dropdown-"
+	+ Math.round(Math.random()*1_000_000)
+)
+let bookmark = $derived(`#${id}`)
 
 afterNavigate(() => {
-	currentAddress = get(page).url.pathname
+	currentAddress = page.url.pathname
 })
 
-let dropdownNavigatorTriggerElement: HTMLAnchorElement|null = null
+let dropdownNavigatorTriggerElement: HTMLAnchorElement|null = $state(null)
 onMount(() => {
 	if (dropdownNavigatorTriggerElement !== null) {
 		// @ts-ignore
@@ -52,7 +57,7 @@ onMount(() => {
 		});
 	}
 })
-$: {
+$effect(() => {
 	if (dropdownNavigatorTriggerElement !== null) {
 		setTimeout(() => {
 			if (dropdownNavigatorTriggerElement === null) return
@@ -68,7 +73,7 @@ $: {
 			});
 		}, 250)
 	}
-}
+});
 </script>
 
 <li>
