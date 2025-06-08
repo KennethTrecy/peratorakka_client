@@ -1,25 +1,29 @@
 <script lang="ts">
-	import type { ContextBundle } from "+/component"
+import type { Writable } from "svelte/store"
+import type { ContextBundle } from "+/component"
 
-	import { getContext } from "svelte"
-	import { afterNavigate, beforeNavigate, goto } from "$app/navigation"
+import { getContext } from "svelte"
+import { afterNavigate, beforeNavigate, goto } from "$app/navigation"
 
-	import { GLOBAL_CONTEXT } from "#/contexts"
+import { GLOBAL_CONTEXT } from "#/contexts"
 
-	import applyRequirements from "$/utility/apply_requirements"
+import applyRequirements from "$/utility/apply_requirements"
 
-	import Form from "%/log_in/form.svelte"
+import Form from "%/log_in/form.svelte"
 
-	const globalContext = getContext(GLOBAL_CONTEXT) as ContextBundle
+const globalContext = getContext(GLOBAL_CONTEXT) as ContextBundle as {
+	mustHaveToken: Writable<boolean>
+	mustBeGuest: Writable<boolean>
+}
 
-	applyRequirements(globalContext, [
-		globalContext.mustHaveToken,
-		globalContext.mustBeGuest
-	], {
-		afterNavigate,
-		beforeNavigate,
-		goto
-	})
+applyRequirements(globalContext, [
+	globalContext.mustHaveToken,
+	globalContext.mustBeGuest
+], {
+	afterNavigate,
+	beforeNavigate,
+	goto
+})
 </script>
 
 <svelte:head>
