@@ -61,16 +61,23 @@ export default function makeShellContext(globalContext: ContextBundle): ContextB
 					"label": "Register"
 				} : null,
 				hasTokenCurrently && hasUserCurrently ? {
-					"type": "item",
-					"link": "/precision_formats",
-					"icon": "decimal_increase",
-					"label": "Precision Formats"
-				} : null,
-				hasTokenCurrently && hasUserCurrently ? {
-					"type": "item",
-					"link": "/currencies",
-					"icon": "universal_currency_alt",
-					"label": "Currencies"
+					"type": "group",
+					"icon": "money",
+					"label": "Monetary Formats",
+					"items": [
+						{
+							"type": "item",
+							"link": "/precision_formats",
+							"icon": "decimal_increase",
+							"label": "Precision Formats"
+						},
+						{
+							"type": "item",
+							"link": "/currencies",
+							"icon": "universal_currency_alt",
+							"label": "Currencies"
+						}
+					]
 				} : null,
 				hasTokenCurrently && hasUserCurrently ? {
 					"type": "item",
