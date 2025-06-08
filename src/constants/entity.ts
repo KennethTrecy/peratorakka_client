@@ -69,6 +69,21 @@ export const ACCOUNT_KIND_AGGREGATED_LIST_PRIOITY = {
 	[UNKNOWN_ACCOUNT_KIND]: 11
 }
 
+export const ACCOUNT_KIND_DESCRIPTIONS = {
+	[LIQUID_ASSET_ACCOUNT_KIND]: "Liquid asset accounts can be converted into cash immediately (e.g. bank deposits or physical cash in wallet).",
+	[ITEMIZED_ASSET_ACCOUNT_KIND]: "Itemized asset accounts are used to keep track of specific items whose quantity, costs, and value may change over time (e.g. raw materials, manufactured goods, mutual fund units).",
+	[DEPRECIATIVE_ASSET_ACCOUNT_KIND]: "Depreciative asset accounts are used to keep track of assets whose value may only decrease over time (e.g. machinery, furniture).",
+	[GENERAL_ASSET_ACCOUNT_KIND]: "General asset account kind is an umbrella category for assets that are neither highly liquid, itemized, nor depreciative.",
+	[GENERAL_TEMPORARY_ACCOUNT_KIND]: "Temporary accounts are used to close other accounts for the next period.",
+	[NOMINAL_RETURN_ACCOUNT_KIND]: "Nominal return accounts represent money made or lost as a result of price changes (e.g. gross profits, capital gains, capital losses).",
+	[GENERAL_REVENUE_ACCOUNT_KIND]: "General revenue account kind is an umbrella category for revenue or income accounts that are not due to price changes.",
+	[LIABILITY_ACCOUNT_KIND]: "Liability accounts represent money owed to different parties (e.g. creditors, employees, suppliers).",
+	[EQUITY_ACCOUNT_KIND]: "Equity accounts represent money owned by different parties (e.g. shareholders, employees, creditors).",
+	[DIRECT_COST_ACCOUNT_KIND]: "Direct cost accounts represent costs that are directly attributable to the production or acquisition of itemized assets (e.g. wages, fees).",
+	[GENERAL_EXPENSE_ACCOUNT_KIND]: "General expense account kind is an umbrella category for expense accounts that are not due to direct costs.",
+	[UNKNOWN_ACCOUNT_KIND]: "Unknown account kind is an umbrella category for accounts that are not yet supported."
+}
+
 const UNKNOWN_FORMULA_OUTPUT_FORMAT = "unknown"
 export const RAW_FORMULA_OUTPUT_FORMAT = "raw"
 export const PERCENTAGE_FORMULA_OUTPUT_FORMAT = "percentage"
