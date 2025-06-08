@@ -16,10 +16,9 @@ const {
 	userEmail: Readable<string>
 }
 
-const shell = getContext(SHELL_CONTEXT) as ContextBundle
-const menuItemInfos = shell.menuItemInfos as Readable<MenuItemInfo[]>
-
-export let isMenuShown: boolean
+let { isMenuShown = $bindable() }: {
+	isMenuShown: boolean
+} = $props()
 
 function close() {
 	isMenuShown = false
@@ -27,17 +26,14 @@ function close() {
 
 afterNavigate(close)
 
-let sideNavigator: HTMLUListElement
+let sideNavigator: HTMLUListElement|null = $state(null)
+
 onMount(() => {
 	// @ts-ignore
-	var instances = window.M.Sidenav.init([ sideNavigator ], {
+	let instances = window.M.Sidenav.init([ sideNavigator ], {
 		// specify options here
-	});
+	})
 })
-let lastMenuItemInfos: MenuItemInfo[] = []
-onDestroy(menuItemInfos.subscribe(newMenuItemInfos => {
-	lastMenuItemInfos = newMenuItemInfos as MenuItemInfo[]
-}))
 </script>
 
 <ul class="sidenav" id="mobile-dropdown" bind:this={sideNavigator}>
