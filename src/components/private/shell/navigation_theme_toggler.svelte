@@ -7,19 +7,24 @@ import { onMount, getContext } from "svelte"
 import { GLOBAL_CONTEXT } from "#/contexts"
 import { DARK_MODE, LIGHT_MODE } from "#/theme"
 
-const globalContext = getContext(GLOBAL_CONTEXT) as ContextBundle
-
-$: themeName = globalContext.themeName as Writable<string>
-$: mustBeInDarkMode = globalContext.mustBeInDarkMode as Readable<boolean>
-
-$: if (typeof window !== "undefined") {
-	document.documentElement.setAttribute(
-		"theme",
-		$themeName
-	)
+const {
+	themeName,
+	mustBeInDarkMode
+} = getContext(GLOBAL_CONTEXT) as ContextBundle as {
+	themeName: Writable<string>
+	mustBeInDarkMode: Readable<boolean>
 }
-$: modeIcon = $mustBeInDarkMode ? "dark_mode" : "light_mode"
-$: currentTheme = $mustBeInDarkMode ? DARK_MODE : LIGHT_MODE
+
+$effect(() => {
+	if (typeof window !== "undefined") {
+		document.documentElement.setAttribute(
+			"theme",
+			$themeName
+		)
+	}
+});
+let modeIcon = $derived(mustBeInDarkMode ? "dark_mode" : "light_mode")
+let currentTheme = $derived(mustBeInDarkMode ? DARK_MODE : LIGHT_MODE)
 
 onMount(() => {
 	$themeName = document.documentElement.getAttribute("theme") ?? LIGHT_MODE
@@ -41,7 +46,7 @@ function toggleThemeThoughMouse(event: MouseEvent): void {
 		data-set-theme={currentTheme}
 		data-act-class={LIGHT_MODE}
 		aria-label="Toggle theme"
-		on:click={toggleThemeThoughMouse}
+		onclick={toggleThemeThoughMouse}
 		class="normal">
 		<i class="material-icons" aria-hidden="true">{modeIcon}</i>
 		<span>{$mustBeInDarkMode ? "Dark" : "Light"}</span>
