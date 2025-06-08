@@ -22,13 +22,13 @@ const IDPrefix = "new_"
 export let isLoadingInitialData: boolean
 export let currencies: Currency[]
 
-export let currencyID: string = UNKNOWN_OPTION
-export let name: string = ""
-export let description: string =""
-export let kind: AcceptableAccountKind = acceptableAccountKinds[0]
+let currencyID: string = UNKNOWN_OPTION
+let name: string = ""
+let description: string =""
+let kind: AcceptableAccountKind = acceptableAccountKinds[0]
 
 let { isConnecting, errors, send } = makeJSONRequester({
-	"path": "/api/v1/accounts",
+	"path": "/api/v2/accounts",
 	"defaultRequestConfiguration": {
 		"method": "POST"
 	},

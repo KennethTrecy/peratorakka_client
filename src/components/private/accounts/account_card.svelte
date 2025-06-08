@@ -26,7 +26,7 @@ let description = data.description
 let kind = fallbackToAceptableKind(data.kind)
 let forceDisabledFields: (keyof Account)[] = [
 	"currency_id",
-	"kind"
+	// "kind"
 ]
 
 $: isArchived = checkArchivedState(data)
@@ -37,7 +37,7 @@ $: associatedCurrency = currencies.find(
 )
 $: friendlyKind = convertSnakeCaseToProperCase(data.kind).toLocaleLowerCase()
 $: restorableItemOptions = makeRestorableItemOptions(
-	`/api/v1/accounts/${data.id}`,
+	`/api/v2/accounts/${data.id}`,
 	{
 		"updateCacheData": () => {
 			data = {

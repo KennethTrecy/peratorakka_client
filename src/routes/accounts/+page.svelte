@@ -46,7 +46,7 @@ let lastOffset: number = 0
 let progressRate = 0
 
 const collectiveName = "accounts"
-const partialPath = `/api/v1/${collectiveName}`
+const partialPath = `/api/v2/${collectiveName}`
 let parameters: [string, string][] = [
 	[ "filter[search_mode]", searchMode as string ],
 	[ "sort[0][0]", sortCriterion ],
@@ -115,7 +115,7 @@ async function loadList() {
 
 	await loadAllDependencies(globalContext, [
 		{
-			"partialPath": "/api/v1/currencies",
+			"partialPath": "/api/v2/currencies",
 			"mainSortCriterion": "name",
 			"resourceKey": "currencies",
 			"getResources": () => currencies,
