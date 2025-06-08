@@ -1,6 +1,8 @@
 <script lang="ts">
-export let label: string
-export let icon: string
+let { label, icon }: {
+	label: string;
+	icon: string;
+} = $props();
 </script>
 
 <a
