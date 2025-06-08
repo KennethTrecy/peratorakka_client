@@ -1,4 +1,5 @@
 <script lang="ts">
+import type { Snippet } from "svelte"
 import { onMount, onDestroy, setContext } from "svelte"
 
 import makeGlobalContext from "$/make_global_context"
@@ -10,7 +11,9 @@ import NavigationDrawer from "%/shell/navigation_drawer.svelte"
 
 const globalContext = makeGlobalContext()
 
-export let isMenuShown = false
+let { main }: { main: Snippet } = $props()
+
+let isMenuShown = $state(false)
 
 setContext(GLOBAL_CONTEXT, globalContext)
 setContext(SHELL_CONTEXT, makeShellContext(globalContext))
@@ -40,7 +43,7 @@ onDestroy(globalContext.unsubscribeWatchedGlobalStates as () => void)
 	<TopAppBar bind:isMenuShown={isMenuShown}/>
 	<NavigationDrawer bind:isMenuShown={isMenuShown}/>
 	<main>
-		<slot name="main"></slot>
+		{@render main()}
 	</main>
 	<footer>
 		<p>
