@@ -1,21 +1,22 @@
 <script lang="ts">
-import { get } from "svelte/store"
-import { page } from "$app/stores"
+import { page } from "$app/state"
 import { afterNavigate } from "$app/navigation"
 
-export let address: string
-export let label: string
-export let icon: string
-let currentAddress = ""
+let { address, label, icon }: {
+	address: string;
+	label: string;
+	icon: string;
+} = $props()
+let currentAddress = $state("")
 
-$: isActive = address === currentAddress
-$: current = (isActive ? "page" : null) as "page"|null
-$: itemClass = [
+let isActive = $derived(address === currentAddress)
+let current = $derived((isActive ? "page" : null) as "page"|null)
+let itemClass = $derived([
 	isActive ? "active" : "normal"
-].filter(Boolean).join(" ")
+].filter(Boolean).join(" "))
 
 afterNavigate(() => {
-	currentAddress = get(page).url.pathname
+	currentAddress = page.url.pathname
 })
 </script>
 
