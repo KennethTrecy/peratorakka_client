@@ -39,13 +39,14 @@ onMount(() => {
 <ul class="sidenav" id="mobile-dropdown" bind:this={sideNavigator}>
 	<li>
 		<div class="user-view">
-			<span class="name">Current User</span>
-			<span class="email">{$userEmail}</span>
+			{#if $userEmail === ""}
+				<span class="name">Guest mode</span>
+				<span class="email">You are not yet identified by the server.</span>
+			{:else}
+				<span class="name">Current User</span>
+				<span class="email">{$userEmail}</span>
+			{/if}
 		</div>
 	</li>
 	<NavigationListCollection {isMenuShown}/>
 </ul>
-
-<style lang="scss">
-@use "@/components/third-party/index";
-</style>
