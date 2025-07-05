@@ -1,14 +1,17 @@
 <script lang="ts">
-export let tag: string
+import type { Snippet } from "svelte"
+
+let { tag, children }: {
+	tag: string
+	children: Snippet
+} = $props()
 </script>
 
 <svelte:element this={tag} class="input-field">
-	<slot></slot>
+	{@render children()}
 </svelte:element>
 
 <style lang="scss">
-@use "@/components/third-party/index";
-
 :global(.input-field:has([disabled])) {
 	--input-color: var(--md-ref-palette-neutral60);
 	--md-sys-color-on-surface: var(--input-color);
