@@ -1,7 +1,9 @@
 <script lang="ts">
-	export let address: string
+let { address }: {
+	address: string
+} = $props()
 
-	$: addressParts = address.split(".")
+let addressParts = $derived(address.split("."))
 </script>
 
 <code>
