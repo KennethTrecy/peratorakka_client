@@ -80,28 +80,35 @@ export default function makeShellContext(globalContext: ContextBundle): ContextB
 					]
 				} : null,
 				hasTokenCurrently && hasUserCurrently ? {
-					"type": "item",
-					"link": "/cash_flow_activities",
-					"icon": "dynamic_feed",
-					"label": "Cash Flow Activities"
-				} : null,
-				hasTokenCurrently && hasUserCurrently ? {
-					"type": "item",
-					"link": "/accounts",
-					"icon": "category",
-					"label": "Chart of Accounts"
-				} : null,
-				hasTokenCurrently && hasUserCurrently ? {
-					"type": "item",
-					"link": "/modifiers",
-					"icon": "component_exchange",
-					"label": "Modifiers"
-				} : null,
-				hasTokenCurrently && hasUserCurrently ? {
-					"type": "item",
-					"link": "/financial_entries",
-					"icon": "receipt_long",
-					"label": "General Ledger"
+					"type": "group",
+					"icon": "checkbook",
+					"label": "Ledger Labels",
+					"items": [
+						{
+							"type": "item",
+							"link": "/cash_flow_activities",
+							"icon": "dynamic_feed",
+							"label": "Cash Flow Activities"
+						},
+						{
+							"type": "item",
+							"link": "/accounts",
+							"icon": "category",
+							"label": "Chart of Accounts"
+						},
+						{
+							"type": "item",
+							"link": "/modifiers",
+							"icon": "component_exchange",
+							"label": "Modifiers"
+						},
+						{
+							"type": "item",
+							"link": "/financial_entries",
+							"icon": "receipt_long",
+							"label": "General Ledger"
+						}
+					]
 				} : null,
 				hasTokenCurrently && hasUserCurrently ? {
 					"type": "group",
