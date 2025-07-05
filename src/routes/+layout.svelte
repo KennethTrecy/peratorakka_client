@@ -1,8 +1,15 @@
 <script lang="ts">
-	import "@/components/third-party"
-	import Shell from "%/shell.svelte"
+import "@/components/third-party/_index.scss"
+import type { Snippet } from "svelte"
+
+import Shell from "%/shell.svelte"
+
+let { children }: { children: Snippet } = $props()
 </script>
 
+
 <Shell>
-	<slot slot="main"></slot>
+	{#snippet main()}
+		{@render children()}
+	{/snippet}
 </Shell>
