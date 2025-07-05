@@ -1,14 +1,25 @@
 <script lang="ts">
+import type { Snippet } from "svelte"
 import type { GeneralError } from "+/rest"
 
 import GeneralFieldContainer from "$/form/general_field_container.svelte"
 import GeneralContent from "$/form/general_content.svelte"
 
-export let fieldName: string
-export let errorFieldID: string
-export let IDPrefix: string
-export let errors: GeneralError[]
-export let supportText: string = ""
+let {
+	fieldName,
+	errorFieldID,
+	IDPrefix,
+	errors,
+	supportText = "",
+	input
+}: {
+	fieldName: string
+	errorFieldID: string
+	IDPrefix: string
+	errors: GeneralError[]
+	supportText?: string
+	input: Snippet<[ { fieldID: string, labelID: string, helperID: string } ]>
+} = $props()
 </script>
 
 <GeneralFieldContainer tag="div">
@@ -17,15 +28,14 @@ export let supportText: string = ""
 		{supportText}
 		{errorFieldID}
 		{IDPrefix}
-		{errors}
-		let:fieldID
-		let:labelID
-		let:helperID>
-		<slot {fieldID} {labelID} {helperID}></slot>
-		<label for={fieldID} id={labelID}>{fieldName}</label>
+		{errors}>
+		{#snippet children({ fieldID, labelID, helperID })}
+			{@render input({ fieldID, labelID, helperID, })}
+			<label for={fieldID} id={labelID}>{fieldName}</label>
+		{/snippet}
 	</GeneralContent>
 </GeneralFieldContainer>
 
-<style lang="scss">
-@use "@/components/third-party/index";
+<style>
+label { width: 100%; }
 </style>
