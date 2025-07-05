@@ -1,16 +1,20 @@
 <script lang="ts">
+import type { Snippet } from "svelte"
 import type { GridCellKind } from "+/component"
 
-export let kind: GridCellKind
-export let rowSpan: number = 0
+let { kind, rowSpan = 0, children }: {
+	kind: GridCellKind
+	rowSpan?: number
+	children?: Snippet
+} = $props()
 
-$: cellClasses =  (
+let cellClasses =  $derived((
 	kind === "wide"
 	? [ "s12", "m8", "l6" ]
 	: kind === "narrow"
 		? [ "s12", "m12", "l3" ]
 		: kind === "padder"
-			? [ "s3", "m3", "l3" ]
+			? [ "s12", "m2", "l3" ]
 			: kind === "almost_full"
 				? [ "s12", "m8", "l8" ]
 				: kind === "full"
@@ -26,14 +30,10 @@ $: cellClasses =  (
 									: kind === "hextet"
 										? [ "s4", "m4", "l2" ]
 										: []
-	).join(" ")
-$: role = kind === "padder" ? "presentation" : null
+	).join(" "))
+let role = $derived(kind === "padder" ? "presentation" : null)
 </script>
 
 <div class={cellClasses} {role} style={rowSpan > 0 ? "grid-row: span "+rowSpan : ""}>
-	<slot/>
+	{@render children?.()}
 </div>
-
-<style lang="scss">
-@use "@/components/third-party/index";
-</style>
