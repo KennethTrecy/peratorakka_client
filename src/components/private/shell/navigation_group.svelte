@@ -9,10 +9,10 @@ import NavigationItem from "%/shell/navigation_item.svelte"
 import NavigationGroup from "%/shell/navigation_group.svelte"
 
 let { label, icon, items }: {
-	label: string;
-	icon: string;
-	items: (MenuItemInfo|MenuGroupInfo)[];
-} = $props();
+	label: string
+	icon: string
+	items: (MenuItemInfo|MenuGroupInfo)[]
+} = $props()
 let currentAddress = $state("")
 
 function hasActiveAddress(infos: (MenuItemInfo|MenuGroupInfo)[], currentAddress: string) {
@@ -35,6 +35,7 @@ let itemClass = $derived([
 	"dropdown-trigger",
 	isActive ? "active" : "normal"
 ].filter(Boolean).join(" "))
+let labelClass = $derived(label.includes(" ") ? "wrap" : null)
 let id = $derived(
 	label.replace(" ", "_").toLocaleLowerCase()
 	+ "-dropdown-"
@@ -84,7 +85,7 @@ $effect(() => {
 		href={bookmark}
 		bind:this={dropdownNavigatorTriggerElement}>
 		<i class="material-icons" aria-hidden="true">{icon}</i>
-		<span>{label}</span>
+		<span class={labelClass}>{label}</span>
 		<i class="material-icons right">arrow_drop_down</i>
 	</a>
 	<ul {id} class="dropdown-content">
@@ -105,16 +106,37 @@ $effect(() => {
 </li>
 
 <style lang="scss">
-@use "@/components/third-party/index";
+li {
+	.normal, .active {
+		display: flex;
+		flex-flow: row nowrap;
+		gap: 0.5rem;
 
-.normal, .active {
-	display: flex;
-	flex-flow: row nowrap;
-	gap: 0.5rem;
+		> i {
+			display: block;
+			float: none;
+			height: unset;
+		}
+	}
+
+	@media only screen and (min-width: 993px) and (max-width: 1599px) {
+		flex-grow: 1;
+
+		.normal, .active {
+			justify-content: center;
+		}
+	}
 }
 
-li.dropdown-content ul :global(li a i.material-icons) {
-	height: initial;
-	margin: 0px;
+li ul.dropdown-content {
+	:global(li a) {
+		@media only screen and (min-width: 993px) and (max-width: 1599px) {
+			justify-content: left;
+		}
+	}
+
+	:global(li a > i.material-icons) {
+		margin-right: 0;
+	}
 }
 </style>

@@ -23,18 +23,17 @@ $effect(() => {
 		)
 	}
 });
-let modeIcon = $derived(mustBeInDarkMode ? "dark_mode" : "light_mode")
-let currentTheme = $derived(mustBeInDarkMode ? DARK_MODE : LIGHT_MODE)
+let modeIcon = $derived($mustBeInDarkMode ? "dark_mode" : "light_mode")
+let currentTheme = $derived($mustBeInDarkMode ? DARK_MODE : LIGHT_MODE)
 
 onMount(() => {
 	$themeName = document.documentElement.getAttribute("theme") ?? LIGHT_MODE
 })
 
-function toggleThemeThoughMouse(event: MouseEvent): void {
+function toggleThemeThroughMouse(event: MouseEvent): void {
 	event.preventDefault()
 	$themeName = $themeName === DARK_MODE ? LIGHT_MODE : DARK_MODE
 }
-
 </script>
 
 <li>
@@ -46,7 +45,7 @@ function toggleThemeThoughMouse(event: MouseEvent): void {
 		data-set-theme={currentTheme}
 		data-act-class={LIGHT_MODE}
 		aria-label="Toggle theme"
-		onclick={toggleThemeThoughMouse}
+		onclick={toggleThemeThroughMouse}
 		class="normal">
 		<i class="material-icons" aria-hidden="true">{modeIcon}</i>
 		<span>{$mustBeInDarkMode ? "Dark" : "Light"}</span>
@@ -54,11 +53,25 @@ function toggleThemeThoughMouse(event: MouseEvent): void {
 </li>
 
 <style lang="scss">
-@use "@/components/third-party/index";
+li {
+	.normal {
+		display: flex;
+		flex-flow: row nowrap;
+		gap: 0.5rem;
 
-a.normal {
-	display: flex;
-	flex-flow: row nowrap;
-	gap: 0.5rem;
+		> i {
+			display: block;
+			float: none;
+			height: unset;
+		}
+	}
+
+	@media only screen and (min-width: 993px) and (max-width: 1599px) {
+		flex-grow: 1;
+
+		.normal {
+			justify-content: center;
+		}
+	}
 }
 </style>

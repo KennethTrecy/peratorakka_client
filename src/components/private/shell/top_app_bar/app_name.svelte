@@ -6,8 +6,6 @@
 </span>
 
 <style lang="scss">
-@use "@/components/third-party/index";
-
 .brand-logo {
 	display: flex;
 	flex-flow: row wrap;
@@ -18,7 +16,6 @@
 	> img {
 		height: 3rem;
 		width: auto;
-		border: 1px index.$surface solid;
 		border-radius: 6px;
 	}
 
@@ -28,6 +25,10 @@
 	@media only screen and (min-width: 993px) {
 		padding-left: 1rem;
 		padding-right: 1rem;
+	}
+
+	@media only screen and (max-width: 992px) {
+		width: 100%;
 	}
 }
 </style>

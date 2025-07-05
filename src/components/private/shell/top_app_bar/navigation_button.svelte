@@ -3,7 +3,7 @@ let { label, icon, onclick }: {
 	label: string
 	icon: string
 	onclick: () => void
-} = $props();
+} = $props()
 </script>
 
 <a
@@ -14,7 +14,3 @@ let { label, icon, onclick }: {
 	{onclick}>
 	<i class="material-icons">{icon}</i>
 </a>
-
-<style lang="scss">
-@use "@/components/third-party/index";
-</style>

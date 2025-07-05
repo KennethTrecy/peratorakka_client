@@ -53,8 +53,6 @@ onDestroy(globalContext.unsubscribeWatchedGlobalStates as () => void)
 </div>
 
 <style lang="scss">
-@use "@/components/third-party/index";
-
 .shell {
 	width: 100%;
 	min-height: 100%;

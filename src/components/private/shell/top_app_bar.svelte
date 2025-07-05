@@ -4,8 +4,8 @@ import NavigationButton from "%/shell/top_app_bar/navigation_button.svelte"
 import NavigationListCollection from "%/shell/navigation_list_collection.svelte"
 
 let { isMenuShown = $bindable() }: {
-	isMenuShown: boolean;
-} = $props();
+	isMenuShown: boolean
+} = $props()
 
 function toggleMenu() {
 	isMenuShown = !isMenuShown
@@ -26,14 +26,26 @@ function toggleMenu() {
 </nav>
 
 <style lang="scss">
-@use "@/components/third-party/index";
-
 ul {
 	display: flex;
 	flex-flow: row nowrap;
 
 	> :global(li:nth-child(3)) {
 		order: 1;
+	}
+}
+
+@media only screen and (min-width: 993px) and (max-width: 1599px) {
+	nav {
+		height: calc(var(--navbar-height) * 2);
+
+		> .nav-wrapper > ul {
+			margin-top: var(--navbar-height);
+			padding-left: 0px;
+			justify-content: stretch;
+			width: 100%;
+			height: 50%;
+		}
 	}
 }
 </style>
