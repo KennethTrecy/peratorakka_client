@@ -1,26 +1,33 @@
 <script lang="ts">
+import type { Snippet } from "svelte"
 import type { FlexDirection, FlexJustifyContent } from "+/component"
 
-export let direction: FlexDirection = "row"
-export let justifyContent: FlexJustifyContent = "start"
-export let mustPad = true
+let {
+	direction = "row",
+	justifyContent = "start",
+	mustPad = true,
+	children
+}: {
+	direction?: FlexDirection
+	justifyContent?: FlexJustifyContent
+	mustPad?: boolean
+	children: Snippet
+} = $props()
 
-$: flexClasses = [
+let flexClasses = $derived([
 	`${direction}-direction`,
 	justifyContent,
 	mustPad && "pad"
-].filter(Boolean).join(" ")
+].filter(Boolean).join(" "))
 </script>
 
 <div class={flexClasses}>
-	<slot/>
+	{@render children()}
 </div>
 
 <style lang="scss">
 @use "sass:map";
 @use "sass:math";
-@use "@/components/third-party/index";
-
 @use "@material/layout-grid/variables";
 
 div {
