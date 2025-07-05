@@ -1,10 +1,12 @@
 <script lang="ts">
-export let isLoading: boolean
-export let progressBarLabel: string
-export let progressRate: number = 0
+let { isLoading, progressBarLabel, progressRate = 0 }: {
+	isLoading: boolean
+	progressBarLabel: string
+	progressRate?: number
+} = $props()
 
-$: isFinished = progressRate === 1
-$: isDetermined = progressRate !== 0 || !isLoading
+let isFinished = $derived(progressRate === 1)
+let isDetermined = $derived(progressRate !== 0 || !isLoading)
 </script>
 
 {#if isLoading}
@@ -24,9 +26,7 @@ $: isDetermined = progressRate !== 0 || !isLoading
 {/if}
 
 <style lang="scss">
-@use "@/components/third-party/index";
-
 .indeterminate {
-	background-color: var(--md-sys-color-tertiary)
+	background-color: var(--md-sys-color-on-tertiary)
 }
 </style>
