@@ -1,4 +1,4 @@
-import type { Readable, Writable, Unsubscriber } from "svelte/store"
+import type { Readable, Writable } from "svelte/store"
 import type { GeneralError } from "+/rest"
 import type { RestorableEntity } from "+/entity"
 
