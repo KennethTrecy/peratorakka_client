@@ -1,26 +1,20 @@
 <script lang="ts">
 import type { ContextBundle } from "+/component"
 import type { PrecisionFormat, Currency } from "+/entity"
-import type { GeneralError, SearchMode, SortOrder } from "+/rest"
 
-import { get, writable, derived } from "svelte/store"
-import { onMount, getContext } from "svelte"
+import { getContext } from "svelte"
 import { afterNavigate, beforeNavigate, goto } from "$app/navigation"
 
 import { GLOBAL_CONTEXT } from "#/contexts"
-import { SEARCH_NORMALLY, ASCENDING_ORDER, MAXIMUM_PAGINATED_LIST_LENGTH } from "#/rest"
+import { UNKNOWN_OPTION } from "#/component"
 
 import assertAuthentication from "$/page_requirement/assert_authentication"
-import loadAllDependencies from "$/rest/load_all_dependencies"
-import makeJSONRequester from "$/rest/make_json_requester"
 
-import AddForm from "%/currencies/add_form.svelte"
-import ArticleGrid from "$/layout/article_grid.svelte"
-import Collection from "%/currencies/collection.svelte"
-import ExtraResourceLoader from "$/catalog/extra_resource_loader.svelte"
-import GridCell from "$/layout/grid_cell.svelte"
-import InnerGrid from "$/layout/inner_grid.svelte"
-import PrimaryHeading from "$/typography/primary_heading.svelte"
+import BasicForm from "%/currencies/basic_form.svelte"
+import CompleteResourcePage from "$/layout/complete_resource_page.svelte"
+import ElementalParagraph from "$/typography/elemental_paragraph.svelte"
+import Card from "%/currencies/currency_card.svelte"
+import TextContainer from "$/typography/text_container.svelte"
 
 const globalContext = getContext(GLOBAL_CONTEXT) as ContextBundle
 
@@ -30,154 +24,116 @@ assertAuthentication(globalContext, {
 	goto
 })
 
-let isRequestingDependencies = true
-let currencies: Currency[] = []
-let precisionFormats: PrecisionFormat[] = []
+let precisionFormats = $state<PrecisionFormat[]>([])
 
-let searchMode: SearchMode = SEARCH_NORMALLY
-let sortCriterion: string = "name"
-let sortOrder: SortOrder = ASCENDING_ORDER
-let lastOffset: number = 0
-let progressRate = 0
-
-const collectiveName = "currencies"
-const partialPath = `/api/v2/${collectiveName}`
-let parameters: [string, string][] = [
-	[ "filter[search_mode]", searchMode as string ],
-	[ "sort[0][0]", sortCriterion ],
-	[ "sort[0][1]", sortOrder as string ]
-]
-let completePath = writable(partialPath)
-$: {
-	parameters = [
-		[ "filter[search_mode]", searchMode as string ],
-		[ "sort[0][0]", sortCriterion ],
-		[ "sort[0][1]", sortOrder as string ],
-	]
-
-	completePath.set(`${partialPath}?${
-		new URLSearchParams([
-			...parameters,
-			[ "page[offset]", `${lastOffset}` ],
-			[ "page[limit]", MAXIMUM_PAGINATED_LIST_LENGTH ]
-		]).toString()
-	}`)
+function deriveID(resource: unknown): string {
+	return `${(resource as Currency).id}`
 }
 
-const dependencyErrors = writable([] as GeneralError[])
+let precisionFormatID = $state(UNKNOWN_OPTION)
+let code = $state("")
+let name = $state("")
 
-let { isConnecting, errors, send } = makeJSONRequester({
-	"path": completePath,
-	"defaultRequestConfiguration": {
-		"method": "GET"
-	},
-	"manualResponseHandlers": [
-		{
-			"statusCode": 200,
-			"action": async (response: Response) => {
-				let responseDocument = await response.json()
-				errors.set([])
-				currencies = responseDocument[collectiveName]
-				lastOffset = Math.max(0, responseDocument[collectiveName].length - 1)
-			}
+function makeNewResourceObject(): Record<string, unknown> {
+	return {
+		"currency": {
+			"precision_format_id": parseInt(precisionFormatID),
+			code,
+			name
 		}
-	],
-	"expectedErrorStatusCodes": [ 401 ]
-})
-
-const allErrors = derived([ dependencyErrors, errors ], ([ dependencyErrors, errors ]) => [
-	...dependencyErrors,
-	...errors
-])
-
-async function reloadCurrencies() {
-	currencies = []
-	await send({})
+	}
 }
 
-async function loadList() {
-	const currentServerURL = get(globalContext.serverURL as any)
+function processCreatedResourceObject(document: Record<string, unknown>): unknown {
+	precisionFormatID = `${precisionFormats[0].id}`
+	code = ""
+	name = ""
 
-	if (currentServerURL === "") {
-		setTimeout(loadList, 1000)
-		return
-	}
+	const { currency } = document
+	return currency
+}
 
-	isRequestingDependencies = true
+let existingPrecisionFormats = $derived(precisionFormats.filter(
+	precisionFormat => precisionFormat.deleted_at === null
+))
+</script>
 
-	await loadAllDependencies(globalContext, [
+<CompleteResourcePage
+	pageTitle="Currencies"
+	createTitle="Add Currency"
+	listTitle="Available Currencies"
+	collectiveName="currencies"
+	defaultSortCriterion="name"
+	availableSortCriteria={[
+		"name",
+		"created_at",
+		"updated_at",
+		"deleted_at"
+	]}
+	dependencies={[ existingPrecisionFormats ]}
+	dependencyInfos={[
 		{
 			"partialPath": "/api/v2/precision_formats",
 			"mainSortCriterion": "name",
 			"resourceKey": "precision_formats",
 			"getResources": () => precisionFormats,
-			"setResources": newResources => { precisionFormats = newResources }
+			"setResources": newResources => { precisionFormats = newResources as PrecisionFormat[] }
 		}
-	], {
-		"updateProgressRate": newProgressRate => { progressRate = newProgressRate },
-		"updateErrors": newErrors => { dependencyErrors.set(newErrors) }
-	})
-
-	isRequestingDependencies = false
-	await reloadCurrencies()
-}
-
-onMount(loadList)
-
-function addCurrency(event: CustomEvent<Currency>) {
-	if (searchMode === "only_deleted") return
-
-	const newCurrency = event.detail
-	currencies = [
-		newCurrency,
-		...currencies
-	]
-}
-
-function addCurrencies(event: CustomEvent<unknown[]>) {
-	const newCurrencies = event.detail as Currency[]
-	currencies = [
-		...currencies,
-		...newCurrencies
-	]
-}
-
-function removeCurrency(event: CustomEvent<Currency>) {
-	const oldCurrency = event.detail
-	currencies = currencies.filter(currency => currency.id !== oldCurrency.id)
-}
-</script>
-
-<svelte:head>
-	<title>Currencies</title>
-</svelte:head>
-
-<ArticleGrid>
-	<InnerGrid>
-		<GridCell kind="full">
-			<PrimaryHeading>Currencies</PrimaryHeading>
-		</GridCell>
-		<AddForm
-			{precisionFormats}
-			isLoadingInitialData={isRequestingDependencies}
-			on:create={addCurrency}/>
-		<Collection
-			{precisionFormats}
-			data={currencies}
-			bind:searchMode={searchMode}
-			bind:sortCriterion={sortCriterion}
-			bind:sortOrder={sortOrder}
-			isConnecting={$isConnecting || isRequestingDependencies}
-			{progressRate}
-			listErrors={$errors}
-			on:remove={removeCurrency}/>
-		<ExtraResourceLoader
-			isConnectingForInitialList={$isConnecting || isRequestingDependencies}
-			{partialPath}
-			{parameters}
-			{collectiveName}
-			bind:lastOffset={lastOffset}
-			on:reloadFully={reloadCurrencies}
-			on:addResources={addCurrencies}/>
-	</InnerGrid>
-</ArticleGrid>
+	]}
+	{deriveID}
+	{makeNewResourceObject}
+	{processCreatedResourceObject}>
+	{#snippet description()}
+		<TextContainer>
+			<ElementalParagraph>
+				Currencies are used as symbols for different financial entries and other parts of the
+				application. You have a freedom to add currencies, regardless whether they are physical
+				or crypto. Some people may treat the shares in stocks or units in mutual funds as
+				currency because the price changes over time.
+			</ElementalParagraph>
+			<ElementalParagraph>
+				One limitation is that the application tracks the currency conversions through previous
+				financial entries. Therefore, there is no network usage to check for current conversions
+				which is a beneficial effect if you have a lot of currencies and save data usage.
+			</ElementalParagraph>
+		</TextContainer>
+	{/snippet}
+	{#snippet form({ IDPrefix, isConnecting, errors, onsubmit, button_group })}
+		<BasicForm
+			precisionFormats={existingPrecisionFormats}
+			bind:code={code}
+			bind:name={name}
+			bind:precisionFormatID={precisionFormatID}
+			{isConnecting}
+			{IDPrefix}
+			{errors}
+			{onsubmit}
+			{button_group}/>
+	{/snippet}
+	{#snippet requirement()}
+		<ElementalParagraph>
+			At least one precision format must exist in the profile to show the form for creating
+			currencies.
+		</ElementalParagraph>
+	{/snippet}
+	{#snippet filled_collection_description()}
+		Below are the currencies that you have added on to your profile.
+		They can be associated to financial accounts.
+	{/snippet}
+	{#snippet empty_collection_description({ isPresent, isPresentAndArchived, isArchived })}
+		There are no available currencies at the moment.
+		{#if isPresent}Create{/if}{#if isPresentAndArchived}/{/if}{#if isArchived}Delete{/if}
+		a currency to view.
+	{/snippet}
+	{#snippet collection_items({ resources, updateResource, removeResource })}
+		{#each resources as entity, i((entity as Currency).id)}
+			<Card
+				{precisionFormats}
+				bind:data={
+					() => entity as Currency,
+					updatedResource => updateResource(updatedResource, i)
+				}
+				remove={removeResource}/>
+		{/each}
+	{/snippet}
+</CompleteResourcePage>
