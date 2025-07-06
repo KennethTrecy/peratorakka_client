@@ -5,6 +5,8 @@ import {
 	modifierKinds,
 	acceptableModifierActions,
 	modifierActions,
+	acceptableModifierAtomKinds,
+	modifierAtomKinds,
 	acceptableFormulaOutputFormats,
 	formulaOutputFormats,
 	acceptableExchangeRateBases,
@@ -21,11 +23,14 @@ import {
 
 interface Entity {
 	id: number
+}
+
+interface TimestampedEntity extends Entity {
 	created_at: string
 	updated_at: string
 }
 
-export interface RestorableEntity extends Entity {
+export interface RestorableEntity extends TimestampedEntity {
 	deleted_at: string|null
 }
 
@@ -65,15 +70,32 @@ type ModifierAction = typeof modifierActions[number]
 
 export type AcceptableModifierAction = typeof acceptableModifierActions[number]
 
+type ModifierAtomKind = typeof modifierAtomKinds[number]
+
+export type AcceptableModifierAtomKind = typeof acceptableModifierAtomKinds[number]
+
 export interface Modifier extends RestorableEntity {
-	debit_account_id: number
-	credit_account_id: number
-	debit_cash_flow_activity_id: number|null
-	credit_cash_flow_activity_id: number|null
 	name: string
 	description: string
 	kind: ModifierKind
 	action: ModifierAction
+}
+
+interface CoreModifierAtomInput {
+	modifier_id: number
+	account_id: number
+	kind: ModifierAtomKind
+}
+
+export interface ModifierAtomInput extends CoreModifierAtomInput {
+	cash_flow_activity_id: number
+}
+
+export type ModifierAtom = Entity & CoreModifierAtomInput
+
+export interface ModifierAtomActivity extends Entity {
+	modifier_atom_id: number
+	cash_flow_activity_id: number
 }
 
 export interface FinancialEntry extends RestorableEntity {
