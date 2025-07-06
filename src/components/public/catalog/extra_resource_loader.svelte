@@ -1,5 +1,5 @@
 <script lang="ts">
-import { createEventDispatcher } from "svelte"
+import { untrack } from "svelte"
 import { writable } from "svelte/store"
 import debounce from "lodash.debounce"
 
@@ -12,21 +12,28 @@ import GridCell from "$/layout/grid_cell.svelte"
 import ShortParagraph from "$/typography/short_paragraph.svelte"
 import TextButton from "$/button/text.svelte"
 
-const dispatch = createEventDispatcher<{
-	"reloadFully": void
-	"addResources": unknown[]
-}>()
-
-export let isConnectingForInitialList: boolean
-export let partialPath: string
-export let collectiveName: string
-export let parameters: [string, string][]
-export let lastOffset: number
-let lastOverallFilteredCount = Infinity
+let {
+	isConnectingForInitialList,
+	partialPath,
+	collectiveName,
+	parameters,
+	reloadFully,
+	addResources,
+	lastOffset = $bindable()
+}: {
+	isConnectingForInitialList: boolean
+	partialPath: string
+	collectiveName: string
+	parameters: [string, string][]
+	reloadFully: () => void
+	addResources: (resources: unknown[]) => void
+	lastOffset: number
+} = $props()
+let lastOverallFilteredCount = $state(Infinity)
 
 let nextPath = writable(partialPath)
 
-$: {
+$effect(() => {
 	const newPath = `${partialPath}?${
 		new URLSearchParams([
 			...parameters,
@@ -35,8 +42,10 @@ $: {
 		]).toString()
 	}`
 
-	nextPath.set(newPath)
-}
+	untrack(() => {
+		nextPath.set(newPath)
+	})
+})
 
 let { isConnecting, errors, send } = makeJSONRequester({
 	"path": nextPath,
@@ -57,7 +66,7 @@ let { isConnecting, errors, send } = makeJSONRequester({
 
 				if (resourceCount > 0) {
 					lastOffset = lastOffset + resourceCount
-					dispatch("addResources", resources)
+					addResources(resources)
 				}
 			}
 		}
@@ -65,8 +74,8 @@ let { isConnecting, errors, send } = makeJSONRequester({
 	"expectedErrorStatusCodes": [ 401 ]
 })
 
-let oldParameters: string[][] = []
-let abortController: AbortController|null = null
+let oldParameters: string[][] = $state([])
+let abortController: AbortController|null = $state(null)
 
 async function loadResources() {
 	if (abortController !== null) abortController.abort()
@@ -78,29 +87,36 @@ async function loadResources() {
 	})
 }
 
-const reloadFully = debounce(() => dispatch("reloadFully"), 2000)
-$: {
-	if (isConnectingForInitialList) {
-		oldParameters = parameters
-	} else {
-		const encodedOldParameters = JSON.stringify(oldParameters)
-		const encodedCurrentParameters = JSON.stringify(parameters)
+const reloadFullyAfterBounce = debounce(reloadFully, 2000)
+$effect(() => {
+	const hasFinishedConnectingForInitialList = !isConnectingForInitialList
+	const newParameters = parameters
 
-		if (encodedOldParameters !== encodedCurrentParameters) {
-			if (abortController !== null) abortController.abort()
-			oldParameters = parameters
-			lastOverallFilteredCount = Infinity
+	untrack(() => {
+		if (hasFinishedConnectingForInitialList) {
+			const encodedOldParameters = JSON.stringify(oldParameters)
+			const encodedCurrentParameters = JSON.stringify(newParameters)
 
-			if (lastOffset > 0) {
-				lastOffset = 0
+			if (encodedOldParameters !== encodedCurrentParameters) {
+				if (abortController !== null) abortController.abort()
+				oldParameters = newParameters
+				lastOverallFilteredCount = Infinity
+
+				if (lastOffset > 0) {
+					lastOffset = 0
+				}
+
+				reloadFullyAfterBounce()
 			}
-
-			reloadFully()
+		} else {
+			oldParameters = newParameters
 		}
-	}
-}
+	})
+})
 
-$: hasPossibleUnloadedResources = lastOffset !== 0 && lastOffset + 1 < lastOverallFilteredCount
+let hasPossibleUnloadedResources = $derived(
+	lastOffset !== 0 && lastOffset + 1 < lastOverallFilteredCount
+)
 </script>
 
 {#if isConnectingForInitialList}
@@ -117,12 +133,12 @@ $: hasPossibleUnloadedResources = lastOffset !== 0 && lastOffset + 1 < lastOvera
 			{:else if hasPossibleUnloadedResources}
 				<TextButton
 					label="Load next items"
-					on:click={loadResources}/>
+					onclick={loadResources}/>
 			{:else}
 				<ShortParagraph>There are no more items beyond this point.</ShortParagraph>
 				<TextButton
 					label="Reload"
-					on:click={reloadFully}/>
+					onclick={reloadFully}/>
 			{/if}
 		</Flex>
 	</GridCell>
