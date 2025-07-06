@@ -1,23 +1,36 @@
 <script lang="ts">
+import type { Snippet } from "svelte"
 import type { GeneralError } from "+/rest"
 
 import BasicForm from "$/form/basic_form.svelte"
 import TextField from "$/form/text_field.svelte"
 import NumberField from "$/form/number_field.svelte"
 
-export let IDPrefix: string
-
-export let name: string
-export let minimumPresentationalPrecision: number
-export let maximumPresentationalPrecision: number
-
-export let isConnecting: boolean
-export let errors: GeneralError[]
-export let id: string|null = null
+let {
+	IDPrefix,
+	name = $bindable(),
+	minimumPresentationalPrecision = $bindable(),
+	maximumPresentationalPrecision = $bindable(),
+	isConnecting,
+	errors,
+	id = null,
+	onsubmit,
+	button_group
+}: {
+	IDPrefix: string
+	name: string
+	minimumPresentationalPrecision: number
+	maximumPresentationalPrecision: number
+	isConnecting: boolean
+	errors: GeneralError[]
+	id?: string|null,
+	onsubmit: (event: SubmitEvent) => void
+	button_group: Snippet
+} = $props()
 </script>
 
-<BasicForm {id} {isConnecting} {errors} on:submit>
-	<svelte:fragment slot="fields">
+<BasicForm {id} {isConnecting} {errors} {onsubmit} {button_group}>
+	{#snippet fields()}
 		<TextField
 			fieldName="Name"
 			disabled={isConnecting}
@@ -42,6 +55,5 @@ export let id: string|null = null
 			bind:value={maximumPresentationalPrecision}
 			{IDPrefix}
 			{errors}/>
-	</svelte:fragment>
-	<slot slot="button_group" name="button_group"/>
+	{/snippet}
 </BasicForm>
