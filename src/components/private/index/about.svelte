@@ -165,8 +165,6 @@ const linkedThirdPartyPackages: ThirdPartyPackage[] = [
 </ArticleGrid>
 
 <style lang="scss">
-@use "@/components/third-party/index";
-
 section {
 	:global(.body-normal) {
 		margin-top: 0rem;

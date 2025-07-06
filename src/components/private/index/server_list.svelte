@@ -37,16 +37,16 @@ const {
 const CUSTOM_KEY = "custom"
 
 const rawServerChoices: string[] = PUBLIC_PRODUCTION_SERVER_CHOICES.split(",")
-let selectedServer = rawServerChoices[0] ?? CUSTOM_KEY
-let customServer = ""
-$: mustBeCustomServer = selectedServer === CUSTOM_KEY
-$: resolvedSelectedServer = mustBeCustomServer
+let selectedServer = $state(rawServerChoices[0] ?? CUSTOM_KEY)
+let customServer = $state("")
+let mustBeCustomServer = $derived(selectedServer === CUSTOM_KEY)
+let resolvedSelectedServer = $derived(mustBeCustomServer
 	? customServer
-	: selectedServer
-$: serverChoices = [
+	: selectedServer)
+let serverChoices = $derived([
 	...rawServerChoices,
 	CUSTOM_KEY
-]
+])
 const domainNameRegex = /https?:\/\/(.+)/
 function transformServer(server: string): ChoiceInfo {
 	let label = "Custom"
@@ -59,15 +59,15 @@ function transformServer(server: string): ChoiceInfo {
 	return { label, data }
 }
 const CUSTOM_SERVER_FIELD_NAME = "Custom Server URL"
-const errors: GeneralError[] = [
+const errors: GeneralError[] = $state([
 	{
 		"field": "custom_server_url",
 		"message": "Example: http://peratorakka.example.com"
 	}
-]
+])
 
-let isConnecting = false
-let didConnectionFail = false
+let isConnecting = $state(false)
+let didConnectionFail = $state(false)
 
 const { send } = makeJSONRequester({
 	"path": "/",
@@ -106,42 +106,44 @@ async function connect(event: SubmitEvent) {
 }
 </script>
 
-<SingleForm	{isConnecting} errors={[]} on:submit={connect}>
-	<TextContainer slot="description_layer">
-		{#if $hasToken}
-			<WeakenedPrimaryHeading>
-				Status: Connected
-			</WeakenedPrimaryHeading>
-			<ShortParagraph>
-				You may change your current server (<ServerDisplay address={$serverURL}/>).
-			</ShortParagraph>
-			<ShortParagraph>
-				<strong>Note</strong>: Doing so may log out any current account.
-			</ShortParagraph>
-		{:else if $hasServer}
-			<WeakenedPrimaryHeading>
-				Status: Connecting
-			</WeakenedPrimaryHeading>
-			<ShortParagraph>
-				Please wait for a moment.
-			</ShortParagraph>
-		{:else if didConnectionFail || $hasCompatibleServer}
-			<WeakenedPrimaryHeading>
-				Status: Connection Failed
-			</WeakenedPrimaryHeading>
-			<ShortParagraph>
-				Please look for another compatible server.
-			</ShortParagraph>
-		{:else}
-			<WeakenedPrimaryHeading>
-				Status: Not Connected
-			</WeakenedPrimaryHeading>
-			<ShortParagraph>
-				Choose or specify a server you want to connect.
-			</ShortParagraph>
-		{/if}
-	</TextContainer>
-	<svelte:fragment slot="field_layer">
+<SingleForm	{isConnecting} errors={[]} onsubmit={connect}>
+	{#snippet description_layer()}
+		<TextContainer>
+			{#if $hasToken}
+				<WeakenedPrimaryHeading>
+					Status: Connected
+				</WeakenedPrimaryHeading>
+				<ShortParagraph>
+					You may change your current server (<ServerDisplay address={$serverURL}/>).
+				</ShortParagraph>
+				<ShortParagraph>
+					<strong>Note</strong>: Doing so may log out any current account.
+				</ShortParagraph>
+			{:else if $hasServer}
+				<WeakenedPrimaryHeading>
+					Status: Connecting
+				</WeakenedPrimaryHeading>
+				<ShortParagraph>
+					Please wait for a moment.
+				</ShortParagraph>
+			{:else if didConnectionFail || $hasCompatibleServer}
+				<WeakenedPrimaryHeading>
+					Status: Connection Failed
+				</WeakenedPrimaryHeading>
+				<ShortParagraph>
+					Please look for another compatible server.
+				</ShortParagraph>
+			{:else}
+				<WeakenedPrimaryHeading>
+					Status: Not Connected
+				</WeakenedPrimaryHeading>
+				<ShortParagraph>
+					Choose or specify a server you want to connect.
+				</ShortParagraph>
+			{/if}
+		</TextContainer>
+	{/snippet}
+	{#snippet field_layer()}
 		<GridCell kind="full">
 			<ChoiceListField
 				fieldName="Servers"
@@ -161,15 +163,11 @@ async function connect(event: SubmitEvent) {
 					errors={errors}/>
 			</GridCell>
 		{/if}
-	</svelte:fragment>
-	<svelte:fragment slot="action_layer">
+	{/snippet}
+	{#snippet action_layer()}
 		<TextCardButton
 			kind="submit"
 			disabled={isConnecting}
 			label={$hasToken ? "Reconnect" : "Connect"}/>
-	</svelte:fragment>
+	{/snippet}
 </SingleForm>
-
-<style lang="scss">
-@use "@/components/third-party/index";
-</style>
