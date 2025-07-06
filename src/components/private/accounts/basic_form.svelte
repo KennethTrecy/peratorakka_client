@@ -1,4 +1,5 @@
 <script lang="ts">
+import type { Snippet } from "svelte"
 import type { GeneralError } from "+/rest"
 import type { Currency, AcceptableAccountKind, Account } from "+/entity"
 
@@ -13,24 +14,39 @@ import TextField from "$/form/text_field.svelte"
 
 const ACCEPTABLE_ACCOUNT_KINDS = [ ...acceptableAccountKinds ]
 
-export let IDPrefix: string
-export let currencies: Currency[]
+let {
+	IDPrefix,
+	currencies,
+	currencyID = $bindable(),
+	name = $bindable(),
+	description = $bindable(),
+	kind = $bindable(),
+	forceDisabledFields = [],
+	isConnecting,
+	errors,
+	id = null,
+	onsubmit,
+	button_group
+}: {
+	IDPrefix: string
+	currencies: Currency[]
+	currencyID: string
+	name: string
+	description: string
+	kind: AcceptableAccountKind
+	forceDisabledFields?: (keyof Account)[]
+	isConnecting: boolean
+	errors: GeneralError[]
+	id?: string|null
+	onsubmit: (event: SubmitEvent) => void
+	button_group: Snippet
+} = $props()
 
-export let currencyID: string
-export let name: string
-export let description: string
-export let kind: AcceptableAccountKind
-export let forceDisabledFields: (keyof Account)[] = []
-
-export let isConnecting: boolean
-export let errors: GeneralError[]
-export let id: string|null = null
-
-$: accountKindSupportText = ACCOUNT_KIND_DESCRIPTIONS[kind]
+let accountKindSupportText = $derived(ACCOUNT_KIND_DESCRIPTIONS[kind])
 </script>
 
-<BasicForm {id} {isConnecting} {errors} on:submit>
-	<svelte:fragment slot="fields">
+<BasicForm {id} {isConnecting} {errors} {onsubmit} {button_group}>
+	{#snippet fields()}
 		<ChoiceListField
 			fieldName="Currency"
 			errorFieldID="currency_id"
@@ -61,6 +77,5 @@ $: accountKindSupportText = ACCOUNT_KIND_DESCRIPTIONS[kind]
 			bind:value={description}
 			{IDPrefix}
 			{errors}/>
-		</svelte:fragment>
-		<slot slot="button_group" name="button_group"/>
+	{/snippet}
 </BasicForm>
