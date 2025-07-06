@@ -32,8 +32,8 @@ const {
 	accessTokenMetadata: Writable<unknown>
 }
 
-let email = ""
-let password = ""
+let email = $state("")
+let password = $state("")
 let { isConnecting, errors, send } = makeJSONRequester({
 	"path": "/login",
 	"defaultRequestConfiguration": {
@@ -92,13 +92,15 @@ async function logIn() {
 }
 </script>
 
-<SingleForm isConnecting={$isConnecting} errors={$errors} on:submit={logIn}>
-	<TextContainer slot="description_layer">
-		<ShortParagraph>
-			Enter the credentials you have on <ServerDisplay address={$serverURL}/> to log in.
-		</ShortParagraph>
-	</TextContainer>
-	<svelte:fragment slot="field_layer">
+<SingleForm isConnecting={$isConnecting} errors={$errors} onsubmit={logIn}>
+	{#snippet description_layer()}
+		<TextContainer>
+			<ShortParagraph>
+				Enter the credentials you have on <ServerDisplay address={$serverURL}/> to log in.
+			</ShortParagraph>
+		</TextContainer>
+	{/snippet}
+	{#snippet field_layer()}
 		<GridCell kind="full">
 			<TextField
 				variant="email"
@@ -114,11 +116,11 @@ async function logIn() {
 				bind:value={password}
 				errors={$errors}/>
 		</GridCell>
-	</svelte:fragment>
-	<svelte:fragment slot="action_layer">
+	{/snippet}
+	{#snippet action_layer()}
 		<TextCardButton
 			kind="submit"
 			disabled={$isConnecting}
 			label="Access"/>
-	</svelte:fragment>
+	{/snippet}
 </SingleForm>
