@@ -20,11 +20,12 @@ const {
 	userEmail: Writable<string>
 }
 
-let oldPassword = ""
-let newPassword = ""
-let confirmNewPassword = ""
+let oldPassword = $state("")
+let newPassword = $state("")
+let confirmNewPassword = $state("")
+let lastUpdate: Date|null = $state(null)
 let { isConnecting, errors, send } = makeJSONRequester({
-	"path": "/api/v1/user/password",
+	"path": "/api/v2/user/password",
 	"defaultRequestConfiguration": {
 		"method": "PATCH",
 		"credentials": "include"
@@ -33,10 +34,13 @@ let { isConnecting, errors, send } = makeJSONRequester({
 		{
 			"statusCode": 204,
 			"action": async (_response: Response) => {
+				errors.set([])
+
 				oldPassword = ""
 				newPassword = ""
 				confirmNewPassword = ""
-				errors.set([])
+
+				lastUpdate = new Date()
 			}
 		}
 	],
@@ -61,11 +65,18 @@ async function update() {
 	isConnecting={$isConnecting}
 	errors={$errors}
 	actionLabel="Change password"
-	on:submit={update}>
-	<ShortParagraph slot="text_description">
-		Update the password you have on <ServerDisplay address={$serverURL}/>.
-	</ShortParagraph>
-	<svelte:fragment slot="fields">
+	onsubmit={update}>
+	{#snippet text_description()}
+		<ShortParagraph >
+			Update the password you have on <ServerDisplay address={$serverURL}/>.
+		</ShortParagraph>
+		{#if lastUpdate}
+			<ShortParagraph>
+				Your credentials have been updated sucessfully last {lastUpdate.toLocaleString()}.
+			</ShortParagraph>
+		{/if}
+	{/snippet}
+	{#snippet fields()}
 		<PasswordField
 			fieldName="Old Password"
 			disabled={$isConnecting}
@@ -81,5 +92,5 @@ async function update() {
 			disabled={$isConnecting}
 			bind:value={confirmNewPassword}
 			errors={$errors}/>
-	</svelte:fragment>
+	{/snippet}
 </CardForm>
