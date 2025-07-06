@@ -1,7 +1,11 @@
-<div class="row">
-	<slot/>
-</div>
+<script lang="ts">
+import type { Snippet } from "svelte"
 
-<style lang="scss">
-@use "@/components/third-party/index";
-</style>
+let { children }: {
+	children: Snippet
+} = $props()
+</script>
+
+<div class="row">
+	{@render children()}
+</div>
