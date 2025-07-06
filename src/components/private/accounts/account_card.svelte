@@ -1,8 +1,6 @@
 <script lang="ts">
 import type { Currency, Account, AcceptableAccountKind } from "+/entity"
 
-import { createEventDispatcher } from "svelte"
-
 import { acceptableAccountKinds } from "#/entity"
 
 import checkArchivedState from "$/utility/check_archived_state"
@@ -14,29 +12,33 @@ import CollectionItem from "$/catalog/collection_item.svelte"
 import EditActionCardButtonPair from "$/button/card/edit_action_pair.svelte"
 import ShortParagraph from "$/typography/short_paragraph.svelte"
 
-export let currencies: Currency[]
-export let data: Account
+let {
+	currencies,
+	data = $bindable(),
+	remove
+}: {
+	currencies: Currency[]
+	data: Account
+	remove: (resource: Account) => void
+} = $props()
 
-const dispatch = createEventDispatcher<{
-	"remove": Account
-}>()
-let currencyID = `${data.currency_id}`
-let name = data.name
-let description = data.description
-let kind = fallbackToAceptableKind(data.kind)
+let currencyID = $state(`${data.currency_id}`)
+let name = $state(data.name)
+let description = $state(data.description)
+let kind = $state(fallbackToAceptableKind(data.kind))
 let forceDisabledFields: (keyof Account)[] = [
 	"currency_id",
 	// "kind"
 ]
 
-$: isArchived = checkArchivedState(data)
-$: IDPrefix = `old_account_${data.id}`
-$: formID = `${IDPrefix}_update_form`
-$: associatedCurrency = currencies.find(
+let isArchived = $derived(checkArchivedState(data))
+let IDPrefix = $derived(`old_account_${data.id}`)
+let formID = $derived(`${IDPrefix}_update_form`)
+let associatedCurrency = $derived(currencies.find(
 	currency => currency.id === parseInt(currencyID)
-)
-$: friendlyKind = convertSnakeCaseToProperCase(data.kind).toLocaleLowerCase()
-$: restorableItemOptions = makeRestorableItemOptions(
+))
+let friendlyKind = $derived(convertSnakeCaseToProperCase(data.kind).toLocaleLowerCase())
+let restorableItemOptions = $derived(makeRestorableItemOptions(
 	`/api/v2/accounts/${data.id}`,
 	{
 		"updateCacheData": () => {
@@ -48,7 +50,7 @@ $: restorableItemOptions = makeRestorableItemOptions(
 				kind
 			}
 		},
-		"removeCacheData": () => dispatch("remove", data),
+		"removeCacheData": () => remove(data),
 		"makeUpdatedBody": () => ({
 			"account": {
 				"currency_id": parseInt(currencyID),
@@ -58,7 +60,7 @@ $: restorableItemOptions = makeRestorableItemOptions(
 			}
 		})
 	}
-)
+))
 
 function resetDraft() {
 	currencyID = `${data.currency_id}`
@@ -80,59 +82,58 @@ function isAcceptable(kind: string): kind is AcceptableAccountKind {
 	label={data.name}
 	{isArchived}
 	options={restorableItemOptions}
-	on:resetDraft={resetDraft}>
-	<BasicForm
-		slot="edit_form"
-		let:confirmEdit
-		let:cancelEdit
-		let:isConnecting
-		let:errors
-		id={formID}
-		bind:currencyID={currencyID}
-		bind:name={name}
-		bind:description={description}
-		bind:kind={kind}
-		{IDPrefix}
-		{currencies}
-		{isConnecting}
-		{errors}
-		{forceDisabledFields}
-		on:submit={confirmEdit}>
-		<EditActionCardButtonPair
-			slot="button_group"
-			disabled={isConnecting}
-			on:cancelEdit={cancelEdit}/>
-	</BasicForm>
-	<svelte:fragment slot="delete_confirmation_message">
+	{resetDraft}>
+	{#snippet edit_form({ confirmEdit, cancelEdit, isConnecting, errors })}
+		<BasicForm
+			id={formID}
+			bind:currencyID={currencyID}
+			bind:name={name}
+			bind:description={description}
+			bind:kind={kind}
+			{IDPrefix}
+			{currencies}
+			{isConnecting}
+			{errors}
+			{forceDisabledFields}
+			onsubmit={confirmEdit}>
+			{#snippet button_group()}
+				<EditActionCardButtonPair
+					disabled={isConnecting}
+					{cancelEdit}/>
+			{/snippet}
+		</BasicForm>
+	{/snippet}
+	{#snippet delete_confirmation_message()}
 		<ShortParagraph>
 			Deleting this account may prevent related data from being shown temporarily.
 		</ShortParagraph>
 		<ShortParagraph>
 			This {friendlyKind} account uses {associatedCurrency?.code ?? "???"} as its currency.
 		</ShortParagraph>
-	</svelte:fragment>
-	<svelte:fragment slot="restore_confirmation_message">
+	{/snippet}
+	{#snippet restore_confirmation_message()}
 		<ShortParagraph>
 			Restoring this account may show related data.
 		</ShortParagraph>
 		<ShortParagraph>
 			This {friendlyKind} account uses {associatedCurrency?.code ?? "???"} as its currency.
 		</ShortParagraph>
-	</svelte:fragment>
-	<svelte:fragment slot="force_delete_confirmation_message">
+	{/snippet}
+	{#snippet force_delete_confirmation_message()}
 		<ShortParagraph>
 			Deleting this account may prevent related data from being shown permanently.
 		</ShortParagraph>
 		<ShortParagraph>
 			This {friendlyKind} account uses {associatedCurrency?.code ?? "???"} as its currency.
 		</ShortParagraph>
-	</svelte:fragment>
-	<svelte:fragment slot="resource_info">
+	{/snippet}
+	{#snippet resource_info()}
 		{#if data.description}
 			<ShortParagraph>{data.description}</ShortParagraph>
 		{/if}
 		<ShortParagraph>
-			This {friendlyKind} account uses {associatedCurrency?.code ?? "???"} as its currency. The account ID is {data.id}.
+			This {friendlyKind} account uses {associatedCurrency?.code ?? "???"} as its currency. The
+			account ID is {data.id}.
 		</ShortParagraph>
-	</svelte:fragment>
+	{/snippet}
 </CollectionItem>
