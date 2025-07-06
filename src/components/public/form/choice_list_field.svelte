@@ -10,29 +10,41 @@ import GeneralField from "@/components/public/form/general_field.svelte"
 
 const UNKNOWN_OPTION_LABEL = "Please select one of the choices..."
 
-export let fieldName: string
-export let errorFieldID: string = ""
-export let disabled: boolean
-export let value: string
-export let IDPrefix: string = ""
-export let supportText = ""
-export let errors: GeneralError[]
-export let rawChoices: unknown[]
-export let choiceConverter: (choice: any) => ChoiceInfo
+let {
+	fieldName,
+	errorFieldID = "",
+	disabled,
+	value = $bindable(),
+	IDPrefix = "",
+	supportText = "",
+	errors,
+	rawChoices,
+	choiceConverter
+}: {
+	fieldName: string
+	errorFieldID?: string
+	disabled: boolean
+	value: string
+	IDPrefix?: string
+	supportText?: string
+	errors: GeneralError[]
+	rawChoices: unknown[]
+	choiceConverter: (choice: any) => ChoiceInfo
+} = $props()
 
-$: choices = rawChoices.map(choiceConverter)
-$: selectedLabelIndex = choices.findIndex(choice => choice.data === value)
-$: selectedLabel = selectedLabelIndex === -1
+let choices = $derived(rawChoices.map(choiceConverter))
+let selectedLabelIndex = $derived(choices.findIndex(choice => choice.data === value))
+let selectedLabel = $derived(selectedLabelIndex === -1
 	? UNKNOWN_OPTION_LABEL
-	: choices[selectedLabelIndex].label
+	: choices[selectedLabelIndex].label)
 
-$: {
+$effect(() => {
 	if (value === UNKNOWN_OPTION && rawChoices.length > 0) {
 		value = choiceConverter(rawChoices[0]).data
 	}
-}
+});
 
-let selectElement: HTMLSelectElement|null = null
+let selectElement: HTMLSelectElement|null = $state(null)
 
 onMount(() => {
 	if (selectElement !== null) {
@@ -43,7 +55,7 @@ onMount(() => {
 	}
 })
 
-$: {
+$effect(() => {
 	if (selectElement !== null && (!disabled || value !== UNKNOWN_OPTION)) {
 		setTimeout(() => {
 			if (selectElement === null) return
@@ -57,7 +69,7 @@ $: {
 			});
 		}, 250)
 	}
-}
+});
 </script>
 
 <GeneralField
@@ -65,37 +77,32 @@ $: {
 	{errorFieldID}
 	{IDPrefix}
 	{errors}
-	{supportText}
-	let:fieldID
-	let:labelID
-	let:helperID>
-	<select
-		id={fieldID}
-		bind:value={value}
-		bind:this={selectElement}
-		aria-labelledby={labelID}
-		aria-controls={helperID}
-		aria-describedby={helperID}
-		aria-disabled={disabled}
-		{disabled}
-		title={selectedLabel}>
-		{#each choices as { label, data }(data)}
-			<option
-				aria-selected={`${(data === value)}`}
-				data-value={data}
-				value={data}
-				title={label}>{label}</option>
-		{/each}
-		{#if value === UNKNOWN_OPTION}
-			<option
-				aria-selected="true"
-				data-value={UNKNOWN_OPTION}
-				value={UNKNOWN_OPTION}
-				title={UNKNOWN_OPTION_LABEL}>{UNKNOWN_OPTION_LABEL}</option>
-		{/if}
-	</select>
+	{supportText}>
+	{#snippet input({ fieldID, labelID, helperID })}
+		<select
+			id={fieldID}
+			bind:value={value}
+			bind:this={selectElement}
+			aria-labelledby={labelID}
+			aria-controls={helperID}
+			aria-describedby={helperID}
+			aria-disabled={disabled}
+			{disabled}
+			title={selectedLabel}>
+			{#each choices as { label, data }(data)}
+				<option
+					aria-selected={`${(data === value)}`}
+					data-value={data}
+					value={data}
+					title={label}>{label}</option>
+			{/each}
+			{#if value === UNKNOWN_OPTION}
+				<option
+					aria-selected="true"
+					data-value={UNKNOWN_OPTION}
+					value={UNKNOWN_OPTION}
+					title={UNKNOWN_OPTION_LABEL}>{UNKNOWN_OPTION_LABEL}</option>
+			{/if}
+		</select>
+	{/snippet}
 </GeneralField>
-
-<style lang="scss">
-@use "@/components/third-party/index";
-</style>
