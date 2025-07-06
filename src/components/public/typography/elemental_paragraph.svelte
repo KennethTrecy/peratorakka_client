@@ -1,21 +1,23 @@
 <script lang="ts">
+import type { Snippet } from "svelte"
 import type { TextAlignment } from "+/component"
 
-export let alignment: TextAlignment = "left"
+let { alignment = "left", children }: {
+	alignment?: TextAlignment
+	children: Snippet
+} = $props()
 
-$: paragraphClasses = [
+let paragraphClasses = $derived([
 	"body-normal",
 	alignment
-].filter(Boolean).join(" ")
+].filter(Boolean).join(" "))
 </script>
 
 <p class={paragraphClasses}>
-	<slot/>
+	{@render children()}
 </p>
 
 <style lang="scss">
-@use "@/components/third-party/index";
-
 .body-normal {
 	&.left {
 		text-align: left;
