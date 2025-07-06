@@ -1,25 +1,19 @@
 <script lang="ts">
 import type { ContextBundle } from "+/component"
 import type { PrecisionFormat } from "+/entity"
-import type { SearchMode, SortOrder } from "+/rest"
 
-import { get, writable } from "svelte/store"
-import { onMount, getContext } from "svelte"
+import { getContext } from "svelte"
 import { afterNavigate, beforeNavigate, goto } from "$app/navigation"
 
 import { GLOBAL_CONTEXT } from "#/contexts"
-import { SEARCH_NORMALLY, ASCENDING_ORDER, MAXIMUM_PAGINATED_LIST_LENGTH } from "#/rest"
 
 import assertAuthentication from "$/page_requirement/assert_authentication"
-import makeJSONRequester from "$/rest/make_json_requester"
 
-import AddForm from "%/precision_formats/add_form.svelte"
-import ArticleGrid from "$/layout/article_grid.svelte"
-import Collection from "%/precision_formats/collection.svelte"
-import ExtraResourceLoader from "$/catalog/extra_resource_loader.svelte"
-import GridCell from "$/layout/grid_cell.svelte"
-import InnerGrid from "$/layout/inner_grid.svelte"
-import PrimaryHeading from "$/typography/primary_heading.svelte"
+import BasicForm from "%/precision_formats/basic_form.svelte"
+import CompleteResourcePage from "$/layout/complete_resource_page.svelte"
+import ElementalParagraph from "$/typography/elemental_paragraph.svelte"
+import Card from "%/precision_formats/precision_format_card.svelte"
+import TextContainer from "$/typography/text_container.svelte"
 
 const globalContext = getContext(GLOBAL_CONTEXT) as ContextBundle
 
@@ -29,125 +23,88 @@ assertAuthentication(globalContext, {
 	goto
 })
 
-let precisionFormats: PrecisionFormat[] = []
-
-let searchMode: SearchMode = SEARCH_NORMALLY
-let sortCriterion: string = "name"
-let sortOrder: SortOrder = ASCENDING_ORDER
-let lastOffset: number = 0
-
-const collectiveName = "precision_formats"
-const partialPath = `/api/v2/${collectiveName}`
-let parameters: [string, string][] = [
-	[ "filter[search_mode]", searchMode as string ],
-	[ "sort[0][0]", sortCriterion ],
-	[ "sort[0][1]", sortOrder as string ]
-]
-let completePath = writable(partialPath)
-$: {
-	parameters = [
-		[ "filter[search_mode]", searchMode as string ],
-		[ "sort[0][0]", sortCriterion ],
-		[ "sort[0][1]", sortOrder as string ],
-	]
-
-	completePath.set(`${partialPath}?${
-		new URLSearchParams([
-			...parameters,
-			[ "page[offset]", `${lastOffset}` ],
-			[ "page[limit]", MAXIMUM_PAGINATED_LIST_LENGTH ]
-		]).toString()
-	}`)
+function deriveID(resource: unknown): string {
+	return `${(resource as PrecisionFormat).id}`
 }
 
-let { isConnecting, errors, send } = makeJSONRequester({
-	"path": completePath,
-	"defaultRequestConfiguration": {
-		"method": "GET"
-	},
-	"manualResponseHandlers": [
-		{
-			"statusCode": 200,
-			"action": async (response: Response) => {
-				let responseDocument = await response.json()
-				errors.set([])
-				precisionFormats = responseDocument[collectiveName]
-				lastOffset = Math.max(0, responseDocument[collectiveName].length - 1)
-			}
+let name = $state("")
+let minimumPresentationalPrecision = $state(0)
+let maximumPresentationalPrecision = $state(12)
+
+function makeNewResourceObject(): Record<string, unknown> {
+	return {
+		"precision_format": {
+			name,
+			"minimum_presentational_precision": minimumPresentationalPrecision,
+			"maximum_presentational_precision": maximumPresentationalPrecision
 		}
-	],
-	"expectedErrorStatusCodes": [ 401 ]
-})
-
-async function reloadPrecisionFormats() {
-	precisionFormats = []
-	await send({})
-}
-
-async function loadList() {
-	const currentServerURL = get(globalContext.serverURL as any)
-
-	if (currentServerURL === "") {
-		setTimeout(loadList, 1000)
-		return
 	}
-
-	await reloadPrecisionFormats()
 }
 
-onMount(loadList)
+function processCreatedResourceObject(document: Record<string, unknown>): unknown {
+	name = ""
+	minimumPresentationalPrecision = 0
+	maximumPresentationalPrecision = 0
 
-function addPrecisionFormat(event: CustomEvent<PrecisionFormat>) {
-	if (searchMode === "only_deleted") return
-
-	const newPrecisionFormat = event.detail
-	precisionFormats = [
-		newPrecisionFormat,
-		...precisionFormats
-	]
-}
-
-function addPrecisionFormats(event: CustomEvent<unknown[]>) {
-	const newPrecisionFormats = event.detail as PrecisionFormat[]
-	precisionFormats = [
-		...precisionFormats,
-		...newPrecisionFormats
-	]
-}
-
-function removePrecisionFormat(event: CustomEvent<PrecisionFormat>) {
-	const oldPrecisionFormat = event.detail
-	precisionFormats = precisionFormats.filter(
-		precisionFormat => precisionFormat.id !== oldPrecisionFormat.id
-	)
+	const { "precision_format": precisionFormat } = document
+	return precisionFormat
 }
 </script>
 
-<svelte:head>
-	<title>Precision Formats</title>
-</svelte:head>
-
-<ArticleGrid>
-	<InnerGrid>
-		<GridCell kind="full">
-			<PrimaryHeading>Precision Formats</PrimaryHeading>
-		</GridCell>
-		<AddForm on:create={addPrecisionFormat}/>
-		<Collection
-			data={precisionFormats}
-			bind:searchMode={searchMode}
-			bind:sortCriterion={sortCriterion}
-			bind:sortOrder={sortOrder}
-			isConnecting={$isConnecting}
-			listErrors={$errors}
-			on:remove={removePrecisionFormat}/>
-		<ExtraResourceLoader
-			isConnectingForInitialList={$isConnecting}
-			{partialPath}
-			{parameters}
-			{collectiveName}
-			bind:lastOffset={lastOffset}
-			on:reloadFully={reloadPrecisionFormats}
-			on:addResources={addPrecisionFormats}/>
-	</InnerGrid>
-</ArticleGrid>
+<CompleteResourcePage
+	pageTitle="Precision Formats"
+	createTitle="Add Precision Format"
+	listTitle="Available Precision Formats"
+	collectiveName="precision_formats"
+	defaultSortCriterion="name"
+	availableSortCriteria={[
+		"name",
+		"created_at",
+		"updated_at",
+		"deleted_at"
+	]}
+	{deriveID}
+	{makeNewResourceObject}
+	{processCreatedResourceObject}>
+	{#snippet description()}
+		<TextContainer>
+			<ElementalParagraph>
+				Precision formats are shared between currencies and numerical tools to display the
+				numbers properly. For example in cryptocurrencies, they usually have multiple decimal
+				places. Meanwhile, fiat currencies usually have two decimal places to represent
+				centavos.
+			</ElementalParagraph>
+		</TextContainer>
+	{/snippet}
+	{#snippet form({ IDPrefix, isConnecting, errors, onsubmit, button_group })}
+		<BasicForm
+			bind:name={name}
+			bind:minimumPresentationalPrecision={minimumPresentationalPrecision}
+			bind:maximumPresentationalPrecision={maximumPresentationalPrecision}
+			{isConnecting}
+			{IDPrefix}
+			{errors}
+			{onsubmit}
+			{button_group}>
+		</BasicForm>
+	{/snippet}
+	{#snippet filled_collection_description()}
+		Below are the precision formats that you have created in your profile.
+		They can be associated to currencies or numerical tools.
+	{/snippet}
+	{#snippet empty_collection_description({ isPresent, isPresentAndArchived, isArchived })}
+		There are no available precision formats at the moment.
+		{#if isPresent}Create{/if}{#if isPresentAndArchived}/{/if}{#if isArchived}Delete{/if}
+		a precision format to view some data here.
+	{/snippet}
+	{#snippet collection_items({ resources, updateResource, removeResource })}
+		{#each resources as entity, i((entity as PrecisionFormat).id)}
+			<Card
+				bind:data={
+					() => entity as PrecisionFormat,
+					updatedResource => updateResource(updatedResource, i)
+				}
+				remove={removeResource}/>
+		{/each}
+	{/snippet}
+</CompleteResourcePage>
