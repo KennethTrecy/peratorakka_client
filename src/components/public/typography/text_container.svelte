@@ -1,10 +1,16 @@
+<script lang="ts">
+import type { Snippet } from "svelte"
+
+let { children }: {
+	children: Snippet
+} = $props()
+</script>
+
 <div class="container">
-	<slot/>
+	{@render children()}
 </div>
 
 <style lang="scss">
-@use "@/components/third-party/index";
-
 .container {
 	max-width: 70ch;
 
