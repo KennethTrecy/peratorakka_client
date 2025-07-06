@@ -3,31 +3,41 @@ import type { GeneralError } from "+/rest"
 
 import GeneralField from "@/components/public/form/general_field.svelte"
 
-export let fieldName: string
-export let disabled: boolean
-export let value: number
-export let min: number
-export let max: number
-export let step: number
-export let errorFieldID = ""
-export let IDPrefix: string = ""
-export let errors: GeneralError[]
+let {
+	fieldName,
+	disabled,
+	value = $bindable(),
+	min,
+	max,
+	step,
+	errorFieldID = "",
+	IDPrefix = "",
+	errors
+}: {
+	fieldName: string
+	disabled: boolean
+	value: number
+	min: number
+	max: number
+	step: number
+	errorFieldID?: string
+	IDPrefix?: string
+	errors: GeneralError[]
+} = $props()
 </script>
 
-<GeneralField {fieldName} {errorFieldID} {IDPrefix} {errors} let:fieldID let:labelID let:helperID>
-	<input
-		id={fieldID}
-		type="number"
-		bind:value={value}
-		{max}
-		{min}
-		{step}
-		disabled={disabled}
-		aria-labelledby={labelID}
-		aria-controls={helperID}
-		aria-describedby={helperID}/>
+<GeneralField {fieldName} {errorFieldID} {IDPrefix} {errors}   >
+	{#snippet input({ fieldID, labelID, helperID })}
+		<input
+			id={fieldID}
+			type="number"
+			bind:value={value}
+			{max}
+			{min}
+			{step}
+			disabled={disabled}
+			aria-labelledby={labelID}
+			aria-controls={helperID}
+			aria-describedby={helperID}/>
+	{/snippet}
 </GeneralField>
-
-<style lang="scss">
-@use "@/components/third-party/index";
-</style>
