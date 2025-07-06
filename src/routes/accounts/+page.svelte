@@ -1,30 +1,21 @@
 <script lang="ts">
-import type { Account, Currency } from "+/entity"
 import type { ContextBundle } from "+/component"
-import type { GeneralError, SearchMode, SortOrder } from "+/rest"
+import type { Currency, Account, AcceptableAccountKind } from "+/entity"
 
-import { get, writable, derived } from "svelte/store"
-import { onMount, getContext } from "svelte"
+import { getContext } from "svelte"
 import { afterNavigate, beforeNavigate, goto } from "$app/navigation"
 
 import { GLOBAL_CONTEXT } from "#/contexts"
-import {
-	SEARCH_NORMALLY,
-	ASCENDING_ORDER,
-	MAXIMUM_PAGINATED_LIST_LENGTH
-} from "#/rest"
+import { UNKNOWN_OPTION } from "#/component"
+import { acceptableAccountKinds } from "#/entity"
 
 import assertAuthentication from "$/page_requirement/assert_authentication"
-import loadAllDependencies from "$/rest/load_all_dependencies"
-import makeJSONRequester from "$/rest/make_json_requester"
 
-import AddForm from "%/accounts/add_form.svelte"
-import ArticleGrid from "$/layout/article_grid.svelte"
-import Collection from "%/accounts/collection.svelte"
-import ExtraResourceLoader from "$/catalog/extra_resource_loader.svelte"
-import GridCell from "$/layout/grid_cell.svelte"
-import InnerGrid from "$/layout/inner_grid.svelte"
-import PrimaryHeading from "$/typography/primary_heading.svelte"
+import BasicForm from "%/accounts/basic_form.svelte"
+import CompleteResourcePage from "$/layout/complete_resource_page.svelte"
+import ElementalParagraph from "$/typography/elemental_paragraph.svelte"
+import Card from "%/accounts/account_card.svelte"
+import TextContainer from "$/typography/text_container.svelte"
 
 const globalContext = getContext(GLOBAL_CONTEXT) as ContextBundle
 
@@ -34,158 +25,120 @@ assertAuthentication(globalContext, {
 	goto
 })
 
-let isRequestingDependencies = true
+let currencies = $state<Currency[]>([])
 
-let currencies: Currency[] = []
-let accounts: Account[] = []
-
-let searchMode: SearchMode = SEARCH_NORMALLY
-let sortCriterion: string = "name"
-let sortOrder: SortOrder = ASCENDING_ORDER
-let lastOffset: number = 0
-let progressRate = 0
-
-const collectiveName = "accounts"
-const partialPath = `/api/v2/${collectiveName}`
-let parameters: [string, string][] = [
-	[ "filter[search_mode]", searchMode as string ],
-	[ "sort[0][0]", sortCriterion ],
-	[ "sort[0][1]", sortOrder as string ]
-]
-const completePath = writable(partialPath)
-$: {
-	parameters = [
-		[ "filter[search_mode]", searchMode as string ],
-		[ "sort[0][0]", sortCriterion ],
-		[ "sort[0][1]", sortOrder as string ]
-	]
-
-	completePath.set(`${partialPath}?${
-		new URLSearchParams([
-			...parameters,
-			[ "page[offset]", `${lastOffset}` ],
-			[ "page[limit]", MAXIMUM_PAGINATED_LIST_LENGTH ]
-		]).toString()
-	}`)
+function deriveID(resource: unknown): string {
+	return `${(resource as Account).id}`
 }
 
-const dependencyErrors = writable([] as GeneralError[])
+let currencyID: string = $state(UNKNOWN_OPTION)
+let name: string = $state("")
+let description: string = $state("")
+let kind: AcceptableAccountKind = $state(acceptableAccountKinds[0])
 
-let {
-	isConnecting,
-	errors,
-	send
-} = makeJSONRequester({
-	"path": completePath,
-	"defaultRequestConfiguration": {
-		"method": "GET"
-	},
-	"manualResponseHandlers": [
-		{
-			"statusCode": 200,
-			"action": async (response: Response) => {
-				let responseDocument = await response.json()
-				accounts = responseDocument[collectiveName]
-				lastOffset = Math.max(0, responseDocument[collectiveName].length - 1)
-			}
+function makeNewResourceObject(): Record<string, unknown> {
+	return {
+		"account": {
+			"currency_id": parseInt(currencyID),
+			name,
+			description,
+			kind
 		}
-	],
-	"expectedErrorStatusCodes": [ 401 ]
-})
-
-const allErrors = derived([ dependencyErrors, errors ], ([ dependencyErrors, errors ]) => [
-	...dependencyErrors,
-	...errors
-])
-
-async function reloadAccounts() {
-	accounts = []
-	await send({})
+	}
 }
 
-async function loadList() {
-	const currentServerURL = get(globalContext.serverURL as any)
+function processCreatedResourceObject(document: Record<string, unknown>): unknown {
+	currencyID = UNKNOWN_OPTION
+	name = ""
+	description = ""
 
-	if (currentServerURL === "") {
-		setTimeout(loadList, 1000)
-		return
-	}
+	const { account } = document
+	return account
+}
 
-	isRequestingDependencies = true
+let existingCurrencies = $derived(currencies.filter(
+	currency => currency.deleted_at === null
+))
+</script>
 
-	await loadAllDependencies(globalContext, [
+{#snippet general_description()}
+<TextContainer>
+	<ElementalParagraph>
+		Financial accounts are some kind of label for the numerical values in a financial entry.
+		Some examples of these are capital, cash, or debt. They may be credited or debited
+		depending on their kind. They may be asset, liability, or equity to name a few.
+	</ElementalParagraph>
+	<ElementalParagraph>
+		To create a financial account to be used in the system, choose a currency and kind in
+		order for the system to calculate properly the associated numerical values. After that,
+		fill out other required info. Finally, press "Add" button.
+	</ElementalParagraph>
+</TextContainer>
+{/snippet}
+
+<CompleteResourcePage
+	pageTitle="Chart of Accounts"
+	createTitle="Add Financial Account"
+	listTitle="Available Accounts"
+	collectiveName="accounts"
+	defaultSortCriterion="name"
+	availableSortCriteria={[
+		"name",
+		"created_at",
+		"updated_at",
+		"deleted_at"
+	]}
+	dependencies={[ existingCurrencies ]}
+	dependencyInfos={[
 		{
 			"partialPath": "/api/v2/currencies",
 			"mainSortCriterion": "name",
 			"resourceKey": "currencies",
 			"getResources": () => currencies,
-			"setResources": newResources => { currencies = newResources }
+			"setResources": newResources => { currencies = newResources as Currency[] }
 		}
-	], {
-		"updateProgressRate": newProgressRate => { progressRate = newProgressRate },
-		"updateErrors": newErrors => { dependencyErrors.set(newErrors) }
-	})
-
-	isRequestingDependencies = false
-	await reloadAccounts()
-}
-
-onMount(loadList)
-
-function addAccount(event: CustomEvent<Account>) {
-	if (searchMode === "only_deleted") return
-
-	const newAccount = event.detail
-	accounts = [
-		newAccount,
-		...accounts
-	]
-}
-
-function addAccounts(event: CustomEvent<unknown[]>) {
-	const newAccounts = event.detail as Account[]
-	accounts = [
-		...accounts,
-		...newAccounts
-	]
-}
-
-function removeAccount(event: CustomEvent<Account>) {
-	const oldAccount = event.detail
-	accounts = accounts.filter(account => account.id !== oldAccount.id)
-}
-
-</script>
-
-<svelte:head>
-	<title>Chart of Accounts</title>
-</svelte:head>
-
-<ArticleGrid>
-	<InnerGrid>
-		<GridCell kind="full">
-			<PrimaryHeading>Chart of Accounts</PrimaryHeading>
-		</GridCell>
-		<AddForm
-			{currencies}
-			isLoadingInitialData={isRequestingDependencies}
-			on:create={addAccount}/>
-		<Collection
-			{currencies}
-			data={accounts}
-			bind:searchMode={searchMode}
-			bind:sortCriterion={sortCriterion}
-			bind:sortOrder={sortOrder}
-			isConnecting={$isConnecting || isRequestingDependencies}
-			listErrors={$allErrors}
-			on:remove={removeAccount}/>
-		<ExtraResourceLoader
-			isConnectingForInitialList={$isConnecting || isRequestingDependencies}
-			{partialPath}
-			{parameters}
-			{collectiveName}
-			bind:lastOffset={lastOffset}
-			on:reloadFully={reloadAccounts}
-			on:addResources={addAccounts}/>
-	</InnerGrid>
-</ArticleGrid>
+	]}
+	{deriveID}
+	{makeNewResourceObject}
+	{processCreatedResourceObject}
+	description={general_description}>
+	{#snippet form({ IDPrefix, isConnecting, errors, onsubmit, button_group })}
+		<BasicForm
+			currencies={existingCurrencies}
+			bind:currencyID={currencyID}
+			bind:name={name}
+			bind:description={description}
+			bind:kind={kind}
+			{isConnecting}
+			{IDPrefix}
+			{errors}
+			{onsubmit}
+			{button_group}/>
+	{/snippet}
+	{#snippet requirement()}
+		<ElementalParagraph>
+			At least one currency must exist in the profile to show the form for creating financial
+			accounts.
+		</ElementalParagraph>
+	{/snippet}
+	{#snippet filled_collection_description()}
+		Below are the financial accounts that you have added on to your profile. They can be
+		associated to modifiers.
+	{/snippet}
+	{#snippet empty_collection_description({ isPresent, isPresentAndArchived, isArchived })}
+		There are no available financial accounts at the moment.
+		{#if isPresent}Create{/if}{#if isPresentAndArchived}/{/if}{#if isArchived}Delete{/if} a
+		financial account to view.
+	{/snippet}
+	{#snippet collection_items({ resources, updateResource, removeResource })}
+		{#each resources as entity, i((entity as Account).id)}
+			<Card
+				{currencies}
+				bind:data={
+					() => entity as Account,
+					updatedResource => updateResource(updatedResource, i)
+				}
+				remove={removeResource}/>
+		{/each}
+	{/snippet}
+</CompleteResourcePage>
