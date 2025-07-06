@@ -1,17 +1,10 @@
 <script lang="ts">
-import { createEventDispatcher } from "svelte"
-
 import TextCardButton from "$/button/card/text.svelte"
 
-export let disabled: boolean
-
-const dispatch = createEventDispatcher<{
-	"cancelEdit": void
-}>()
-
-function cancelEdit() {
-	dispatch("cancelEdit")
-}
+let { disabled, cancelEdit }: {
+	disabled: boolean
+	cancelEdit: () => void
+} = $props()
 </script>
 
 <TextCardButton
@@ -22,4 +15,4 @@ function cancelEdit() {
 	kind="button"
 	{disabled}
 	label="Cancel"
-	on:click={cancelEdit}/>
+	onclick={cancelEdit}/>
