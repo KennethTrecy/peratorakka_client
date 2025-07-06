@@ -1,8 +1,6 @@
 <script lang="ts">
 import type { CashFlowActivity } from "+/entity"
 
-import { createEventDispatcher } from "svelte"
-
 import checkArchivedState from "$/utility/check_archived_state"
 import makeRestorableItemOptions from "$/rest/make_restorable_item_options"
 
@@ -11,19 +9,22 @@ import CollectionItem from "$/catalog/collection_item.svelte"
 import EditActionCardButtonPair from "$/button/card/edit_action_pair.svelte"
 import ShortParagraph from "$/typography/short_paragraph.svelte"
 
-export let data: CashFlowActivity
+let {
+	data = $bindable(),
+	remove
+}: {
+	data: CashFlowActivity
+	remove: (resource: CashFlowActivity) => void
+} = $props()
 
-const dispatch = createEventDispatcher<{
-	"remove": CashFlowActivity
-}>()
-let name = data.name
-let description = data.description
+let name = $state(data.name)
+let description = $state(data.description)
 
-$: isArchived = checkArchivedState(data)
-$: IDPrefix = `old_cash_flow_activity_${data.id}`
-$: formID = `${IDPrefix}_update_form`
-$: restorableItemOptions = makeRestorableItemOptions(
-	`/api/v1/cash_flow_activities/${data.id}`,
+let isArchived = $derived(checkArchivedState(data))
+let IDPrefix = $derived(`old_cash_flow_activity_${data.id}`)
+let formID = $derived(`${IDPrefix}_update_form`)
+let restorableItemOptions = $derived(makeRestorableItemOptions(
+	`/api/v2/cash_flow_activities/${data.id}`,
 	{
 		"updateCacheData": () => {
 			data = {
@@ -32,7 +33,7 @@ $: restorableItemOptions = makeRestorableItemOptions(
 				description
 			}
 		},
-		"removeCacheData": () => dispatch("remove", data),
+		"removeCacheData": () => remove(data),
 		"makeUpdatedBody": () => ({
 			"cash_flow_activity": {
 				name,
@@ -40,7 +41,7 @@ $: restorableItemOptions = makeRestorableItemOptions(
 			}
 		})
 	}
-)
+))
 
 function resetDraft() {
 	name = data.name
@@ -52,40 +53,44 @@ function resetDraft() {
 	label={data.name}
 	{isArchived}
 	options={restorableItemOptions}
-	on:resetDraft={resetDraft}>
-	<BasicForm
-		slot="edit_form"
-		let:confirmEdit
-		let:cancelEdit
-		let:isConnecting
-		let:errors
-		id={formID}
-		bind:name={name}
-		bind:description={description}
-		{IDPrefix}
-		{isConnecting}
-		{errors}
-		on:submit={confirmEdit}>
-		<EditActionCardButtonPair
-			slot="button_group"
-			disabled={isConnecting}
-			on:cancelEdit={cancelEdit}/>
-	</BasicForm>
-	<ShortParagraph slot="delete_confirmation_message">
-		Deleting this cash flow activity may cause inaccuracy of the cash flow statements.
-	</ShortParagraph>
-	<ShortParagraph slot="restore_confirmation_message">
-		Restoring this cash flow activity may cause inaccuracy of the cash flow statements.
-	</ShortParagraph>
-	<ShortParagraph slot="force_delete_confirmation_message">
-		Deleting this cash flow activity may cause inaccuracy of the cash flow statements permanently.
-	</ShortParagraph>
-	<svelte:fragment slot="resource_info">
+	{resetDraft}>
+	{#snippet edit_form({ confirmEdit, cancelEdit, isConnecting, errors })}
+		<BasicForm
+			id={formID}
+			bind:name={name}
+			bind:description={description}
+			{IDPrefix}
+			{isConnecting}
+			{errors}
+			onsubmit={confirmEdit}>
+			{#snippet button_group()}
+				<EditActionCardButtonPair
+					disabled={isConnecting}
+					{cancelEdit}/>
+			{/snippet}
+		</BasicForm>
+	{/snippet}
+	{#snippet delete_confirmation_message()}
+		<ShortParagraph >
+			Deleting this cash flow activity may cause inaccuracy of the cash flow statements.
+		</ShortParagraph>
+	{/snippet}
+	{#snippet restore_confirmation_message()}
+		<ShortParagraph >
+			Restoring this cash flow activity may cause inaccuracy of the cash flow statements.
+		</ShortParagraph>
+	{/snippet}
+	{#snippet force_delete_confirmation_message()}
+		<ShortParagraph >
+			Deleting this cash flow activity may cause inaccuracy of the cash flow statements permanently.
+		</ShortParagraph>
+	{/snippet}
+	{#snippet resource_info()}
 		{#if data.description}
 			<ShortParagraph>{data.description}</ShortParagraph>
 		{/if}
 		<ShortParagraph>
 			The cash flow activity ID is {data.id}.
 		</ShortParagraph>
-	</svelte:fragment>
+	{/snippet}
 </CollectionItem>
