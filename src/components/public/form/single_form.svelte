@@ -1,4 +1,5 @@
 <script lang="ts">
+import type { Snippet } from "svelte"
 import type { GeneralError } from "+/rest"
 
 import Flex from "$/layout/flex.svelte"
@@ -7,8 +8,21 @@ import Grid from "$/layout/grid.svelte"
 import GridCell from "$/layout/grid_cell.svelte"
 import InnerGrid from "$/layout/inner_grid.svelte"
 
-export let errors: GeneralError[]
-export let isConnecting: boolean
+let {
+	errors,
+	isConnecting,
+	onsubmit,
+	description_layer,
+	field_layer,
+	action_layer
+}: {
+	errors: GeneralError[]
+	isConnecting: boolean
+	onsubmit: (event: SubmitEvent) => void
+	description_layer: Snippet
+	field_layer?: Snippet
+	action_layer: Snippet
+} = $props()
 </script>
 
 <Grid>
@@ -17,15 +31,20 @@ export let isConnecting: boolean
 		<GridCell kind="wide">
 			<Flex direction="column" mustPad={false}>
 				<div class="single_form">
-					<FormBase id={null} {isConnecting} {errors} on:submit>
-						<svelte:fragment slot="lead_content">
+					<FormBase id={null} {isConnecting} {errors} {onsubmit}>
+						{#snippet lead_content()}
 							<img src="logo.png" alt="Peratorakka logo"/>
-							<slot name="description_layer"/>
-						</svelte:fragment>
-						<InnerGrid slot="field_content">
-							<slot name="field_layer"/>
-						</InnerGrid>
-						<slot slot="action_buttons" name="action_layer"/>
+							{@render description_layer()}
+						{/snippet}
+						{#snippet field_content()}
+							<GridCell kind="padder"/>
+							<InnerGrid>
+								{@render field_layer?.()}
+							</InnerGrid>
+						{/snippet}
+						{#snippet action_buttons()}
+							{@render action_layer()}
+						{/snippet}
 					</FormBase>
 				</div>
 			</Flex>
@@ -35,8 +54,6 @@ export let isConnecting: boolean
 </Grid>
 
 <style lang="scss">
-@use "@/components/third-party/index";
-
 .single_form {
 	text-align: center;
 	padding-top: 1rem;
@@ -44,6 +61,10 @@ export let isConnecting: boolean
 
 	:global(.card-content) {
 		min-height: 25rem;
+	}
+
+	:global(label) {
+		text-align: left;
 	}
 }
 </style>
