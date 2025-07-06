@@ -1,7 +1,11 @@
-<h1 class="headline-small">
-	<slot/>
-</h1>
+<script lang="ts">
+import type { Snippet } from "svelte"
 
-<style lang="scss">
-@use "@/components/third-party/index";
-</style>
+let { children }: {
+	children: Snippet
+} = $props()
+</script>
+
+<h1 class="headline-small">
+	{@render children()}
+</h1>
