@@ -1,7 +1,8 @@
 <script lang="ts">
+import type { Snippet } from "svelte"
+import type { GeneralError } from "+/rest"
 import type { CardStatus, GridCellKind, RestorableItemOptions } from "+/component"
 
-import { createEventDispatcher } from "svelte"
 import { get } from "svelte/store"
 
 import Flex from "$/layout/flex.svelte"
@@ -10,32 +11,55 @@ import ShortParagraph from "$/typography/short_paragraph.svelte"
 import TextCardButton from "$/button/card/text.svelte"
 import WeakenedTertiaryHeading from "$/typography/weakened_tertiary_heading.svelte"
 
-export let label: string
-export let isArchived: boolean
-export let options: RestorableItemOptions
-export let kind: GridCellKind = "narrow"
-$: isConnectingToUpdate = options.isConnectingToUpdate
-$: updateErrors = options.updateErrors
-$: requestUpdate = options.requestUpdate
-$: isConnectingToDelete = options.isConnectingToDelete
-$: deleteErrors = options.deleteErrors
-$: requestDelete = options.requestDelete
-$: isConnectingToRestore = options.isConnectingToRestore
-$: restoreErrors = options.restoreErrors
-$: requestRestore = options.requestRestore
-$: isConnectingToForceDelete = options.isConnectingToForceDelete
-$: forceDeleteErrors = options.forceDeleteErrors
-$: requestForceDelete = options.requestForceDelete
+let {
+	label,
+	isArchived,
+	options,
+	kind = "narrow",
+	resetDraft,
+	edit_form,
+	delete_confirmation_message,
+	restore_confirmation_message,
+	force_delete_confirmation_message,
+	resource_info,
+	extra_buttons
+}: {
+	label: string
+	isArchived: boolean
+	options: RestorableItemOptions
+	kind?: GridCellKind
+	resetDraft: () => void
+	edit_form?: Snippet<[ {
+		isConnecting: boolean
+		errors: GeneralError[]
+		confirmEdit: (event: SubmitEvent) => void
+		cancelEdit: () => void
+	}]>
+	delete_confirmation_message: Snippet
+	restore_confirmation_message: Snippet
+	force_delete_confirmation_message: Snippet
+	resource_info: Snippet
+	extra_buttons?: Snippet
+} = $props()
 
-const dispatch = createEventDispatcher<{
-	"resetDraft": void
-}>()
+let isConnectingToUpdate = $derived(options.isConnectingToUpdate)
+let updateErrors = $derived(options.updateErrors)
+let requestUpdate = $derived(options.requestUpdate)
+let isConnectingToDelete = $derived(options.isConnectingToDelete)
+let deleteErrors = $derived(options.deleteErrors)
+let requestDelete = $derived(options.requestDelete)
+let isConnectingToRestore = $derived(options.isConnectingToRestore)
+let restoreErrors = $derived(options.restoreErrors)
+let requestRestore = $derived(options.requestRestore)
+let isConnectingToForceDelete = $derived(options.isConnectingToForceDelete)
+let forceDeleteErrors = $derived(options.forceDeleteErrors)
+let requestForceDelete = $derived(options.requestForceDelete)
 
-let status: CardStatus = "reading"
-$: isEditing = status === "editing"
-$: isConfirmingDeletion = status === "confirming_deletion"
-$: isConfirmingRestoration = status === "confirming_restoration"
-$: isConfirmingForceDeletion = status === "confirming_nullification"
+let status: CardStatus = $state<CardStatus>("reading")
+let isEditing = $derived(status === "editing")
+let isConfirmingDeletion = $derived(status === "confirming_deletion")
+let isConfirmingRestoration = $derived(status === "confirming_restoration")
+let isConfirmingForceDeletion = $derived(status === "confirming_nullification")
 
 function startReading() {
 	status = "reading"
@@ -61,8 +85,10 @@ async function confirmEdit(event: SubmitEvent) {
 	event.preventDefault()
 
 	updateErrors.set([])
+
+	await requestUpdate()
+
 	if (get(updateErrors).length === 0) {
-		await requestUpdate()
 		startReading()
 	}
 }
@@ -84,32 +110,32 @@ async function confirmForceDelete() {
 
 function cancelEdit() {
 	startReading()
-	dispatch("resetDraft")
+	resetDraft()
 }
 
-$: isConfirming = isEditing
+let isConfirming = $derived(isEditing
 	? isConnectingToUpdate
 	: isConfirmingDeletion
 		? isConnectingToDelete
 		: isConfirmingRestoration
 			? isConnectingToRestore
-			: isConnectingToForceDelete
+			: isConnectingToForceDelete)
 
-$: confirmAction = isConfirmingDeletion
+let confirmAction = $derived(isConfirmingDeletion
 	? confirmDelete
 	: isConfirmingRestoration
 		? confirmRestore
-		: confirmForceDelete
+		: confirmForceDelete)
 </script>
 
 <GridCell {kind}>
 	{#if isEditing}
-		<slot
-			name="edit_form"
-			{confirmEdit}
-			{cancelEdit}
-			isConnecting={$isConfirming}
-			errors={$updateErrors}/>
+		{@render edit_form?.({
+			isConnecting: $isConfirming,
+			errors: $updateErrors,
+			confirmEdit,
+			cancelEdit
+		})}
 	{:else}
 		<article class="card">
 			<div class="card-content">
@@ -118,7 +144,7 @@ $: confirmAction = isConfirmingDeletion
 						<WeakenedTertiaryHeading>
 							Delete {label}?
 						</WeakenedTertiaryHeading>
-						<slot name="delete_confirmation_message"/>
+						{@render delete_confirmation_message()}
 						{#each $deleteErrors as error}
 							<ShortParagraph>
 								{error.message}
@@ -128,7 +154,7 @@ $: confirmAction = isConfirmingDeletion
 						<WeakenedTertiaryHeading>
 							Restore {label}?
 						</WeakenedTertiaryHeading>
-						<slot name="restore_confirmation_message"/>
+						{@render restore_confirmation_message()}
 						{#each $restoreErrors as error}
 							<ShortParagraph>
 								{error.message}
@@ -138,7 +164,7 @@ $: confirmAction = isConfirmingDeletion
 						<WeakenedTertiaryHeading>
 							Force delete {label}?
 						</WeakenedTertiaryHeading>
-						<slot name="force_delete_confirmation_message"/>
+						{@render force_delete_confirmation_message()}
 						{#each $forceDeleteErrors as error}
 							<ShortParagraph>
 								{error.message}
@@ -148,7 +174,7 @@ $: confirmAction = isConfirmingDeletion
 						<WeakenedTertiaryHeading>
 							{label}
 						</WeakenedTertiaryHeading>
-						<slot name="resource_info"/>
+						{@render resource_info()}
 					{/if}
 				</Flex>
 			</div>
@@ -158,45 +184,41 @@ $: confirmAction = isConfirmingDeletion
 						kind="button"
 						disabled={$isConfirming}
 						label="Confirm"
-						on:click={confirmAction}/>
+						onclick={confirmAction}/>
 					<TextCardButton
 						kind="button"
 						label="Cancel"
-						on:click={startReading}/>
+						onclick={startReading}/>
 				{:else if isArchived}
 					<TextCardButton
 						kind="submit"
 						label="Restore"
-						on:click={confirmRestoration}/>
+						onclick={confirmRestoration}/>
 					<TextCardButton
 						kind="button"
 						label="Force Delete"
-						on:click={confirmForceDeletion}/>
+						onclick={confirmForceDeletion}/>
 				{:else}
-					{#if $$slots.edit_form}
+					{#if edit_form}
 						<TextCardButton
-							kind="submit"
+							kind="button"
 							label="Edit"
-							on:click={startEditing}/>
+							onclick={startEditing}/>
 					{/if}
-					{#if !$$slots.delete_confirmation_message && !$$slots.restore_confirmation_message}
+					{#if !delete_confirmation_message && !restore_confirmation_message}
 						<TextCardButton
 							kind="button"
 							label="Force Delete"
-							on:click={confirmForceDeletion}/>
+							onclick={confirmForceDeletion}/>
 					{:else}
 						<TextCardButton
 							kind="button"
 							label="Delete"
-							on:click={confirmDeletion}/>
+							onclick={confirmDeletion}/>
 					{/if}
 				{/if}
-				<slot name="extra_buttons"/>
+				{@render extra_buttons?.()}
 			</div>
 		</article>
 	{/if}
 </GridCell>
-
-<style lang="scss">
-@use "@/components/third-party/index";
-</style>
