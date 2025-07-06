@@ -1,23 +1,30 @@
 <script lang="ts">
 import type { ButtonKind } from "+/component"
 
-export let label: string
-export let kind: ButtonKind = "button"
-export let disabled: boolean = false
-let otherClasses: string = ""
+let {
+	label,
+	kind = "button",
+	disabled = false,
+	"class": otherClasses = "",
+	onclick = () => {}
+}: {
+	label: string
+	kind?: ButtonKind
+	disabled?: boolean
+	class?: string
+	onclick?: (event: MouseEvent) => void
+} = $props()
 
-export { otherClasses as class }
-
-$: buttonClasses = [
+let buttonClasses = $derived([
 	"btn",
 	...otherClasses.split(" ")
-].filter(Boolean).join(" ")
+].filter(Boolean).join(" "))
 </script>
 
 <button
 	type={kind}
 	{disabled}
 	class={buttonClasses}
-	on:click>
+	{onclick}>
 	<span>{label}</span>
 </button>
