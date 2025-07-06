@@ -2,7 +2,7 @@
 import type { Writable } from "svelte/store"
 import type { ContextBundle } from "+/component"
 
-import { getContext } from "svelte"
+import { getContext, onMount } from "svelte"
 
 import { GLOBAL_CONTEXT } from "#/contexts"
 
@@ -15,16 +15,19 @@ import TextField from "$/form/text_field.svelte"
 
 const {
 	serverURL,
+	userName,
 	userEmail
 } = getContext(GLOBAL_CONTEXT) as ContextBundle as {
 	serverURL: Writable<string>
+	userName: Writable<string>
 	userEmail: Writable<string>
 }
 
-let email = ""
-let username = ""
+let email = $state("")
+let username = $state("")
+let lastUpdate: Date|null = $state(null)
 let { isConnecting, errors, send } = makeJSONRequester({
-	"path": "/api/v1/user",
+	"path": "/api/v2/user",
 	"defaultRequestConfiguration": {
 		"method": "PATCH",
 		"credentials": "include"
@@ -34,7 +37,15 @@ let { isConnecting, errors, send } = makeJSONRequester({
 			"statusCode": 204,
 			"action": async (_response: Response) => {
 				errors.set([])
-				userEmail.set(email)
+
+				if (username !== "") {
+					userName.set(username)
+				}
+				if (email !== "") {
+					userEmail.set(email)
+				}
+
+				lastUpdate = new Date()
 			}
 		}
 	],
@@ -51,6 +62,11 @@ async function update() {
 		})
 	})
 }
+
+$effect(() => {
+	email = $userEmail
+	username = $userName
+})
 </script>
 
 <CardForm
@@ -58,11 +74,18 @@ async function update() {
 	isConnecting={$isConnecting}
 	errors={$errors}
 	actionLabel="Change plain credentials"
-	on:submit={update}>
-	<ShortParagraph slot="text_description">
-		Update the credentials you have on <ServerDisplay address={$serverURL}/>.
-	</ShortParagraph>
-	<svelte:fragment slot="fields">
+	onsubmit={update}>
+	{#snippet text_description()}
+		<ShortParagraph>
+			Update the credentials you have on <ServerDisplay address={$serverURL}/>.
+		</ShortParagraph>
+		{#if lastUpdate}
+			<ShortParagraph>
+				Your credentials have been updated sucessfully last {lastUpdate.toLocaleString()}.
+			</ShortParagraph>
+		{/if}
+	{/snippet}
+	{#snippet fields()}
 		<TextField
 			variant="text"
 			fieldName="Username"
@@ -75,5 +98,5 @@ async function update() {
 			disabled={$isConnecting}
 			bind:value={email}
 			errors={$errors}/>
-	</svelte:fragment>
+	{/snippet}
 </CardForm>
