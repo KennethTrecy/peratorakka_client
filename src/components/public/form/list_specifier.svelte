@@ -1,4 +1,5 @@
 <script lang="ts">
+import type { Snippet } from "svelte"
 import type { ChoiceInfo } from "+/component"
 import type { GeneralError, SearchMode, SortOrder } from "+/rest"
 
@@ -16,28 +17,39 @@ import ChoiceListField from "$/form/choice_list_field.svelte"
 import ShortParagraph from "$/typography/short_paragraph.svelte"
 import TextContainer from "$/typography/text_container.svelte"
 
-export let searchMode: SearchMode|null
-export let sortCriterion: string
-export let sortOrder: SortOrder
-
-export let availableSearchModes: unknown[] = [
-	SEARCH_NORMALLY_OPTION,
-	SEARCH_ONLY_DELETED_OPTION
-]
-export let availableSortCriteria: unknown[]
-export let availableSortOrders: unknown[] = [
-	...SORT_ORDERS
-]
-
-export let isConnecting: boolean
-export let errors: GeneralError[]
+let {
+	searchMode = $bindable(),
+	sortCriterion = $bindable(),
+	sortOrder = $bindable(),
+	availableSearchModes = [
+		SEARCH_NORMALLY_OPTION,
+		SEARCH_ONLY_DELETED_OPTION
+	],
+	availableSortCriteria,
+	availableSortOrders = [
+		...SORT_ORDERS
+	],
+	isConnecting,
+	errors,
+	after_presence_field
+}: {
+	searchMode: SearchMode|null
+	sortCriterion: string
+	sortOrder: SortOrder
+	availableSearchModes?: ChoiceInfo[]
+	availableSortCriteria: string[]
+	availableSortOrders?: string[]
+	isConnecting: boolean
+	errors: GeneralError[]
+	after_presence_field?: Snippet
+} = $props()
 
 function returnChoiceAgain(choice: ChoiceInfo): ChoiceInfo {
 	return choice
 }
 
-$: simpleErrors = errors.filter(isSimpleError)
-$: hasSimpleErrors = simpleErrors.length > 1
+let simpleErrors = $derived(errors.filter(isSimpleError))
+let hasSimpleErrors = $derived(simpleErrors.length > 1)
 </script>
 
 {#if searchMode !== null}
@@ -49,7 +61,7 @@ $: hasSimpleErrors = simpleErrors.length > 1
 		choiceConverter={returnChoiceAgain}
 		{errors}/>
 {/if}
-<slot name="after_presence_field"/>
+{@render after_presence_field?.()}
 <ChoiceListField
 	fieldName="Sort Criteria"
 	disabled={isConnecting}
