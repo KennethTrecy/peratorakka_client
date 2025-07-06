@@ -1,34 +1,45 @@
 <script lang="ts">
+import type { Snippet } from "svelte"
 import type { GeneralError } from "+/rest"
 
 import Flex from "$/layout/flex.svelte"
 import FormBase from "$/form/base.svelte"
 import TextCardButton from "$/button/card/text.svelte"
-import TextContainer from "$/typography/text_container.svelte"
 
-export let errors: GeneralError[]
-export let id: string|null
-export let isConnecting: boolean
-export let actionLabel: string
+let {
+	errors,
+	id,
+	isConnecting,
+	actionLabel,
+	onsubmit,
+	text_description,
+	fields
+}: {
+	errors: GeneralError[]
+	id: string|null
+	isConnecting: boolean
+	actionLabel: string
+	onsubmit: (event: SubmitEvent) => void
+	text_description?: Snippet
+	fields: Snippet
+} = $props()
 </script>
 
 <div class="card_form">
-	<FormBase {id} {isConnecting} {errors} on:submit>
-		<svelte:fragment slot="lead_content">
-			<slot name="text_description"/>
-		</svelte:fragment>
-		<Flex slot="field_content" mustPad={false} justifyContent="stretch">
-			<slot name="fields"/>
-		</Flex>
-		<svelte:fragment slot="action_buttons">
+	<FormBase {id} {isConnecting} {errors} {onsubmit}>
+		{#snippet lead_content()}
+			{@render text_description?.()}
+		{/snippet}
+		{#snippet field_content()}
+			<Flex mustPad={false} justifyContent="stretch">
+				{@render fields?.()}
+			</Flex>
+		{/snippet}
+		{#snippet action_buttons()}
 			<TextCardButton
 				kind="submit"
 				disabled={isConnecting}
 				label={actionLabel}/>
-		</svelte:fragment>
+		{/snippet}
 	</FormBase>
 </div>
-
-<style lang="scss">
-@use "@/components/third-party/index";
-</style>
