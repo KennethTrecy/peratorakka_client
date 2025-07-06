@@ -1,10 +1,16 @@
+<script lang="ts">
+import type { Snippet } from "svelte"
+
+let { children }: {
+	children: Snippet
+} = $props()
+</script>
+
 <h2 class="headline-small">
-	<slot/>
+	{@render children?.()}
 </h2>
 
 <style lang="scss">
-@use "@/components/third-party/index";
-
 h2 {
 	text-align: center;
 }
