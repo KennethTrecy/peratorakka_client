@@ -1,19 +1,25 @@
+<script lang="ts">
+import type { Snippet } from "svelte"
+
+let { text, widget }: {
+	text: Snippet
+	widget: Snippet
+} = $props()
+</script>
+
 <div class="interactive_container">
 	<div class="interactive_container__content">
 		<div class="interactive_container__text">
-			<slot name="text"/>
+			{@render text()}
 		</div>
 		<div class="interactive_container__widget">
-			<slot name="widget"/>
+			{@render widget()}
 		</div>
 	</div>
 </div>
 
-
 <style lang="scss">
 @use "sass:map";
-@use "@/components/third-party/index";
-
 @use "@material/layout-grid/variables";
 
 .interactive_container {
