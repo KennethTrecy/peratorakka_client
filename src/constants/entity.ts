@@ -20,9 +20,10 @@ export const acceptableAccountKinds = [
 	LIQUID_ASSET_ACCOUNT_KIND,
 	DEPRECIATIVE_ASSET_ACCOUNT_KIND,
 	GENERAL_TEMPORARY_ACCOUNT_KIND,
-	ITEMIZED_ASSET_ACCOUNT_KIND,
 	DIRECT_COST_ACCOUNT_KIND,
 	NOMINAL_RETURN_ACCOUNT_KIND
+	// Below are the kinds not yet supported
+	// ITEMIZED_ASSET_ACCOUNT_KIND
 ] as const
 
 export const accountKinds = [
@@ -51,6 +52,29 @@ export const acceptableModifierKinds = [
 export const modifierKinds = [
 	"unknown",
 	...acceptableModifierKinds
+] as const
+
+export const UNKNOWN_MODIFIER_ATOM_KIND = "unknown"
+export const REAL_DEBIT_MODIFIER_ATOM_KIND = "real_debit"
+export const REAL_CREDIT_MODIFIER_ATOM_KIND = "real_credit"
+export const IMAGINARY_DEBIT_MODIFIER_ATOM_KIND = "imaginary_debit"
+export const IMAGINARY_CREDIT_MODIFIER_ATOM_KIND = "imaginary_credit"
+export const ITEM_COUNT_MODIFIER_ATOM_KIND = "item_count"
+export const PRICE_MODIFIER_ATOM_KIND = "price"
+
+export const acceptableModifierAtomKinds = [
+	REAL_DEBIT_MODIFIER_ATOM_KIND,
+	REAL_CREDIT_MODIFIER_ATOM_KIND
+	// Below are the kinds not yet supported
+	//  IMAGINARY_DEBIT_MODIFIER_ATOM_KIND,
+	//  IMAGINARY_CREDIT_MODIFIER_ATOM_KIND,
+	//  ITEM_COUNT_MODIFIER_ATOM_KIND,
+	//  PRICE_MODIFIER_ATOM_KIND
+] as const
+
+export const modifierAtomKinds = [
+	UNKNOWN_MODIFIER_ATOM_KIND,
+	...acceptableModifierAtomKinds
 ] as const
 
 // The lower the value, the earlier it is in the list
