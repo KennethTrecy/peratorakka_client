@@ -20,20 +20,22 @@ import TextField from "$/form/text_field.svelte"
 
 const {
 	serverURL,
+	userName,
 	userEmail,
 	accessToken,
 	accessTokenMetadata
 } = getContext(GLOBAL_CONTEXT) as ContextBundle as {
 	serverURL: Writable<string>
+	userName: Writable<string>
 	userEmail: Writable<string>
 	accessToken: Writable<string>
 	accessTokenMetadata: Writable<unknown>
 }
 
-let username = ""
-let email = ""
-let password = ""
-let passwordConfirmation = ""
+let username = $state("")
+let email = $state("")
+let password = $state("")
+let passwordConfirmation = $state("")
 let { isConnecting, errors, send } = makeJSONRequester({
 	"path": "/register",
 	"defaultRequestConfiguration": {
@@ -56,6 +58,7 @@ let { isConnecting, errors, send } = makeJSONRequester({
 				if (accessTokenMetadataRaw.get("type") === MAINTENANCE_EXPIRATION_MECHANISM) {
 					accessToken.set(data)
 					accessTokenMetadata.set(accessTokenMetadataRaw)
+					userName.set(username)
 					userEmail.set(email)
 					errors.set([])
 				} else {
@@ -86,13 +89,15 @@ async function register() {
 }
 </script>
 
-<SingleForm isConnecting={$isConnecting} errors={$errors} on:submit={register}>
-	<TextContainer slot="description_layer">
-		<ShortParagraph>
-			Enter the credentials to be sent to <ServerDisplay address={$serverURL}/> to register.
-		</ShortParagraph>
-	</TextContainer>
-	<svelte:fragment slot="field_layer">
+<SingleForm isConnecting={$isConnecting} errors={$errors} onsubmit={register}>
+	{#snippet description_layer()}
+		<TextContainer>
+			<ShortParagraph>
+				Enter the credentials to be sent to <ServerDisplay address={$serverURL}/> to register.
+			</ShortParagraph>
+		</TextContainer>
+	{/snippet}
+	{#snippet field_layer()}
 		<GridCell kind="full">
 			<TextField
 				fieldName="Username"
@@ -122,15 +127,11 @@ async function register() {
 				bind:value={passwordConfirmation}
 				errors={$errors}/>
 		</GridCell>
-	</svelte:fragment>
-	<svelte:fragment slot="action_layer">
+	{/snippet}
+	{#snippet action_layer()}
 		<TextCardButton
 			kind="submit"
 			disabled={$isConnecting}
 			label="Register"/>
-	</svelte:fragment>
+	{/snippet}
 </SingleForm>
-
-<style lang="scss">
-@use "@/components/third-party/index";
-</style>
