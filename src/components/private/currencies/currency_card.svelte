@@ -1,10 +1,6 @@
 <script lang="ts">
 import type { Currency, PrecisionFormat } from "+/entity"
 
-import { createEventDispatcher } from "svelte"
-
-import { UNKNOWN_OPTION } from "#/component"
-
 import checkArchivedState from "$/utility/check_archived_state"
 import makeRestorableItemOptions from "$/rest/make_restorable_item_options"
 
@@ -13,21 +9,25 @@ import CollectionItem from "$/catalog/collection_item.svelte"
 import EditActionCardButtonPair from "$/button/card/edit_action_pair.svelte"
 import ShortParagraph from "$/typography/short_paragraph.svelte"
 
-export let precisionFormats: PrecisionFormat[]
-export let data: Currency
+let {
+	precisionFormats,
+	data = $bindable(),
+	remove
+}: {
+	precisionFormats: PrecisionFormat[]
+	data: Currency
+	remove: (resource: Currency) => void
+} = $props()
 
-const dispatch = createEventDispatcher<{
-	"remove": Currency
-}>()
-let precisionFormatID = UNKNOWN_OPTION
-let code = data.code
-let name = data.name
+let precisionFormatID = $state(`${data.precision_format_id}`)
+let code = $state(data.code)
+let name = $state(data.name)
 
-$: isArchived = checkArchivedState(data)
-$: IDPrefix = `old_currency_${data.id}`
-$: formID = `${IDPrefix}_update_form`
-$: restorableItemOptions = makeRestorableItemOptions(
-	`/api/v1/currencies/${data.id}`,
+let isArchived = $derived(checkArchivedState(data))
+let IDPrefix = $derived(`old_currency_${data.id}`)
+let formID = $derived(`${IDPrefix}_update_form`)
+let restorableItemOptions = $derived(makeRestorableItemOptions(
+	`/api/v2/currencies/${data.id}`,
 	{
 		"updateCacheData": () => {
 			data = {
@@ -37,7 +37,7 @@ $: restorableItemOptions = makeRestorableItemOptions(
 				name
 			}
 		},
-		"removeCacheData": () => dispatch("remove", data),
+		"removeCacheData": () => remove(data),
 		"makeUpdatedBody": () => ({
 			"currency": {
 				precision_format_id: precisionFormatID,
@@ -46,7 +46,7 @@ $: restorableItemOptions = makeRestorableItemOptions(
 			}
 		})
 	}
-)
+))
 
 function resetDraft() {
 	code = data.code
@@ -54,51 +54,55 @@ function resetDraft() {
 	precisionFormatID = `${data.precision_format_id}`
 }
 
-$: precisionFormat = precisionFormats.find(
+let precisionFormat = $derived(precisionFormats.find(
 	precisionFormat => `${precisionFormat.id}` === precisionFormatID
-)
+))
 </script>
 
 <CollectionItem
 	label={data.code}
 	{isArchived}
 	options={restorableItemOptions}
-	on:resetDraft={resetDraft}>
-	<BasicForm
-		slot="edit_form"
-		let:confirmEdit
-		let:cancelEdit
-		let:isConnecting
-		let:errors
-		id={formID}
-		bind:precisionFormatID={precisionFormatID}
-		bind:code={code}
-		bind:name={name}
-		{IDPrefix}
-		{precisionFormats}
-		{isConnecting}
-		{errors}
-		on:submit={confirmEdit}>
-		<EditActionCardButtonPair
-			slot="button_group"
-			disabled={isConnecting}
-			on:cancelEdit={cancelEdit}/>
-	</BasicForm>
-	<ShortParagraph slot="delete_confirmation_message">
-		Deleting this currency may prevent related data from being shown temporarily.
-	</ShortParagraph>
-	<ShortParagraph slot="restore_confirmation_message">
-		Restoring this currency may show related data.
-	</ShortParagraph>
-	<ShortParagraph slot="force_delete_confirmation_message">
-		Deleting this currency may prevent related data from being shown permanently.
-	</ShortParagraph>
-	<svelte:fragment slot="resource_info">
+	{resetDraft}>
+	{#snippet edit_form({ confirmEdit, cancelEdit, isConnecting, errors })}
+		<BasicForm
+			id={formID}
+			bind:precisionFormatID={precisionFormatID}
+			bind:code={code}
+			bind:name={name}
+			{IDPrefix}
+			{precisionFormats}
+			{isConnecting}
+			{errors}
+			onsubmit={confirmEdit}>
+			{#snippet button_group()}
+				<EditActionCardButtonPair
+					disabled={isConnecting}
+					{cancelEdit}/>
+			{/snippet}
+		</BasicForm>
+	{/snippet}
+	{#snippet delete_confirmation_message()}
+		<ShortParagraph >
+			Deleting this currency may prevent related data from being shown temporarily.
+		</ShortParagraph>
+	{/snippet}
+	{#snippet restore_confirmation_message()}
+		<ShortParagraph >
+			Restoring this currency may show related data.
+		</ShortParagraph>
+	{/snippet}
+	{#snippet force_delete_confirmation_message()}
+		<ShortParagraph >
+			Deleting this currency may prevent related data from being shown permanently.
+		</ShortParagraph>
+	{/snippet}
+	{#snippet resource_info()}
 		<ShortParagraph>
 			{data.name}
 		</ShortParagraph>
 		<ShortParagraph>
 			Numbers associated with this currency would be shown in {precisionFormat?.name ?? "unknown"} precision format.
 		</ShortParagraph>
-	</svelte:fragment>
+	{/snippet}
 </CollectionItem>
