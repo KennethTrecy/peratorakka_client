@@ -3,17 +3,24 @@ import type { ButtonKind } from "+/component"
 
 import TextButton from "$/button/text.svelte"
 
-export let label: string
-export let kind: ButtonKind = "button"
-export let disabled: boolean = false
-let otherClasses: string = ""
+let {
+	label,
+	kind = "button",
+	disabled = false,
+	"class": otherClasses = "",
+	onclick = () => {}
+}: {
+	label: string
+	kind?: ButtonKind
+	disabled?: boolean
+	class?: string
+	onclick?: (event: MouseEvent) => void
+} = $props()
 
-export { otherClasses as class }
-
-$: buttonClasses = [
+let buttonClasses = $derived([
 	"text",
 	...otherClasses.split(" ")
-].filter(Boolean).join(" ")
+].filter(Boolean).join(" "))
 </script>
 
 <TextButton
@@ -21,8 +28,4 @@ $: buttonClasses = [
 	{kind}
 	{disabled}
 	class={buttonClasses}
-	on:click/>
-
-<style lang="scss">
-@use "@/components/third-party/index";
-</style>
+	{onclick}/>
