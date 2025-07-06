@@ -1,23 +1,36 @@
 <script lang="ts">
+import type { Snippet } from "svelte"
 import type { GeneralError } from "+/rest"
 import type { CashFlowActivity } from "+/entity"
 
 import BasicForm from "$/form/basic_form.svelte"
 import TextField from "$/form/text_field.svelte"
 
-export let IDPrefix: string
-
-export let name: string
-export let description: string
-export let forceDisabledFields: (keyof CashFlowActivity)[] = []
-
-export let isConnecting: boolean
-export let errors: GeneralError[]
-export let id: string|null = null
+let {
+	IDPrefix,
+	name = $bindable(),
+	description = $bindable(),
+	forceDisabledFields = [],
+	isConnecting,
+	errors,
+	id = null,
+	onsubmit,
+	button_group
+}: {
+	IDPrefix: string
+	name: string
+	description: string
+	forceDisabledFields?: (keyof CashFlowActivity)[];
+	isConnecting: boolean
+	errors: GeneralError[]
+	id?: string|null
+	onsubmit: (event: SubmitEvent) => void
+	button_group: Snippet
+} = $props()
 </script>
 
-<BasicForm {id} {isConnecting} {errors} on:submit>
-	<svelte:fragment slot="fields">
+<BasicForm {id} {isConnecting} {errors} {onsubmit} {button_group}>
+	{#snippet fields()}
 		<TextField
 			fieldName="Name"
 			disabled={isConnecting || forceDisabledFields.includes("name")}
@@ -30,6 +43,5 @@ export let id: string|null = null
 			bind:value={description}
 			{IDPrefix}
 			{errors}/>
-	</svelte:fragment>
-	<slot slot="button_group" name="button_group"/>
+	{/snippet}
 </BasicForm>
