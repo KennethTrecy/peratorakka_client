@@ -85,7 +85,9 @@ export default async function loadAllDependencies<T extends RestorableEntity>(
 						dependencyOffset.update(lastDependencyOffset => {
 							return lastDependencyOffset + resources.length
 						})
-						individualTotalDependencyCount.set(responseDocument.meta.overall_filtered_count)
+						individualTotalDependencyCount.set(
+							responseDocument["@meta"].overall_filtered_count
+						)
 					}
 				},
 				{
