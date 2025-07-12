@@ -3,6 +3,16 @@ import type { BufferDelayConfiguration } from "+/component"
 
 export const UNKNOWN_OPTION = "unknown"
 
+export const UNKNOWN_CURRENCY: Currency = {
+	"id": 0,
+	"precision_format_id": 0,
+	"code": "???",
+	"name": "Unknown",
+	"created_at": "",
+	"updated_at": "",
+	"deleted_at": null
+}
+
 export const UNKNOWN_ACCOUNT: Account = {
 	"id": 0,
 	"name": "Unknown",
@@ -10,15 +20,29 @@ export const UNKNOWN_ACCOUNT: Account = {
 	"currency_id": 0,
 	"kind": "unknown",
 	"created_at": "",
-	"updated_at": ""
+	"updated_at": "",
+	"deleted_at": null
+}
+
+export const UNKNOWN_MODIFIER: Modifier = {
+	"id": 0,
+	"name": "Unknown",
+	"description": "Either the associated modifier is still loading or not yet created.",
+	"kind": "unknown",
+	"action": "unknown",
+	"created_at": "",
+	"updated_at": "",
+	"deleted_at": null
 }
 
 export const ANY_CURRENCY: Currency = {
 	"id": 0,
+	"precision_format_id": 0,
 	"name": "Any Currency",
 	"code": "---",
 	"created_at": "",
-	"updated_at": ""
+	"updated_at": "",
+	"deleted_at": null
 }
 
 export const ANY_ACCOUNT: Account = {
@@ -28,21 +52,19 @@ export const ANY_ACCOUNT: Account = {
 	"currency_id": 0,
 	"kind": "unknown",
 	"created_at": "",
-	"updated_at": ""
+	"updated_at": "",
+	"deleted_at": null
 }
 
 export const ANY_MODIFIER: Modifier = {
 	"id": 0,
-	"debit_account_id": 0,
-	"credit_account_id": 0,
-	"debit_cash_flow_activity_id": null,
-	"credit_cash_flow_activity_id": null,
 	"name": "Any Modifier",
 	"description": "To be used as choice on filtering by modifiers",
 	"kind": "unknown",
 	"action": "unknown",
 	"created_at": "",
-	"updated_at": ""
+	"updated_at": "",
+	"deleted_at": null
 }
 
 export const NO_CASH_FLOW_ACTIVITY: CashFlowActivity = {
@@ -50,7 +72,8 @@ export const NO_CASH_FLOW_ACTIVITY: CashFlowActivity = {
 	"name": "No Cash Flow Activity",
 	"description": "This is an option used to represent uncategorized accounts.",
 	"created_at": "",
-	"updated_at": ""
+	"updated_at": "",
+	"deleted_at": null
 }
 
 export const EMPTY_AMOUNT = "0.00"
