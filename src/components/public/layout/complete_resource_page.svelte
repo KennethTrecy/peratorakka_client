@@ -58,7 +58,7 @@ let {
 	listTitle: string
 	collectiveName: string
 	defaultSortCriterion: string
-	defaultSortOrder: SortOrder
+	defaultSortOrder?: SortOrder
 	availableSortCriteria: string[]
 	additionalListParameters?: [string, string][]
 	dependencyInfos?: (
