@@ -7,6 +7,8 @@ import {
 	modifierActions,
 	acceptableModifierAtomKinds,
 	modifierAtomKinds,
+	acceptableFinancialEntryAtomKinds,
+	financialEntryAtomKinds,
 	acceptableFormulaOutputFormats,
 	formulaOutputFormats,
 	acceptableExchangeRateBases,
@@ -82,16 +84,17 @@ export interface Modifier extends RestorableEntity {
 }
 
 interface CoreModifierAtomInput {
-	modifier_id: number
 	account_id: number
 	kind: ModifierAtomKind
 }
 
 export interface ModifierAtomInput extends CoreModifierAtomInput {
-	cash_flow_activity_id: number
+	cash_flow_activity_id: number|null
 }
 
-export type ModifierAtom = Entity & CoreModifierAtomInput
+export type ModifierAtom = Entity & CoreModifierAtomInput & {
+	modifier_id: number
+}
 
 export interface ModifierAtomActivity extends Entity {
 	modifier_atom_id: number
@@ -101,9 +104,39 @@ export interface ModifierAtomActivity extends Entity {
 export interface FinancialEntry extends RestorableEntity {
 	modifier_id: number
 	transacted_at: string
-	debit_amount: string
-	credit_amount: string
 	remarks: string
+}
+
+export type FinancialEntryAtomKind = typeof financialEntryAtomKinds[number]
+
+export type AcceptableFinancialEntryAtomKind = typeof acceptableFinancialEntryAtomKinds[number]
+
+interface CoreFinancialEntryAtomInput {
+	modifier_atom_id: number
+	kind: FinancialEntryAtomKind
+	numerical_value: string
+}
+
+export type FinancialEntryAtomInput = CoreFinancialEntryAtomInput
+
+export type FinancialEntryAtom = Entity & CoreFinancialEntryAtomInput & {
+	financial_entry_id: number
+}
+
+export interface CompleteFinancialEntryAtomInput {
+	modifier_atom: ModifierAtom
+	account: Account
+	currency: Currency
+	input: FinancialEntryAtomInput
+}
+
+export interface CompleteFinancialEntryAtom {
+	modifier_atom: ModifierAtom
+	cash_flow_activity: CashFlowActivity|null
+	account: Account
+	currency: Currency
+	precision_format: PrecisionFormat
+	financial_entry_atom: FinancialEntryAtom
 }
 
 export interface FrozenPeriod extends Entity {
