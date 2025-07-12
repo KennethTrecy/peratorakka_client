@@ -120,6 +120,7 @@ interface CoreFinancialEntryAtomInput {
 export type FinancialEntryAtomInput = CoreFinancialEntryAtomInput
 
 export type FinancialEntryAtom = Entity & CoreFinancialEntryAtomInput & {
+	id?: number
 	financial_entry_id: number
 }
 
