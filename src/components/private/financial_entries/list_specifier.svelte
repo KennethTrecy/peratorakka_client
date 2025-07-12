@@ -1,6 +1,6 @@
 <script lang="ts">
-import type { GeneralError, SearchMode, SortOrder } from "+/rest"
-import type { Account, Currency, Modifier } from "+/entity"
+import type { GeneralError } from "+/rest"
+import type { Account, Currency, Modifier, ModifierAtom } from "+/entity"
 
 import { ANY_ACCOUNT, ANY_MODIFIER } from "#/component"
 
@@ -8,48 +8,52 @@ import transformModifier from "$/form/choice_info_transformer/transform_modifier
 import makeAccountTransformer from "$/form/choice_info_transformer/make_account_transformer"
 
 import ChoiceListField from "$/form/choice_list_field.svelte"
-import ListSpecifier from "$/form/list_specifier.svelte"
 import TextField from "$/form/text_field.svelte"
 
-export let isConnecting: boolean = false
-export let currencies: Currency[]
-export let accounts: Account[]
-export let modifiers: Modifier[]
-
-export let beginDate: string
-export let endDate: string
-export let selectedAccountID: string
-export let selectedModifierID: string
-export let searchMode: SearchMode
-export let sortCriterion: string
-export let sortOrder: SortOrder
-export let listErrors: GeneralError[]
+let {
+	isConnecting = false,
+	currencies,
+	accounts,
+	modifiers,
+	modifierAtoms,
+	beginDate = $bindable(),
+	endDate = $bindable(),
+	selectedAccountID = $bindable(),
+	selectedModifierID = $bindable(),
+	listErrors
+}: {
+	isConnecting?: boolean
+	currencies: Currency[]
+	accounts: Account[]
+	modifiers: Modifier[]
+	modifierAtoms: ModifierAtom[]
+	beginDate: string
+	endDate: string
+	selectedAccountID: string
+	selectedModifierID: string
+	listErrors: GeneralError[]
+} = $props()
 
 const availableSortCriteria = [
 	"transacted_at",
 	"created_at"
 ]
 
-$: transformAccount = makeAccountTransformer(currencies)
+let transformAccount = $derived(makeAccountTransformer(currencies))
 
-$: availableAccountChoices = [
+let availableAccountChoices = $derived([
 	ANY_ACCOUNT,
 	...accounts
-]
-$: {
-	if (selectedAccountID === "") selectedAccountID = "0"
-}
-$: availableModifierChoices = [
+])
+let availableModifierChoices = $derived([
 	ANY_MODIFIER,
-	...modifiers.filter(modifier => {
-		return selectedAccountID === `${ANY_ACCOUNT.id}`
-			|| `${modifier.debit_account_id}` === selectedAccountID
-			|| `${modifier.credit_account_id}` === selectedAccountID
-	})
-]
-$: {
-	if (selectedModifierID === "") selectedModifierID = "0"
-}
+	...modifiers.filter(
+		modifier => selectedAccountID === `${ANY_ACCOUNT.id}`
+			|| modifierAtoms.filter(
+				modifierAtom => modifierAtom.modifier_id === modifier.id
+			).some(modifierAtom => `${modifierAtom.account_id}` === selectedAccountID)
+	)
+])
 </script>
 
 <TextField
@@ -81,11 +85,4 @@ $: {
 	bind:value={selectedModifierID}
 	rawChoices={availableModifierChoices}
 	choiceConverter={transformModifier}
-	errors={listErrors}/>
-<ListSpecifier
-	bind:searchMode={searchMode}
-	bind:sortCriterion={sortCriterion}
-	bind:sortOrder={sortOrder}
-	{isConnecting}
-	{availableSortCriteria}
 	errors={listErrors}/>
