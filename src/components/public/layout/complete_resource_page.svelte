@@ -37,11 +37,13 @@ let {
 	collectiveName,
 	defaultSortCriterion,
 	availableSortCriteria,
+	additionalListParameters = [],
 	dependencies = [],
 	dependencyInfos = [],
 	deriveID,
 	makeNewResourceObject,
 	processCreatedResourceObject,
+	processListResourceObject = () => {},
 	description,
 	form,
 	requirement,
@@ -56,6 +58,7 @@ let {
 	collectiveName: string
 	defaultSortCriterion: string
 	availableSortCriteria: string[]
+	additionalListParameters?: [string, string][]
 	dependencyInfos?: (
 		ResourceDependencyInfo<RestorableEntity>
 		|HighResourceDependencyInfo<RestorableEntity>
@@ -64,6 +67,7 @@ let {
 	deriveID: (resource: unknown) => string
 	makeNewResourceObject: () => Record<string, unknown>
 	processCreatedResourceObject: (document: Record<string, unknown>) => unknown
+	processListResourceObject?: (document: Record<string, unknown>) => void
 	description: Snippet
 	form: Snippet<[
 		{
@@ -112,7 +116,8 @@ const partialPath = `/api/v2/${collectiveName}`
 let parameters: [string, string][] = $derived([
 	[ "filter[search_mode]", searchMode as string ],
 	[ "sort[0][0]", sortCriterion ],
-	[ "sort[0][1]", sortOrder as string ]
+	[ "sort[0][1]", sortOrder as string ],
+	...additionalListParameters
 ])
 let completePath = writable(partialPath)
 $effect(() => {
@@ -147,6 +152,7 @@ let {
 				errorsForList.set([])
 				resources = responseDocument[collectiveName]
 				lastOffset = Math.max(0, responseDocument[collectiveName].length - 1)
+				processListResourceObject(responseDocument)
 			}
 		}
 	],
@@ -308,7 +314,7 @@ let isArchived = $derived(searchMode === "only_deleted" || isPresentAndArchived)
 		</GridCell>
 		<CatalogBase
 			data={resources}
-			isConnecting={$isConnectingForList}
+			isConnecting={$isConnectingForList || isRequestingDependencies}
 			{progressRate}
 			{collectiveName}
 			{filled_collection_description}>

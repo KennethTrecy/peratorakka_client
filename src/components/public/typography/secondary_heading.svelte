@@ -7,7 +7,7 @@ let { children }: {
 </script>
 
 <h2 class="headline-small">
-	{@render children?.()}
+	{@render children()}
 </h2>
 
 <style lang="scss">
