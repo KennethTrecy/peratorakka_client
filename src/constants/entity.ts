@@ -81,6 +81,22 @@ export const modifierAtomKinds = [
 	...acceptableModifierAtomKinds
 ] as const
 
+export const UNKNOWN_FINANCIAL_ENTRY_ATOM_KIND = "unknown";
+export const QUANTITY_FINANCIAL_ENTRY_ATOM_KIND = "quantity";
+export const PRICE_FINANCIAL_ENTRY_ATOM_KIND = "price";
+export const TOTAL_FINANCIAL_ENTRY_ATOM_KIND = "total";
+
+export const acceptableFinancialEntryAtomKinds = [
+    TOTAL_FINANCIAL_ENTRY_ATOM_KIND,
+    QUANTITY_FINANCIAL_ENTRY_ATOM_KIND,
+    PRICE_FINANCIAL_ENTRY_ATOM_KIND
+];
+
+export const financialEntryAtomKinds = [
+    UNKNOWN_FINANCIAL_ENTRY_ATOM_KIND,
+    ...acceptableFinancialEntryAtomKinds
+];
+
 // The lower the value, the earlier it is in the list
 export const ACCOUNT_KIND_AGGREGATED_LIST_PRIOITY = {
 	[LIQUID_ASSET_ACCOUNT_KIND]: 0,
