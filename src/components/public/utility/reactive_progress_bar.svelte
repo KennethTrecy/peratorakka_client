@@ -26,7 +26,7 @@ let isDetermined = $derived(progressRate !== 0 || !isLoading)
 {/if}
 
 <style lang="scss">
-.indeterminate {
+.indeterminate, .determinate {
 	background-color: var(--md-sys-color-on-tertiary)
 }
 </style>
