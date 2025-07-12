@@ -1,31 +1,39 @@
 <script lang="ts">
-import type { Account, CashFlowActivity, Currency, Modifier } from "+/entity"
 import type { ContextBundle } from "+/component"
-import type { GeneralError, SearchMode, SortOrder } from "+/rest"
+import type {
+	Currency,
+	Account,
+	CashFlowActivity,
+	Modifier,
+	ModifierAtom,
+	ModifierAtomActivity,
+	ModifierAtomInput,
+	AcceptableModifierKind,
+	AcceptableModifierAction
+} from "+/entity"
 
-import { get, writable, derived } from "svelte/store"
-import { onMount, getContext } from "svelte"
+import { getContext } from "svelte"
 import { afterNavigate, beforeNavigate, goto } from "$app/navigation"
 
-import { NO_CASH_FLOW_ACTIVITY } from "#/component"
 import { GLOBAL_CONTEXT } from "#/contexts"
+import { UNKNOWN_OPTION } from "#/component"
 import {
-	SEARCH_NORMALLY,
-	ASCENDING_ORDER,
-	MAXIMUM_PAGINATED_LIST_LENGTH
-} from "#/rest"
+	acceptableModifierKinds,
+	acceptableModifierActions,
+	REAL_DEBIT_MODIFIER_ATOM_KIND,
+	REAL_CREDIT_MODIFIER_ATOM_KIND,
+	LIQUID_ASSET_ACCOUNT_KIND
+} from "#/entity"
 
 import assertAuthentication from "$/page_requirement/assert_authentication"
-import loadAllDependencies from "$/rest/load_all_dependencies"
-import makeJSONRequester from "$/rest/make_json_requester"
+import mergeUniqueElements from "$/utility/merge_unique_elements"
+import mergeUniqueResources from "$/utility/merge_unique_resources"
 
-import AddForm from "%/modifiers/add_form.svelte"
-import ArticleGrid from "$/layout/article_grid.svelte"
-import Collection from "%/modifiers/collection.svelte"
-import ExtraResourceLoader from "$/catalog/extra_resource_loader.svelte"
-import GridCell from "$/layout/grid_cell.svelte"
-import InnerGrid from "$/layout/inner_grid.svelte"
-import PrimaryHeading from "$/typography/primary_heading.svelte"
+import BasicForm from "%/modifiers/basic_form.svelte"
+import CompleteResourcePage from "$/layout/complete_resource_page.svelte"
+import ElementalParagraph from "$/typography/elemental_paragraph.svelte"
+import Card from "%/modifiers/modifier_card.svelte"
+import TextContainer from "$/typography/text_container.svelte"
 
 const globalContext = getContext(GLOBAL_CONTEXT) as ContextBundle
 
@@ -35,192 +43,212 @@ assertAuthentication(globalContext, {
 	goto
 })
 
-let isRequestingDependencies = true
+let currencies = $state<Currency[]>([])
+let accounts = $state<Account[]>([])
+let cashFlowActivities = $state<CashFlowActivity[]>([])
+let modifierAtoms = $state<ModifierAtom[]>([])
+let modifierAtomActivities = $state<ModifierAtomActivity[]>([])
 
-let currencies: Currency[] = []
-let cashFlowActivities: CashFlowActivity[] = []
-let accounts: Account[] = []
-let modifiers: Modifier[] = []
-
-let searchMode: SearchMode = SEARCH_NORMALLY
-let sortCriterion: string = "name"
-let sortOrder: SortOrder = ASCENDING_ORDER
-let lastOffset: number = 0
-let progressRate = 0
-
-const collectiveName = "modifiers"
-const partialPath = `/api/v1/${collectiveName}`
-let parameters: [string, string][] = [
-	[ "filter[search_mode]", searchMode as string ],
-	[ "sort[0][0]", sortCriterion ],
-	[ "sort[0][1]", sortOrder as string ],
-	[ "sort[1][0]", "created_at" ],
-	[ "sort[1][1]", sortOrder as string ]
-]
-let completePath = writable(partialPath)
-$: {
-	parameters = [
-		[ "filter[search_mode]", searchMode as string ],
-		[ "sort[0][0]", sortCriterion ],
-		[ "sort[0][1]", sortOrder as string ],
-		[ "sort[1][0]", "created_at" ],
-		[ "sort[1][1]", sortOrder as string ]
-	]
-
-	completePath.set(`${partialPath}?${
-		new URLSearchParams([
-			...parameters,
-			[ "page[offset]", `${lastOffset}` ],
-			[ "page[limit]", MAXIMUM_PAGINATED_LIST_LENGTH ]
-		]).toString()
-	}`)
+function deriveID(resource: unknown): string {
+	return `${(resource as Modifier).id}`
 }
 
-const dependencyErrors = writable([] as GeneralError[])
+let currencyID: string = $state(UNKNOWN_OPTION)
+let name: string = $state("")
+let description: string = $state("")
+let kind = $state<AcceptableModifierKind>(acceptableModifierKinds[0] as AcceptableModifierKind)
+let action = $state<AcceptableModifierAction>(
+	acceptableModifierActions[0] as AcceptableModifierAction
+)
+let atoms = $state<ModifierAtomInput[]>([])
 
-let {
-	isConnecting,
-	errors,
-	send
-} = makeJSONRequester({
-	"path": completePath,
-	"defaultRequestConfiguration": {
-		"method": "GET"
-	},
-	"manualResponseHandlers": [
-		{
-			"statusCode": 200,
-			"action": async (response: Response) => {
-				let responseDocument = await response.json()
-				errors.set([])
-				modifiers = responseDocument[collectiveName]
-				lastOffset = Math.max(0, responseDocument[collectiveName].length - 1)
+function makeNewResourceObject(): Record<string, unknown> {
+	return {
+		"modifier": {
+			"currency_id": parseInt(currencyID),
+			name,
+			description,
+			kind,
+			action,
+			"@relationship": {
+				"modifier_atoms": atoms
 			}
 		}
-	],
-	"expectedErrorStatusCodes": [ 401 ]
-})
-
-const allErrors = derived([ dependencyErrors, errors ], ([ dependencyErrors, errors ]) => [
-	...dependencyErrors,
-	...errors
-])
-
-async function reloadModifiers() {
-	modifiers = []
-	await send({})
+	}
 }
 
-async function loadList() {
-	const currentServerURL = get(globalContext.serverURL as any)
+function processCreatedResourceObject(document: Record<string, unknown>): unknown {
+	currencyID = UNKNOWN_OPTION
+	name = ""
+	description = ""
+	kind = acceptableModifierKinds[0]
+	action = acceptableModifierActions[0]
 
-	if (currentServerURL === "") {
-		setTimeout(loadList, 1000)
-		return
-	}
+	const defaultAccountID = accounts[0].id
+	const accountInfo = accounts.find(
+		account => account.id === defaultAccountID
+	) as Account
+	const isLiquidAsset = accountInfo.kind === LIQUID_ASSET_ACCOUNT_KIND
+	const defaultCashFlowActivityID = isLiquidAsset
+		? null
+		: cashFlowActivities[0].id
 
-	isRequestingDependencies = true
-
-	await loadAllDependencies<CashFlowActivity|Account>(globalContext, [
+	atoms = [
 		{
-			"partialPath": "/api/v1/cash_flow_activities",
+			"account_id": defaultAccountID,
+			"cash_flow_activity_id": defaultCashFlowActivityID,
+			"kind": REAL_DEBIT_MODIFIER_ATOM_KIND
+		},
+		{
+			"account_id": defaultAccountID,
+			"cash_flow_activity_id": defaultCashFlowActivityID,
+			"kind": REAL_CREDIT_MODIFIER_ATOM_KIND
+		}
+	]
+
+	const {
+		modifier,
+		"modifier_atoms": newModifierAtoms,
+		"modifier_atom_activities": newModifierAtomActivities
+	} = document
+
+	modifierAtoms = mergeUniqueResources(modifierAtoms, newModifierAtoms as ModifierAtom[])
+	modifierAtomActivities = mergeUniqueElements(
+		modifierAtomActivities,
+		newModifierAtomActivities as ModifierAtomActivity[],
+		element => `${element.modifier_atom_id}_${element.cash_flow_activity_id}`
+	)
+	return modifier
+}
+
+function processListResourceObject(document: Record<string, unknown>): void {
+	modifierAtoms = mergeUniqueResources(modifierAtoms, document["modifier_atoms"] as ModifierAtom[])
+	modifierAtomActivities = mergeUniqueElements(
+		modifierAtomActivities,
+		document["modifier_atom_activities"] as ModifierAtomActivity[],
+		element => `${element.modifier_atom_id}_${element.cash_flow_activity_id}`
+	)
+}
+
+let existingCurrencies = $derived(currencies.filter(
+	currency => currency.deleted_at === null
+))
+let existingAccounts = $derived(accounts.filter(
+	account => account.deleted_at === null
+))
+let existingCashFlowActivities = $derived(cashFlowActivities.filter(
+	cashFlowActivity => cashFlowActivity.deleted_at === null
+))
+</script>
+
+{#snippet general_description()}
+	<TextContainer>
+		<ElementalParagraph>
+			Modifiers are premade actions to create financial entries. Currently, manual input is the
+			only kind of modifier available. Other kinds may added in the future to allow automated
+			modifications on different accounts.
+		</ElementalParagraph>
+		<ElementalParagraph>
+			Modifiers can also serve as references for financial entries. Everyone reading the entries
+			would know if a financial entry was a result of manual input or automated calculations.
+		</ElementalParagraph>
+		<ElementalParagraph>
+			To create a modifier to be used by the system, choose a debit account and a credit account
+			that the modifier would be responsible. After that, fill out other required info. Finally,
+			press "Add" button.
+		</ElementalParagraph>
+	</TextContainer>
+{/snippet}
+
+<CompleteResourcePage
+pageTitle="Modifiers"
+createTitle="Add Modifier"
+listTitle="Available Modifiers"
+	collectiveName="modifiers"
+	defaultSortCriterion="name"
+	availableSortCriteria={[
+		"name",
+		"created_at",
+		"updated_at",
+		"deleted_at"
+	]}
+	additionalListParameters={[
+		[ "relationship", "modifier_atoms,modifier_atom_activities" ]
+	]}
+	dependencies={[ existingCurrencies, existingAccounts, existingCashFlowActivities ]}
+	dependencyInfos={[
+		{
+			"partialPath": "/api/v2/cash_flow_activities",
 			"mainSortCriterion": "name",
 			"resourceKey": "cash_flow_activities",
 			"getResources": () => cashFlowActivities,
-			"setResources": (newResources: CashFlowActivity[]) => { cashFlowActivities = newResources }
+			"setResources": newResources => { cashFlowActivities = newResources as CashFlowActivity[] }
 		},
 		{
-			"partialPath": "/api/v1/accounts",
+			"partialPath": "/api/v2/accounts",
 			"mainSortCriterion": "name",
 			"resourceKey": "accounts",
 			"getResources": () => accounts,
-			"setResources": (
-				(newResources: Account[]) => { accounts = newResources }
-			) as (newResources: (Account|CashFlowActivity)[]) => void,
-			"getLinkedResources": () => [
-				{
-					"resourceKey": "currencies",
-					"resources": currencies
-				}
-			],
-			"setLinkedResources": newResources => {
-				currencies = newResources[0] as Currency[]
-			}
+			"setResources": newResources => { accounts = newResources as Account[] }
+		},
+		{
+			"partialPath": "/api/v2/currencies",
+			"mainSortCriterion": "name",
+			"resourceKey": "currencies",
+			"getResources": () => currencies,
+			"setResources": newResources => { currencies = newResources as Currency[] }
 		}
-	], {
-		"updateProgressRate": newProgressRate => { progressRate = newProgressRate },
-		"updateErrors": newErrors => { dependencyErrors.set(newErrors) }
-	})
-
-	isRequestingDependencies = false
-	await reloadModifiers()
-}
-
-onMount(loadList)
-
-function addModifier(event: CustomEvent<Modifier>) {
-	if (searchMode === "only_deleted") return
-
-	const newModifier = event.detail
-	modifiers = [
-		newModifier,
-		...modifiers
-	]
-}
-
-function addModifiers(event: CustomEvent<unknown[]>) {
-	const newModifiers = event.detail as Modifier[]
-	modifiers = [
-		...modifiers,
-		...newModifiers
-	]
-}
-
-function removeModifier(event: CustomEvent<Modifier>) {
-	const oldModifier = event.detail
-	modifiers = modifiers.filter(modifier => modifier.id !== oldModifier.id)
-}
-
-$: selectableCashFlowActivities = [
-	NO_CASH_FLOW_ACTIVITY,
-	...cashFlowActivities
-]
-</script>
-
-<svelte:head>
-	<title>Modifiers</title>
-</svelte:head>
-
-<ArticleGrid>
-	<InnerGrid>
-		<GridCell kind="full">
-			<PrimaryHeading>Modifiers</PrimaryHeading>
-		</GridCell>
-		<AddForm
-			{currencies}
-			{accounts}
-			cashFlowActivities={selectableCashFlowActivities}
-			isLoadingInitialData={isRequestingDependencies}
-			on:create={addModifier}/>
-		<Collection
-			{currencies}
-			cashFlowActivities={selectableCashFlowActivities}
-			{accounts}
-			data={modifiers}
-			bind:searchMode={searchMode}
-			bind:sortCriterion={sortCriterion}
-			bind:sortOrder={sortOrder}
-			isConnecting={$isConnecting || isRequestingDependencies}
-			{progressRate}
-			listErrors={$allErrors}
-			on:remove={removeModifier}/>
-		<ExtraResourceLoader
-			isConnectingForInitialList={$isConnecting || isRequestingDependencies}
-			{partialPath}
-			{parameters}
-			{collectiveName}
-			bind:lastOffset={lastOffset}
-			on:reloadFully={reloadModifiers}
-			on:addResources={addModifiers}/>
-	</InnerGrid>
-</ArticleGrid>
+	]}
+	{deriveID}
+	{makeNewResourceObject}
+	{processCreatedResourceObject}
+	{processListResourceObject}
+	description={general_description}>
+	{#snippet form({ IDPrefix, isConnecting, errors, onsubmit, button_group })}
+		<BasicForm
+			currencies={existingCurrencies}
+			accounts={existingAccounts}
+			cashFlowActivities={existingCashFlowActivities}
+			bind:name={name}
+			bind:description={description}
+			bind:kind={kind}
+			bind:action={action}
+			bind:atoms={atoms}
+			{isConnecting}
+			isEditing={false}
+			{IDPrefix}
+			{errors}
+			{onsubmit}
+			{button_group}/>
+	{/snippet}
+	{#snippet requirement()}
+		<ElementalParagraph>
+			At least two financial accounts must exist in the profile to show the form for creating
+			modifiers.
+		</ElementalParagraph>
+	{/snippet}
+	{#snippet filled_collection_description()}
+		Below are the financial entries that you have added on to your profile.
+		Entries should be frozen to prevent editing or deletion.
+	{/snippet}
+	{#snippet empty_collection_description({ isPresent, isPresentAndArchived, isArchived })}
+		There are no available modifiers at the moment.
+		{#if isPresent}Create{/if}{#if isPresentAndArchived}/{/if}{#if isArchived}Delete{/if} a
+		modifier to view.
+	{/snippet}
+	{#snippet collection_items({ resources, updateResource, removeResource })}
+		{#each resources as entity, i((entity as Modifier).id)}
+			<Card
+				{currencies}
+				{accounts}
+				{cashFlowActivities}
+				{modifierAtoms}
+				{modifierAtomActivities}
+				bind:data={
+					() => entity as Modifier,
+					updatedResource => updateResource(updatedResource, i)
+				}
+				remove={removeResource}/>
+		{/each}
+	{/snippet}
+</CompleteResourcePage>
