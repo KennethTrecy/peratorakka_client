@@ -5,7 +5,7 @@ import checkArchivedState from "$/utility/check_archived_state"
 import makeRestorableItemOptions from "$/rest/make_restorable_item_options"
 
 import BasicForm from "%/cash_flow_activities/basic_form.svelte"
-import CollectionItem from "$/catalog/collection_item.svelte"
+import CardItem from "$/catalog/card_item.svelte"
 import EditActionCardButtonPair from "$/button/card/edit_action_pair.svelte"
 import ShortParagraph from "$/typography/short_paragraph.svelte"
 
@@ -49,7 +49,7 @@ function resetDraft() {
 }
 </script>
 
-<CollectionItem
+<CardItem
 	label={data.name}
 	{isArchived}
 	options={restorableItemOptions}
@@ -71,17 +71,17 @@ function resetDraft() {
 		</BasicForm>
 	{/snippet}
 	{#snippet delete_confirmation_message()}
-		<ShortParagraph >
+		<ShortParagraph>
 			Deleting this cash flow activity may cause inaccuracy of the cash flow statements.
 		</ShortParagraph>
 	{/snippet}
 	{#snippet restore_confirmation_message()}
-		<ShortParagraph >
+		<ShortParagraph>
 			Restoring this cash flow activity may cause inaccuracy of the cash flow statements.
 		</ShortParagraph>
 	{/snippet}
 	{#snippet force_delete_confirmation_message()}
-		<ShortParagraph >
+		<ShortParagraph>
 			Deleting this cash flow activity may cause inaccuracy of the cash flow statements permanently.
 		</ShortParagraph>
 	{/snippet}
@@ -93,4 +93,4 @@ function resetDraft() {
 			The cash flow activity ID is {data.id}.
 		</ShortParagraph>
 	{/snippet}
-</CollectionItem>
+</CardItem>

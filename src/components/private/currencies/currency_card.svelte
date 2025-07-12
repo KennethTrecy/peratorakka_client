@@ -5,7 +5,7 @@ import checkArchivedState from "$/utility/check_archived_state"
 import makeRestorableItemOptions from "$/rest/make_restorable_item_options"
 
 import BasicForm from "%/currencies/basic_form.svelte"
-import CollectionItem from "$/catalog/collection_item.svelte"
+import CardItem from "$/catalog/card_item.svelte"
 import EditActionCardButtonPair from "$/button/card/edit_action_pair.svelte"
 import ShortParagraph from "$/typography/short_paragraph.svelte"
 
@@ -59,7 +59,7 @@ let precisionFormat = $derived(precisionFormats.find(
 ))
 </script>
 
-<CollectionItem
+<CardItem
 	label={data.code}
 	{isArchived}
 	options={restorableItemOptions}
@@ -105,4 +105,4 @@ let precisionFormat = $derived(precisionFormats.find(
 			Numbers associated with this currency would be shown in {precisionFormat?.name ?? "unknown"} precision format.
 		</ShortParagraph>
 	{/snippet}
-</CollectionItem>
+</CardItem>

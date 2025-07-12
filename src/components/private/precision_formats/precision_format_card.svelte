@@ -5,7 +5,7 @@ import checkArchivedState from "$/utility/check_archived_state"
 import makeRestorableItemOptions from "$/rest/make_restorable_item_options"
 
 import BasicForm from "%/precision_formats/basic_form.svelte"
-import CollectionItem from "$/catalog/collection_item.svelte"
+import CardItem from "$/catalog/card_item.svelte"
 import EditActionCardButtonPair from "$/button/card/edit_action_pair.svelte"
 import ShortParagraph from "$/typography/short_paragraph.svelte"
 
@@ -53,7 +53,7 @@ function resetDraft() {
 }
 </script>
 
-<CollectionItem
+<CardItem
 	label={data.name}
 	{isArchived}
 	options={restorableItemOptions}
@@ -95,4 +95,4 @@ function resetDraft() {
 			Resources using this setting may show {data.minimum_presentational_precision} to {data.maximum_presentational_precision} significant digits.
 		</ShortParagraph>
 	{/snippet}
-</CollectionItem>
+</CardItem>

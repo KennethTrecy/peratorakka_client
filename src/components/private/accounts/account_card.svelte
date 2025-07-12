@@ -8,7 +8,7 @@ import convertSnakeCaseToProperCase from "$/utility/convert_snake_case_to_proper
 import makeRestorableItemOptions from "$/rest/make_restorable_item_options"
 
 import BasicForm from "%/accounts/basic_form.svelte"
-import CollectionItem from "$/catalog/collection_item.svelte"
+import CardItem from "$/catalog/card_item.svelte"
 import EditActionCardButtonPair from "$/button/card/edit_action_pair.svelte"
 import ShortParagraph from "$/typography/short_paragraph.svelte"
 
@@ -78,7 +78,7 @@ function isAcceptable(kind: string): kind is AcceptableAccountKind {
 }
 </script>
 
-<CollectionItem
+<CardItem
 	label={data.name}
 	{isArchived}
 	options={restorableItemOptions}
@@ -136,4 +136,4 @@ function isAcceptable(kind: string): kind is AcceptableAccountKind {
 			account ID is {data.id}.
 		</ShortParagraph>
 	{/snippet}
-</CollectionItem>
+</CardItem>
