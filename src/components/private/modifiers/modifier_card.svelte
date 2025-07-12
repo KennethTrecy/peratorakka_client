@@ -5,105 +5,122 @@ import type {
 	Account,
 	AcceptableModifierKind,
 	AcceptableModifierAction,
-	Modifier
+	Modifier,
+	ModifierAtom,
+	ModifierAtomActivity,
+	ModifierAtomInput
 } from "+/entity"
 
-import { createEventDispatcher } from "svelte"
-
-import { acceptableModifierKinds, acceptableModifierActions } from "#/entity"
-import { UNKNOWN_ACCOUNT } from "#/component"
-import { NO_CASH_FLOW_ACTIVITY } from "#/component"
+import {
+	acceptableModifierKinds,
+	acceptableModifierActions,
+	REAL_DEBIT_MODIFIER_ATOM_KIND,
+	REAL_CREDIT_MODIFIER_ATOM_KIND
+} from "#/entity"
 
 import checkArchivedState from "$/utility/check_archived_state"
 import convertSnakeCaseToProperCase from "$/utility/convert_snake_case_to_proper_case"
 import makeRestorableItemOptions from "$/rest/make_restorable_item_options"
 
 import BasicForm from "%/modifiers/basic_form.svelte"
-import CollectionItem from "$/catalog/collection_item.svelte"
+import CardItem from "$/catalog/card_item.svelte"
 import EditActionCardButtonPair from "$/button/card/edit_action_pair.svelte"
 import Flex from "$/layout/flex.svelte"
 import ShortParagraph from "$/typography/short_paragraph.svelte"
 
-export let currencies: Currency[]
-export let cashFlowActivities: CashFlowActivity[]
-export let accounts: Account[]
-export let data: Modifier
+let {
+	currencies,
+	cashFlowActivities,
+	accounts,
+	data = $bindable(),
+	modifierAtoms = $bindable(),
+	modifierAtomActivities = $bindable(),
+	remove
+}: {
+	currencies: Currency[]
+	cashFlowActivities: CashFlowActivity[]
+	accounts: Account[]
+	modifierAtoms: ModifierAtom[],
+	modifierAtomActivities: ModifierAtomActivity[]
+	data: Modifier
+	remove: (resource: Modifier) => void
+} = $props()
 
-const dispatch = createEventDispatcher<{
-	"remove": Modifier
-}>()
-let debitAccountID = `${data.debit_account_id}`
-let creditAccountID = `${data.credit_account_id}`
-let debitCashFlowActivityID = data.debit_cash_flow_activity_id === null
-	? `${NO_CASH_FLOW_ACTIVITY.id}`
-	: `${data.debit_cash_flow_activity_id}`
-let creditCashFlowActivityID = data.credit_cash_flow_activity_id === null
-	? `${NO_CASH_FLOW_ACTIVITY.id}`
-	: `${data.credit_cash_flow_activity_id}`
-let name = data.name
-let description = data.description
-let kind = fallbackToAceptableKind(data.kind)
-let action = fallbackToAceptableAction(data.action)
+let name = $state(data.name)
+let description = $state(data.description)
+let kind = $state(fallbackToAceptableKind(data.kind))
+let action = $state(fallbackToAceptableAction(data.action))
+let atoms = $derived(modifierAtoms.filter(atom => atom.modifier_id === data.id))
+let atomActivities = $derived(modifierAtomActivities.filter(
+	atomActivity => atomActivity.modifier_atom_id !== null
+))
+let atomInputs = $derived<ModifierAtomInput[]>(
+	atoms
+	.filter(atom => atom.modifier_id === data.id)
+	.map(atom => ({
+		"account_id": atom.account_id,
+		"kind": atom.kind,
+		"cash_flow_activity_id": atomActivities.find(
+			atomActivity => atomActivity.modifier_atom_id === atom.id
+		)?.cash_flow_activity_id ?? null
+	}))
+)
 const forceDisabledFields: (keyof Modifier)[] = [
-	"debit_account_id",
-	"credit_account_id",
-	"debit_cash_flow_activity_id",
-	"credit_cash_flow_activity_id",
-	"kind",
 	"action"
 ]
 
-$: isArchived = checkArchivedState(data)
-$: IDPrefix = `old_modifier_${data.id}`
-$: formID = `${IDPrefix}_update_form`
-$: debitAccount = accounts.find(
-	account => account.id === data.debit_account_id
-) ?? UNKNOWN_ACCOUNT
-$: creditAccount = accounts.find(
-	account => account.id === data.credit_account_id
-) ?? UNKNOWN_ACCOUNT
-$: friendlyAction = data.action
-$: friendlyKind = data.kind
-$: resolvedDescription = description || "None"
-$: hasDebitCashFlowActivity = debitCashFlowActivityID !== `${NO_CASH_FLOW_ACTIVITY.id}`
-$: associatedDebitCashFlowActivity = hasDebitCashFlowActivity ? cashFlowActivities.find(
-	cashFlowActivity => cashFlowActivity.id === parseInt(debitCashFlowActivityID)
-) as CashFlowActivity : null
-$: hasCreditCashFlowActivity = creditCashFlowActivityID !== `${NO_CASH_FLOW_ACTIVITY.id}`
-$: associatedCreditCashFlowActivity = hasCreditCashFlowActivity ? cashFlowActivities.find(
-	cashFlowActivity => cashFlowActivity.id === parseInt(creditCashFlowActivityID)
-) as CashFlowActivity : null
+let isArchived = $derived(checkArchivedState(data))
+let IDPrefix = $derived(`old_modifier_${data.id}`)
+let formID = $derived(`${IDPrefix}_update_form`)
+let friendlyAction = $derived(data.action)
+let friendlyKind = $derived(data.kind)
+let resolvedDescription = $derived(description || "None")
+let debitAtoms = $derived(atomInputs.filter(atom => atom.kind === REAL_DEBIT_MODIFIER_ATOM_KIND))
+let creditAtoms = $derived(atomInputs.filter(atom => atom.kind === REAL_CREDIT_MODIFIER_ATOM_KIND))
 
-$: friendlyDebitActivityName = hasDebitCashFlowActivity
-	? associatedDebitCashFlowActivity?.name
-	: null
-$: friendlyCreditActivityName = hasCreditCashFlowActivity
-	? associatedCreditCashFlowActivity?.name
-	: null
+let friendlyDebitAtoms = $derived(debitAtoms.map(atom => {
+	const account = accounts.find(account => account.id === atom.account_id)
+	const cashFlowActivity = cashFlowActivities.find(
+		cashFlowActivity => cashFlowActivity.id === atom.cash_flow_activity_id
+	)
+	const friendlyCashFlowActivity = typeof cashFlowActivity === "undefined"
+		? ""
+		: ` (as part of “${cashFlowActivity.name}”)`
 
-$: restorableItemOptions = makeRestorableItemOptions(
-	`/api/v1/modifiers/${data.id}`,
+	return `“${account?.name ?? "Unknown Account"}”${friendlyCashFlowActivity}`
+}).join(", "))
+let friendlyCreditAtoms = $derived(creditAtoms.map(atom => {
+	const account = accounts.find(account => account.id === atom.account_id)
+	const cashFlowActivity = cashFlowActivities.find(
+		cashFlowActivity => cashFlowActivity.id === atom.cash_flow_activity_id
+	)
+	const friendlyCashFlowActivity = typeof cashFlowActivity === "undefined"
+		? ""
+		: ` (as part of “${cashFlowActivity.name}”)`
+	return `“${account?.name ?? "Unknown Account"}”${friendlyCashFlowActivity}`
+}).join(", "))
+
+let restorableItemOptions = $derived(makeRestorableItemOptions(
+	`/api/v2/modifiers/${data.id}`,
 	{
 		"updateCacheData": () => {
 			data = {
 				...data,
-				"debit_account_id": parseInt(debitAccountID),
-				"credit_account_id": parseInt(creditAccountID),
 				name,
-				description
+				description,
+				kind
 			}
 		},
-		"removeCacheData": () => dispatch("remove", data),
+		"removeCacheData": () => remove(data),
 		"makeUpdatedBody": () => ({
 			"modifier": {
-				"debit_account_id": parseInt(debitAccountID),
-				"credit_account_id": parseInt(creditAccountID),
 				name,
-				description
+				description,
+				kind
 			}
 		})
 	}
-)
+))
 
 function resetDraft() {
 	name = data.name
@@ -127,49 +144,51 @@ function isAcceptableAction(action: string): action is AcceptableModifierAction 
 }
 </script>
 
-<CollectionItem
+<CardItem
 	label={data.name}
 	{isArchived}
 	options={restorableItemOptions}
-	on:resetDraft={resetDraft}>
-	<BasicForm
-		slot="edit_form"
-		let:confirmEdit
-		let:cancelEdit
-		let:isConnecting
-		let:errors
-		id={formID}
-		bind:debitAccountID={debitAccountID}
-		bind:creditAccountID={creditAccountID}
-		bind:debitCashFlowActivityID={debitCashFlowActivityID}
-		bind:creditCashFlowActivityID={creditCashFlowActivityID}
-		bind:name={name}
-		bind:description={description}
-		bind:kind={kind}
-		bind:action={action}
-		{isConnecting}
-		{IDPrefix}
-		{currencies}
-		{accounts}
-		{cashFlowActivities}
-		{errors}
-		{forceDisabledFields}
-		on:submit={confirmEdit}>
-		<EditActionCardButtonPair
-			slot="button_group"
-			disabled={isConnecting}
-			on:cancelEdit={cancelEdit}/>
-	</BasicForm>
-	<ShortParagraph slot="delete_confirmation_message">
-		Deleting this modifier may prevent related data from being shown temporarily.
-	</ShortParagraph>
-	<ShortParagraph slot="restore_confirmation_message">
-		Restoring this modifier may show related data.
-	</ShortParagraph>
-	<ShortParagraph slot="force_delete_confirmation_message">
-		Deleting this modifier may prevent related data from being shown permanently.
-	</ShortParagraph>
-	<svelte:fragment slot="resource_info">
+	{resetDraft}>
+	{#snippet edit_form({ confirmEdit, cancelEdit, isConnecting, errors })}
+		<BasicForm
+			id={formID}
+			bind:name={name}
+			bind:description={description}
+			bind:kind={kind}
+			bind:action={action}
+			bind:atoms={atomInputs}
+			{isConnecting}
+			isEditing={true}
+			{IDPrefix}
+			{currencies}
+			{accounts}
+			{cashFlowActivities}
+			{errors}
+			{forceDisabledFields}
+			onsubmit={confirmEdit}>
+			{#snippet button_group()}
+				<EditActionCardButtonPair
+					disabled={isConnecting}
+					{cancelEdit}/>
+			{/snippet}
+		</BasicForm>
+	{/snippet}
+	{#snippet delete_confirmation_message()}
+		<ShortParagraph>
+			Deleting this modifier may prevent related data from being shown temporarily.
+		</ShortParagraph>
+	{/snippet}
+	{#snippet restore_confirmation_message()}
+		<ShortParagraph>
+			Restoring this modifier may show related data.
+		</ShortParagraph>
+	{/snippet}
+	{#snippet force_delete_confirmation_message()}
+		<ShortParagraph>
+			Deleting this modifier may prevent related data from being shown permanently.
+		</ShortParagraph>
+	{/snippet}
+	{#snippet resource_info()}
 		<Flex direction="row" mustPad={false}>
 			{#if convertSnakeCaseToProperCase(resolvedDescription) !== "None"}
 				<ShortParagraph>
@@ -178,15 +197,9 @@ function isAcceptableAction(action: string): action is AcceptableModifierAction 
 			{/if}
 			<ShortParagraph>
 				The {friendlyKind} {friendlyAction} modifier
-				debits “{debitAccount.name}”
-				{#if hasDebitCashFlowActivity}
-					(debited cash flow is considered under “{friendlyDebitActivityName}”)
-				{/if}
-				and credits “{creditAccount.name}”
-				{#if hasCreditCashFlowActivity}
-					(credited cash flow is considered under “{friendlyCreditActivityName}”)
-				{/if}.
+				debits {friendlyDebitAtoms}
+				and credits {friendlyCreditAtoms}.
 			</ShortParagraph>
 		</Flex>
-	</svelte:fragment>
-</CollectionItem>
+	{/snippet}
+</CardItem>
