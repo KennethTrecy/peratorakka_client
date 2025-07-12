@@ -31,10 +31,14 @@ export const accountKinds = [
 	...acceptableAccountKinds
 ] as const
 
+export const RECORD_MODIFIER_ACTION = "record"
+export const CLOSE_MODIFIER_ACTION = "close"
+export const EXCHANGE_MODIFIER_ACTION = "exchange"
+
 export const acceptableModifierActions = [
-	"record",
-	"close",
-	"exchange"
+	RECORD_MODIFIER_ACTION,
+	CLOSE_MODIFIER_ACTION,
+	EXCHANGE_MODIFIER_ACTION
 ] as const
 
 export const modifierActions = [
