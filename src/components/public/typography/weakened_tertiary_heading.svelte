@@ -13,5 +13,6 @@ let { children }: {
 <style lang="scss">
 h3 {
 	margin-top: 1.168rem;
+	width: 100%;
 }
 </style>
