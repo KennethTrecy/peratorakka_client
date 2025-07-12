@@ -36,6 +36,7 @@ let {
 	listTitle,
 	collectiveName,
 	defaultSortCriterion,
+	defaultSortOrder = ASCENDING_ORDER,
 	availableSortCriteria,
 	additionalListParameters = [],
 	dependencies = [],
@@ -57,6 +58,7 @@ let {
 	listTitle: string
 	collectiveName: string
 	defaultSortCriterion: string
+	defaultSortOrder: SortOrder
 	availableSortCriteria: string[]
 	additionalListParameters?: [string, string][]
 	dependencyInfos?: (
@@ -109,7 +111,7 @@ let resources: unknown[] = $state([])
 
 let searchMode: SearchMode = $state<SearchMode>(SEARCH_NORMALLY)
 let sortCriterion: string = $state(defaultSortCriterion)
-let sortOrder: SortOrder = $state(ASCENDING_ORDER)
+let sortOrder: SortOrder = $state(defaultSortOrder)
 let lastOffset: number = $state(0)
 
 const partialPath = `/api/v2/${collectiveName}`
