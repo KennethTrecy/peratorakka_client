@@ -2,7 +2,7 @@
 import type { ChoiceInfo } from "+/component"
 import type { GeneralError } from "+/rest"
 
-import { onMount } from "svelte"
+import { onMount, untrack } from "svelte"
 
 import { UNKNOWN_OPTION } from "#/component"
 
@@ -45,6 +45,8 @@ $effect(() => {
 });
 
 let selectElement: HTMLSelectElement|null = $state(null)
+let oldValue = $state(value)
+let oldChoices = $state([] as ChoiceInfo[])
 
 onMount(() => {
 	if (selectElement !== null) {
@@ -56,9 +58,17 @@ onMount(() => {
 })
 
 $effect(() => {
-	if (selectElement !== null && (!disabled || value !== UNKNOWN_OPTION)) {
+	const isElementAvailable = selectElement !== null
+		&& (!disabled || value !== UNKNOWN_OPTION)
+	const hasDifferentChoices = untrack(() => oldChoices).map(choice => choice.data).join(",")
+		!== choices.map(choice => choice.data).join(",")
+	const hasDifferentValues = untrack(() => oldValue) !== value
+	if (isElementAvailable || hasDifferentChoices || hasDifferentValues) {
 		setTimeout(() => {
 			if (selectElement === null) return
+
+			oldChoices = choices
+			oldValue = value
 
 			// @ts-ignore
 			M.FormSelect.getInstance(selectElement).destroy()
