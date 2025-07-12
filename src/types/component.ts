@@ -2,7 +2,7 @@ import type { Readable, Writable } from "svelte/store"
 import type { GeneralError } from "+/rest"
 import type { RestorableEntity } from "+/entity"
 
-export type CardStatus =
+export type ItemStatus =
 	| "reading"
 	| "editing"
 	| "confirming_deletion"
@@ -95,19 +95,21 @@ export interface ResourceDependencyInfo<T extends RestorableEntity> {
 	partialPath: string,
 	mainSortCriterion: string,
 	resourceKey: string,
+	additionalPathParameters?: [ string, string ][],
 	getResources: () => T[],
 	setResources: (resources: T[]) => void
 }
 
 interface LinkedResource {
 	resourceKey: string,
-	resources: RestorableEntity[]
+	resources: Object[],
+	keyGenerator?: ((element: Object) => string|number)
 }
 
 export interface HighResourceDependencyInfo<T extends RestorableEntity>
 extends ResourceDependencyInfo<T> {
 	getLinkedResources: () => LinkedResource[],
-	setLinkedResources: (resources: RestorableEntity[][]) => void,
+	setLinkedResources: (resources: Object[][]) => void,
 }
 
 export function isHighResourceDependencyInfo<T extends RestorableEntity>(data: any)
