@@ -1,23 +1,34 @@
 <script lang="ts">
+import type { Snippet } from "svelte"
 import type { DataTableCellKind, DataTableCellScope, DataTableCellStatus } from "+/component"
 
-export let kind: DataTableCellKind = "normal"
-export let status: DataTableCellStatus = "present"
-export let scope: DataTableCellScope = "row"
-export let columnSpan: number = 1
-export let rowSpan: number = 1
+let {
+	kind = "normal",
+	status = "present",
+	scope = "row",
+	columnSpan = 1,
+	rowSpan = 1,
+	children
+}: {
+	kind?: DataTableCellKind
+	status?: DataTableCellStatus
+	scope?: DataTableCellScope
+	columnSpan?: number
+	rowSpan?: number
+	children: Snippet
+} = $props()
 
-$: headerClasses = [
+let headerClasses = $derived([
 	kind === "numeric" ? "cell--numeric" : false,
 	kind === "descriptive" ? "cell--descriptive" : false,
 	kind === "representative" ? "cell--representative" : false,
 	status === "archived" ? "cell--archived" : false
-].filter(Boolean).join(" ")
-$: resolvedScope = scope === "column" ? "col" : "row"
-$: role = scope === "column" ? "columnheader" : null
+].filter(Boolean).join(" "))
+let resolvedScope = $derived<"row"|"col">(scope === "column" ? "col" : "row")
+let role = $derived(scope === "column" ? "columnheader" : null)
 
-let element: HTMLElement
-$: title = element?.innerHTML ?? "Loading..."
+let element = $state<HTMLElement>()
+let title = $derived(element?.innerHTML ?? "Loading...")
 </script>
 
 <th
@@ -28,12 +39,10 @@ $: title = element?.innerHTML ?? "Loading..."
 	rowspan={rowSpan}
 	{title}
 	bind:this={element}>
-	<slot/>
+	{@render children()}
 </th>
 
 <style lang="scss">
-@use "@/components/third-party/index";
-
 .cell--numeric {
 	text-align: right;
 }
