@@ -10,6 +10,7 @@ import { SEARCH_WITH_DELETED, MAXIMUM_PAGINATED_LIST_LENGTH } from "#/rest"
 import { isHighResourceDependencyInfo } from "+/component"
 import makeJSONRequester from "$/rest/make_json_requester"
 import mergeUniqueResources from "$/utility/merge_unique_resources"
+import mergeUniqueElements from "$/utility/merge_unique_elements"
 
 export default async function loadAllDependencies<T extends RestorableEntity>(
 	globalContext: ContextBundle,
@@ -37,6 +38,7 @@ export default async function loadAllDependencies<T extends RestorableEntity>(
 			const completePath = `${partialDependencyPath}?${
 				new URLSearchParams([
 					...dependencyPathParameters,
+					...(dependencyInfo.additionalPathParameters ?? []),
 					[ "page[offset]", `${newOffset + 1}` ],
 				]).toString()
 			}`
@@ -76,9 +78,10 @@ export default async function loadAllDependencies<T extends RestorableEntity>(
 						if (isHighResourceDependencyInfo(dependencyInfo)) {
 							const linkedResources = dependencyInfo.getLinkedResources()
 							dependencyInfo.setLinkedResources(linkedResources.map(
-								({ resourceKey, resources }) => mergeUniqueResources(
+								({ resourceKey, resources, keyGenerator }) => mergeUniqueElements(
 									responseDocument[resourceKey],
-									resources
+									resources,
+									(keyGenerator ?? (element => (element as { id: number|string }).id))
 								)
 							))
 						}
