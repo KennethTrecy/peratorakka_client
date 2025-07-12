@@ -1,17 +1,20 @@
 import Fraction from "fraction.js"
 import { Chart as ChartJS } from "chart.js"
 
-import type { Currency } from "+/entity"
+import type { PrecisionFormat, Currency } from "+/entity"
 
 import { DEFAULT_MINIMUM_FRACTION_DIGITS, DEFAULT_MAXIMUM_FRACTION_DIGITS } from "#/component"
 import { DARK_MODE } from "#/theme"
 
 export function formatAmount(
+	precisionFormat: PrecisionFormat | undefined,
 	currency: Currency | undefined,
-	amount: string,
-	minimumFractionDigits: number,
-	maximumFractionDigits: number
+	amount: string
 ) {
+	const minimumFractionDigits = precisionFormat?.minimum_presentational_precision
+		?? DEFAULT_MINIMUM_FRACTION_DIGITS
+	const maximumFractionDigits = precisionFormat?.maximum_presentational_precision
+		?? DEFAULT_MAXIMUM_FRACTION_DIGITS
 	const parsedAmount = new Fraction(amount)
 	const untrimmedAmount = parsedAmount
 		.round(maximumFractionDigits)
@@ -29,16 +32,23 @@ export function formatAmount(
 
 	const formattedAmount = `${whole}${rawFraction}`
 
-	return makeFormattedAmount(currency, formattedAmount)
+	return makeFormattedAmount(precisionFormat, currency, formattedAmount)
 }
 
-export function makeFormattedAmount(currency: Currency | undefined, amount: string): string {
+export function makeFormattedAmount(
+	precisionFormat: PrecisionFormat | undefined,
+	currency: Currency | undefined,
+	amount: string
+): string {
+	const minimumFractionDigits = precisionFormat?.minimum_presentational_precision
+		?? DEFAULT_MINIMUM_FRACTION_DIGITS
+	const maximumFractionDigits = precisionFormat?.maximum_presentational_precision
+		?? DEFAULT_MAXIMUM_FRACTION_DIGITS
+
 	return `${currency?.code ?? "---"} ${(+amount).toLocaleString("en-US", {
 		"useGrouping": "true",
-		"minimumFractionDigits": (
-			currency?.presentational_precision ?? DEFAULT_MINIMUM_FRACTION_DIGITS
-		),
-		"maximumFractionDigits": currency?.presentational_precision ?? DEFAULT_MAXIMUM_FRACTION_DIGITS
+		"minimumFractionDigits": minimumFractionDigits,
+		"maximumFractionDigits": maximumFractionDigits
 	}).replaceAll(",", " ")}`
 }
 
@@ -51,11 +61,13 @@ export function subtractAmount(subtrahend: string, minuend: string): string {
 }
 
 export function multiplyAmount(multiplicand: string, multiplier: string): string {
+	// @ts-ignore
 	Fraction.REDUCE = true;
 	return new Fraction(multiplicand).mul(multiplier).toString()
 }
 
 export function divideAmount(dividend: string, divisor: string): string {
+	// @ts-ignore
 	Fraction.REDUCE = true;
 	return new Fraction(dividend).div(divisor).toFraction()
 }

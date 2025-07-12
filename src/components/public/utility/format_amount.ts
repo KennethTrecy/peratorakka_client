@@ -1,25 +1,19 @@
-import type { Currency } from "+/entity"
-
-import { DEFAULT_MINIMUM_FRACTION_DIGITS, DEFAULT_MAXIMUM_FRACTION_DIGITS } from "#/component"
+import type { PrecisionFormat, Currency } from "+/entity"
 
 import { formatAmount as formatAmountStrictly } from "!/index"
 import cleanValue from "$/utility/clean_value"
 import parenthesizeValue from "$/utility/parenthesize_value"
 
-export default function formatAmount(currency: Currency | undefined, amount: string): string {
-	const minimumFractionDigits = typeof currency === "undefined"
-		? DEFAULT_MINIMUM_FRACTION_DIGITS
-		: currency.presentational_precision
-	const maximumFractionDigits = typeof currency === "undefined"
-		? DEFAULT_MAXIMUM_FRACTION_DIGITS
-		: currency.presentational_precision
-
+export default function formatAmount(
+	precisionFormat: PrecisionFormat | undefined,
+	currency: Currency | undefined,
+	amount: string
+): string {
 	const [ isNegative, cleanAmount ] = cleanValue(amount)
 
 	return parenthesizeValue(isNegative, formatAmountStrictly(
+		precisionFormat,
 		currency,
-		cleanAmount,
-		minimumFractionDigits,
-		maximumFractionDigits
+		cleanAmount
 	))
 }
