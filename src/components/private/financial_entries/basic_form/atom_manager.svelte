@@ -99,15 +99,22 @@ $effect(() => {
 
 $effect(() => {
 	const newAtomInputs = untrack(() => completeAtomInputs).map(atom => atom.input)
-	if (JSON.stringify(atoms) !== JSON.stringify(newAtomInputs)) {
+	const hasDifferentNewAtoms = JSON.stringify(atoms.map(
+		atom => `${atom.modifier_atom_id}_${atom.kind}_${atom.numerical_value}`
+	)) !== JSON.stringify(newAtomInputs.map(
+		atom => `${atom.modifier_atom_id}_${atom.kind}_${atom.numerical_value}`
+	))
+	if (hasDifferentNewAtoms) {
 		untrack(() => {
 			completeAtomInputs = completeAtomInputs.map(atom => ({
 				...atom,
 				"input": {
 					...atom.input,
 					"numerical_value": atoms.find(
-						oldAtom => oldAtom.modifier_atom_id === atom.input.modifier_atom_id
-						&& oldAtom.kind === atom.input.kind
+						oldAtom => (
+							oldAtom.modifier_atom_id === atom.input.modifier_atom_id
+							&& oldAtom.kind === atom.input.kind
+						)
 					)?.numerical_value ?? "0"
 				}
 			}))
@@ -161,6 +168,8 @@ function updateAtomAutomatically(atom: CompleteFinancialEntryAtomInput, index: n
 			}
 		}
 	}
+
+	console.log("updated atom", newCompleteAtomInputs)
 
 	completeAtomInputs = newCompleteAtomInputs
 }
