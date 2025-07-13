@@ -35,7 +35,6 @@ import EditActionCardButtonPair from "$/button/card/edit_action_pair.svelte"
 import ElementalParagraph from "$/typography/elemental_paragraph.svelte"
 import Flex from "$/layout/flex.svelte"
 import ShortParagraph from "$/typography/short_paragraph.svelte"
-import TextContainer from "$/typography/text_container.svelte"
 import WeakenedTertiaryHeading from "$/typography/weakened_tertiary_heading.svelte"
 
 let {
