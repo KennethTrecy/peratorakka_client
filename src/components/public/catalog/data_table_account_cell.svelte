@@ -3,26 +3,34 @@ import type { DataTableCellKind } from "+/component"
 
 import DataTableCell from "$/catalog/data_table_cell.svelte"
 
-export let kind: DataTableCellKind = "normal"
-export let rawDebitExistence: boolean[]
-export let rawDebit: any[]
-export let rawCreditExistence: boolean[]
-export let rawCredit: any[]
+let {
+	kind = "normal",
+	rawDebitExistence,
+	rawDebit,
+	rawCreditExistence,
+	rawCredit
+}: {
+	kind?: DataTableCellKind
+	rawDebitExistence: boolean[]
+	rawDebit: any[]
+	rawCreditExistence: boolean[]
+	rawCredit: any[]
+} = $props()
 
-$: debits = kind === "normal" ? (rawDebit as string[]) : (rawDebit as number[])
-$: credits = kind === "normal" ? (rawCredit as string[]) : (rawCredit as number[])
-$: debitClasses = [
+let debits = $derived(kind === "normal" ? (rawDebit as string[]) : (rawDebit as number[]))
+let credits = $derived(kind === "normal" ? (rawCredit as string[]) : (rawCredit as number[]))
+let debitClasses = $derived([
 	"browser-default",
 	"debit",
 	"p-0",
 	kind
-].join(" ")
-$: creditClasses = [
+].join(" "))
+let creditClasses = $derived([
 	"browser-default",
 	"credit",
 	"p-0",
 	kind
-].join(" ")
+].join(" "))
 </script>
 
 <DataTableCell {kind}>
