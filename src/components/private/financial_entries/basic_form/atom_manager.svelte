@@ -58,10 +58,11 @@ let expectedFinancialEntryAtomInputs = $derived(
 				account => account.id === currentAtom.account_id
 			) ?? UNKNOWN_ACCOUNT
 
-			const foundAtom = atoms.find(atom => (
+			const foundFinancialEntryAtom = atoms.find(atom => (
 				atom.kind === TOTAL_FINANCIAL_ENTRY_ATOM_KIND
 				&& atom.modifier_atom_id === currentAtom.id
 			))
+
 			return [
 				...compiledAtoms,
 				{
@@ -73,9 +74,13 @@ let expectedFinancialEntryAtomInputs = $derived(
 					"input": {
 						"modifier_atom_id": currentAtom.id,
 						"kind": TOTAL_FINANCIAL_ENTRY_ATOM_KIND,
-						"numerical_value": foundAtom?.numerical_value ?? "0"
+						"numerical_value": foundFinancialEntryAtom?.numerical_value ?? "0",
+						...(
+							typeof foundFinancialEntryAtom === "undefined"
+								? {}
+								: { "id": foundFinancialEntryAtom.id }
+						)
 					},
-					...(typeof foundAtom === "undefined" ? {} : { "id": foundAtom.id })
 				}
 			]
 		},
