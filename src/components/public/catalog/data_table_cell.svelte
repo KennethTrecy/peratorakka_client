@@ -1,26 +1,34 @@
 <script lang="ts">
+import type { Snippet } from "svelte"
 import type { DataTableCellKind, DataTableCellStatus } from "+/component"
 
-export let kind: DataTableCellKind = "normal"
-export let status: DataTableCellStatus = "present"
-export let columnSpan: number = 1
-export let rowSpan: number = 1
+let {
+	kind = "normal",
+	status = "present",
+	columnSpan = 1,
+	rowSpan = 1,
+	children
+}: {
+	kind?: DataTableCellKind
+	status?: DataTableCellStatus
+	columnSpan?: number
+	rowSpan?: number
+	children: Snippet
+} = $props()
 
-$: rowClasses = [,
+let rowClasses = $derived([,
 	kind === "numeric" ? "cell--numeric" : false,
 	kind === "descriptive" ? "cell--descriptive" : false,
 	kind === "representative" ? "cell--representative" : false,
 	status === "archived" ? "cell--archived" : false
-].filter(Boolean).join(" ")
+].filter(Boolean).join(" "))
 </script>
 
 <td class={rowClasses} colspan={columnSpan} rowspan={rowSpan}>
-	<slot/>
+	{@render children()}
 </td>
 
 <style lang="scss">
-@use "@/components/third-party/index";
-
 .cell--numeric {
 	text-align: right;
 	white-space: nowrap;
