@@ -58,6 +58,10 @@ let expectedFinancialEntryAtomInputs = $derived(
 				account => account.id === currentAtom.account_id
 			) ?? UNKNOWN_ACCOUNT
 
+			const foundAtom = atoms.find(atom => (
+				atom.kind === TOTAL_FINANCIAL_ENTRY_ATOM_KIND
+				&& atom.modifier_atom_id === currentAtom.id
+			))
 			return [
 				...compiledAtoms,
 				{
@@ -69,11 +73,9 @@ let expectedFinancialEntryAtomInputs = $derived(
 					"input": {
 						"modifier_atom_id": currentAtom.id,
 						"kind": TOTAL_FINANCIAL_ENTRY_ATOM_KIND,
-						"numerical_value": atoms.find(atom => (
-							atom.kind === TOTAL_FINANCIAL_ENTRY_ATOM_KIND
-							&& atom.modifier_atom_id === currentAtom.id
-						))?.numerical_value ?? "0"
-					}
+						"numerical_value": foundAtom?.numerical_value ?? "0"
+					},
+					...(typeof foundAtom === "undefined" ? {} : { "id": foundAtom.id })
 				}
 			]
 		},
@@ -122,6 +124,21 @@ $effect(() => {
 	}
 })
 
+$effect(() => {
+	const newAtomInputs = completeAtomInputs.map(atom => atom.input)
+	const hasDifferentNewAtoms = JSON.stringify(untrack(() => atoms).map(
+		atom => `${atom.modifier_atom_id}_${atom.kind}_${atom.numerical_value}`
+	)) !== JSON.stringify(newAtomInputs.map(
+		atom => `${atom.modifier_atom_id}_${atom.kind}_${atom.numerical_value}`
+	))
+	if (hasDifferentNewAtoms) {
+		untrack(() => {
+			atoms = newAtomInputs
+		})
+	}
+})
+
+
 let monetaryAtomInputs = $derived(completeAtomInputs.filter(
 	atom => (
 		atom.modifier_atom.kind === REAL_DEBIT_MODIFIER_ATOM_KIND
@@ -168,8 +185,6 @@ function updateAtomAutomatically(atom: CompleteFinancialEntryAtomInput, index: n
 			}
 		}
 	}
-
-	console.log("updated atom", newCompleteAtomInputs)
 
 	completeAtomInputs = newCompleteAtomInputs
 }
