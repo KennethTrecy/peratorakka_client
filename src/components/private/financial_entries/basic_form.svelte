@@ -99,7 +99,7 @@ let modifier = $derived(modifiers.find(
 		{modifierAtoms}
 		{modifier}
 		disabled={isConnecting || forceDisabledFields.includes("atoms")}
-		{atoms}
+		bind:atoms={atoms}
 		{IDPrefix}
 		{isConnecting}
 		{errors}/>
