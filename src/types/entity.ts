@@ -112,6 +112,7 @@ export type FinancialEntryAtomKind = typeof financialEntryAtomKinds[number]
 export type AcceptableFinancialEntryAtomKind = typeof acceptableFinancialEntryAtomKinds[number]
 
 interface CoreFinancialEntryAtomInput {
+	id?: number
 	modifier_atom_id: number
 	kind: FinancialEntryAtomKind
 	numerical_value: string
@@ -120,7 +121,6 @@ interface CoreFinancialEntryAtomInput {
 export type FinancialEntryAtomInput = CoreFinancialEntryAtomInput
 
 export type FinancialEntryAtom = Entity & CoreFinancialEntryAtomInput & {
-	id?: number
 	financial_entry_id: number
 }
 
