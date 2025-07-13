@@ -6,7 +6,7 @@ import DataTableRow from "$/catalog/data_table_row.svelte"
 let { table_headers, table_rows, table_footer_cells }: {
 	table_headers: Snippet
 	table_rows: Snippet
-	table_footer_cells: Snippet
+	table_footer_cells?: Snippet
 } = $props()
 </script>
 
