@@ -1,11 +1,9 @@
 <script lang="ts">
-import type { Currency, Account, SummaryCalculation } from "+/entity"
+import type { PrecisionFormat, Currency } from "+/entity"
 import type { FinancialStatementGroup, ExchangeRateInfo } from "+/rest"
-import type { TrialBalanceKind } from "+/component"
+import type { SimplifiedSummaryCalculation, TrialBalanceKind } from "+/component"
 
-import convertAmount from "$/utility/convert_amount"
-import deriveExchangeRateQuickly from "$/utility/derive_exchange_rate_quickly"
-import formatAmount from "$/utility/format_amount"
+import makeShownAmount from "$/utility/make_shown_amount"
 
 import DataTableCell from "$/catalog/data_table_cell.svelte"
 import DataTableHeader from "$/catalog/data_table_header.svelte"
@@ -13,58 +11,70 @@ import QuarternaryHeading from "$/typography/quarternary_heading.svelte"
 import TrialRow from "%/frozen_periods/financial_statements/trial_row.svelte"
 import UnitDataTable from "$/catalog/unit_data_table.svelte"
 
-export let kind: TrialBalanceKind
-export let statement: FinancialStatementGroup
-export let exchangeRates: ExchangeRateInfo[]
-export let viewedCurrency: Currency
-export let currencies: Currency[]
-export let accounts: Account[]
-export let data: Omit<SummaryCalculation, "frozen_period_id">[]
-
-$: headingAdjective = kind === "adjusted" ? "Adjusted" : "Unadjusted"
-$: exchangeRate = deriveExchangeRateQuickly(
-	statement.currency_id,
-	viewedCurrency.id,
+let {
+	kind,
+	statement,
+	statementExchangeRate,
+	statementCurrency,
+	viewedCurrency,
+	precisionFormats,
 	currencies,
-	exchangeRates
-)
-$: convertedTotalDebitAmount = convertAmount(
+	data
+}: {
+	kind: TrialBalanceKind
+	statement: FinancialStatementGroup
+	statementExchangeRate: ExchangeRateInfo
+	statementCurrency: Currency
+	viewedCurrency: Currency
+	precisionFormats: PrecisionFormat[]
+	currencies: Currency[]
+	data: SimplifiedSummaryCalculation[]
+} = $props()
+
+let headingAdjective = $derived(kind === "adjusted" ? "Adjusted" : "Unadjusted")
+let totalDebitAmount = $derived(
 	kind === "adjusted"
 		? statement.adjusted_trial_balance.debit_total
-		: statement.unadjusted_trial_balance.debit_total,
-	exchangeRate
+		: statement.unadjusted_trial_balance.debit_total
 )
-$: friendlyTotalDebitAmount = formatAmount(viewedCurrency, convertedTotalDebitAmount)
-$: convertedTotalCreditAmount = convertAmount(
+let friendlyTotalDebitAmount = $derived(makeShownAmount(
+	precisionFormats,
+	currencies,
+	statementExchangeRate,
+	statementCurrency,
+	viewedCurrency,
+	totalDebitAmount
+))
+let totalCreditAmount = $derived(
 	kind === "adjusted"
 		? statement.adjusted_trial_balance.credit_total
-		: statement.unadjusted_trial_balance.credit_total,
-	exchangeRate
+		: statement.unadjusted_trial_balance.credit_total
 )
-$: friendlyTotalCreditAmount = formatAmount(viewedCurrency, convertedTotalCreditAmount)
+let friendlyTotalCreditAmount = $derived(makeShownAmount(
+	precisionFormats,
+	currencies,
+	statementExchangeRate,
+	statementCurrency,
+	viewedCurrency,
+	totalCreditAmount
+))
 </script>
 
 <QuarternaryHeading>{headingAdjective} Trial Balance</QuarternaryHeading>
 <UnitDataTable>
-	<svelte:fragment slot="table_headers">
+	{#snippet table_headers()}
 		<DataTableHeader scope="column">Account</DataTableHeader>
 		<DataTableHeader scope="column" kind="numeric">Debit Amount</DataTableHeader>
 		<DataTableHeader scope="column" kind="numeric">Credit Amount</DataTableHeader>
-	</svelte:fragment>
-	<svelte:fragment slot="table_rows">
-		{#each data as calculation(calculation.account_id)}
-			<TrialRow
-				{viewedCurrency}
-				{exchangeRates}
-				{currencies}
-				{accounts}
-				data={calculation}
-				{kind}/>
+	{/snippet}
+	{#snippet table_rows()}
+		{#each data as calculation(calculation.account.id)}
+			<TrialRow data={calculation}/>
 		{/each}
-	</svelte:fragment>
-	<svelte:fragment slot="table_footer_cells">
+	{/snippet}
+	{#snippet table_footer_cells()}
 		<DataTableHeader scope="row">Total</DataTableHeader>
 		<DataTableCell kind="numeric">{friendlyTotalDebitAmount}</DataTableCell>
 		<DataTableCell kind="numeric">{friendlyTotalCreditAmount}</DataTableCell>
-	</svelte:fragment>
+	{/snippet}
 </UnitDataTable>
