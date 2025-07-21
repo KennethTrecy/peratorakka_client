@@ -1,51 +1,38 @@
 <script lang="ts">
-import type { CashFlowActivitySubtotal, ExchangeRateInfo } from "+/rest"
-import type {
-	Currency,
-	CashFlowActivity,
-	Account,
-	FlowCalculation
-} from "+/entity"
+import type { SimplifiedFlowCalculation } from "+/component"
+import type { CashFlowActivitySubtotal } from "+/rest"
+import type { CashFlowActivity } from "+/entity"
 
-import { UNKNOWN_ACCOUNT } from "#/component"
-import { acceptableAccountKinds } from "#/entity"
+import { temporaryAccountKinds } from "#/entity"
 
 import AmountRow
 	from "%/frozen_periods/financial_statements/cash_flow_statement/amount_row.svelte"
 
-export let exchangeRates: ExchangeRateInfo[]
-export let viewedCurrency: Currency
-export let currencies: Currency[]
-export let cashFlowActivity: CashFlowActivity
-export let cashFlowSubtotals: CashFlowActivitySubtotal[]
-export let accounts: Account[]
-export let flowCalculations: Omit<FlowCalculation, "frozen_period_id">[]
+let {
+	emptyAmount,
+	cashFlowActivity,
+	shownCashFlowSubtotals,
+	data
+}: {
+	emptyAmount: string
+	cashFlowActivity: CashFlowActivity
+	shownCashFlowSubtotals: CashFlowActivitySubtotal[]
+	data: SimplifiedFlowCalculation[]
+} = $props()
 
-$: matchedSubtotal = cashFlowSubtotals.find(
+let matchedSubtotal = $derived(shownCashFlowSubtotals.find(
 	subtotal => subtotal.cash_flow_activity_id === cashFlowActivity.id
-) as CashFlowActivitySubtotal|undefined
-$: matchedFlowCalculations = flowCalculations.filter(
-	flowCalculation => flowCalculation.cash_flow_activity_id === cashFlowActivity.id
-)
-$: accountedFlowCalculations = matchedFlowCalculations.map(flowCalculation => {
-	const account = accounts.find(
-		account => account.id === flowCalculation.account_id
-	) ?? UNKNOWN_ACCOUNT
-
-	return {
-		...flowCalculation,
-		"@meta": {
-			account
-		}
-	}
-}).filter(flowCalculation => {
-	return flowCalculation["@meta"].account.kind !== acceptableAccountKinds[3]
-		&& flowCalculation["@meta"].account.kind !== acceptableAccountKinds[4]
-		&& flowCalculation.net_amount !== "0"
-})
-$: hasNetIncome = matchedSubtotal?.net_income !== "0"
-$: rowCountBeforeAccounts = hasNetIncome ? 1 : 0
-$: firstRowSpan = accountedFlowCalculations.length + 1 + rowCountBeforeAccounts
+) as CashFlowActivitySubtotal|undefined)
+let matchedFlowCalculations = $derived(data.filter(
+	flowCalculation => (
+		flowCalculation.cashFlowActivity.id === cashFlowActivity.id
+		&& temporaryAccountKinds.indexOf(flowCalculation.account.kind) === -1
+		&& flowCalculation.amount !== emptyAmount
+	)
+))
+let hasNetIncome = $derived(matchedSubtotal?.net_income !== emptyAmount)
+let rowCountBeforeAccounts = $derived(hasNetIncome ? 1 : 0)
+let firstRowSpan = $derived(matchedFlowCalculations.length + 1 + rowCountBeforeAccounts)
 </script>
 
 {#if typeof matchedSubtotal !== "undefined"}
@@ -53,31 +40,19 @@ $: firstRowSpan = accountedFlowCalculations.length + 1 + rowCountBeforeAccounts
 		<AmountRow
 			categoryName={cashFlowActivity.name}
 			categoryNameRowSpan={firstRowSpan}
-			{viewedCurrency}
-			{exchangeRates}
-			{currencies}
-			baseCurrencyID={viewedCurrency.id}
 			accountName="Net income"
-			rawAmount={matchedSubtotal.net_income}/>
+			shownAmount={matchedSubtotal.net_income}/>
 	{/if}
-	{#each accountedFlowCalculations as flowCalculation, i}
+	{#each matchedFlowCalculations as flowCalculation, i}
 		<AmountRow
 			categoryName={cashFlowActivity.name}
 			categoryNameRowSpan={i + rowCountBeforeAccounts === 0 ? firstRowSpan : 0}
-			{viewedCurrency}
-			{exchangeRates}
-			{currencies}
-			baseCurrencyID={flowCalculation["@meta"].account.currency_id}
-			accountName={flowCalculation["@meta"].account.name}
-			rawAmount={flowCalculation.net_amount}/>
+			accountName={flowCalculation.account.name}
+			shownAmount={flowCalculation.amount}/>
 	{/each}
 	<AmountRow
 		categoryName={cashFlowActivity.name}
 		categoryNameRowSpan={0}
-		{viewedCurrency}
-		{exchangeRates}
-		{currencies}
-		baseCurrencyID={viewedCurrency.id}
 		accountName="Balance"
-		rawAmount={matchedSubtotal.subtotal}/>
+		shownAmount={matchedSubtotal.subtotal}/>
 {/if}
