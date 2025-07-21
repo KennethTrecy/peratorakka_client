@@ -1,14 +1,23 @@
 <script lang="ts">
-import type { FinancialStatementGroup, ExchangeRateInfo } from "+/rest"
+import { untrack, type Snippet } from "svelte"
 import type {
+	FinancialStatementGroup,
+	ExchangeRateInfo,
+	CompleteFrozenPeriodInfo,
+	GeneralError
+} from "+/rest"
+import type {
+	PrecisionFormat,
 	Currency,
 	CashFlowActivity,
 	Account,
-	SummaryCalculation,
-	FlowCalculation
+	FrozenAccount,
+	RealAdjustedSummaryCalculation,
+	RealUnadjustedSummaryCalculation,
+	RealFlowCalculation
 } from "+/entity"
 
-import { get } from "svelte/store"
+import { onDestroy } from "svelte"
 
 import { ANY_CURRENCY } from "#/component"
 
@@ -24,65 +33,144 @@ import ChoiceListField from "$/form/choice_list_field.svelte"
 import Cluster from "%/frozen_periods/financial_statements/cluster.svelte"
 import TertiaryHeading from "$/typography/tertiary_heading.svelte"
 
-export let isConnecting: boolean
+let {
+	isConnecting,
+	errors,
+	children
+}: {
+	isConnecting: boolean
+	errors: GeneralError[]
+	children: Snippet<[{
+		financialStatementCluster: Snippet
+		display: (completeFrozenPeriodInfo: CompleteFrozenPeriodInfo) => void
+	}]>
+} = $props()
 
-export let startedAt: string
-export let finishedAt: string
-export let statements: FinancialStatementGroup[]
-export let exchangeRates: ExchangeRateInfo[]
-export let currencies: Currency[]
-export let cashFlowActivities: CashFlowActivity[]
-export let accounts: Account[]
-export let summaryCalculations: Omit<SummaryCalculation, "frozen_period_id">[]
-export let flowCalculations: Omit<FlowCalculation, "frozen_period_id">[]
+let completeFrozenPeriodInfo = $state<CompleteFrozenPeriodInfo|null>(null)
+let precisionFormats = $derived<PrecisionFormat[]>(
+	completeFrozenPeriodInfo?.precision_formats ?? []
+)
+let currencies = $derived<Currency[]>(
+	[...(completeFrozenPeriodInfo?.currencies ?? [])]
+	.sort((a, b) => a.created_at.localeCompare(b.created_at))
+)
+let cashFlowActivities = $derived<CashFlowActivity[]>(
+	completeFrozenPeriodInfo?.cash_flow_activities ?? []
+)
+let accounts = $derived<Account[]>(
+	completeFrozenPeriodInfo?.accounts ?? []
+)
+let frozenAccounts = $derived<FrozenAccount[]>(
+	completeFrozenPeriodInfo?.frozen_accounts ?? []
+)
+let realAdjustedSummaryCalculations = $derived<RealAdjustedSummaryCalculation[]>(
+	completeFrozenPeriodInfo?.real_adjusted_summary_calculations ?? []
+)
+let realUnadjustedSummaryCalculations = $derived<RealUnadjustedSummaryCalculation[]>(
+	completeFrozenPeriodInfo?.real_unadjusted_summary_calculations ?? []
+)
+let realFlowCalculations = $derived<RealFlowCalculation[]>(
+	completeFrozenPeriodInfo?.real_flow_calculations ?? []
+)
+let statements = $derived<FinancialStatementGroup[]>(
+	completeFrozenPeriodInfo !== null ? completeFrozenPeriodInfo["@meta"].statements
+	: []
+)
+let exchangeRates = $derived<ExchangeRateInfo[]>(
+	completeFrozenPeriodInfo !== null ? completeFrozenPeriodInfo["@meta"].exchange_rates : []
+)
 
-let selectedCurrencyID = `${ANY_CURRENCY.id}`
-let previousSelectedCurrencyID = `${ANY_CURRENCY.id}`
-let targetCurrencyID = `${ANY_CURRENCY.id}`
-let hasSelectedFirstCurrencyAfterLoading = false
-$: IDPrefix = `date_${startedAt}_to_${finishedAt}`
-$: {
-	if (currencies.length > 0) {
-		if (selectedCurrencyID === `${ANY_CURRENCY.id}` && !hasSelectedFirstCurrencyAfterLoading) {
+let startedAt = $derived(
+	(completeFrozenPeriodInfo?.frozen_period.started_at ?? "----------")
+	.slice(0, "YYYY-MM-DD".length)
+)
+let finishedAt = $derived(
+	(completeFrozenPeriodInfo?.frozen_period.finished_at ?? "----------")
+	.slice(0, "YYYY-MM-DD".length)
+)
+
+let selectedCurrencyID = $state(`${ANY_CURRENCY.id}`)
+let targetCurrencyID = $state(`${ANY_CURRENCY.id}`)
+let hasSelectedFirstCurrencyAfterLoading = $state(false)
+let IDPrefix = $derived(`date_${startedAt}_to_${finishedAt}`)
+$effect(() => {
+	if (
+		currencies.length > 0
+		&& selectedCurrencyID === `${ANY_CURRENCY.id}`
+		&& !hasSelectedFirstCurrencyAfterLoading
+	) {
+		untrack(() => {
 			selectedCurrencyID = `${currencies[0].id}`
 			hasSelectedFirstCurrencyAfterLoading = true
-		}
-
-		if (previousSelectedCurrencyID !== selectedCurrencyID) {
-			previousSelectedCurrencyID = selectedCurrencyID
-			if (selectedCurrencyID === `${ANY_CURRENCY.id}`) {
-				targetCurrencyID = `${currencies[0].id}`
-			} else {
-				targetCurrencyID = selectedCurrencyID
-			}
-		}
+		})
 	}
-}
+})
+$effect(() => {
+	if (
+		currencies.length > 0
+		&& selectedCurrencyID === `${ANY_CURRENCY.id}`
+		&& hasSelectedFirstCurrencyAfterLoading
+	) {
+		untrack(() => {
+			targetCurrencyID = `${currencies[0].id}`
+		})
+	} else {
+		untrack(() => {
+			targetCurrencyID = selectedCurrencyID
+		})
+	}
+})
 
-$: hasGoodDependencies = statements.length > 0
+let hasGoodDependencies = $derived(
+	statements.length > 0
 	|| exchangeRates.length > 0
 	|| currencies.length > 0
 	|| cashFlowActivities.length > 0
 	|| accounts.length > 0
-	|| summaryCalculations.length > 0
-	|| flowCalculations.length > 0
-$: viewedCurrency = currencies.find(
+	|| frozenAccounts.length > 0
+	|| realAdjustedSummaryCalculations.length > 0
+	|| realUnadjustedSummaryCalculations.length > 0
+	|| realFlowCalculations.length > 0
+)
+let viewedCurrency = $derived(currencies.find(
 	currency => `${currency.id}` === targetCurrencyID
-) ?? currencies[0] ?? ANY_CURRENCY
+) ?? currencies[0] ?? ANY_CURRENCY)
 
-$: availableCurrencies = [
+let availableCurrencies = $derived([
 	...currencies,
 	ANY_CURRENCY
-]
+])
 
-let selectedStatement: FinancialStatementGroup|null = null
+let resolvedExchangeRates = $derived<Record<string, ExchangeRateInfo>>(currencies.reduce(
+	(previousRates, currency) => {
+		const exchangeRate = deriveExchangeRate(currency, viewedCurrency, exchangeRates)
+		const sourceKey = `${currency.id}`
 
+		return {
+			...previousRates,
+			[sourceKey]: exchangeRate ?? {
+				"source": {
+					"currency_id": currency.id,
+					"value": "1"
+				},
+				"destination": {
+					"currency_id": currency.id,
+					"value": "0"
+				},
+				"updated_at": (new Date()).toDateString()
+			}
+		}
+	},
+	{}
+))
+
+let selectedStatement: FinancialStatementGroup|null = $state(null)
 const {
 	"isConnecting": isConnectingForRecalculation,
 	"errors": errorsForRecalculation,
 	"send": requestForRecalculation
 } = makeJSONRequester({
-	"path": "/api/v1/frozen_periods/recalculate",
+	"path": "/api/v2/frozen_periods/recalculate",
 	"defaultRequestConfiguration": {
 		"method": "POST"
 	},
@@ -102,27 +190,20 @@ const {
 	"expectedErrorStatusCodes": [ 401 ]
 })
 
-$: {
-	if (!get(isConnectingForRecalculation)) {
+let isConnectingToRecalculate = $state(false)
+onDestroy(isConnectingForRecalculation.subscribe(value => {
+	isConnectingToRecalculate = value
+}))
+$effect(() => {
+	if (!isConnectingToRecalculate) {
 		try {
-			selectedStatement = statements.length > 0 && selectedCurrencyID === `${ANY_CURRENCY.id}`
-				? statements.reduce((compiledGroup, currentGroup) => {
-					const currentCurrency = currencies.find(
-						currency => currency.id === currentGroup.currency_id
-					) ?? ANY_CURRENCY
-					const exchangeRate = viewedCurrency.id === ANY_CURRENCY.id
-						? {
-							"source": {
-								"currency_id": currentGroup.currency_id ?? 0,
-								"value": "1"
-							},
-							"destination": {
-								"currency_id": compiledGroup.currency_id ?? 0,
-								"value": "0"
-							},
-							"updated_at": (new Date()).toDateString()
-						}
-						: deriveExchangeRate(currentCurrency, viewedCurrency, exchangeRates)
+			const isAnyCurrencySelected = (
+				statements.length > 0
+				&& selectedCurrencyID === `${ANY_CURRENCY.id}`
+			)
+			const resolvedSelectedStatement = isAnyCurrencySelected
+				? untrack(() => statements.reduce((compiledGroup, currentGroup) => {
+					const exchangeRate = resolvedExchangeRates[`${currentGroup.currency_id}`]
 
 					const compiledSubtotals = compiledGroup.cash_flow_statement.subtotals
 
@@ -155,11 +236,17 @@ $: {
 						"unadjusted_trial_balance": {
 							"debit_total": addAmount(
 								compiledGroup.unadjusted_trial_balance.debit_total,
-								convertAmount(currentGroup.unadjusted_trial_balance.debit_total, exchangeRate)
+								convertAmount(
+									currentGroup.unadjusted_trial_balance.debit_total,
+									exchangeRate
+								)
 							),
 							"credit_total": addAmount(
 								compiledGroup.unadjusted_trial_balance.credit_total,
-								convertAmount(currentGroup.unadjusted_trial_balance.credit_total, exchangeRate)
+								convertAmount(
+									currentGroup.unadjusted_trial_balance.credit_total,
+									exchangeRate
+								)
 							)
 						},
 						"income_statement": {
@@ -183,18 +270,24 @@ $: {
 							)
 						},
 						"cash_flow_statement": {
-							"opened_liquid_amount": addAmount(
-								compiledGroup.cash_flow_statement.opened_liquid_amount,
-								convertAmount(currentGroup.cash_flow_statement.opened_liquid_amount, exchangeRate)
-							),
-							"closed_liquid_amount": addAmount(
-								compiledGroup.cash_flow_statement.closed_liquid_amount,
-								convertAmount(currentGroup.cash_flow_statement.closed_liquid_amount, exchangeRate)
-							),
-							"liquid_amount_difference": addAmount(
-								compiledGroup.cash_flow_statement.liquid_amount_difference,
+							"opened_real_liquid_amount": addAmount(
+								compiledGroup.cash_flow_statement.opened_real_liquid_amount,
 								convertAmount(
-									currentGroup.cash_flow_statement.liquid_amount_difference,
+									currentGroup.cash_flow_statement.opened_real_liquid_amount,
+									exchangeRate
+								)
+							),
+							"closed_real_liquid_amount": addAmount(
+								compiledGroup.cash_flow_statement.closed_real_liquid_amount,
+								convertAmount(
+									currentGroup.cash_flow_statement.closed_real_liquid_amount,
+									exchangeRate
+								)
+							),
+							"real_liquid_amount_difference": addAmount(
+								compiledGroup.cash_flow_statement.real_liquid_amount_difference,
+								convertAmount(
+									currentGroup.cash_flow_statement.real_liquid_amount_difference,
 									exchangeRate
 								)
 							),
@@ -203,11 +296,17 @@ $: {
 						"adjusted_trial_balance": {
 							"debit_total": addAmount(
 								compiledGroup.adjusted_trial_balance.debit_total,
-								convertAmount(currentGroup.adjusted_trial_balance.debit_total, exchangeRate)
+								convertAmount(
+									currentGroup.adjusted_trial_balance.debit_total,
+									exchangeRate
+								)
 							),
 							"credit_total": addAmount(
 								compiledGroup.adjusted_trial_balance.credit_total,
-								convertAmount(currentGroup.adjusted_trial_balance.credit_total, exchangeRate)
+								convertAmount(
+									currentGroup.adjusted_trial_balance.credit_total,
+									exchangeRate
+								)
 							)
 						}
 					}
@@ -228,85 +327,112 @@ $: {
 						"total_equities": "0"
 					},
 					"cash_flow_statement": {
-						"opened_liquid_amount": "0",
-						"closed_liquid_amount": "0",
-						"liquid_amount_difference": "0",
+						"opened_real_liquid_amount": "0",
+						"closed_real_liquid_amount": "0",
+						"real_liquid_amount_difference": "0",
 						"subtotals": []
 					},
 					"adjusted_trial_balance": {
 						"debit_total": "0",
 						"credit_total": "0"
 					}
-				} as FinancialStatementGroup)
+				} as FinancialStatementGroup))
 				: statements.find(
 					statement => `${statement.currency_id}` === selectedCurrencyID
 				) ?? null
+			untrack(() => {
+				selectedStatement = resolvedSelectedStatement
+			})
 		} catch (e) {
-			selectedStatement = null
+			untrack(() => {
+				selectedStatement = null
 
-			requestForRecalculation({
-				"body": JSON.stringify({
-					"frozen_period": {
-						"started_at": `${startedAt} 00:00:00`,
-						"finished_at": `${finishedAt} 11:59:59`,
-						"source_currency_id": `${ANY_CURRENCY.id}` ? null : +selectedCurrencyID,
-						"target_currency_id": viewedCurrency.id
-					}
+				requestForRecalculation({
+					"body": JSON.stringify({
+						"frozen_period": {
+							"started_at": `${startedAt} 00:00:00`,
+							"finished_at": `${finishedAt} 11:59:59`,
+							"source_currency_id": `${ANY_CURRENCY.id}` ? null : +selectedCurrencyID,
+							"target_currency_id": viewedCurrency.id
+						}
+					})
 				})
 			})
 		}
 	}
+})
+
+let data = $derived([
+	selectedStatement,
+	...frozenAccounts,
+	...realAdjustedSummaryCalculations,
+	...realUnadjustedSummaryCalculations,
+	...exchangeRates,
+	...realFlowCalculations
+].filter(data => data !== null))
+
+function display(newCompleteFrozenPeriodInfo: CompleteFrozenPeriodInfo) {
+	console.log("inside display")
+	completeFrozenPeriodInfo = newCompleteFrozenPeriodInfo
 }
 
-$: data = [
-	selectedStatement,
-	...summaryCalculations,
-	...exchangeRates,
-	...flowCalculations
-].filter(data => data !== null)
+// TODO: Show errors
 </script>
 
-<CatalogBase
-	collectiveName="Financial Statements"
-	isConnecting={isConnecting || $isConnectingForRecalculation}
-	{data}
-	progressRate={0}>
-	<TertiaryHeading slot="name">Financial Statements</TertiaryHeading>
-	<svelte:fragment slot="filled_collection_description">
-		{#if hasGoodDependencies && selectedStatement}
-		Below are the financial statements associated from {startedAt} to {finishedAt}.
-			<ChoiceListField
-				fieldName="Origin Currency"
-				errorFieldID="currency_id"
-				disabled={isConnecting}
-				bind:value={selectedCurrencyID}
-				rawChoices={availableCurrencies}
-				choiceConverter={transformCurrency}
-				{IDPrefix}
-				errors={[]}/>
-			<ChoiceListField
-				fieldName="Viewed Currency"
-				errorFieldID="currency_id"
-				disabled={false}
-				bind:value={targetCurrencyID}
-				rawChoices={currencies}
-				choiceConverter={transformCurrency}
-				{IDPrefix}
-				errors={[]}/>
-		{/if}
-	</svelte:fragment>
-	<slot slot="empty_collection_description" name="empty_collection_description"/>
-	<svelte:fragment slot="available_content">
-		{#if hasGoodDependencies && selectedStatement}
-			<Cluster
-				{viewedCurrency}
-				statement={selectedStatement}
-				{exchangeRates}
-				{currencies}
-				{cashFlowActivities}
-				{accounts}
-				{summaryCalculations}
-				{flowCalculations}/>
-		{/if}
-	</svelte:fragment>
-</CatalogBase>
+{#snippet financialStatementCluster()}
+	<CatalogBase
+		collectiveName="Financial Statements"
+		isConnecting={isConnecting || $isConnectingForRecalculation}
+		{data}
+		progressRate={0}>
+		{#snippet name()}
+			<TertiaryHeading>Financial Statements</TertiaryHeading>
+		{/snippet}
+		{#snippet filled_collection_description()}
+			{#if hasGoodDependencies && selectedStatement}
+				Below are the financial statements associated from {startedAt} to {finishedAt}.
+				<ChoiceListField
+					fieldName="Origin Currency"
+					errorFieldID="currency_id"
+					disabled={isConnecting}
+					bind:value={selectedCurrencyID}
+					rawChoices={availableCurrencies}
+					choiceConverter={transformCurrency}
+					{IDPrefix}
+					errors={[]}/>
+				<ChoiceListField
+					fieldName="Viewed Currency"
+					errorFieldID="currency_id"
+					disabled={false}
+					bind:value={targetCurrencyID}
+					rawChoices={currencies}
+					choiceConverter={transformCurrency}
+					{IDPrefix}
+					errors={[]}/>
+			{/if}
+		{/snippet}
+		{#snippet empty_collection_description()}
+			There are no financial statements at the chosen date range. Please check another range.
+		{/snippet}
+		{#snippet available_content()}
+			{#if hasGoodDependencies && selectedStatement}
+				<Cluster
+					{viewedCurrency}
+					statement={selectedStatement}
+					{resolvedExchangeRates}
+					{precisionFormats}
+					{currencies}
+					{cashFlowActivities}
+					{accounts}
+					{frozenAccounts}
+					{realAdjustedSummaryCalculations}
+					{realUnadjustedSummaryCalculations}
+					{realFlowCalculations}/>
+			{:else}
+				Nos
+			{/if}
+		{/snippet}
+	</CatalogBase>
+{/snippet}
+
+{@render children({ financialStatementCluster, display })}
