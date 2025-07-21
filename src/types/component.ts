@@ -1,6 +1,6 @@
 import type { Readable, Writable } from "svelte/store"
 import type { GeneralError } from "+/rest"
-import type { RestorableEntity } from "+/entity"
+import type { Account, CashFlowActivity, RestorableEntity } from "+/entity"
 
 export type ItemStatus =
 	| "reading"
@@ -116,4 +116,16 @@ export function isHighResourceDependencyInfo<T extends RestorableEntity>(data: a
 : data is HighResourceDependencyInfo<T> {
 	const keys = Object.keys(data)
 	return keys.includes("getLinkedResources")
+}
+
+export interface SimplifiedSummaryCalculation {
+	account: Account
+	debitAmount: string
+	creditAmount: string
+}
+
+export interface SimplifiedFlowCalculation {
+	cashFlowActivity: CashFlowActivity
+	account: Account
+	amount: string
 }
