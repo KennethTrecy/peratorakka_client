@@ -1,81 +1,75 @@
 <script lang="ts">
-	import type { Currency, Account, SummaryCalculation } from "+/entity"
-	import type { FinancialStatementGroup, ExchangeRateInfo } from "+/rest"
+import type { PrecisionFormat, Currency } from "+/entity"
+import type { FinancialStatementGroup, ExchangeRateInfo } from "+/rest"
+import type { SimplifiedSummaryCalculation } from "+/component"
 
-	import { GENERAL_REVENUE_ACCOUNT_KIND, GENERAL_EXPENSE_ACCOUNT_KIND } from "#/entity"
+import { temporaryAccountKinds } from "#/entity"
 
-	import convertAmount from "$/utility/convert_amount"
-	import deriveExchangeRateQuickly from "$/utility/derive_exchange_rate_quickly"
-	import formatAmount from "$/utility/format_amount"
+import makeCleanShownAmount from "$/utility/make_clean_shown_amount"
 
-	import DataTableCell from "$/catalog/data_table_cell.svelte"
-	import DataTableHeader from "$/catalog/data_table_header.svelte"
-	import QuarternaryHeading from "$/typography/quarternary_heading.svelte"
-	import TrialRow from "%/frozen_periods/financial_statements/trial_row.svelte"
-	import UnitDataTable from "$/catalog/unit_data_table.svelte"
+import DataTableCell from "$/catalog/data_table_cell.svelte"
+import DataTableHeader from "$/catalog/data_table_header.svelte"
+import QuarternaryHeading from "$/typography/quarternary_heading.svelte"
+import TrialRow from "%/frozen_periods/financial_statements/trial_row.svelte"
+import UnitDataTable from "$/catalog/unit_data_table.svelte"
 
-	export let statement: FinancialStatementGroup
-	export let exchangeRates: ExchangeRateInfo[]
-	export let viewedCurrency: Currency
-	export let currencies: Currency[]
-	export let accounts: Account[]
-	export let data: Omit<SummaryCalculation, "frozen_period_id">[]
+let {
+	statement,
+	statementExchangeRate,
+	statementCurrency,
+	viewedCurrency,
+	precisionFormats,
+	currencies,
+	data
+}: {
+	statement: FinancialStatementGroup
+	statementExchangeRate: ExchangeRateInfo
+	statementCurrency: Currency
+	viewedCurrency: Currency
+	precisionFormats: PrecisionFormat[]
+	currencies: Currency[]
+	data: SimplifiedSummaryCalculation[]
+} = $props()
 
-	$: incomeAccounts = accounts.filter(account => account.kind === GENERAL_REVENUE_ACCOUNT_KIND)
-	$: incomeAccountIDs = incomeAccounts.map(account => account.id)
-	$: expenseAccounts = accounts.filter(account => account.kind === GENERAL_EXPENSE_ACCOUNT_KIND)
-	$: expenseAccountIDs = expenseAccounts.map(account => account.id)
-
-	$: incomeCalculations = data.filter(
-		calculation => incomeAccountIDs.indexOf(calculation.account_id) > -1
-	)
-	$: expenseCalculations = data.filter(
-		calculation => expenseAccountIDs.indexOf(calculation.account_id) > -1
-	)
-
-	$: exchangeRate = deriveExchangeRateQuickly(
-		statement.currency_id,
-		viewedCurrency.id,
-		currencies,
-		exchangeRates
-	)
-	$: convertedNetAmount = convertAmount(
-		statement.income_statement.net_total,
-		exchangeRate
-	)
-	$: friendlyNetAmount = formatAmount(viewedCurrency, convertedNetAmount)
+let allowedCalculations = $derived(data.filter(calculation => (
+	temporaryAccountKinds.indexOf(calculation.account.kind) > -1
+)))
+let positiveAccounts = $derived(allowedCalculations.filter(calculation => (
+	calculation.creditAmount !== ""
+)))
+let negativeAccounts = $derived(allowedCalculations.filter(calculation => (
+	calculation.debitAmount !== ""
+)))
+let friendlyNetAmountInfo = $derived(makeCleanShownAmount(
+	precisionFormats,
+	currencies,
+	statementExchangeRate,
+	statementCurrency,
+	viewedCurrency,
+	statement.income_statement.net_total
+))
+let friendlyDebitedNetAmount = $derived(friendlyNetAmountInfo[0] ? friendlyNetAmountInfo[1] : "")
+let friendlyCreditedNetAmount = $derived(friendlyNetAmountInfo[0] ? "" : friendlyNetAmountInfo[1])
 </script>
 
 <QuarternaryHeading>Income Statement</QuarternaryHeading>
 <UnitDataTable>
-	<svelte:fragment slot="table_headers">
+	{#snippet table_headers()}
 		<DataTableHeader scope="column">Temporary Account</DataTableHeader>
 		<DataTableHeader scope="column" kind="numeric">Debit Amount</DataTableHeader>
 		<DataTableHeader scope="column" kind="numeric">Credit Amount</DataTableHeader>
-	</svelte:fragment>
-	<svelte:fragment slot="table_rows">
-		{#each incomeCalculations as calculation(calculation.account_id)}
-			<TrialRow
-				{viewedCurrency}
-				{exchangeRates}
-				{currencies}
-				{accounts}
-				data={calculation}
-				kind="unadjusted"/>
+	{/snippet}
+	{#snippet table_rows()}
+		{#each positiveAccounts as calculation(calculation.account.id)}
+			<TrialRow data={calculation}/>
 		{/each}
-		{#each expenseCalculations as calculation(calculation.account_id)}
-			<TrialRow
-				{viewedCurrency}
-				{exchangeRates}
-				{currencies}
-				{accounts}
-				data={calculation}
-				kind="unadjusted"/>
+		{#each negativeAccounts as calculation(calculation.account.id)}
+			<TrialRow data={calculation}/>
 		{/each}
-	</svelte:fragment>
-	<svelte:fragment slot="table_footer_cells">
+	{/snippet}
+	{#snippet table_footer_cells()}
 		<DataTableHeader scope="row">Net Total</DataTableHeader>
-		<DataTableCell></DataTableCell>
-		<DataTableCell kind="numeric">{friendlyNetAmount}</DataTableCell>
-	</svelte:fragment>
+		<DataTableCell kind="numeric">{friendlyDebitedNetAmount}</DataTableCell>
+		<DataTableCell kind="numeric">{friendlyCreditedNetAmount}</DataTableCell>
+	{/snippet}
 </UnitDataTable>
