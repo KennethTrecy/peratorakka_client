@@ -1,11 +1,27 @@
 <script lang="ts">
+import type { Snippet } from "svelte"
 import CatalogBase from "$/catalog/base.svelte"
 import SecondaryHeading from "$/typography/secondary_heading.svelte"
 
-export let isConnecting: boolean
-export let progressRate: number
-export let collectiveName: string
-export let data: unknown[]
+let {
+	isConnecting,
+	progressRate,
+	collectiveName,
+	data,
+	list_specifier,
+	filled_collection_description,
+	empty_collection_description,
+	cards
+}: {
+	isConnecting: boolean
+	progressRate: number
+	collectiveName: string
+	data: unknown[];
+	list_specifier?: Snippet
+	filled_collection_description: Snippet
+	empty_collection_description: Snippet
+	cards: Snippet
+} = $props()
 </script>
 
 <CatalogBase
@@ -13,10 +29,11 @@ export let data: unknown[]
 	{progressRate}
 	{collectiveName}
 	{data}
-	hasListSpecifier={$$slots.list_specifier}>
-	<SecondaryHeading slot="name">Available {collectiveName}</SecondaryHeading>
-	<slot slot="filled_collection_description" name="filled_collection_description"/>
-	<slot slot="empty_collection_description" name="empty_collection_description"/>
-	<slot slot="list_specifier" name="list_specifier"/>
-	<slot slot="available_content" name="cards"/>
+	{list_specifier}
+	{filled_collection_description}
+	{empty_collection_description}
+	available_content={cards}>
+	{#snippet name()}
+		<SecondaryHeading>Available {collectiveName}</SecondaryHeading>
+	{/snippet}
 </CatalogBase>
