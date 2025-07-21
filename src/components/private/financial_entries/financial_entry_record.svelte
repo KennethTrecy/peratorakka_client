@@ -11,8 +11,7 @@ import type {
 	FinancialEntry,
 	FinancialEntryAtom,
 	FinancialEntryAtomInput,
-	CompleteFinancialEntryAtom,
-	CompleteFinancialEntryAtomInput
+	CompleteFinancialEntryAtom
 } from "+/entity"
 
 import { untrack } from "svelte"
