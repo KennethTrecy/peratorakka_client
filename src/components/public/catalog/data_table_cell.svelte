@@ -13,7 +13,7 @@ let {
 	status?: DataTableCellStatus
 	columnSpan?: number
 	rowSpan?: number
-	children: Snippet
+	children?: Snippet
 } = $props()
 
 let rowClasses = $derived([,
@@ -25,7 +25,7 @@ let rowClasses = $derived([,
 </script>
 
 <td class={rowClasses} colspan={columnSpan} rowspan={rowSpan}>
-	{@render children()}
+	{@render children?.()}
 </td>
 
 <style lang="scss">
