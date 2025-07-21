@@ -1,5 +1,16 @@
 import type { Writable, Readable } from "svelte/store"
 import type { ContextBundle } from "+/component"
+import type {
+	PrecisionFormat,
+	Currency,
+	Account,
+	CashFlowActivity,
+	FrozenPeriod,
+	FrozenAccount,
+	RealAdjustedSummaryCalculation,
+	RealUnadjustedSummaryCalculation,
+	RealFlowCalculation
+} from "+/entity"
 
 import { SEARCH_MODES, SORT_ORDERS, ACCEPTABLE_CONSTELLATION_KINDS } from "#/rest"
 
@@ -76,9 +87,9 @@ export interface FinancialStatementGroup {
 		total_equities: string
 	}
 	cash_flow_statement: {
-		opened_liquid_amount: string
-		closed_liquid_amount: string
-		liquid_amount_difference: string
+		opened_real_liquid_amount: string
+		closed_real_liquid_amount: string
+		real_liquid_amount_difference: string
 		subtotals: CashFlowActivitySubtotal[]
 	}
 	adjusted_trial_balance: TrialBalance
@@ -93,6 +104,22 @@ export interface ExchangeRateInfo {
 	source: CurrencyInfo
 	destination: CurrencyInfo
 	updated_at: string
+}
+
+export interface CompleteFrozenPeriodInfo {
+	"@meta": {
+		statements: FinancialStatementGroup[]
+		exchange_rates: ExchangeRateInfo[]
+	}
+	precision_formats: PrecisionFormat[]
+	currencies: Currency[]
+	accounts: Account[]
+	cash_flow_activities: CashFlowActivity[]
+	frozen_period: FrozenPeriod
+	frozen_accounts: FrozenAccount[]
+	real_adjusted_summary_calculations: RealAdjustedSummaryCalculation[]
+	real_unadjusted_summary_calculations: RealUnadjustedSummaryCalculation[]
+	real_flow_calculations: RealFlowCalculation[]
 }
 
 export type SearchMode = typeof SEARCH_MODES[number]
