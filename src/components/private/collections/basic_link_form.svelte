@@ -1,6 +1,9 @@
 <script lang="ts">
+import type { Snippet } from "svelte"
 import type { GeneralError } from "+/rest"
 import type { Account, Collection, Currency } from "+/entity"
+
+import { untrack } from "svelte"
 
 import makeAccountTransformer from "$/form/choice_info_transformer/make_account_transformer"
 import transformCollection from "$/form/choice_info_transformer/transform_collection"
@@ -8,36 +11,54 @@ import transformCollection from "$/form/choice_info_transformer/transform_collec
 import BasicForm from "$/form/basic_form.svelte"
 import ChoiceListField from "$/form/choice_list_field.svelte"
 
-export let IDPrefix: string
-export let collection: Collection
-export let currencies: Currency[]
-export let accounts: Account[]
-export let linkedAccounts: Account[]
+let {
+	IDPrefix,
+	collection,
+	currencies,
+	accounts,
+	linkedAccounts,
+	accountID = $bindable(),
+	isConnecting,
+	errors,
+	id = null,
+	onsubmit,
+	button_group
+}: {
+	IDPrefix: string
+	collection: Collection
+	currencies: Currency[]
+	accounts: Account[]
+	linkedAccounts: Account[]
+	accountID: string
+	isConnecting: boolean
+	errors: GeneralError[]
+	id?: string|null
+	onsubmit: (event: SubmitEvent) => void
+	button_group: Snippet
+} = $props()
 
-export let accountID: string
+let oldUnlinkedAccounts: Account[] = $state([])
 
-export let isConnecting: boolean
-export let errors: GeneralError[]
-export let id: string|null = null
+let linkedAccountIDs = $derived(linkedAccounts.map(account => account.id))
+let unlinkedAccounts = $derived(accounts.filter(account => !linkedAccountIDs.includes(account.id)))
+let transformAccount = $derived(makeAccountTransformer(currencies))
 
-let oldUnlinkedAccounts: Account[] = []
-
-$: linkedAccountIDs = linkedAccounts.map(account => account.id)
-$: unlinkedAccounts = accounts.filter(account => !linkedAccountIDs.includes(account.id))
-$: transformAccount = makeAccountTransformer(currencies)
-
-$: {
-	if (unlinkedAccounts.length !== oldUnlinkedAccounts.length) {
-		oldUnlinkedAccounts = unlinkedAccounts
+$effect(() => {
+	if (JSON.stringify(unlinkedAccounts) !== JSON.stringify(untrack(() => oldUnlinkedAccounts))) {
+		untrack(() => {
+			oldUnlinkedAccounts = unlinkedAccounts
+		})
 		if (unlinkedAccounts.length > 0) {
-			accountID = `${unlinkedAccounts[0].id}`
+			untrack(() => {
+				accountID = `${unlinkedAccounts[0].id}`
+			})
 		}
 	}
-}
+})
 </script>
 
-<BasicForm {id} {isConnecting} {errors} on:submit>
-	<svelte:fragment slot="fields">
+<BasicForm {id} {isConnecting} {errors} {onsubmit} {button_group}>
+	{#snippet fields()}
 		<ChoiceListField
 			fieldName="Account"
 			errorFieldID="account_id"
@@ -56,6 +77,5 @@ $: {
 			choiceConverter={transformCollection}
 			{IDPrefix}
 			{errors}/>
-	</svelte:fragment>
-	<slot slot="button_group" name="button_group"/>
+	{/snippet}
 </BasicForm>
