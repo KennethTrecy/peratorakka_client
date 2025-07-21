@@ -4,25 +4,33 @@ import type { Account, AccountCollection, Collection, Currency } from "+/entity"
 import CollectionCatalog from "$/catalog/collection.svelte"
 import AccountCard from "%/collections/account_card.svelte"
 
-export let isConnecting: boolean
-export let progressRate: number
-export let selectedCollection: Collection
-export let data: AccountCollection[]
-export let accounts: Account[]
-export let currencies: Currency[]
+let {
+	selectedCollection,
+	data,
+	accounts,
+	currencies,
+	remove
+}: {
+	selectedCollection: Collection
+	data: AccountCollection[]
+	accounts: Account[]
+	currencies: Currency[]
+	remove: (resource: AccountCollection) => void
+} = $props()
 </script>
 
-<CollectionCatalog collectiveName="Linked Accounts" {isConnecting} {data} {progressRate}>
-	<svelte:fragment slot="filled_collection_description">
-		Below are the accounts under to collection named "{selectedCollection.name}". Expect some of them to be shown in dashboard if this collection is included in one the numerical tools.
-	</svelte:fragment>
-	<svelte:fragment slot="cards">
+<CollectionCatalog collectiveName="Linked Accounts" isConnecting={false} {data} progressRate={1}>
+	{#snippet filled_collection_description()}
+		Below are the accounts under to collection named "{selectedCollection.name}". Expect some of
+		them to be shown in dashboard if this collection is included in one the numerical tools.
+	{/snippet}
+	{#snippet cards()}
 		{#each data as entity(entity.id)}
-			<AccountCard data={entity} {accounts} {currencies} on:remove/>
+			<AccountCard data={entity} {accounts} {currencies} {remove}/>
 		{/each}
-	</svelte:fragment>
-	<svelte:fragment slot="empty_collection_description">
+	{/snippet}
+	{#snippet empty_collection_description()}
 		There are no available accounts at the moment.
 		Link an account to view.
-	</svelte:fragment>
+	{/snippet}
 </CollectionCatalog>
