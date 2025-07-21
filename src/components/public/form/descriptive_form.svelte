@@ -1,4 +1,6 @@
 <script lang="ts">
+import type { Snippet } from "svelte"
+
 import ElementalParagraph from "$/typography/elemental_paragraph.svelte"
 import Flex from "$/layout/flex.svelte"
 import GridCell from "$/layout/grid_cell.svelte"
@@ -7,9 +9,21 @@ import ReactiveProgressBar from "$/utility/reactive_progress_bar.svelte"
 import SecondaryHeading from "$/typography/secondary_heading.svelte"
 import TextContainer from "$/typography/text_container.svelte"
 
-export let individualName: string
-export let mayShowForm: boolean
-export let isLoadingInitialData: boolean = false
+let {
+	individualName,
+	mayShowForm,
+	isLoadingInitialData = false,
+	description,
+	form,
+	requirement
+}: {
+	individualName: string
+	mayShowForm: boolean
+	isLoadingInitialData?: boolean
+	description: Snippet
+	form: Snippet
+	requirement?: Snippet
+} = $props()
 </script>
 
 <GridCell kind="full">
@@ -17,8 +31,10 @@ export let isLoadingInitialData: boolean = false
 </GridCell>
 <GridCell kind="full">
 	<InteractiveContainer>
-		<slot slot="text" name="description"/>
-		<svelte:fragment slot="widget">
+		{#snippet text()}
+			{@render description()}
+		{/snippet}
+		{#snippet widget()}
 			<ReactiveProgressBar
 				isLoading={isLoadingInitialData}
 				progressBarLabel="Waiting for server's response..."/>
@@ -31,10 +47,10 @@ export let isLoadingInitialData: boolean = false
 					</TextContainer>
 				</Flex>
 			{:else if mayShowForm}
-				<slot name="form"/>
+				{@render form()}
 			{:else}
-				<slot name="requirement"/>
+				{@render requirement?.()}
 			{/if}
-		</svelte:fragment>
+		{/snippet}
 	</InteractiveContainer>
 </GridCell>
