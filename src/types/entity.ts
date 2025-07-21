@@ -145,21 +145,27 @@ export interface FrozenPeriod extends Entity {
 	finished_at: string
 }
 
-export interface SummaryCalculation extends Entity {
+export interface FrozenAccount extends Entity {
+	hash: string
 	frozen_period_id: number
 	account_id: number
-	opened_debit_amount: string
-	opened_credit_amount: string
-	unadjusted_debit_amount: string
-	unadjusted_credit_amount: string
-	closed_debit_amount: string
-	closed_credit_amount: string
 }
 
-export interface FlowCalculation extends Entity {
-	frozen_period_id: number
+export interface RealUnadjustedSummaryCalculation extends Entity {
+	frozen_account_hash: string
+	debit_amount: string
+	credit_amount: string
+}
+
+export interface RealAdjustedSummaryCalculation extends Entity {
+	frozen_account_hash: string
+	opened_amount: string
+	closed_amount: string
+}
+
+export interface RealFlowCalculation extends Entity {
+	frozen_account_hash: string
 	cash_flow_activity_id: number
-	account_id: number
 	net_amount: string
 }
 
