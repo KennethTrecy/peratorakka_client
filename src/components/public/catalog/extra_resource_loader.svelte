@@ -17,17 +17,19 @@ let {
 	partialPath,
 	collectiveName,
 	parameters,
+	lastOffset = $bindable(),
 	reloadFully,
 	addResources,
-	lastOffset = $bindable()
+	processListResourceObject = () => {}
 }: {
 	isConnectingForInitialList: boolean
 	partialPath: string
 	collectiveName: string
 	parameters: [string, string][]
+	lastOffset: number
 	reloadFully: () => void
 	addResources: (resources: unknown[]) => void
-	lastOffset: number
+	processListResourceObject?: (document: Record<string, unknown>) => void
 } = $props()
 let lastOverallFilteredCount = $state(Infinity)
 
@@ -67,6 +69,7 @@ let { isConnecting, errors, send } = makeJSONRequester({
 				if (resourceCount > 0) {
 					lastOffset = lastOffset + resourceCount
 					addResources(resources)
+					processListResourceObject(responseDocument)
 				}
 			}
 		}

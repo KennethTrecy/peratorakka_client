@@ -48,10 +48,12 @@ let {
 	description,
 	form,
 	requirement,
+	create_grid_cell_rear,
 	custom_list_specifiers,
 	filled_collection_description,
 	"empty_collection_description": empty_collection_description_child,
-	collection_items
+	collection_items,
+	list_grid_cell_rear
 }: {
 	pageTitle: string
 	createTitle: string
@@ -81,6 +83,7 @@ let {
 		}
 	]>
 	requirement?: Snippet
+	create_grid_cell_rear?: Snippet
 	custom_list_specifiers?: Snippet<[ {
 		isConnecting: boolean,
 		errors: GeneralError[]
@@ -96,6 +99,7 @@ let {
 		updateResource: (resource: unknown, index: number) => void
 		removeResource: (resource: unknown) => void
 	} ]>
+	list_grid_cell_rear?: Snippet
 } = $props()
 
 const globalContext = getContext(GLOBAL_CONTEXT) as ContextBundle
@@ -314,6 +318,7 @@ let isArchived = $derived(searchMode === "only_deleted" || isPresentAndArchived)
 				{/snippet}
 			</InteractiveContainer>
 		</GridCell>
+		{@render create_grid_cell_rear?.()}
 		<CatalogBase
 			data={resources}
 			isConnecting={$isConnectingForList || isRequestingDependencies}
@@ -361,6 +366,8 @@ let isArchived = $derived(searchMode === "only_deleted" || isPresentAndArchived)
 			{collectiveName}
 			bind:lastOffset={lastOffset}
 			reloadFully={reloadResources}
-			addResources={addResources}/>
+			{addResources}
+			{processListResourceObject}/>
+		{@render list_grid_cell_rear?.()}
 	</InnerGrid>
 </ArticleGrid>
