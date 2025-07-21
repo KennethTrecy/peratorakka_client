@@ -1,7 +1,7 @@
 <script lang="ts">
 import type { Account, AccountCollection, Collection, Currency } from "+/entity"
 
-import { createEventDispatcher } from "svelte"
+import { untrack } from "svelte"
 
 import { UNKNOWN_OPTION } from "#/component"
 import makeJSONRequester from "$/rest/make_json_requester"
@@ -12,22 +12,26 @@ import ElementalParagraph from "$/typography/elemental_paragraph.svelte"
 import TextCardButton from "$/button/card/text.svelte"
 import TextContainer from "$/typography/text_container.svelte"
 
-const dispatch = createEventDispatcher<{
-	"create": AccountCollection
-}>()
-
-export let isLoadingInitialData: boolean
-export let collection: Collection
-export let currencies: Currency[]
-export let accounts: Account[]
-export let linkedAccounts: Account[]
+let {
+	collection,
+	currencies,
+	accounts,
+	linkedAccounts,
+	create
+}: {
+	collection: Collection
+	currencies: Currency[]
+	accounts: Account[]
+	linkedAccounts: Account[]
+	create: (data: AccountCollection) => void
+} = $props()
 
 const IDPrefix = "link_"
-let collectionID = `${collection.id}`
-let accountID = UNKNOWN_OPTION
+let collectionID = $state(`${collection.id}`)
+let accountID = $state(UNKNOWN_OPTION)
 
 let { isConnecting, errors, send } = makeJSONRequester({
-	"path": "/api/v1/account_collections",
+	"path": "/api/v2/account_collections",
 	"defaultRequestConfiguration": {
 		"method": "POST"
 	},
@@ -40,7 +44,7 @@ let { isConnecting, errors, send } = makeJSONRequester({
 
 				accountID = UNKNOWN_OPTION
 				errors.set([])
-				dispatch("create", account_collection)
+				create(account_collection)
 			}
 		}
 	],
@@ -58,36 +62,42 @@ async function createAccountCollection() {
 	})
 }
 
-$: {
-	if (collectionID !== `${collection.id}`) {
-		collectionID = `${collection.id}`
-		accountID = UNKNOWN_OPTION
+$effect(() => {
+	if (untrack(() => collectionID) !== `${collection.id}`) {
+		untrack(() => {
+			collectionID = `${collection.id}`
+			accountID = UNKNOWN_OPTION
+		})
 	}
-}
+});
 </script>
 
-<DescriptiveForm individualName="Accounts" mayShowForm {isLoadingInitialData}>
-	<TextContainer slot="description">
-		<ElementalParagraph>
-			Collections are used to group multiple financial accounts. They help in calculating a formula or presenting data.
-		</ElementalParagraph>
-	</TextContainer>
-	<BasicLinkForm
-		slot="form"
-		bind:accountID={accountID}
-		{collection}
-		{currencies}
-		{accounts}
-		{linkedAccounts}
-		isConnecting={$isConnecting}
-		{IDPrefix}
-		errors={$errors}
-		on:submit={createAccountCollection}>
-		<svelte:fragment slot="button_group">
-			<TextCardButton
-				kind="submit"
-				disabled={$isConnecting}
-				label="Add"/>
-		</svelte:fragment>
-	</BasicLinkForm>
+<DescriptiveForm individualName="Add Linked Accounts" mayShowForm>
+	{#snippet description()}
+		<TextContainer >
+			<ElementalParagraph>
+				Collections are used to group multiple financial accounts. They help in calculating a
+				formula or presenting data.
+			</ElementalParagraph>
+		</TextContainer>
+	{/snippet}
+	{#snippet form()}
+		<BasicLinkForm
+			bind:accountID={accountID}
+			{collection}
+			{currencies}
+			{accounts}
+			{linkedAccounts}
+			isConnecting={$isConnecting}
+			{IDPrefix}
+			errors={$errors}
+			onsubmit={createAccountCollection}>
+			{#snippet button_group()}
+				<TextCardButton
+					kind="submit"
+					disabled={$isConnecting}
+					label="Add"/>
+			{/snippet}
+		</BasicLinkForm>
+	{/snippet}
 </DescriptiveForm>
