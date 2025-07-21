@@ -8,13 +8,13 @@ export default function deriveExchangeRateQuickly(
 	viewedCurrencyID: number,
 	currencies: Currency[],
 	exchangeRates: ExchangeRateInfo[]
-): ExchangeRateInfo {
+): ExchangeRateInfo|null {
 	const sourceCurrency = currencies.find(
 		currency => currency.id === sourceCurrencyID
 	) ?? currencies[0]
 	const viewedCurrency = currencies.find(
 		currency => currency.id === viewedCurrencyID
-	)
+	) ?? sourceCurrency
 
 	return deriveExchangeRate(sourceCurrency, viewedCurrency, exchangeRates)
 }

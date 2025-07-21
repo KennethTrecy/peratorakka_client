@@ -10,7 +10,7 @@ export default function deriveExchangeRate(
 	sourceCurrency: Currency,
 	viewedCurrency: Currency,
 	exchangeRates: ExchangeRateInfo[]
-): ExchangeRateInfo {
+): ExchangeRateInfo|null {
 	if (sourceCurrency.id === viewedCurrency.id) {
 		return {
 			"source": {
@@ -25,20 +25,16 @@ export default function deriveExchangeRate(
 		}
 	}
 
-	const reverseExchangeRates = exchangeRates.map(exchangeRate => ({
-		"source": exchangeRate.destination,
-		"destination": exchangeRate.source,
-		"updated_at": exchangeRate.updated_at
-	}))
-
-	const knownExchangeRates = [
-		...exchangeRates,
-		...reverseExchangeRates
-	]
+	const knownExchangeRates = exchangeRates
 
 	const initialPaths = knownExchangeRates.filter(
 		exchangeRate => exchangeRate.source.currency_id === sourceCurrency.id
 	).map(foundExchangeRate => [ foundExchangeRate ])
+
+	if (initialPaths.length === 0) {
+		return null
+	}
+
 	const paths = initialPaths
 		.map(path => findPaths(viewedCurrency, exchangeRates, path))
 		.reduce((previousPaths, currentPathCollection) => {

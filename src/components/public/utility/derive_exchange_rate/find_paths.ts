@@ -8,6 +8,7 @@ export default function findPaths(
 ): ExchangeRateInfo[][] {
 	const lastPathIndex = currentPath.length - 1;
 	const lastExchangeRate = currentPath[lastPathIndex]
+
 	if (lastExchangeRate.destination.currency_id === viewedCurrency.id) {
 		return [
 			currentPath
@@ -21,7 +22,7 @@ export default function findPaths(
 				exchangeRate.source.currency_id,
 				exchangeRate.destination.currency_id
 			]
-		}, [])
+		}, [] as number[])
 	)
 
 	let foundPaths: ExchangeRateInfo[][] = []
