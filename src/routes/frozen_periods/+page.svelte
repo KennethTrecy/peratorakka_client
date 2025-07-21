@@ -1,33 +1,31 @@
 <script lang="ts">
-import type {
-	Account,
-	Currency,
-	CashFlowActivity,
-	FrozenPeriod,
-	SummaryCalculation,
-	FlowCalculation
-} from "+/entity"
+import type { FrozenPeriod } from "+/entity"
 import type { ContextBundle } from "+/component"
-import type { GeneralError, FinancialStatementGroup, ExchangeRateInfo, SortOrder } from "+/rest"
+import type { CompleteFrozenPeriodInfo } from "+/rest"
 
-import { get, writable } from "svelte/store"
-import { onMount, getContext } from "svelte"
+import { writable } from "svelte/store"
+import { getContext, untrack } from "svelte"
 import { afterNavigate, beforeNavigate, goto } from "$app/navigation"
 
 import { GLOBAL_CONTEXT } from "#/contexts"
-import { DESCENDING_ORDER, MAXIMUM_PAGINATED_LIST_LENGTH } from "#/rest"
+import { DESCENDING_ORDER } from "#/rest"
 
+import makeDateFieldValue from "$/utility/make_date_field_value"
 import assertAuthentication from "$/page_requirement/assert_authentication"
 import makeJSONRequester from "$/rest/make_json_requester"
 
-import AddForm from "%/frozen_periods/add_form.svelte"
-import ArticleGrid from "$/layout/article_grid.svelte"
-import DataTable from "%/frozen_periods/data_table.svelte"
-import ExtraResourceLoader from "$/catalog/extra_resource_loader.svelte"
-import FinancialStatements from "%/frozen_periods/financial_statements.svelte"
+import DataTableHeader from "$/catalog/data_table_header.svelte"
+import DataTableRecordHeader from "$/catalog/data_table_record_headers.svelte"
+import FrozenPeriodRecord from "%/frozen_periods/frozen_period_record.svelte"
+import BasicForm from "%/frozen_periods/basic_form.svelte"
+import CompleteResourcePage from "$/layout/complete_resource_page.svelte"
+import ElementalParagraph from "$/typography/elemental_paragraph.svelte"
+import Flex from "$/layout/flex.svelte"
 import GridCell from "$/layout/grid_cell.svelte"
-import InnerGrid from "$/layout/inner_grid.svelte"
-import PrimaryHeading from "$/typography/primary_heading.svelte"
+import TextContainer from "$/typography/text_container.svelte"
+import UnitDataTable from "$/catalog/unit_data_table.svelte"
+import FinancialStatements from "%/frozen_periods/financial_statements.svelte"
+import TextCardButton from "$/button/card/text.svelte"
 
 const globalContext = getContext(GLOBAL_CONTEXT) as ContextBundle
 
@@ -37,151 +35,130 @@ assertAuthentication(globalContext, {
 	goto
 })
 
-let frozenPeriods: FrozenPeriod[] = []
-
-let sortCriterion: string = "started_at"
-let sortOrder: SortOrder = DESCENDING_ORDER
-let lastOffset: number = 0
-
-const collectiveName = "frozen_periods"
-const partialPath = `/api/v1/${collectiveName}`
-let parameters: [string, string][] = [
-	[ "sort[0][0]", sortCriterion ],
-	[ "sort[0][1]", sortOrder as string ]
-]
-let completePath = writable(partialPath)
-$: {
-	parameters = [
-		[ "sort[0][0]", sortCriterion ],
-		[ "sort[0][1]", sortOrder as string ]
-	]
-
-	completePath.set(`${partialPath}?${
-		new URLSearchParams([
-			...parameters,
-			[ "page[offset]", `${lastOffset}` ],
-			[ "page[limit]", MAXIMUM_PAGINATED_LIST_LENGTH ]
-		]).toString()
-	}`)
+function deriveID(resource: unknown): string {
+	return `${(resource as FrozenPeriod).id}`
 }
+
+const previousDate =  new Date()
+previousDate.setDate(1)
+const defaultStartedDate = makeDateFieldValue(previousDate)
+const defaultFinishedDate = makeDateFieldValue(new Date())
+
+let startedAt: string = $state(defaultStartedDate)
+let finishedAt: string = $state(defaultFinishedDate)
+
+function makeNewResourceObject(): Record<string, unknown> {
+	return {
+		"frozen_period": {
+			"started_at": `${startedAt} 00:00:00`,
+			"finished_at": `${finishedAt} 11:59:59`
+		}
+	}
+}
+
+function processCreatedResourceObject(document: Record<string, unknown>): unknown {
+	const nextStartedAt = new Date(startedAt)
+	nextStartedAt.setMonth(nextStartedAt.getMonth() + 1)
+	const nextFinishedAt = new Date(finishedAt)
+	nextFinishedAt.setDate(1)
+	nextFinishedAt.setMonth(nextFinishedAt.getMonth() + 2)
+	nextFinishedAt.setTime(nextFinishedAt.getTime() - 24 * 60 * 60 * 1000)
+
+	startedAt = makeDateFieldValue(nextStartedAt)
+	finishedAt = makeDateFieldValue(nextFinishedAt)
+
+	const { frozen_period } = document
+
+	return frozen_period
+}
+
+let hasAttemptedDryRun = $state(false)
+let dryRunCompleteFrozenPeriodInfo = $state<CompleteFrozenPeriodInfo|null>(null)
+
 let {
-	"isConnecting": isConnectingForFrozenPeriods,
-	"errors": errorsForFrozenPeriods,
-	"send": requestForFrozenPeriods
+	"isConnecting": isConnectingToDryRunCreate,
+	"errors": dryRunCreateErrors,
+	"send": requestToDryRunCreate
 } = makeJSONRequester({
-	"path": completePath,
+	"path": "/api/v2/frozen_periods/dry_run",
 	"defaultRequestConfiguration": {
-		"method": "GET"
+		"method": "POST"
 	},
 	"manualResponseHandlers": [
 		{
 			"statusCode": 200,
 			"action": async (response: Response) => {
-				let responseDocument = await response.json()
-				errorsForFrozenPeriods.set([])
-				frozenPeriods = responseDocument.frozen_periods
-				summaryCalculations = responseDocument.summary_calculations
-				accounts = responseDocument.accounts
-				currencies = responseDocument.currencies
-				lastOffset = Math.max(0, responseDocument[collectiveName].length - 1)
+				const document = await response.json()
+
+				dryRunCompleteFrozenPeriodInfo = document
+				dryRunCreateErrors.set([])
 			}
 		}
 	],
-	"expectedErrorStatusCodes": [ 401 ]
+	"expectedErrorStatusCodes": [ 400 ]
 })
 
-let currencies: Currency[] = []
-let cashFlowActivities: CashFlowActivity[] = []
-let accounts: Account[] = []
-let summaryCalculations: SummaryCalculation[] = []
-let flowCalculations: FlowCalculation[] = []
-let statements: FinancialStatementGroup[] = []
-let exchangeRates: ExchangeRateInfo[] = []
+async function dryRunCreateFrozenPeriod(
+	display: (completeFrozenPeriodInfo: CompleteFrozenPeriodInfo) => void
+) {
+	hasAttemptedDryRun = false
 
-let chosenPeriod: FrozenPeriod|null = null
-let isConnectingToShow = writable<boolean>(false)
-let showErrors = writable<GeneralError[]>([])
-$: {
-	if (chosenPeriod !== null) {
-		const requesterInfo = makeJSONRequester({
-			"path": `/api/v1/frozen_periods/${chosenPeriod.id}`,
-			"defaultRequestConfiguration": {
-				"method": "GET",
-			},
-			"manualResponseHandlers": [
-				{
-					"statusCode": 200,
-					"action": async (response: Response) => {
-						const responseDocument = await response.json()
-						currencies = responseDocument.currencies
-						cashFlowActivities = responseDocument.cash_flow_activities
-						accounts = responseDocument.accounts
-						summaryCalculations = responseDocument.summary_calculations
-						flowCalculations = responseDocument.flow_calculations
-						statements = responseDocument["@meta"].statements
-						exchangeRates = responseDocument["@meta"].exchange_rates
-
-						showErrors.set([])
-					}
-				}
-			],
-			"expectedErrorStatusCodes": [ 400 ]
+	await requestToDryRunCreate({
+		"body": JSON.stringify({
+			"frozen_period": {
+				"started_at": `${startedAt} 00:00:00`,
+				"finished_at": `${finishedAt} 11:59:59`
+			}
 		})
+	})
 
-		isConnectingToShow = requesterInfo.isConnecting
-		showErrors = requesterInfo.errors
-		requesterInfo.send({})
+	if (dryRunCompleteFrozenPeriodInfo) {
+		display(dryRunCompleteFrozenPeriodInfo)
+
+		hasAttemptedDryRun = true
 	}
 }
 
-$: startedAt = (chosenPeriod?.started_at || "----------").slice(0, "YYYY-MM-DD".length)
-$: finishedAt = (chosenPeriod?.finished_at || "----------").slice(0, "YYYY-MM-DD".length)
-
-async function reloadFrozenPeriods() {
-	frozenPeriods = []
-	await requestForFrozenPeriods({})
-}
-
-async function loadList() {
-	const currentServerURL = get(globalContext.serverURL as any)
-
-	if (currentServerURL === "") {
-		setTimeout(loadList, 1000)
-		return
+let chosenPeriod = $state<FrozenPeriod|null>(null)
+let completeFrozenPeriodInfo = $state<CompleteFrozenPeriodInfo|null>(null)
+const partialPath = "/api/v2/frozen_periods"
+let completePath = writable(partialPath)
+$effect(() => {
+	if (chosenPeriod !== null) {
+		const id = chosenPeriod.id
+		untrack(() => {
+			completePath.set(`${partialPath}/${id}`)
+		})
 	}
+})
+const { isConnecting, errors, send } = makeJSONRequester({
+	"path": completePath,
+	"defaultRequestConfiguration": {
+		"method": "GET",
+	},
+	"manualResponseHandlers": [
+		{
+			"statusCode": 200,
+			"action": async (response: Response) => {
+				const responseDocument = await response.json()
+				completeFrozenPeriodInfo = responseDocument
+				errors.set([])
+			}
+		}
+	],
+	"expectedErrorStatusCodes": [ 400 ]
+})
 
-	await requestForFrozenPeriods({})
-}
-
-onMount(loadList)
-
-function addFrozenPeriod(event: CustomEvent<FrozenPeriod>) {
-	const newFrozenPeriod = event.detail
-	frozenPeriods = [
-		...frozenPeriods,
-		newFrozenPeriod
-	]
-}
-
-function addFrozenPeriods(event: CustomEvent<unknown[]>) {
-	const newFrozenPeriods = event.detail as FrozenPeriod[]
-
-	frozenPeriods = [
-		...frozenPeriods,
-		...newFrozenPeriods
-	]
-}
-
-function removeFrozenPeriod(event: CustomEvent<FrozenPeriod>) {
-	const oldFrozenPeriod = event.detail
-	frozenPeriods = frozenPeriods.filter(
-		frozenPeriod => frozenPeriod.id !== oldFrozenPeriod.id
-	)
-}
-
-function checkFrozenPeriod(event: CustomEvent<FrozenPeriod>) {
-	const selectedFrozenPeriod = event.detail
+async function checkFrozenPeriod(
+	selectedFrozenPeriod: FrozenPeriod,
+	display: (completeFrozenPeriodInfo: CompleteFrozenPeriodInfo) => void
+) {
 	chosenPeriod = selectedFrozenPeriod
+	await send({})
+
+	if (completeFrozenPeriodInfo !== null) {
+		display(completeFrozenPeriodInfo)
+	}
 }
 </script>
 
@@ -189,43 +166,120 @@ function checkFrozenPeriod(event: CustomEvent<FrozenPeriod>) {
 	<title>Frozen Periods</title>
 </svelte:head>
 
-<ArticleGrid>
-	<InnerGrid>
-		<GridCell kind="full">
-			<PrimaryHeading>Frozen Periods</PrimaryHeading>
-		</GridCell>
-		<AddForm
-			isLoadingInitialData={$isConnectingForFrozenPeriods}
-			on:create={addFrozenPeriod}/>
-		<DataTable
-			isConnecting={$isConnectingForFrozenPeriods}
-			data={frozenPeriods}
-			on:remove={removeFrozenPeriod}
-			on:check={checkFrozenPeriod}/>
-		<ExtraResourceLoader
-			isConnectingForInitialList={$isConnectingForFrozenPeriods}
-			{partialPath}
-			{parameters}
-			{collectiveName}
-			bind:lastOffset={lastOffset}
-			on:reloadFully={reloadFrozenPeriods}
-			on:addResources={addFrozenPeriods}/>
-		{#if chosenPeriod !== null && currencies}
-			<FinancialStatements
-				isConnecting={$isConnectingToShow}
-				startedAt={startedAt}
-				finishedAt={finishedAt}
-				{statements}
-				{exchangeRates}
-				{accounts}
-				{currencies}
-				{cashFlowActivities}
-				{summaryCalculations}
-				{flowCalculations}>
-				<svelte:fragment slot="empty_collection_description">
-					There are no financial statements at the chosen date range. Please check another range.
-				</svelte:fragment>
-			</FinancialStatements>
-		{/if}
-	</InnerGrid>
-</ArticleGrid>
+<FinancialStatements isConnecting={$isConnecting} errors={$errors}>
+	{#snippet children({
+		"financialStatementCluster": checkFinancialStatementCluster,
+		"display": checkDisplay
+	})}
+		<FinancialStatements isConnecting={$isConnectingToDryRunCreate} errors={$dryRunCreateErrors}>
+			{#snippet children({
+				"financialStatementCluster": dryRunFinancialStatementCluster,
+				"display": dryRunDisplay
+			})}
+				<CompleteResourcePage
+					pageTitle="Frozen Periods"
+					createTitle="Add Frozen Periods"
+					listTitle="Frozen Periods"
+					collectiveName="frozen_periods"
+					defaultSortCriterion="started_at"
+					defaultSortOrder={DESCENDING_ORDER}
+					availableSortCriteria={[
+						"started_at",
+						"finished_at"
+					]}
+					{deriveID}
+					{makeNewResourceObject}
+					{processCreatedResourceObject}>
+					{#snippet description()}
+						<TextContainer>
+							<ElementalParagraph>
+								Frozen periods prevents editing, removal, or addition of financial entries
+								at a certain point of time. They contain summary of calculations of each
+								account which would be used on the consecutive frozen period.
+							</ElementalParagraph>
+							<ElementalParagraph>
+								To create frozen period, choose the started date and finished date of a
+								frozen period. It recommended to freeze every month for correct analysis and
+								better performance. Check the balances of each account and ensure the
+								temporary accounts have been closed. If every calculation is in order,
+								freeze the period and the system would wait for future entries.
+							</ElementalParagraph>
+						</TextContainer>
+					{/snippet}
+					{#snippet form({ IDPrefix, isConnecting, errors, onsubmit, button_group })}
+						{#snippet customized_button_group()}
+							<TextCardButton
+								kind="button"
+								disabled={$isConnectingToDryRunCreate}
+								label="Check"
+								onclick={() => dryRunCreateFrozenPeriod(dryRunDisplay)}/>
+							{@render button_group()}
+						{/snippet}
+						<BasicForm
+							bind:startedAt={startedAt}
+							bind:finishedAt={finishedAt}
+							{isConnecting}
+							{IDPrefix}
+							{errors}
+							{onsubmit}
+							button_group={customized_button_group}/>
+					{/snippet}
+					{#snippet requirement()}
+						<ElementalParagraph>
+							At least one manual modifier must exist in the profile to show the form for
+							creating financial entries.
+						</ElementalParagraph>
+					{/snippet}
+					{#snippet create_grid_cell_rear()}
+						{#if hasAttemptedDryRun || $isConnectingToDryRunCreate}
+							{@render dryRunFinancialStatementCluster()}
+						{/if}
+					{/snippet}
+					{#snippet filled_collection_description()}
+						Below are the frozen periods that you have added on to your profile.
+						Freezing certain periods is a feature to optimize the calculation of
+						different accounts. It also serves as an artifact when reviewing the
+						past financial statements.
+					{/snippet}
+					{#snippet empty_collection_description({ isPresent, isPresentAndArchived, isArchived })}
+						There are no available frozen periods at the moment.
+						{#if isPresent}Create{/if}{#if isPresentAndArchived}/{/if}{#if isArchived
+						}Delete{/if}a frozen period to view.
+					{/snippet}
+					{#snippet collection_items({ resources, removeResource })}
+						<GridCell kind="full">
+							<Flex direction="column" mustPad={false}>
+								<UnitDataTable>
+									{#snippet table_headers()}
+										<DataTableRecordHeader
+											mainCellLabel="ID"
+											actionCellLabel="Available Actions">
+											{#snippet trailing_headers()}
+												<DataTableHeader>Start Date</DataTableHeader>
+												<DataTableHeader>Finish Date</DataTableHeader>
+											{/snippet}
+										</DataTableRecordHeader>
+									{/snippet}
+									{#snippet table_rows()}
+										{#each resources as entity((entity as FrozenPeriod).id)}
+											<FrozenPeriodRecord
+												data={entity as FrozenPeriod}
+												remove={removeResource}
+												check={() => checkFrozenPeriod(
+													entity as FrozenPeriod,
+													checkDisplay
+												)}/>
+										{/each}
+									{/snippet}
+								</UnitDataTable>
+							</Flex>
+						</GridCell>
+					{/snippet}
+					{#snippet list_grid_cell_rear()}
+						{@render checkFinancialStatementCluster()}
+					{/snippet}
+				</CompleteResourcePage>
+			{/snippet}
+		</FinancialStatements>
+	{/snippet}
+</FinancialStatements>
