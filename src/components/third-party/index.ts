@@ -69,7 +69,14 @@ export function multiplyAmount(multiplicand: string, multiplier: string): string
 export function divideAmount(dividend: string, divisor: string): string {
 	// @ts-ignore
 	Fraction.REDUCE = true;
-	return new Fraction(dividend).div(divisor).toFraction()
+	try {
+		return new Fraction(dividend).div(divisor).toFraction()
+	} catch(error) {
+		console.error("Division error: ", error)
+		console.log(`Dividend: ${dividend}`)
+		console.log(`Divisor: ${divisor}`)
+		return "0"
+	}
 }
 
 export function setTheme(filename: string): void {
