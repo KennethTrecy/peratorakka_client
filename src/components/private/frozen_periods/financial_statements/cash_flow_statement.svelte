@@ -1,15 +1,13 @@
 <script lang="ts">
+import type { SimplifiedFlowCalculation } from "+/component"
 import type { FinancialStatementGroup, ExchangeRateInfo } from "+/rest"
 import type {
+	PrecisionFormat,
 	Currency,
-	CashFlowActivity,
-	Account,
-	FlowCalculation
+	CashFlowActivity
 } from "+/entity"
 
-import convertAmount from "$/utility/convert_amount"
-import deriveExchangeRateQuickly from "$/utility/derive_exchange_rate_quickly"
-import formatAmount from "$/utility/format_amount"
+import makeShownAmount from "$/utility/make_shown_amount"
 
 import TotalAmountRow
 	from "%/frozen_periods/financial_statements/cash_flow_statement/total_amount_row.svelte"
@@ -20,60 +18,99 @@ import DataTableHeader from "$/catalog/data_table_header.svelte"
 import QuarternaryHeading from "$/typography/quarternary_heading.svelte"
 import UnitDataTable from "$/catalog/unit_data_table.svelte"
 
-export let statement: FinancialStatementGroup
-export let exchangeRates: ExchangeRateInfo[]
-export let viewedCurrency: Currency
-export let currencies: Currency[]
-export let cashFlowActivities: CashFlowActivity[]
-export let accounts: Account[]
-export let flowCalculations: Omit<FlowCalculation, "frozen_period_id">[]
-
-$: exchangeRate = deriveExchangeRateQuickly(
-	statement.currency_id,
-	viewedCurrency.id,
+let {
+	statement,
+	statementExchangeRate,
+	statementCurrency,
+	viewedCurrency,
+	precisionFormats,
 	currencies,
-	exchangeRates
-)
+	emptyAmount,
+	cashFlowActivities,
+	data
+}: {
+	statement: FinancialStatementGroup
+	statementExchangeRate: ExchangeRateInfo
+	statementCurrency: Currency
+	viewedCurrency: Currency
+	precisionFormats: PrecisionFormat[]
+	currencies: Currency[]
+	emptyAmount: string
+	cashFlowActivities: CashFlowActivity[]
+	data: SimplifiedFlowCalculation[]
+} = $props()
 
-$: subtotals = statement.cash_flow_statement.subtotals
-$: convertedAmount = convertAmount(
-	statement.cash_flow_statement.liquid_amount_difference,
-	exchangeRate
-)
-$: friendlyLiquidAmountDifference = formatAmount(viewedCurrency, convertedAmount)
+let friendlyOpenedLiquidAmount = $derived(makeShownAmount(
+	precisionFormats,
+	currencies,
+	statementExchangeRate,
+	statementCurrency,
+	viewedCurrency,
+	statement.cash_flow_statement.opened_real_liquid_amount
+))
+let friendlyClosedLiquidAmount = $derived(makeShownAmount(
+	precisionFormats,
+	currencies,
+	statementExchangeRate,
+	statementCurrency,
+	viewedCurrency,
+	statement.cash_flow_statement.closed_real_liquid_amount
+))
+let friendlyLiquidAmountDifference = $derived(makeShownAmount(
+	precisionFormats,
+	currencies,
+	statementExchangeRate,
+	statementCurrency,
+	viewedCurrency,
+	statement.cash_flow_statement.real_liquid_amount_difference
+))
+let shownCashFlowSubtotals = $derived(statement.cash_flow_statement.subtotals.map(
+	subtotal => ({
+		...subtotal,
+		"net_income": makeShownAmount(
+			precisionFormats,
+			currencies,
+			statementExchangeRate,
+			statementCurrency,
+			viewedCurrency,
+			subtotal.net_income
+		),
+		"subtotal": makeShownAmount(
+			precisionFormats,
+			currencies,
+			statementExchangeRate,
+			statementCurrency,
+			viewedCurrency,
+			subtotal.subtotal
+		)
+	})
+))
 </script>
 
 <QuarternaryHeading>Cash Flow Statement</QuarternaryHeading>
 <UnitDataTable>
-	<svelte:fragment slot="table_headers">
+	{#snippet table_headers()}
 		<DataTableHeader scope="column">Name</DataTableHeader>
 		<DataTableHeader scope="column">Account</DataTableHeader>
 		<DataTableHeader scope="column" kind="numeric">Amount</DataTableHeader>
-	</svelte:fragment>
-	<svelte:fragment slot="table_rows">
+	{/snippet}
+	{#snippet table_rows()}
 		{#each cashFlowActivities as cashFlowActivity}
 			<CategorizedSection
-				cashFlowActivity={cashFlowActivity}
-				cashFlowSubtotals={subtotals}
-				{viewedCurrency}
-				{exchangeRates}
-				{currencies}
-				{accounts}
-				{flowCalculations}/>
+				{emptyAmount}
+				{cashFlowActivity}
+				{shownCashFlowSubtotals}
+				{data}/>
 		{/each}
 		<TotalAmountRow
 			rowName="Opened Liquid Balance"
-			{exchangeRate}
-			currency={viewedCurrency}
-			rawAmount={statement.cash_flow_statement.opened_liquid_amount}/>
+			shownAmount={friendlyOpenedLiquidAmount}/>
 		<TotalAmountRow
 			rowName="Closed Liquid Balance"
-			{exchangeRate}
-			currency={viewedCurrency}
-			rawAmount={statement.cash_flow_statement.closed_liquid_amount}/>
-	</svelte:fragment>
-	<svelte:fragment slot="table_footer_cells">
+			shownAmount={friendlyClosedLiquidAmount}/>
+	{/snippet}
+	{#snippet table_footer_cells()}
 		<DataTableHeader scope="row" columnSpan={2}>Difference</DataTableHeader>
 		<DataTableCell kind="numeric">{friendlyLiquidAmountDifference}</DataTableCell>
-	</svelte:fragment>
+	{/snippet}
 </UnitDataTable>
