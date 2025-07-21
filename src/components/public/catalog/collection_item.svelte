@@ -37,8 +37,8 @@ let {
 		confirmEdit: (event: SubmitEvent) => void
 		cancelEdit: () => void
 	}]>
-	delete_confirmation_message: Snippet
-	restore_confirmation_message: Snippet
+	delete_confirmation_message?: Snippet
+	restore_confirmation_message?: Snippet
 	force_delete_confirmation_message: Snippet
 	item: Snippet<[{
 		isEditing: boolean
@@ -150,7 +150,7 @@ let confirmAction = $derived(
 			<WeakenedTertiaryHeading>
 				Delete {label}?
 			</WeakenedTertiaryHeading>
-			{@render delete_confirmation_message()}
+			{@render delete_confirmation_message?.()}
 			{#each $deleteErrors as error}
 				<ShortParagraph>
 					{error.message}
@@ -160,7 +160,7 @@ let confirmAction = $derived(
 			<WeakenedTertiaryHeading>
 				Restore {label}?
 			</WeakenedTertiaryHeading>
-			{@render restore_confirmation_message()}
+			{@render restore_confirmation_message?.()}
 			{#each $restoreErrors as error}
 				<ShortParagraph>
 					{error.message}

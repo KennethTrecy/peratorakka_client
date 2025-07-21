@@ -13,7 +13,7 @@ let {
 	isArchived,
 	options,
 	kind = "narrow",
-	resetDraft,
+	resetDraft = () => {},
 	edit_form,
 	delete_confirmation_message,
 	restore_confirmation_message,
@@ -25,15 +25,15 @@ let {
 	isArchived: boolean
 	options: RestorableItemOptions
 	kind?: GridCellKind
-	resetDraft: () => void
+	resetDraft?: () => void
 	edit_form?: Snippet<[{
 		isConnecting: boolean
 		errors: GeneralError[]
 		confirmEdit: (event: SubmitEvent) => void
 		cancelEdit: () => void
 	}]>
-	delete_confirmation_message: Snippet
-	restore_confirmation_message: Snippet
+	delete_confirmation_message?: Snippet
+	restore_confirmation_message?: Snippet
 	force_delete_confirmation_message: Snippet
 	resource_info: Snippet
 	extra_buttons?: Snippet
