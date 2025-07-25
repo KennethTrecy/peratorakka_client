@@ -40,16 +40,23 @@ export function makeFormattedAmount(
 	currency: Currency | undefined,
 	amount: string
 ): string {
+	return `${currency?.code ?? "---"} ${makeRawFormattedAmount(precisionFormat, amount)}`
+}
+
+export function makeRawFormattedAmount(
+	precisionFormat: PrecisionFormat | undefined,
+	amount: string
+): string {
 	const minimumFractionDigits = precisionFormat?.minimum_presentational_precision
 		?? DEFAULT_MINIMUM_FRACTION_DIGITS
 	const maximumFractionDigits = precisionFormat?.maximum_presentational_precision
 		?? DEFAULT_MAXIMUM_FRACTION_DIGITS
 
-	return `${currency?.code ?? "---"} ${(+amount).toLocaleString("en-US", {
+	return (+amount).toLocaleString("en-US", {
 		"useGrouping": "true",
 		"minimumFractionDigits": minimumFractionDigits,
 		"maximumFractionDigits": maximumFractionDigits
-	}).replaceAll(",", " ")}`
+	}).replaceAll(",", " ")
 }
 
 export function addAmount(addend: string, adder: string): string {
