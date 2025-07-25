@@ -1,11 +1,10 @@
 <script lang="ts">
 import type { GeneralError } from "+/rest"
-import type { Collection, Currency, Formula, AcceptableSource } from "+/entity"
+import type { Collection, Formula, AcceptableSource } from "+/entity"
 
-import { createEventDispatcher } from "svelte"
+import { untrack } from "svelte"
 
 import {
-	acceptableExchangeRateBases,
 	acceptableAmountStageBases,
 	acceptableAmountSideBases
 } from "#/entity"
@@ -19,65 +18,76 @@ import CollectionFieldset from "%/numerical_tools/basic_form/collection_fieldset
 import GeneralFieldContainer from "$/form/general_field_container.svelte"
 import TextButton from "$/button/text.svelte"
 
-const dispatch = createEventDispatcher<{
-	"remove": number
-	"up": number
-	"down": number
-}>()
+let {
+	IDPrefix,
+	formulae,
+	collections,
+	index,
+	maxIndex,
+	source = $bindable(),
+	isConnecting,
+	errors,
+	remove,
+	up,
+	down
+}: {
+	IDPrefix: string
+	formulae: Formula[]
+	collections: Collection[]
+	index: number
+	maxIndex: number
+	source: AcceptableSource
+	isConnecting: boolean
+	errors: GeneralError[],
+	remove: (index: number) => void
+	up: (index: number) => void
+	down: (index: number) => void
+} = $props()
 
-export let IDPrefix: string
-export let formulae: Formula[]
-export let currencies: Currency[]
-export let collections: Collection[]
-
-export let index: number
-export let maxIndex: number
-export let source: AcceptableSource
-
-export let isConnecting: boolean
-export let errors: GeneralError[]
-
-let oldSource = source
-let oldType = source.type
-let currentType = source.type
-$: {
-	if (JSON.stringify(oldSource) !== JSON.stringify(source)) {
-		oldSource = source
-		currentType = source.type
-		oldType = currentType
-	} else if (oldType !== currentType) {
-		oldType = currentType
-		switch (currentType) {
-			case "formula":
-				source = {
-					"type": "formula",
-					"formula_id": formulae[0].id,
-				}
-			case "collection":
-				source = {
-					"type": "collection",
-					"collection_id": collections[0].id,
-					"currency_id": currencies[0].id,
-					"exchange_rate_basis": acceptableExchangeRateBases[0],
-					"stage_basis": acceptableAmountStageBases[0],
-					"side_basis": acceptableAmountSideBases[0],
-					"must_show_individual_amounts": true,
-					"must_show_collective_average": false,
-					"must_show_collective_sum": false
-				}
-		}
+let oldSource = $state(source)
+let oldType = $state(source.type)
+let currentType = $state(source.type)
+$effect(() => {
+	if (JSON.stringify(untrack(() => oldSource)) !== JSON.stringify(source)) {
+		untrack(() => {
+			oldSource = source
+			currentType = source.type
+			oldType = currentType
+		})
+	} else if (untrack(() => oldType) !== currentType) {
+		untrack(() => {
+			oldType = currentType
+			switch (currentType) {
+				case "formula":
+					source = {
+						"type": "formula",
+						"formula_id": formulae[0].id,
+					}
+				case "collection":
+					source = {
+						"type": "collection",
+						"collection_id": collections[0].id,
+						"stage_basis": acceptableAmountStageBases[0],
+						"side_basis": acceptableAmountSideBases[0],
+						"must_show_individual_amounts": true,
+						"must_show_collective_average": false,
+						"must_show_collective_sum": false
+					}
+			}
+		})
 	}
-}
+})
 
-$: ACCEPTABLE_SOURCES = [
-	collections.length === 0 || currencies.length === 0 ? null : "collection",
+let ACCEPTABLE_SOURCES = $derived([
+	collections.length === 0 ? null : "collection",
 	formulae.length === 0 ? null : "formula"
-].filter(type => type !== null) as (AcceptableSource["type"])[]
+].filter(type => type !== null) as (AcceptableSource["type"])[])
 </script>
 
 {#if ACCEPTABLE_SOURCES.length === 0}
 	<ShortParagraph>
-		There are no available formula or collection to show a data. Please make a formula or a collection first. If want show a collections, at least one currency is required too.
+		There are no available formula or collection to show a data. Please make a formula or a
+		collection first.
 	</ShortParagraph>
 {:else}
 	<GeneralFieldContainer tag="fieldset">
@@ -99,7 +109,6 @@ $: ACCEPTABLE_SOURCES = [
 		{:else if source.type === "collection"}
 			<CollectionFieldset
 				bind:collection={source}
-				{currencies}
 				{collections}
 				{IDPrefix}
 				{isConnecting}
@@ -108,14 +117,14 @@ $: ACCEPTABLE_SOURCES = [
 		<TextButton
 			label="Remove"
 			disabled={maxIndex === 0}
-			on:click={() => dispatch("remove", index)}/>
+			onclick={() => remove(index)}/>
 		<TextButton
 			label="Move Up"
 			disabled={index === 0}
-			on:click={() => dispatch("up", index)}/>
+			onclick={() => up(index)}/>
 		<TextButton
 			label="Move Down"
 			disabled={index === maxIndex}
-			on:click={() => dispatch("down", index)}/>
+			onclick={() => down(index)}/>
 	</GeneralFieldContainer>
 {/if}
