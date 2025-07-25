@@ -119,18 +119,9 @@ async function dryRunCreateFrozenPeriod(
 	}
 }
 
-let chosenPeriod = $state<FrozenPeriod|null>(null)
 let completeFrozenPeriodInfo = $state<CompleteFrozenPeriodInfo|null>(null)
 const partialPath = "/api/v2/frozen_periods"
 let completePath = writable(partialPath)
-$effect(() => {
-	if (chosenPeriod !== null) {
-		const id = chosenPeriod.id
-		untrack(() => {
-			completePath.set(`${partialPath}/${id}`)
-		})
-	}
-})
 const { isConnecting, errors, send } = makeJSONRequester({
 	"path": completePath,
 	"defaultRequestConfiguration": {
@@ -153,7 +144,7 @@ async function checkFrozenPeriod(
 	selectedFrozenPeriod: FrozenPeriod,
 	display: (completeFrozenPeriodInfo: CompleteFrozenPeriodInfo) => void
 ) {
-	chosenPeriod = selectedFrozenPeriod
+	completePath.set(`${partialPath}/${selectedFrozenPeriod.id}?relationship=*`)
 	await send({})
 
 	if (completeFrozenPeriodInfo !== null) {

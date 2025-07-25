@@ -367,12 +367,10 @@ let data = $derived([
 	...frozenAccounts,
 	...realAdjustedSummaryCalculations,
 	...realUnadjustedSummaryCalculations,
-	...exchangeRates,
 	...realFlowCalculations
 ].filter(data => data !== null))
 
 function display(newCompleteFrozenPeriodInfo: CompleteFrozenPeriodInfo) {
-	console.log("inside display")
 	completeFrozenPeriodInfo = newCompleteFrozenPeriodInfo
 }
 
@@ -428,8 +426,6 @@ function display(newCompleteFrozenPeriodInfo: CompleteFrozenPeriodInfo) {
 					{realAdjustedSummaryCalculations}
 					{realUnadjustedSummaryCalculations}
 					{realFlowCalculations}/>
-			{:else}
-				Nos
 			{/if}
 		{/snippet}
 	</CatalogBase>
