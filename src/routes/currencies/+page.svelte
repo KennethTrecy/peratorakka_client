@@ -83,7 +83,7 @@ let existingPrecisionFormats = $derived(precisionFormats.filter(
 	{deriveID}
 	{makeNewResourceObject}
 	{processCreatedResourceObject}>
-	{#snippet description()}
+	{#snippet general_description()}
 		<TextContainer>
 			<ElementalParagraph>
 				Currencies are used as symbols for different financial entries and other parts of the
