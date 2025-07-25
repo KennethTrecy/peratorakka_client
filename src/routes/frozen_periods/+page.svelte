@@ -190,7 +190,7 @@ async function checkFrozenPeriod(
 					{deriveID}
 					{makeNewResourceObject}
 					{processCreatedResourceObject}>
-					{#snippet description()}
+					{#snippet general_description()}
 						<TextContainer>
 							<ElementalParagraph>
 								Frozen periods prevents editing, removal, or addition of financial entries
