@@ -60,17 +60,17 @@ export function makeRawFormattedAmount(
 }
 
 export function addAmount(addend: string, adder: string): string {
-	return new Fraction(addend).add(adder).toString()
+	return new Fraction(addend).add(adder).toFraction()
 }
 
 export function subtractAmount(subtrahend: string, minuend: string): string {
-	return new Fraction(subtrahend).sub(minuend).toString()
+	return new Fraction(subtrahend).sub(minuend).toFraction()
 }
 
 export function multiplyAmount(multiplicand: string, multiplier: string): string {
 	// @ts-ignore
 	Fraction.REDUCE = true;
-	return new Fraction(multiplicand).mul(multiplier).toString()
+	return new Fraction(multiplicand).mul(multiplier).toFraction()
 }
 
 export function divideAmount(dividend: string, divisor: string): string {
