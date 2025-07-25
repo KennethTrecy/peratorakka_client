@@ -39,7 +39,7 @@ let {
 	}]>
 	delete_confirmation_message?: Snippet
 	restore_confirmation_message?: Snippet
-	force_delete_confirmation_message: Snippet
+	force_delete_confirmation_message?: Snippet
 	item: Snippet<[{
 		isEditing: boolean
 		isConnecting: boolean
@@ -170,7 +170,7 @@ let confirmAction = $derived(
 			<WeakenedTertiaryHeading>
 				Force delete {label}?
 			</WeakenedTertiaryHeading>
-			{@render force_delete_confirmation_message()}
+			{@render force_delete_confirmation_message?.()}
 			{#each $forceDeleteErrors as error}
 				<ShortParagraph>
 					{error.message}
@@ -213,11 +213,13 @@ let confirmAction = $derived(
 			})}
 		{/if}
 		{#if !delete_confirmation_message && !restore_confirmation_message}
-			{@render action_button({
-				"kind": "button",
-				"label": "Force Delete",
-				"onclick": confirmForceDeletion
-			})}
+			{#if force_delete_confirmation_message}
+				{@render action_button({
+					"kind": "button",
+					"label": "Force Delete",
+					"onclick": confirmForceDeletion
+				})}
+			{/if}
 		{:else}
 			{@render action_button({
 				"kind": "button",
