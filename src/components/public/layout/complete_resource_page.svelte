@@ -1,30 +1,23 @@
 <script lang="ts">
 import type { Snippet } from "svelte"
 import type { ContextBundle, ResourceDependencyInfo, HighResourceDependencyInfo } from "+/component"
-import type { GeneralError, SearchMode, SortOrder } from "+/rest"
+import type { GeneralError, SortOrder } from "+/rest"
 import type { RestorableEntity } from "+/entity"
 
-import { get, writable, derived as deriveStore } from "svelte/store"
-import { onMount, getContext, untrack } from "svelte"
+import { getContext } from "svelte"
 import { afterNavigate, beforeNavigate, goto } from "$app/navigation"
 
 import { GLOBAL_CONTEXT } from "#/contexts"
-import { SEARCH_NORMALLY, ASCENDING_ORDER, MAXIMUM_PAGINATED_LIST_LENGTH } from "#/rest"
+import { ASCENDING_ORDER } from "#/rest"
 
 import assertAuthentication from "$/page_requirement/assert_authentication"
-import loadAllDependencies from "$/rest/load_all_dependencies"
 import makeJSONRequester from "$/rest/make_json_requester"
 
-import ArticleGrid from "$/layout/article_grid.svelte"
-import CatalogBase from "$/catalog/base.svelte"
+import ListResourcePage from "$/layout/list_resource_page.svelte"
 import ElementalParagraph from "$/typography/elemental_paragraph.svelte"
-import ExtraResourceLoader from "$/catalog/extra_resource_loader.svelte"
 import Flex from "$/layout/flex.svelte"
 import GridCell from "$/layout/grid_cell.svelte"
-import InnerGrid from "$/layout/inner_grid.svelte"
 import InteractiveContainer from "$/layout/interactive_container.svelte"
-import ListSpecifier from "$/form/list_specifier.svelte"
-import PrimaryHeading from "$/typography/primary_heading.svelte"
 import ReactiveProgressBar from "$/utility/reactive_progress_bar.svelte"
 import SecondaryHeading from "$/typography/secondary_heading.svelte"
 import TextCardButton from "$/button/card/text.svelte"
@@ -45,13 +38,13 @@ let {
 	makeNewResourceObject,
 	processCreatedResourceObject,
 	processListResourceObject = () => {},
-	description,
+	general_description,
 	form,
 	requirement,
 	create_grid_cell_rear,
 	custom_list_specifiers,
 	filled_collection_description,
-	"empty_collection_description": empty_collection_description_child,
+	empty_collection_description,
 	collection_items,
 	list_grid_cell_rear
 }: {
@@ -72,7 +65,7 @@ let {
 	makeNewResourceObject: () => Record<string, unknown>
 	processCreatedResourceObject: (document: Record<string, unknown>) => unknown
 	processListResourceObject?: (document: Record<string, unknown>) => void
-	description: Snippet
+	general_description: Snippet
 	form: Snippet<[
 		{
 			IDPrefix: string,
@@ -110,129 +103,9 @@ assertAuthentication(globalContext, {
 	goto
 })
 
-let isRequestingDependencies = $state(true)
-let resources: unknown[] = $state([])
-
-let searchMode: SearchMode = $state<SearchMode>(SEARCH_NORMALLY)
-let sortCriterion: string = $state(defaultSortCriterion)
-let sortOrder: SortOrder = $state(defaultSortOrder)
-let lastOffset: number = $state(0)
+let createdResource = $state<unknown|null>(null)
 
 const partialPath = `/api/v2/${collectiveName}`
-let parameters: [string, string][] = $derived([
-	[ "filter[search_mode]", searchMode as string ],
-	[ "sort[0][0]", sortCriterion ],
-	[ "sort[0][1]", sortOrder as string ],
-	...additionalListParameters
-])
-let completePath = writable(partialPath)
-$effect(() => {
-	const completeParameters = new URLSearchParams([
-		...parameters,
-		[ "page[offset]", `${lastOffset}` ],
-		[ "page[limit]", MAXIMUM_PAGINATED_LIST_LENGTH ]
-	]).toString()
-
-	untrack(() => {
-		completePath.set(`${partialPath}?${completeParameters}`)
-	})
-})
-
-let progressRate = $state(0)
-const dependencyErrors = writable([] as GeneralError[])
-
-let {
-	"isConnecting": isConnectingForList,
-	"errors": errorsForList,
-	"send": sendForList
-} = makeJSONRequester({
-	"path": completePath,
-	"defaultRequestConfiguration": {
-		"method": "GET"
-	},
-	"manualResponseHandlers": [
-		{
-			"statusCode": 200,
-			"action": async (response: Response) => {
-				let responseDocument = await response.json()
-				errorsForList.set([])
-				resources = responseDocument[collectiveName]
-				lastOffset = Math.max(0, responseDocument[collectiveName].length - 1)
-				processListResourceObject(responseDocument)
-			}
-		}
-	],
-	"expectedErrorStatusCodes": [ 401 ]
-})
-
-const allErrors = deriveStore(
-	[ dependencyErrors, errorsForList ],
-	([ dependencyErrors, errors ]) => [
-		...dependencyErrors,
-		...errors
-	]
-)
-
-async function reloadResources() {
-	resources = []
-	await sendForList({})
-}
-
-async function loadList() {
-	const currentServerURL = get(globalContext.serverURL as any)
-
-	if (currentServerURL === "") {
-		setTimeout(loadList, 1000)
-		return
-	}
-
-	isRequestingDependencies = true
-
-	if (dependencyInfos.length > 0) {
-		await loadAllDependencies(globalContext, dependencyInfos, {
-			"updateProgressRate": newProgressRate => { progressRate = newProgressRate },
-			"updateErrors": newErrors => { dependencyErrors.set(newErrors) }
-		})
-	} else {
-		progressRate = 1
-	}
-
-	isRequestingDependencies = false
-
-	await reloadResources()
-}
-
-onMount(loadList)
-
-function addResource(newResource: unknown) {
-	if (searchMode === "only_deleted") return
-
-	resources = [
-		newResource,
-		...resources
-	]
-}
-
-function addResources(newResources: unknown[]) {
-	resources = [
-		...resources,
-		...newResources as unknown[]
-	]
-}
-
-function removeResource(oldResource: unknown) {
-	resources = resources.filter(
-		resource => deriveID(resource) !== deriveID(oldResource)
-	)
-}
-
-let hasLoadedAllDependencies = $derived(
-	!isRequestingDependencies
-	&& (
-		dependencyInfos.length === 0
-		|| dependencies.every(dependency => dependency.length > 0)
-	)
-)
 
 let {
 	"isConnecting": isConnectingForCreation,
@@ -250,27 +123,25 @@ let {
 				const document = await response.json()
 
 				errorsForCreation.set([])
-				addResource(processCreatedResourceObject(document))
+				createdResource = processCreatedResourceObject(document)
 			}
 		}
 	],
 	"expectedErrorStatusCodes": [ 400 ]
 })
 
-async function createResource() {
+async function createResource(addResource: (resource: unknown) => void) {
+	createdResource = null
+
 	await sendForCreation({
 		"body": JSON.stringify(makeNewResourceObject())
 	})
+
+	if (createdResource !== null) {
+		addResource(createdResource)
+	}
 }
-
-let isPresentAndArchived = $derived(searchMode === "with_deleted")
-let isPresent = $derived(searchMode === "normal" || isPresentAndArchived)
-let isArchived = $derived(searchMode === "only_deleted" || isPresentAndArchived)
 </script>
-
-<svelte:head>
-	<title>{pageTitle}</title>
-</svelte:head>
 
 {#snippet button_group()}
 	<TextCardButton
@@ -279,18 +150,35 @@ let isArchived = $derived(searchMode === "only_deleted" || isPresentAndArchived)
 		label="Add"/>
 {/snippet}
 
-<ArticleGrid>
-	<InnerGrid>
-		<GridCell kind="full">
-			<PrimaryHeading>{pageTitle}</PrimaryHeading>
-		</GridCell>
+<ListResourcePage
+	{pageTitle}
+	{listTitle}
+	{collectiveName}
+	{defaultSortCriterion}
+	{defaultSortOrder}
+	{availableSortCriteria}
+	{additionalListParameters}
+	{dependencies}
+	{dependencyInfos}
+	{deriveID}
+	{processListResourceObject}
+	{custom_list_specifiers}
+	{filled_collection_description}
+	{empty_collection_description}
+	{collection_items}
+	{list_grid_cell_rear}>
+	{#snippet list_grid_cell_face({
+		isRequestingDependencies,
+		hasLoadedAllDependencies,
+		addResource
+	})}
 		<GridCell kind="full">
 			<SecondaryHeading>{createTitle}</SecondaryHeading>
 		</GridCell>
 		<GridCell kind="full">
 			<InteractiveContainer>
 				{#snippet text()}
-					{@render description()}
+					{@render general_description()}
 				{/snippet}
 				{#snippet widget()}
 					<ReactiveProgressBar
@@ -310,7 +198,7 @@ let isArchived = $derived(searchMode === "only_deleted" || isPresentAndArchived)
 							"isConnecting": $isConnectingForCreation,
 							"errors": $errorsForCreation,
 							button_group,
-							"onsubmit": createResource
+							"onsubmit": () => createResource(addResource)
 						})}
 					{:else}
 						{@render requirement?.()}
@@ -319,55 +207,5 @@ let isArchived = $derived(searchMode === "only_deleted" || isPresentAndArchived)
 			</InteractiveContainer>
 		</GridCell>
 		{@render create_grid_cell_rear?.()}
-		<CatalogBase
-			data={resources}
-			isConnecting={$isConnectingForList || isRequestingDependencies}
-			{progressRate}
-			{collectiveName}
-			{filled_collection_description}>
-			{#snippet name()}
-				<SecondaryHeading>{listTitle}</SecondaryHeading>
-			{/snippet}
-			{#snippet list_specifier()}
-				{@render custom_list_specifiers?.({
-					"isConnecting": $isConnectingForList,
-					"errors": $errorsForList
-				})}
-
-				<ListSpecifier
-					bind:searchMode={searchMode}
-					bind:sortCriterion={sortCriterion}
-					bind:sortOrder={sortOrder}
-					isConnecting={$isConnectingForList}
-					{availableSortCriteria}
-					errors={$errorsForList}/>
-			{/snippet}
-			{#snippet available_content()}
-				{@render collection_items({
-					resources,
-					updateResource: (resource: unknown, index: number) => {
-						resources[index] = resource
-					},
-					removeResource
-				})}
-			{/snippet}
-			{#snippet empty_collection_description()}
-				{@render empty_collection_description_child({
-					isPresentAndArchived,
-					isPresent,
-					isArchived
-				})}
-			{/snippet}
-		</CatalogBase>
-		<ExtraResourceLoader
-			isConnectingForInitialList={$isConnectingForList || isRequestingDependencies}
-			{partialPath}
-			{parameters}
-			{collectiveName}
-			bind:lastOffset={lastOffset}
-			reloadFully={reloadResources}
-			{addResources}
-			{processListResourceObject}/>
-		{@render list_grid_cell_rear?.()}
-	</InnerGrid>
-</ArticleGrid>
+	{/snippet}
+</ListResourcePage>
