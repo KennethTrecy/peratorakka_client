@@ -144,11 +144,17 @@ function updateAtomAutomatically(atom: CompleteFinancialEntryAtomInput, index: n
 	newCompleteAtomInputs[index] = JSON.parse(JSON.stringify(atom))
 
 	if (hasSimpleAtomicPair) {
-		newCompleteAtomInputs[1] = JSON.parse(JSON.stringify(atom))
+		newCompleteAtomInputs[1] = {
+			...newCompleteAtomInputs[1],
+			"input": {
+				...newCompleteAtomInputs[1].input,
+				"numerical_value": atom.input.numerical_value
+			}
+		}
 	}
 
 	completeAtomInputs = newCompleteAtomInputs
-	atoms = newCompleteAtomInputs.map(atom => atom.input)
+	atoms = completeAtomInputs.map(atom => atom.input)
 }
 </script>
 
