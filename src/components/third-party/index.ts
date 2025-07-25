@@ -11,28 +11,7 @@ export function formatAmount(
 	currency: Currency | undefined,
 	amount: string
 ) {
-	const minimumFractionDigits = precisionFormat?.minimum_presentational_precision
-		?? DEFAULT_MINIMUM_FRACTION_DIGITS
-	const maximumFractionDigits = precisionFormat?.maximum_presentational_precision
-		?? DEFAULT_MAXIMUM_FRACTION_DIGITS
-	const parsedAmount = new Fraction(amount)
-	const untrimmedAmount = parsedAmount
-		.round(maximumFractionDigits)
-		.toString(maximumFractionDigits)
-
-	const trimmedAmount = untrimmedAmount.split(".")
-	const whole = trimmedAmount[0]
-	let rawFraction = trimmedAmount[1] ?? ""
-	rawFraction = `${rawFraction}${
-		Array(Math.max(minimumFractionDigits - rawFraction.length, 0)).fill(0).join("")
-	}`
-	rawFraction = rawFraction.length === 0
-		? ""
-		: `.${rawFraction}`
-
-	const formattedAmount = `${whole}${rawFraction}`
-
-	return makeFormattedAmount(precisionFormat, currency, formattedAmount)
+	return makeFormattedAmount(precisionFormat, currency, amount)
 }
 
 export function makeFormattedAmount(
@@ -40,7 +19,15 @@ export function makeFormattedAmount(
 	currency: Currency | undefined,
 	amount: string
 ): string {
-	return `${currency?.code ?? "---"} ${makeRawFormattedAmount(precisionFormat, amount)}`
+	const emptyAmount = makeRawFormattedAmount(precisionFormat, "0")
+	const formattedAmount = makeRawFormattedAmount(precisionFormat, amount)
+	const isInfinitesimalAmount = emptyAmount === formattedAmount
+
+	return `${currency?.code ?? "---"} ${
+		isInfinitesimalAmount
+			? amount
+			: formattedAmount
+	}`
 }
 
 export function makeRawFormattedAmount(
@@ -52,11 +39,9 @@ export function makeRawFormattedAmount(
 	const maximumFractionDigits = precisionFormat?.maximum_presentational_precision
 		?? DEFAULT_MAXIMUM_FRACTION_DIGITS
 
-	return (+amount).toLocaleString("en-US", {
-		"useGrouping": "true",
-		"minimumFractionDigits": minimumFractionDigits,
-		"maximumFractionDigits": maximumFractionDigits
-	}).replaceAll(",", " ")
+	return (new Fraction(amount))
+		.round(maximumFractionDigits)
+		.toString(maximumFractionDigits)
 }
 
 export function addAmount(addend: string, adder: string): string {
