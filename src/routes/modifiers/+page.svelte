@@ -141,25 +141,6 @@ let existingCashFlowActivities = $derived(cashFlowActivities.filter(
 ))
 </script>
 
-{#snippet general_description()}
-	<TextContainer>
-		<ElementalParagraph>
-			Modifiers are premade actions to create financial entries. Currently, manual input is the
-			only kind of modifier available. Other kinds may added in the future to allow automated
-			modifications on different accounts.
-		</ElementalParagraph>
-		<ElementalParagraph>
-			Modifiers can also serve as references for financial entries. Everyone reading the entries
-			would know if a financial entry was a result of manual input or automated calculations.
-		</ElementalParagraph>
-		<ElementalParagraph>
-			To create a modifier to be used by the system, choose a debit account and a credit account
-			that the modifier would be responsible. After that, fill out other required info. Finally,
-			press "Add" button.
-		</ElementalParagraph>
-	</TextContainer>
-{/snippet}
-
 <CompleteResourcePage
 pageTitle="Modifiers"
 createTitle="Add Modifier"
@@ -202,8 +183,26 @@ listTitle="Available Modifiers"
 	{deriveID}
 	{makeNewResourceObject}
 	{processCreatedResourceObject}
-	{processListResourceObject}
-	description={general_description}>
+	{processListResourceObject}>
+	{#snippet general_description()}
+		<TextContainer>
+			<ElementalParagraph>
+				Modifiers are premade actions to create financial entries. Currently, manual input is
+				the only kind of modifier available. Other kinds may added in the future to allow
+				automated modifications on different accounts.
+			</ElementalParagraph>
+			<ElementalParagraph>
+				Modifiers can also serve as references for financial entries. Everyone reading the
+				entries would know if a financial entry was a result of manual input or automated
+				calculations.
+			</ElementalParagraph>
+			<ElementalParagraph>
+				To create a modifier to be used by the system, choose a debit account and a credit
+				account that the modifier would be responsible. After that, fill out other required
+				info. Finally, press "Add" button.
+			</ElementalParagraph>
+		</TextContainer>
+	{/snippet}
 	{#snippet form({ IDPrefix, isConnecting, errors, onsubmit, button_group })}
 		<BasicForm
 			currencies={existingCurrencies}
