@@ -96,3 +96,11 @@ $effect(() => {
 			onclick={refresh}/>
 	{/snippet}
 </CardItem>
+
+<style lang="scss">
+@use "@/components/third-party/index";
+
+:global(article.card) {
+	height: 100%;
+}
+</style>
