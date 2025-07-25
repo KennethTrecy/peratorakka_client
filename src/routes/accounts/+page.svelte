@@ -61,21 +61,6 @@ let existingCurrencies = $derived(currencies.filter(
 ))
 </script>
 
-{#snippet general_description()}
-<TextContainer>
-	<ElementalParagraph>
-		Financial accounts are some kind of label for the numerical values in a financial entry.
-		Some examples of these are capital, cash, or debt. They may be credited or debited
-		depending on their kind. They may be asset, liability, or equity to name a few.
-	</ElementalParagraph>
-	<ElementalParagraph>
-		To create a financial account to be used in the system, choose a currency and kind in
-		order for the system to calculate properly the associated numerical values. After that,
-		fill out other required info. Finally, press "Add" button.
-	</ElementalParagraph>
-</TextContainer>
-{/snippet}
-
 <CompleteResourcePage
 	pageTitle="Chart of Accounts"
 	createTitle="Add Financial Account"
@@ -100,8 +85,21 @@ let existingCurrencies = $derived(currencies.filter(
 	]}
 	{deriveID}
 	{makeNewResourceObject}
-	{processCreatedResourceObject}
-	description={general_description}>
+	{processCreatedResourceObject}>
+	{#snippet general_description()}
+		<TextContainer>
+			<ElementalParagraph>
+				Financial accounts are some kind of label for the numerical values in a financial entry.
+				Some examples of these are capital, cash, or debt. They may be credited or debited
+				depending on their kind. They may be asset, liability, or equity to name a few.
+			</ElementalParagraph>
+			<ElementalParagraph>
+				To create a financial account to be used in the system, choose a currency and kind in
+				order for the system to calculate properly the associated numerical values. After that,
+				fill out other required info. Finally, press "Add" button.
+			</ElementalParagraph>
+		</TextContainer>
+	{/snippet}
 	{#snippet form({ IDPrefix, isConnecting, errors, onsubmit, button_group })}
 		<BasicForm
 			currencies={existingCurrencies}
