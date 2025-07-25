@@ -1,67 +1,104 @@
 <script lang="ts">
 import type { GeneralError } from "+/rest"
-import type { Collection, Currency, CollectionSource } from "+/entity"
+import type { Collection, CollectionSource } from "+/entity"
+
+import { untrack } from "svelte"
 
 import {
-	acceptableExchangeRateBases,
 	acceptableAmountStageBases,
 	acceptableAmountSideBases
 } from "#/entity"
 
 import transformCollection from "$/form/choice_info_transformer/transform_collection"
-import transformCurrency from "$/form/choice_info_transformer/transform_currency"
 import transformString from "$/form/choice_info_transformer/transform_string"
 
 import ChoiceListField from "$/form/choice_list_field.svelte"
 import CheckboxField from "$/form/checkbox_field.svelte"
 
-const ACCEPTABLE_FORMULA_EXCHANGE_RATE_BASES = [ ...acceptableExchangeRateBases ]
 const ACCEPTABLE_AMOUNT_STAGE_BASES = [ ...acceptableAmountStageBases ]
 const ACCEPTABLE_AMOUNT_SIDE_BASES = [ ...acceptableAmountSideBases ]
 
-export let IDPrefix: string
-export let collections: Collection[]
-export let currencies: Currency[]
-export let collection: CollectionSource
+let {
+	IDPrefix,
+	collections,
+	collection = $bindable(),
+	isConnecting,
+	errors
+}: {
+	IDPrefix: string
+	collections: Collection[]
+	collection: CollectionSource
+	isConnecting: boolean
+	errors: GeneralError[]
+} = $props()
 
-export let isConnecting: boolean
-export let errors: GeneralError[]
+let collectionID = $state(`${collection.collection_id}`)
+let stageBasis = $state(collection.stage_basis)
+let sideBasis = $state(collection.side_basis)
+let mustShowIndividualAmounts = $state(collection.must_show_individual_amounts)
+let mustShowCollectiveSum = $state(collection.must_show_collective_sum)
+let mustShowCollectiveAverage = $state(collection.must_show_collective_average)
 
-let oldCollection = collection
-let collectionID = `${collection.collection_id}`
-let currencyID = `${collection.currency_id}`
-let exchangeRateBasis = collection.exchange_rate_basis
-let stageBasis = collection.stage_basis
-let sideBasis = collection.side_basis
-let mustShowIndividualAmounts = collection.must_show_individual_amounts
-let mustShowCollectiveSum = collection.must_show_collective_sum
-let mustShowCollectiveAverage = collection.must_show_collective_average
+$effect(() => {
+	const parsedCollectionID = +collectionID
 
-$: {
-	if (JSON.stringify(oldCollection) !== JSON.stringify(collection)) {
-		oldCollection = collection
-		collectionID = `${collection.collection_id}`
-		currencyID = `${collection.currency_id}`
-		exchangeRateBasis = collection.exchange_rate_basis
-		stageBasis = collection.stage_basis
-		sideBasis = collection.side_basis
-		mustShowIndividualAmounts = collection.must_show_individual_amounts
-		mustShowCollectiveSum = collection.must_show_collective_sum
-		mustShowCollectiveAverage = collection.must_show_collective_average
-	} else {
+	untrack(() => {
 		collection = {
 			...collection,
-			"collection_id": +collectionID,
-			"currency_id": +currencyID,
-			"exchange_rate_basis": exchangeRateBasis,
-			"stage_basis": stageBasis,
-			"side_basis": sideBasis,
-			"must_show_individual_amounts": mustShowIndividualAmounts,
-			"must_show_collective_sum": mustShowCollectiveSum,
-			"must_show_collective_average": mustShowCollectiveAverage
+			"collection_id": parsedCollectionID
 		}
-	}
-}
+	})
+})
+$effect(() => {
+	const newStageBasis = stageBasis
+
+	untrack(() => {
+		collection = {
+			...collection,
+			"stage_basis": newStageBasis
+		}
+	})
+})
+$effect(() => {
+	const newSideBasis = sideBasis
+
+	untrack(() => {
+		collection = {
+			...collection,
+			"side_basis": newSideBasis
+		}
+	})
+})
+$effect(() => {
+	const newMustShowIndividualAmounts = mustShowIndividualAmounts
+
+	untrack(() => {
+		collection = {
+			...collection,
+			"must_show_individual_amounts": newMustShowIndividualAmounts
+		}
+	})
+})
+$effect(() => {
+	const newMustShowCollectiveSum = mustShowCollectiveSum
+
+	untrack(() => {
+		collection = {
+			...collection,
+			"must_show_collective_sum": newMustShowCollectiveSum
+		}
+	})
+})
+$effect(() => {
+	const newMustShowCollectiveAverage = mustShowCollectiveAverage
+
+	untrack(() => {
+		collection = {
+			...collection,
+			"must_show_collective_average": newMustShowCollectiveAverage
+		}
+	})
+})
 </script>
 
 <ChoiceListField
@@ -70,22 +107,6 @@ $: {
 	bind:value={collectionID}
 	rawChoices={collections}
 	choiceConverter={transformCollection}
-	{IDPrefix}
-	{errors}/>
-<ChoiceListField
-	fieldName="Base Currency"
-	disabled={isConnecting}
-	bind:value={currencyID}
-	rawChoices={currencies}
-	choiceConverter={transformCurrency}
-	{IDPrefix}
-	{errors}/>
-<ChoiceListField
-	fieldName="Exchange Rate Basis"
-	disabled={isConnecting}
-	bind:value={exchangeRateBasis}
-	rawChoices={ACCEPTABLE_FORMULA_EXCHANGE_RATE_BASES}
-	choiceConverter={transformString}
 	{IDPrefix}
 	{errors}/>
 <ChoiceListField
