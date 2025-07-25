@@ -18,8 +18,6 @@ import {
 	TOTAL_FINANCIAL_ENTRY_ATOM_KIND
 } from "#/entity"
 
-import makeAccountTransformer from "$/form/choice_info_transformer/make_account_transformer"
-
 import AtomContainer from "%/financial_entries/basic_form/atom_container.svelte"
 
 let {
@@ -129,21 +127,6 @@ $effect(() => {
 	}
 })
 
-$effect(() => {
-	const newAtomInputs = completeAtomInputs.map(atom => atom.input)
-	const hasDifferentNewAtoms = JSON.stringify(untrack(() => atoms).map(
-		atom => `${atom.modifier_atom_id}_${atom.kind}_${atom.numerical_value}`
-	)) !== JSON.stringify(newAtomInputs.map(
-		atom => `${atom.modifier_atom_id}_${atom.kind}_${atom.numerical_value}`
-	))
-	if (hasDifferentNewAtoms) {
-		untrack(() => {
-			atoms = newAtomInputs
-		})
-	}
-})
-
-
 let monetaryAtomInputs = $derived(completeAtomInputs.filter(
 	atom => (
 		atom.modifier_atom.kind === REAL_DEBIT_MODIFIER_ATOM_KIND
@@ -156,51 +139,27 @@ let hasSimpleAtomicPair = $derived(
 	&& monetaryAtomInputs[0].currency.id === monetaryAtomInputs[1].currency.id
 )
 
-let transformAccount = $derived(makeAccountTransformer(currencies))
-
 function updateAtomAutomatically(atom: CompleteFinancialEntryAtomInput, index: number) {
-	const newCompleteAtomInputs = [ ...completeAtomInputs]
-	newCompleteAtomInputs[index] = atom
+	const newCompleteAtomInputs = [ ...completeAtomInputs ]
+	newCompleteAtomInputs[index] = JSON.parse(JSON.stringify(atom))
 
 	if (hasSimpleAtomicPair) {
-		const creditAtomIndex = newCompleteAtomInputs.findIndex(
-			atom => atom.modifier_atom.kind === REAL_CREDIT_MODIFIER_ATOM_KIND
-		)
-		const debitAtomIndex = newCompleteAtomInputs.findIndex(
-			atom => atom.modifier_atom.kind === REAL_DEBIT_MODIFIER_ATOM_KIND
-		)
-		const creditInput = newCompleteAtomInputs[creditAtomIndex]
-		const debitInput = newCompleteAtomInputs[debitAtomIndex]
-
-		if (index === creditAtomIndex) {
-			newCompleteAtomInputs[debitAtomIndex] = {
-				...debitInput,
-				"input": {
-					...debitInput.input,
-					"numerical_value": creditInput.input.numerical_value
-				}
-			}
-		} else if (index === debitAtomIndex) {
-			newCompleteAtomInputs[creditAtomIndex] = {
-				...creditInput,
-				"input": {
-					...creditInput.input,
-					"numerical_value": debitInput.input.numerical_value
-				}
-			}
-		}
+		newCompleteAtomInputs[1] = JSON.parse(JSON.stringify(atom))
 	}
 
 	completeAtomInputs = newCompleteAtomInputs
+	atoms = newCompleteAtomInputs.map(atom => atom.input)
 }
 </script>
 
 {#each completeAtomInputs as atom, index}
 	<AtomContainer
 		{disabled}
-		bind:atom={() => atom, atomInput => updateAtomAutomatically(atomInput, index)}
+		bind:atom={
+			() => hasSimpleAtomicPair ? completeAtomInputs[0] : atom,
+			atomInput => updateAtomAutomatically(atomInput, hasSimpleAtomicPair ? 0 : index)
+		}
 		IDPrefix={`${IDPrefix}_${index}`}
 		{isConnecting}
-		{errors}
-		{transformAccount}/>
+		{errors}/>
 {/each}

@@ -13,15 +13,13 @@ let {
 	IDPrefix,
 	disabled,
 	isConnecting,
-	errors,
-	transformAccount
+	errors
 }: {
 	atom: CompleteFinancialEntryAtomInput
 	IDPrefix: string
 	disabled: boolean
 	isConnecting: boolean
 	errors: GeneralError[]
-	transformAccount: (account: Account) => ChoiceInfo
 } = $props()
 
 let label = $derived(`${
