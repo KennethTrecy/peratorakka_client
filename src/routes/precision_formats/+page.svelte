@@ -66,7 +66,7 @@ function processCreatedResourceObject(document: Record<string, unknown>): unknow
 	{deriveID}
 	{makeNewResourceObject}
 	{processCreatedResourceObject}>
-	{#snippet description()}
+	{#snippet general_description()}
 		<TextContainer>
 			<ElementalParagraph>
 				Precision formats are shared between currencies and numerical tools to display the
