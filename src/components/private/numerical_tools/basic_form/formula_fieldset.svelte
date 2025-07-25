@@ -2,28 +2,33 @@
 import type { GeneralError } from "+/rest"
 import type { Formula, FormulaSource } from "+/entity"
 
+import { untrack } from "svelte"
+
 import transformFormula from "$/form/choice_info_transformer/transform_formula"
 
 import ChoiceListField from "$/form/choice_list_field.svelte"
 
-export let IDPrefix: string
-export let formulae: Formula[]
+let {
+	IDPrefix,
+	formulae,
+	formula = $bindable(),
+	isConnecting,
+	errors
+}: {
+	IDPrefix: string
+	formulae: Formula[]
+	formula: FormulaSource
+	isConnecting: boolean
+	errors: GeneralError[]
+} = $props()
 
-export let formula: FormulaSource
-
-export let isConnecting: boolean
-export let errors: GeneralError[]
-
-let oldFormula = formula
-let formulaID = `${formula.formula_id}`
-$: {
-	if (JSON.stringify(oldFormula) !== JSON.stringify(formula)) {
-		oldFormula = formula
-		formulaID = `${formula.formula_id}`
-	} else {
-		formula = { ...formula, "formula_id": +formulaID }
-	}
-}
+let formulaID = $state(`${formula.formula_id}`)
+$effect(() => {
+	const parsedFormulaID = +formulaID
+	untrack(() => {
+		formula = { ...formula, "formula_id": parsedFormulaID }
+	})
+});
 </script>
 
 <ChoiceListField
