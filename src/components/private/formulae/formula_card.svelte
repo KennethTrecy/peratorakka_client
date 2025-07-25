@@ -1,9 +1,5 @@
 <script lang="ts">
-import type { Currency, Formula, AcceptableExchangeRateBasis} from "+/entity"
-
-import { createEventDispatcher } from "svelte"
-
-import {  acceptableExchangeRateBases } from "#/entity"
+import type { PrecisionFormat, Formula } from "+/entity"
 
 import { fallbackToAcceptableFormulaOutputFormat } from "+/entity"
 import checkArchivedState from "$/utility/check_archived_state"
@@ -11,143 +7,135 @@ import convertSnakeCaseToProperCase from "$/utility/convert_snake_case_to_proper
 import makeRestorableItemOptions from "$/rest/make_restorable_item_options"
 
 import BasicForm from "%/formulae/basic_form.svelte"
-import CollectionItem from "$/catalog/collection_item.svelte"
+import CardItem from "$/catalog/card_item.svelte"
 import EditActionCardButtonPair from "$/button/card/edit_action_pair.svelte"
 import ShortParagraph from "$/typography/short_paragraph.svelte"
 
-export let currencies: Currency[]
-export let data: Formula
+let {
+	precisionFormats,
+	data = $bindable(),
+	remove
+}: {
+	precisionFormats: PrecisionFormat[]
+	data: Formula
+	remove: (resource: Formula) => void
+} = $props()
 
-const dispatch = createEventDispatcher<{
-	"remove": Formula
-}>()
-let currencyID = `${data.currency_id}`
-let name = data.name
-let description = data.description
-let outputFormat = fallbackToAcceptableFormulaOutputFormat(data.output_format)
-let exchangeRateBasis = fallbackToAcceptableExchangeRateBasis(data.exchange_rate_basis)
-let presentationalPrecision = data.presentational_precision
-let formula = data.formula
+let precisionFormatID = $state(`${data.precision_format_id}`)
+let name = $state(data.name)
+let description = $state(data.description)
+let outputFormat = $state(fallbackToAcceptableFormulaOutputFormat(data.output_format))
+let expression = $state(data.expression)
 
-$: isArchived = checkArchivedState(data)
-$: IDPrefix = `old_account_${data.id}`
-$: formID = `${IDPrefix}_update_form`
-$: associatedCurrency = currencies.find(
-	currency => currency.id === parseInt(currencyID)
+let isArchived = $derived(checkArchivedState(data))
+let IDPrefix = $derived(`old_account_${data.id}`)
+let formID = $derived(`${IDPrefix}_update_form`)
+let associatedPrecisionFormat = $derived(precisionFormats.find(
+	precisionFormat => precisionFormat.id === parseInt(precisionFormatID)
+))
+let friendlyOutputFormat = $derived(
+	convertSnakeCaseToProperCase(data.output_format).toLocaleLowerCase()
 )
-$: friendlyOutputFormat = convertSnakeCaseToProperCase(data.output_format).toLocaleLowerCase()
-$: friendlyExchangeRateBasis = data.exchange_rate_basis === "latest"
-	? "per period"
-	: "regardless of the period"
-$: restorableItemOptions = makeRestorableItemOptions(
-	`/api/v1/formulae/${data.id}`,
+let friendlyPrecisionFormat = $derived(
+	associatedPrecisionFormat?.maximum_presentational_precision ?? "unknown number of"
+)
+let restorableItemOptions = $derived(makeRestorableItemOptions(
+	`/api/v2/formulae/${data.id}`,
 	{
 		"updateCacheData": () => {
 			data = {
 				...data,
-				"currency_id": parseInt(currencyID),
+				"precision_format_id": parseInt(precisionFormatID),
 				name,
 				description,
 				"output_format": outputFormat,
-				"exchange_rate_basis": exchangeRateBasis,
-				"presentational_precision": presentationalPrecision,
-				formula
+				expression
 			}
 		},
-		"removeCacheData": () => dispatch("remove", data),
+		"removeCacheData": () => remove(data),
 		"makeUpdatedBody": () => ({
 			"formula": {
-				"currency_id": parseInt(currencyID),
+				"precision_format_id": parseInt(precisionFormatID),
 				name,
 				description,
 				"output_format": outputFormat,
-				"exchange_rate_basis": exchangeRateBasis,
-				"presentational_precision": presentationalPrecision,
-				formula
+				expression
 			}
 		})
 	}
-)
+))
 
 function resetDraft() {
-	currencyID = `${data.currency_id}`
+	precisionFormatID = `${data.precision_format_id}`
 	name = data.name
 	description = data.description
 	outputFormat = fallbackToAcceptableFormulaOutputFormat(data.output_format)
 }
-
-function fallbackToAcceptableExchangeRateBasis(data: string): AcceptableExchangeRateBasis {
-	return isAcceptableExchangeRateBasis(data) ? data : acceptableExchangeRateBases[0]
-}
-
-function isAcceptableExchangeRateBasis(data: string): data is AcceptableExchangeRateBasis {
-	return (<string[]>[ ...acceptableExchangeRateBases ]).indexOf(data) > -1
-}
 </script>
 
-<CollectionItem
+<CardItem
 	label={data.name}
 	{isArchived}
 	options={restorableItemOptions}
-	on:resetDraft={resetDraft}>
-	<BasicForm
-		slot="edit_form"
-		let:confirmEdit
-		let:cancelEdit
-		let:isConnecting
-		let:errors
-		id={formID}
-		bind:currencyID={currencyID}
-		bind:name={name}
-		bind:description={description}
-		bind:outputFormat={outputFormat}
-		bind:exchangeRateBasis={exchangeRateBasis}
-		bind:presentationalPrecision={presentationalPrecision}
-		bind:formula={formula}
-		{IDPrefix}
-		{currencies}
-		{isConnecting}
-		{errors}
-		on:submit={confirmEdit}>
-		<EditActionCardButtonPair
-			slot="button_group"
-			disabled={isConnecting}
-			on:cancelEdit={cancelEdit}/>
-	</BasicForm>
-	<svelte:fragment slot="delete_confirmation_message">
+	{resetDraft}>
+	{#snippet edit_form({ confirmEdit, cancelEdit, isConnecting, errors })}
+		<BasicForm
+			id={formID}
+			bind:precisionFormatID={precisionFormatID}
+			bind:name={name}
+			bind:description={description}
+			bind:outputFormat={outputFormat}
+			bind:expression={expression}
+			{IDPrefix}
+			{precisionFormats}
+			{isConnecting}
+			{errors}
+			onsubmit={confirmEdit}>
+			{#snippet button_group()}
+				<EditActionCardButtonPair
+					disabled={isConnecting}
+					{cancelEdit}/>
+			{/snippet}
+		</BasicForm>
+	{/snippet}
+	{#snippet delete_confirmation_message()}
 		<ShortParagraph>
-			Deleting this formula may prevent related data from being shown temporarily.
+			Deleting this expression may prevent related data from being shown temporarily.
 		</ShortParagraph>
 		<ShortParagraph>
-			It converts financial amounts in {associatedCurrency?.code ?? "???"} before calculation of result using the latest exchange rate {friendlyExchangeRateBasis}. Result is formatted as {friendlyOutputFormat} showing up to {data.presentational_precision} significant digits.
+			Result is formatted as {friendlyOutputFormat} showing up to {friendlyPrecisionFormat}
+			significant digits.
 		</ShortParagraph>
-	</svelte:fragment>
-	<svelte:fragment slot="restore_confirmation_message">
+	{/snippet}
+	{#snippet restore_confirmation_message()}
 		<ShortParagraph>
 			Restoring this account may show related data.
 		</ShortParagraph>
 		<ShortParagraph>
-			It converts financial amounts in {associatedCurrency?.code ?? "???"} before calculation of result using the latest exchange rate {friendlyExchangeRateBasis}. Result is formatted as {friendlyOutputFormat} showing up to {data.presentational_precision} significant digits.
+			Result is formatted as {friendlyOutputFormat} showing up to {friendlyPrecisionFormat}
+			significant digits.
 		</ShortParagraph>
-	</svelte:fragment>
-	<svelte:fragment slot="force_delete_confirmation_message">
+	{/snippet}
+	{#snippet force_delete_confirmation_message()}
 		<ShortParagraph>
 			Deleting this account may prevent related data from being shown permanently.
 		</ShortParagraph>
 		<ShortParagraph>
-			It converts financial amounts in {associatedCurrency?.code ?? "???"} before calculation of result using the latest exchange rate {friendlyExchangeRateBasis}. Result is formatted as {friendlyOutputFormat} showing up to {data.presentational_precision} significant digits.
+			Result is formatted as {friendlyOutputFormat} showing up to {friendlyPrecisionFormat}
+			significant digits.
 		</ShortParagraph>
-	</svelte:fragment>
-	<svelte:fragment slot="resource_info">
+	{/snippet}
+	{#snippet resource_info()}
 		<ShortParagraph>{data.description}</ShortParagraph>
 		<ShortParagraph>
-			It converts financial amounts in {associatedCurrency?.code ?? "???"} before calculation of result using the latest exchange rate {friendlyExchangeRateBasis}. Result is formatted as {friendlyOutputFormat} showing up to {data.presentational_precision} significant digits.
+			Result is formatted as {friendlyOutputFormat} showing up to {friendlyPrecisionFormat}
+			significant digits.
 		</ShortParagraph>
 		<ShortParagraph>
-			Formula has an assigned ID of {data.id} with the following equation: <span>{data.formula}</span>
+			Formula has an assigned ID of {data.id} with the following equation: <span>{data.expression}</span>
 		</ShortParagraph>
-	</svelte:fragment>
-</CollectionItem>
+	{/snippet}
+</CardItem>
 
 <style lang="scss">
 span {
