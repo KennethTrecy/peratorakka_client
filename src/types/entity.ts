@@ -197,13 +197,11 @@ type ExchangeRateBasis = typeof exchangeRateBases[number]
 export type AcceptableExchangeRateBasis = typeof acceptableExchangeRateBases[number]
 
 export interface Formula extends RestorableEntity {
-	currency_id: number
+	precision_format_id: number
 	name: string
 	description: string
 	output_format: OutputFormat
-	exchange_rate_basis: ExchangeRateBasis
-	presentational_precision: number
-	formula: string
+	expression: string
 }
 
 type NumericalToolKind = typeof numericalToolKinds[number]
@@ -230,8 +228,6 @@ type AmountSideBasis = typeof amountSideBases[number]
 export interface CollectionSource extends NumericalToolSource {
 	type: "collection"
 	collection_id: number
-	currency_id: number
-	exchange_rate_basis: ExchangeRateBasis
 	stage_basis: AmountStageBasis
 	side_basis: AmountSideBasis
 	must_show_individual_amounts: boolean
@@ -246,16 +242,18 @@ export interface FormulaSource extends NumericalToolSource {
 
 export type AcceptableSource = CollectionSource|FormulaSource
 
-interface NumericalToolConfiguration {
+export interface NumericalToolConfiguration {
 	sources: AcceptableSource[]
 }
 
 export interface NumericalTool extends RestorableEntity {
+	currency_id: number
+	exchange_rate_basis: ExchangeRateBasis
 	name: string
 	kind: NumericalToolKind
 	recurrence: NumericalToolRecurrencePeriod
 	recency: number
 	order: number
 	notes: string
-	configuration: NumericalToolConfiguration
+	configuration: string
 }
