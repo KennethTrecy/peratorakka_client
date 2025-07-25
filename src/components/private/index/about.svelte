@@ -37,10 +37,10 @@ const bundledThirdPartyPackages: ThirdPartyPackage[] = [
 		"licenseName": "MIT",
 		"licenseLink": "https://github.com/chartjs/Chart.js/blob/master/LICENSE.md"
 	}, {
-		"name": "svelte-chartjs",
+		"name": "svelte5-chartjs",
 		"homepage": "https://saurav.tech/mdbsvelte/?path=/story/charts--examples",
 		"licenseName": "MIT",
-		"licenseLink": "https://github.com/SauravKanchan/svelte-chartjs/blob/master/LICENSE"
+		"licenseLink": "https://github.com/LupusAI/svelte5-chartjs/blob/master/LICENSE"
 	}, {
 		"name": "chartjs-plugin-autocolors",
 		"homepage": "https://github.com/kurkle/chartjs-plugin-autocolors#readme",
