@@ -1,4 +1,6 @@
 <script lang="ts">
+import type { Snippet } from "svelte"
+
 import type { GeneralError } from "+/rest"
 import type {
 	Collection,
@@ -7,10 +9,11 @@ import type {
 	NumericalTool,
 	AcceptableNumericalToolKind,
 	AcceptableNumericalToolRecurrencePeriod,
-	AcceptableSource
+	AcceptableSource,
+	AcceptableExchangeRateBasis
 } from "+/entity"
 
-import { onMount, onDestroy } from "svelte"
+import { onMount, onDestroy, untrack } from "svelte"
 
 import {
 	acceptableExchangeRateBases,
@@ -23,6 +26,7 @@ import {
 } from "#/entity"
 
 import transformString from "$/form/choice_info_transformer/transform_string"
+import transformCurrency from "$/form/choice_info_transformer/transform_currency"
 
 import BasicForm from "$/form/basic_form.svelte"
 import CheckboxField from "$/form/checkbox_field.svelte"
@@ -36,45 +40,80 @@ const ACCEPTABLE_NUMERICAL_TOOL_KINDS = [ ...acceptableNumericalToolKinds ]
 const ACCEPTABLE_NUMERICAL_TOOL_RECURRENCE_PERIODS = [
 	...acceptableNumericalToolRecurrencePeriods
 ]
+const ACCEPTABLE_EXCHANGE_RATE_BASES = [ ...acceptableExchangeRateBases ]
 
-export let IDPrefix: string
-export let formulae: Formula[]
-export let currencies: Currency[]
-export let collections: Collection[]
+let {
+	IDPrefix,
+	formulae,
+	currencies,
+	collections,
+	name = $bindable(),
+	kind = $bindable(),
+	recurrence = $bindable(),
+	recency = $bindable(),
+	currencyID = $bindable(),
+	exchangeRateBasis = $bindable(),
+	order = $bindable(),
+	notes = $bindable(),
+	sources = $bindable(),
+	forceDisabledFields = [],
+	isConnecting,
+	errors,
+	id = null,
+	onsubmit,
+	button_group
+}: {
+	IDPrefix: string
+	formulae: Formula[]
+	currencies: Currency[]
+	collections: Collection[]
+	name: string
+	kind: AcceptableNumericalToolKind
+	recurrence: AcceptableNumericalToolRecurrencePeriod
+	recency: number
+	currencyID: string
+	exchangeRateBasis: AcceptableExchangeRateBasis
+	order: number
+	notes: string
+	sources: AcceptableSource[];
+	forceDisabledFields?: (keyof NumericalTool)[]
+	isConnecting: boolean
+	errors: GeneralError[]
+	id?: string|null
+	onsubmit: (event: SubmitEvent) => void
+	button_group: Snippet
+} = $props()
 
-export let name: string
-export let kind: AcceptableNumericalToolKind
-export let recurrence: AcceptableNumericalToolRecurrencePeriod
-export let recency: number
-export let order: number
-export let notes: string
-export let sources: AcceptableSource[]
-export let forceDisabledFields: (keyof NumericalTool)[] = []
+let isShown = $state(false)
+let expectedNewRecency = $state(recency)
+$effect(() => {
+	if (expectedNewRecency !== untrack(() => recency) && isShown) untrack(() => {
+		recency = expectedNewRecency
+	})
+})
 
-export let isConnecting: boolean
-export let errors: GeneralError[]
-export let id = ""
-
-let isShown = false
-let expectedNewRecency = recency
-$: {
-	if (expectedNewRecency !== recency && isShown) recency = expectedNewRecency
-}
-
-let numberOfFrozenCycles = 0
-let mustIncludeLatestUnfrozenCycle = true
-$: expectedNewRecency = (mustIncludeLatestUnfrozenCycle ? -1 : 1) * numberOfFrozenCycles
-$: friendlyFrozenRecurrenceFieldName = recurrence === PERIODIC_NUMERICAL_TOOL_RECURRENCE_PERIOD
-	? "Maximum number of frozen periods to show"
-	: recurrence === YEARLY_NUMERICAL_TOOL_RECURRENCE_PERIOD
-		? "Maximum number of frozen years to show"
-		: "Maximum number of frozen cycles to show"
-$: friendlyUnfrozenRecurrenceFieldName = recurrence === PERIODIC_NUMERICAL_TOOL_RECURRENCE_PERIOD
-	? "May show current unfrozen period"
-	: recurrence === YEARLY_NUMERICAL_TOOL_RECURRENCE_PERIOD
-		? "May show current unfrozen year"
-		: "May show current unfrozen cycle"
-
+let numberOfFrozenCycles = $state(0)
+let mustIncludeLatestUnfrozenCycle = $state(true)
+$effect(() => {
+	const newRecency = (mustIncludeLatestUnfrozenCycle ? -1 : 1) * numberOfFrozenCycles
+	untrack(() => {
+		expectedNewRecency = newRecency
+	})
+})
+let friendlyFrozenRecurrenceFieldName = $derived(
+	recurrence === PERIODIC_NUMERICAL_TOOL_RECURRENCE_PERIOD
+		? "Maximum number of frozen periods to show"
+		: recurrence === YEARLY_NUMERICAL_TOOL_RECURRENCE_PERIOD
+			? "Maximum number of frozen years to show"
+			: "Maximum number of frozen cycles to show"
+)
+let friendlyUnfrozenRecurrenceFieldName = $derived(
+	recurrence === PERIODIC_NUMERICAL_TOOL_RECURRENCE_PERIOD
+		? "May show current unfrozen period"
+		: recurrence === YEARLY_NUMERICAL_TOOL_RECURRENCE_PERIOD
+			? "May show current unfrozen year"
+			: "May show current unfrozen cycle"
+)
 function addSource() {
 	sources = [
 		...sources,
@@ -84,8 +123,6 @@ function addSource() {
 		} : {
 			"type": "collection",
 			"collection_id": collections[0].id,
-			"currency_id": currencies[0].id,
-			"exchange_rate_basis": acceptableExchangeRateBases[0],
 			"side_basis": acceptableAmountSideBases[0],
 			"stage_basis": acceptableAmountStageBases[0],
 			"must_show_individual_amounts": true,
@@ -106,8 +143,17 @@ onDestroy(() => {
 })
 </script>
 
-<BasicForm {id} {isConnecting} {errors} on:submit>
-	<svelte:fragment slot="fields">
+{#snippet custom_button_group()}
+	<TextCardButton
+		kind="button"
+		disabled={isConnecting}
+		label="Add Source"
+		onclick={addSource}/>
+	{@render button_group()}
+{/snippet}
+
+<BasicForm {id} {isConnecting} {errors} {onsubmit} button_group={custom_button_group}>
+	{#snippet fields()}
 		<TextField
 			fieldName="Name"
 			disabled={isConnecting || forceDisabledFields.includes("name")}
@@ -148,6 +194,24 @@ onDestroy(() => {
 				{IDPrefix}
 				{errors}/>
 		{/if}
+		<ChoiceListField
+			fieldName="Base Currency"
+			errorFieldID="currency_id"
+			disabled={isConnecting || forceDisabledFields.includes("currency_id")}
+			bind:value={currencyID}
+			rawChoices={currencies}
+			choiceConverter={transformCurrency}
+			{IDPrefix}
+			{errors}/>
+		<ChoiceListField
+			fieldName="Exchange Rate Basis"
+			errorFieldID="exchange_rate_basis"
+			disabled={isConnecting || forceDisabledFields.includes("exchange_rate_basis")}
+			bind:value={exchangeRateBasis}
+			rawChoices={ACCEPTABLE_EXCHANGE_RATE_BASES}
+			choiceConverter={transformString}
+			{IDPrefix}
+			{errors}/>
 		<NumberField
 			fieldName="Dashboard Order"
 			errorFieldID="order"
@@ -167,19 +231,9 @@ onDestroy(() => {
 		<SourceManager
 			bind:sources={sources}
 			{formulae}
-			{currencies}
 			{collections}
 			{IDPrefix}
 			{isConnecting}
 			{errors}/>
-	</svelte:fragment>
-	<svelte:fragment slot="button_group">
-		<TextCardButton
-			kind="button"
-			disabled={isConnecting}
-			label="Add Source"
-			on:click={addSource}/>
-		<slot name="button_group"/>
-	</svelte:fragment>
-
+	{/snippet}
 </BasicForm>
