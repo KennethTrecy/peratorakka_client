@@ -207,7 +207,7 @@ let existingCashFlowActivities = $derived(cashFlowActivities.filter(
 	{makeNewResourceObject}
 	{processCreatedResourceObject}
 	{processListResourceObject}>
-	{#snippet description()}
+	{#snippet general_description()}
 		<TextContainer>
 			<ElementalParagraph>
 				Financial entries are the main data that is being processed by the system. They always have a pair of debit amount and credit amount.
