@@ -1,27 +1,30 @@
 <script lang="ts">
 import type { ContextBundle } from "+/component"
-import type { Collection, Currency, Formula, NumericalTool } from "+/entity"
-import type { GeneralError, SearchMode, SortOrder } from "+/rest"
+import type {
+	Collection,
+	Currency,
+	Formula,
+	NumericalTool,
+	AcceptableSource
+} from "+/entity"
 
-import { get, writable, derived } from "svelte/store"
-import { onMount, getContext } from "svelte"
+import { getContext } from "svelte"
 import { afterNavigate, beforeNavigate, goto } from "$app/navigation"
 
 import { GLOBAL_CONTEXT } from "#/contexts"
-import { SEARCH_NORMALLY, ASCENDING_ORDER, MAXIMUM_PAGINATED_LIST_LENGTH } from "#/rest"
+import { UNKNOWN_OPTION } from "#/component"
+import {
+	acceptableNumericalToolKinds,
+	acceptableNumericalToolRecurrencePeriods,
+	acceptableExchangeRateBases
+} from "#/entity"
 
 import assertAuthentication from "$/page_requirement/assert_authentication"
-import loadAllDependencies from "$/rest/load_all_dependencies"
-import makeJSONRequester from "$/rest/make_json_requester"
-import parseNumericalTool from "$/utility/parse_numerical_tool"
 
-import AddForm from "%/numerical_tools/add_form.svelte"
-import ArticleGrid from "$/layout/article_grid.svelte"
-import NumericalToolCollection from "%/numerical_tools/collection.svelte"
-import ExtraResourceLoader from "$/catalog/extra_resource_loader.svelte"
-import GridCell from "$/layout/grid_cell.svelte"
-import InnerGrid from "$/layout/inner_grid.svelte"
-import PrimaryHeading from "$/typography/primary_heading.svelte"
+import BasicForm from "%/numerical_tools/basic_form.svelte"
+import CompleteResourcePage from "$/layout/complete_resource_page.svelte"
+import ElementalParagraph from "$/typography/elemental_paragraph.svelte"
+import Card from "%/numerical_tools/numerical_tool_card.svelte"
 
 const globalContext = getContext(GLOBAL_CONTEXT) as ContextBundle
 
@@ -31,175 +34,163 @@ assertAuthentication(globalContext, {
 	goto
 })
 
-let isRequestingDependencies = true
+let formulae: Formula[] = $state([])
+let collections: Collection[] = $state([])
+let currencies: Currency[] = $state([])
 
-let numericalTools: NumericalTool[] = []
-let formulae: Formula[] = []
-let collections: Collection[] = []
-let currencies: Currency[] = []
-
-let searchMode: SearchMode = SEARCH_NORMALLY
-let sortCriterion: string = "name"
-let sortOrder: SortOrder = ASCENDING_ORDER
-let lastOffset: number = 0
-let progressRate = 0
-
-const collectiveName = "numerical_tools"
-const partialPath = `/api/v1/${collectiveName}`
-let parameters: [string, string][] = [
-	[ "filter[search_mode]", searchMode as string ],
-	[ "sort[0][0]", sortCriterion ],
-	[ "sort[0][1]", sortOrder as string ]
-]
-let completePath = writable(partialPath)
-$: {
-	parameters = [
-		[ "filter[search_mode]", searchMode as string ],
-		[ "sort[0][0]", sortCriterion ],
-		[ "sort[0][1]", sortOrder as string ],
-	]
-
-	completePath.set(`${partialPath}?${
-		new URLSearchParams([
-			...parameters,
-			[ "page[offset]", `${lastOffset}` ],
-			[ "page[limit]", MAXIMUM_PAGINATED_LIST_LENGTH ]
-		]).toString()
-	}`)
+function deriveID(resource: unknown): string {
+	return `${(resource as NumericalTool).id}`
 }
 
-const dependencyErrors = writable([] as GeneralError[])
+let currencyID = $state(UNKNOWN_OPTION)
+let exchangeRateBasis = $state(acceptableExchangeRateBases[0])
+let name = $state("")
+let kind = $state(acceptableNumericalToolKinds[0])
+let recurrence = $state(acceptableNumericalToolRecurrencePeriods[0])
+let recency = $state(0)
+let order = $state(0)
+let notes = $state("")
+let sources = $state<AcceptableSource[]>([])
 
-let { isConnecting, errors, send } = makeJSONRequester({
-	"path": completePath,
-	"defaultRequestConfiguration": {
-		"method": "GET"
-	},
-	"manualResponseHandlers": [
-		{
-			"statusCode": 200,
-			"action": async (response: Response) => {
-				let responseDocument = await response.json()
-				errors.set([])
-				numericalTools = responseDocument[collectiveName].map(parseNumericalTool)
-				lastOffset = Math.max(0, responseDocument[collectiveName].length - 1)
-			}
+function makeNewResourceObject(): Record<string, unknown> {
+	return {
+		"numerical_tool": {
+			"currency_id": parseInt(currencyID),
+			"exchange_rate_basis": exchangeRateBasis,
+			name,
+			kind,
+			recurrence,
+			recency,
+			order,
+			notes,
+			"configuration": JSON.stringify({
+				sources
+			})
 		}
-	],
-	"expectedErrorStatusCodes": [ 401 ]
-})
-
-const allErrors = derived([ dependencyErrors, errors ], ([ dependencyErrors, errors ]) => [
-	...dependencyErrors,
-	...errors
-])
-
-async function reloadNumericalTools() {
-	numericalTools = []
-	await send({})
+	}
 }
 
-async function loadList() {
-	const currentServerURL = get(globalContext.serverURL as any)
+function processCreatedResourceObject(document: Record<string, unknown>): unknown {
+	currencyID = `${currencies[0].id}`
+	exchangeRateBasis = acceptableExchangeRateBases[0]
+	name = ""
+	kind = acceptableNumericalToolKinds[0]
+	recurrence = acceptableNumericalToolRecurrencePeriods[0]
+	recency = 0
+	order = 0
+	notes = ""
+	sources = []
 
-	if (currentServerURL === "") {
-		setTimeout(loadList, 1000)
-		return
-	}
+	const { numerical_tool } = document
 
-	isRequestingDependencies = true
+	return numerical_tool
+}
 
-	await loadAllDependencies<Currency|Collection|Formula>(globalContext, [
+</script>
+
+<CompleteResourcePage
+	pageTitle="Numerical Tools"
+	createTitle="Add Numerical Tool"
+	listTitle="Numerical Tools"
+	collectiveName="numerical_tools"
+	defaultSortCriterion="name"
+	availableSortCriteria={[
+		"name",
+		"created_at",
+		"updated_at",
+		"deleted_at"
+	]}
+	dependencies={[ currencies, collections, formulae ]}
+	dependencyInfos={[
 		{
-			"partialPath": "/api/v1/formulae",
+			"partialPath": "/api/v2/formulae",
 			"mainSortCriterion": "name",
 			"resourceKey": "formulae",
 			"getResources": () => formulae,
 			"setResources": newResources => { formulae = newResources as Formula[] }
 		},
 		{
-			"partialPath": "/api/v1/collections",
+			"partialPath": "/api/v2/collections",
 			"mainSortCriterion": "name",
 			"resourceKey": "collections",
 			"getResources": () => collections,
 			"setResources": newResources => { collections = newResources as Collection[] }
 		},
 		{
-			"partialPath": "/api/v1/currencies",
+			"partialPath": "/api/v2/currencies",
 			"mainSortCriterion": "name",
 			"resourceKey": "currencies",
 			"getResources": () => currencies,
 			"setResources": newResources => { currencies = newResources as Currency[] }
 		}
-	], {
-		"updateProgressRate": newProgressRate => { progressRate = newProgressRate },
-		"updateErrors": newErrors => { dependencyErrors.set(newErrors) }
-	})
-
-	isRequestingDependencies = false
-	await reloadNumericalTools()
-}
-
-onMount(loadList)
-
-function addNumericalTool(event: CustomEvent<NumericalTool>) {
-	if (searchMode === "only_deleted") return
-
-	const newNumericalTool = parseNumericalTool(event.detail)
-	numericalTools = [
-		newNumericalTool,
-		...numericalTools
-	]
-}
-
-function addNumericalTools(event: CustomEvent<unknown[]>) {
-	const newNumericalTools = event.detail as NumericalTool[]
-	numericalTools = [
-		...numericalTools,
-		...newNumericalTools.map(parseNumericalTool)
-	]
-}
-
-function removeNumericalTool(event: CustomEvent<NumericalTool>) {
-	const oldNumericalTool = event.detail
-	numericalTools = numericalTools.filter(numericalTool => numericalTool.id !== oldNumericalTool.id)
-}
-</script>
-
-<svelte:head>
-	<title>Numerical Tools</title>
-</svelte:head>
-
-<ArticleGrid>
-	<InnerGrid>
-		<GridCell kind="full">
-			<PrimaryHeading>Numerical Tools</PrimaryHeading>
-		</GridCell>
-		<AddForm
+	]}
+	{deriveID}
+	{makeNewResourceObject}
+	{processCreatedResourceObject}>
+	{#snippet general_description()}
+		<ElementalParagraph>
+			Numerical tools contains information for the data visualizers shown in the dashboard. There
+			are different kinds of visualizers. Some only show numbers. Others show as a table. Line
+			charts and pie charts are also a possibility too.
+		</ElementalParagraph>
+		<ElementalParagraph>
+			Recurrence indicates that data would be grouped per frozen period or per year. Meanwhile,
+			recency indicates the maximum number of frozen periods or frozen years to be visualized. It
+			may also indicate if the current unfrozen period or unfrozen year should be included in the
+			visualization.
+		</ElementalParagraph>
+		<ElementalParagraph>
+			Finally, order indicates the likeliness of the visualizer to be shown first compare to
+			other tools. The lower the order number, the more likely the visualizer to appear first in
+			the dashboard.
+		</ElementalParagraph>
+	{/snippet}
+	{#snippet form({ IDPrefix, isConnecting, errors, onsubmit, button_group })}
+		<BasicForm
 			{formulae}
 			{collections}
 			{currencies}
-			isLoadingInitialData={isRequestingDependencies}
-			on:create={addNumericalTool}/>
-		<NumericalToolCollection
-			data={numericalTools}
-			{formulae}
-			{currencies}
-			{collections}
-			bind:searchMode={searchMode}
-			bind:sortCriterion={sortCriterion}
-			bind:sortOrder={sortOrder}
-			isConnecting={$isConnecting}
-			{progressRate}
-			listErrors={$allErrors}
-			on:remove={removeNumericalTool}/>
-		<ExtraResourceLoader
-			isConnectingForInitialList={$isConnecting}
-			{partialPath}
-			{parameters}
-			{collectiveName}
-			bind:lastOffset={lastOffset}
-			on:reloadFully={reloadNumericalTools}
-			on:addResources={addNumericalTools}/>
-	</InnerGrid>
-</ArticleGrid>
+			bind:currencyID={currencyID}
+			bind:exchangeRateBasis={exchangeRateBasis}
+			bind:name={name}
+			bind:kind={kind}
+			bind:recurrence={recurrence}
+			bind:recency={recency}
+			bind:order={order}
+			bind:notes={notes}
+			bind:sources={sources}
+			{isConnecting}
+			{IDPrefix}
+			{errors}
+			{onsubmit}
+			{button_group}/>
+	{/snippet}
+	{#snippet requirement()}
+		<ElementalParagraph>
+			At least one collection or one formula must exist in the profile to show the form for
+			creating numerical tools.
+		</ElementalParagraph>
+	{/snippet}
+	{#snippet filled_collection_description()}
+		Below are the numerical tools that you have added on to your profile.
+		Their outputs can be seen on the dashboard.
+	{/snippet}
+	{#snippet empty_collection_description({ isPresent, isPresentAndArchived, isArchived })}
+		There are no available numerical tools at the moment.
+		{#if isPresent}Create{/if}{#if isPresentAndArchived}/{/if}{#if isArchived}Delete{/if}
+		a numerical tool to view.
+	{/snippet}
+	{#snippet collection_items({ resources, updateResource, removeResource })}
+		{#each resources as entity, i((entity as Collection).id)}
+			<Card
+				{formulae}
+				{collections}
+				{currencies}
+				bind:data={
+					() => entity as NumericalTool,
+					updatedResource => updateResource(updatedResource, i)
+				}
+				remove={removeResource}/>
+		{/each}
+	{/snippet}
+</CompleteResourcePage>
