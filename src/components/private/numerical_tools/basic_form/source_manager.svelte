@@ -5,25 +5,27 @@ import type { Collection, Currency, Formula, AcceptableSource } from "+/entity"
 import ShortParagraph from "$/typography/short_paragraph.svelte"
 import SourceContainer from "%/numerical_tools/basic_form/source_container.svelte"
 
-export let IDPrefix: string
-export let formulae: Formula[]
-export let currencies: Currency[]
-export let collections: Collection[]
+let {
+	IDPrefix,
+	formulae,
+	collections,
+	sources = $bindable(),
+	isConnecting,
+	errors
+}: {
+	IDPrefix: string
+	formulae: Formula[]
+	collections: Collection[]
+	sources: AcceptableSource[]
+	isConnecting: boolean
+	errors: GeneralError[]
+} = $props()
 
-export let sources: AcceptableSource[]
-
-export let isConnecting: boolean
-export let errors: GeneralError[]
-
-function removeSource(event: CustomEvent<number>) {
-	const index = event.detail
-
+function removeSource(index: number): void {
 	sources = sources.filter((_, i) => i !== index)
 }
 
-function moveSourceUp(event: CustomEvent<number>) {
-	const index = event.detail
-
+function moveSourceUp(index: number): void {
 	const newSources = [ ...sources ]
 	const currentSource = newSources[index]
 
@@ -33,9 +35,7 @@ function moveSourceUp(event: CustomEvent<number>) {
 	sources = newSources
 }
 
-function moveSourceDown(event: CustomEvent<number>) {
-	const index = event.detail
-
+function moveSourceDown(index: number): void {
 	const newSources = [ ...sources ]
 	const currentSource = newSources[index]
 
@@ -45,7 +45,7 @@ function moveSourceDown(event: CustomEvent<number>) {
 	sources = newSources
 }
 
-$: sourceCount = sources.length
+let sourceCount = $derived(sources.length)
 </script>
 
 {#if sourceCount === 0}
@@ -59,13 +59,12 @@ $: sourceCount = sources.length
 		{isConnecting}
 		index={index}
 		maxIndex={sourceCount - 1}
-		bind:source={source}
+		bind:source={() => source, source => sources[index] = source}
 		{formulae}
-		{currencies}
 		{collections}
 		IDPrefix={`${IDPrefix}_${index}`}
 		{errors}
-		on:remove={removeSource}
-		on:up={moveSourceUp}
-		on:down={moveSourceDown}/>
+		remove={removeSource}
+		up={moveSourceUp}
+		down={moveSourceDown}/>
 {/each}
