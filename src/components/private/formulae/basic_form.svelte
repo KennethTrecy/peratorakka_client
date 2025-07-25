@@ -1,53 +1,56 @@
 <script lang="ts">
+import type { Snippet } from "svelte"
 import type { GeneralError } from "+/rest"
 import type {
-	Currency,
+	PrecisionFormat,
 	Formula,
-	AcceptableFormulaOutputFormat,
-	AcceptableExchangeRateBasis
+	AcceptableFormulaOutputFormat
 } from "+/entity"
 
-import { acceptableFormulaOutputFormats, acceptableExchangeRateBases } from "#/entity"
+import { acceptableFormulaOutputFormats } from "#/entity"
 
-import transformCurrency from "$/form/choice_info_transformer/transform_currency"
+import transformPrecisionFormat from "$/form/choice_info_transformer/transform_precision_format"
 import transformString from "$/form/choice_info_transformer/transform_string"
 
 import BasicForm from "$/form/basic_form.svelte"
 import ChoiceListField from "$/form/choice_list_field.svelte"
-import NumberField from "$/form/number_field.svelte"
 import TextField from "$/form/text_field.svelte"
 
 const ACCEPTABLE_FORMULA_OUTPUT_FORMATS = [ ...acceptableFormulaOutputFormats ]
-const ACCEPTABLE_FORMULA_EXCHANGE_RATE_BASES = [ ...acceptableExchangeRateBases ]
 
-export let IDPrefix: string
-export let currencies: Currency[]
-
-export let currencyID: string
-export let name: string
-export let description: string
-export let outputFormat: AcceptableFormulaOutputFormat
-export let exchangeRateBasis: AcceptableExchangeRateBasis
-export let presentationalPrecision: number
-export let formula: string
-export let forceDisabledFields: (keyof Formula)[] = []
-
-export let isConnecting: boolean
-export let errors: GeneralError[]
-export let id = ""
+let {
+	IDPrefix,
+	precisionFormats,
+	precisionFormatID = $bindable(),
+	name = $bindable(),
+	description = $bindable(),
+	outputFormat = $bindable(),
+	expression = $bindable(),
+	forceDisabledFields = [],
+	isConnecting,
+	errors,
+	id = null,
+	onsubmit,
+	button_group
+}: {
+	IDPrefix: string
+	precisionFormats: PrecisionFormat[]
+	precisionFormatID: string
+	name: string
+	description: string
+	outputFormat: AcceptableFormulaOutputFormat
+	expression: string
+	forceDisabledFields?: (keyof Formula)[]
+	isConnecting: boolean
+	errors: GeneralError[]
+	id?: string|null
+	onsubmit: (event: SubmitEvent) => void
+	button_group: Snippet
+} = $props()
 </script>
 
-<BasicForm {id} {isConnecting} {errors} on:submit>
-	<svelte:fragment slot="fields">
-		<ChoiceListField
-			fieldName="Currency"
-			errorFieldID="currency_id"
-			disabled={isConnecting || forceDisabledFields.includes("currency_id")}
-			bind:value={currencyID}
-			rawChoices={currencies}
-			choiceConverter={transformCurrency}
-			{IDPrefix}
-			{errors}/>
+<BasicForm {id} {isConnecting} {errors} {onsubmit} {button_group}>
+	{#snippet fields()}
 		<TextField
 			fieldName="Name"
 			disabled={isConnecting || forceDisabledFields.includes("name")}
@@ -69,28 +72,19 @@ export let id = ""
 			{IDPrefix}
 			{errors}/>
 		<ChoiceListField
-			fieldName="Exchange Rate Basis"
-			disabled={isConnecting || forceDisabledFields.includes("exchange_rate_basis")}
-			bind:value={exchangeRateBasis}
-			rawChoices={ACCEPTABLE_FORMULA_EXCHANGE_RATE_BASES}
-			choiceConverter={transformString}
-			{IDPrefix}
-			{errors}/>
-		<NumberField
-			fieldName="Presentational Precision"
-			min={0}
-			max={12}
-			step={1}
-			disabled={isConnecting}
-			bind:value={presentationalPrecision}
+			fieldName="Precision Format"
+			errorFieldID="precision_format_id"
+			disabled={isConnecting || forceDisabledFields.includes("precision_format_id")}
+			bind:value={precisionFormatID}
+			rawChoices={precisionFormats}
+			choiceConverter={transformPrecisionFormat}
 			{IDPrefix}
 			{errors}/>
 		<TextField
-			fieldName="Formula"
-			disabled={isConnecting || forceDisabledFields.includes("formula")}
-			bind:value={formula}
+			fieldName="Expression"
+			disabled={isConnecting || forceDisabledFields.includes("expression")}
+			bind:value={expression}
 			{IDPrefix}
 			{errors}/>
-		</svelte:fragment>
-		<slot slot="button_group" name="button_group"/>
+	{/snippet}
 </BasicForm>
