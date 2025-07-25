@@ -1,6 +1,6 @@
 import type { ChoiceInfo } from "+/component"
 
-export const RECOMMENDED_API_VERSION = "0.5.0"
+export const RECOMMENDED_API_VERSION = "0.6.0-dev"
 
 export const MAINTENANCE_EXPIRATION_MECHANISM = "maintenance"
 
