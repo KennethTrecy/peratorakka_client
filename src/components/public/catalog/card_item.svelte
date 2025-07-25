@@ -13,6 +13,7 @@ let {
 	isArchived,
 	options,
 	kind = "narrow",
+	rowSpan,
 	resetDraft = () => {},
 	edit_form,
 	delete_confirmation_message,
@@ -25,6 +26,7 @@ let {
 	isArchived: boolean
 	options: RestorableItemOptions
 	kind?: GridCellKind
+	rowSpan?: number
 	resetDraft?: () => void
 	edit_form?: Snippet<[{
 		isConnecting: boolean
@@ -34,7 +36,7 @@ let {
 	}]>
 	delete_confirmation_message?: Snippet
 	restore_confirmation_message?: Snippet
-	force_delete_confirmation_message: Snippet
+	force_delete_confirmation_message?: Snippet
 	resource_info: Snippet
 	extra_buttons?: Snippet
 } = $props()
@@ -62,7 +64,7 @@ let {
 		notice,
 		action_buttons
 	})}
-		<GridCell {kind}>
+		<GridCell {kind} {rowSpan}>
 			{#if isEditing}
 				{@render edit_form?.({
 					isConnecting,
