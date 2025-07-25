@@ -1,10 +1,16 @@
 <script lang="ts">
-import type { Currency, NumericalTool, AcceptableFormulaOutputFormat } from "+/entity"
-import type { NumericalToolConclusion, AcceptableConstellationKind, Constellation } from "+/rest"
+import type { Writable } from "svelte/store"
+import type { PrecisionFormat, Currency, Formula, NumericalToolConfiguration } from "+/entity"
+import type {
+	GeneralError,
+	NumericalToolConclusion,
+	AcceptableConstellationKind,
+	Constellation
+} from "+/rest"
 import type { AutocolorsOptions } from "chartjs-plugin-autocolors"
 
 import autocolors from "chartjs-plugin-autocolors"
-import { Pie } from "svelte-chartjs"
+import { Pie } from "svelte5-chartjs"
 import {
 	Chart as ChartJS,
 	Title,
@@ -15,31 +21,58 @@ import {
 } from "chart.js"
 
 import { ACCEPTABLE_CONSTELLATION_KINDS } from "#/rest"
+import { CURRENCY_FORMULA_OUTPUT_FORMAT } from "#/entity"
 
+import { fallbackToAcceptableFormulaOutputFormat } from "+/entity"
 import convertSnakeCaseToProperCase from "$/utility/convert_snake_case_to_proper_case"
 import formatStar from "$/utility/format_star"
 import formatPercentage from "$/utility/format_percentage"
 
-import Flex from "$/layout/flex.svelte"
-import GridCell from "$/layout/grid_cell.svelte"
+import BaseCard from "%/dashboard/dashboard_card/base.svelte"
 import NumberVisualizer from "%/dashboard/dashboard_card/number.svelte"
 import ShortParagraph from "$/typography/short_paragraph.svelte"
-import WeakenedTertiaryHeading from "$/typography/weakened_tertiary_heading.svelte"
 
-export let numericalTool: NumericalTool
-export let currency: Currency|null
-export let outputFormat: AcceptableFormulaOutputFormat
-export let conclusion: NumericalToolConclusion
+let {
+	currencyPrecisionFormat,
+	currency,
+	formulae,
+	precisionFormats,
+	name,
+	configuration,
+	referenceDate,
+	conclusion,
+	IDPrefix,
+	formID,
+	isConnecting,
+	errors,
+	view,
+	refresh
+}: {
+	currency: Currency|null
+	currencyPrecisionFormat: PrecisionFormat|null
+	formulae: Formula[]
+	precisionFormats: PrecisionFormat[]
+	name: string
+	configuration: NumericalToolConfiguration
+	referenceDate: string
+	conclusion: NumericalToolConclusion
+	IDPrefix: string
+	formID: string
+	isConnecting: Writable<boolean>
+	errors: Writable<GeneralError[]>
+	view: (referenceDate: string) => Promise<void>
+	refresh: () => Promise<void>
+} = $props()
 
-$: timeTags = conclusion.time_tags
-$: timeTagCount = timeTags.length
-$: constellations = conclusion.constellations
-$: hasMultipleTimes = timeTags.length > 1
+let timeTags = $derived(conclusion.time_tags)
+let timeTagCount = $derived(timeTags.length)
+let constellations = $derived(conclusion.constellations)
+let hasMultipleTimes = $derived(timeTags.length > 1)
 
-$: reducedConstellations = constellations.filter(
+let reducedConstellations = $derived(constellations.filter(
 	constellation => constellation.stars.some(star => star.numerical_value !== 0)
-)
-$: constellationGroups = reducedConstellations.reduce((groups, constellation) => ({
+))
+let constellationGroups = $derived(reducedConstellations.reduce((groups, constellation) => ({
 	...groups,
 	[constellation.kind]: typeof groups[constellation.kind] === "undefined" ? [
 		constellation
@@ -47,12 +80,12 @@ $: constellationGroups = reducedConstellations.reduce((groups, constellation) =>
 		...groups[constellation.kind],
 		constellation
 	]
-}), {} as Record<AcceptableConstellationKind, Constellation[]>)
-$: constellationCollection = ACCEPTABLE_CONSTELLATION_KINDS.map(kind => ({
+}), {} as Record<AcceptableConstellationKind, Constellation[]>))
+let constellationCollection = $derived(ACCEPTABLE_CONSTELLATION_KINDS.map(kind => ({
 	kind,
 	"group": constellationGroups[kind] ?? []
-})).filter(collection => collection.group.length > 0)
-$: constellationInfo = constellationCollection.map(collection => {
+})).filter(collection => collection.group.length > 0))
+let constellationInfo = $derived(constellationCollection.map(collection => {
 	const labels = collection.group.map(constellation => constellation.name)
 	return {
 		"name": collection.kind,
@@ -82,9 +115,25 @@ $: constellationInfo = constellationCollection.map(collection => {
 						"label": function(context: any) {
 							const i = context.datasetIndex
 							const j = context.dataIndex
+							const name = labels[j]
+							const foundFormula = formulae.find(formula => formula.name === name)
+							const isFormulaKnownAsSource = configuration.sources.some(
+								source =>
+									source.type === "formula"
+									&& source.formula_id === foundFormula?.id
+							)
+							const outputFormat = isFormulaKnownAsSource
+								? fallbackToAcceptableFormulaOutputFormat(
+									foundFormula?.output_format ?? CURRENCY_FORMULA_OUTPUT_FORMAT
+								) : CURRENCY_FORMULA_OUTPUT_FORMAT
+							const precisionFormat = isFormulaKnownAsSource
+								? precisionFormats.find(precisionFormat => {
+									return precisionFormat.id === foundFormula?.precision_format_id
+								}) ?? currencyPrecisionFormat
+								: currencyPrecisionFormat
 
 							const rawAmount = collection.group[j].stars[timeTagCount - i - 1]
-							const amount = formatStar(outputFormat, currency, rawAmount)
+							const amount = formatStar(outputFormat, precisionFormat, currency, rawAmount)
 							const sum = collection.group.reduce(
 								function (previousSum, constellation) {
 									const amount = constellation.stars[timeTagCount - i - 1].numerical_value
@@ -101,49 +150,54 @@ $: constellationInfo = constellationCollection.map(collection => {
 			}
 		}
 	}
-})
+}))
 
 ChartJS.register(Title, Tooltip, Legend, ArcElement, CategoryScale, autocolors)
 </script>
 
 {#each constellationInfo as constellationDatum, i}
-	{#if constellationCollection[i].group.length === 1}
+	{#if constellationCollection[i].group.length === 1 && false}
 		<NumberVisualizer
-			{numericalTool}
+			{currencyPrecisionFormat}
 			{currency}
-			{outputFormat}
+			{formulae}
+			{precisionFormats}
+			{name}
+			{configuration}
+			{referenceDate}
 			conclusion={{
 				"time_tags": timeTags,
 				"constellations": constellationCollection[i].group
-			}}/>
+			}}
+			IDPrefix={`group_${i}_${IDPrefix}`}
+			formID={`group_${i}_${formID}`}
+			{isConnecting}
+			{errors}
+			{view}
+			{refresh}/>
 	{:else}
-		<GridCell
+		{@const cardName = `Composition of ${
+			convertSnakeCaseToProperCase(constellationDatum.name)
+		}s (instructed by ${name})`}
+		<BaseCard
 			kind={constellationCollection[i].group.length < 10 ? "triad" : "almost_full"}
-			rowSpan={constellationCollection[i].group.length < 10 ? 3 * 2 : 5 * 2}>
-			<article class="card">
-				<div class="card-content">
-					<Flex mustPad={false} justifyContent="center">
-						<WeakenedTertiaryHeading>
-							Composition of {convertSnakeCaseToProperCase(constellationDatum.name)}s
-							(instructed by {numericalTool.name})
-						</WeakenedTertiaryHeading>
-						<Pie data={constellationDatum.chartInfo} options={constellationDatum.options}/>
-						<ShortParagraph>
-							The pie chart above shows the data from {timeTags[0]}{#if
-							hasMultipleTimes}&nbsp;(inner pie) to {timeTags[timeTagCount - 1]} (outer
-							pie){/if}.
-						</ShortParagraph>
-					</Flex>
-				</div>
-			</article>
-		</GridCell>
+			rowSpan={constellationCollection[i].group.length < 10 ? 3 * 2 : 5 * 2}
+			name={cardName}
+			{referenceDate}
+			{IDPrefix}
+			{formID}
+			{isConnecting}
+			{errors}
+			{view}
+			{refresh}>
+			{#snippet resource_info()}
+				<Pie data={constellationDatum.chartInfo} options={constellationDatum.options}/>
+				<ShortParagraph>
+					The pie chart above shows the data from {timeTags[0]}{#if
+					hasMultipleTimes}&nbsp;(inner pie) to {timeTags[timeTagCount - 1]} (outer
+					pie){/if}.
+				</ShortParagraph>
+			{/snippet}
+		</BaseCard>
 	{/if}
 {/each}
-
-<style lang="scss">
-@use "@/components/third-party/index";
-
-.card {
-	height: 100%;
-}
-</style>
