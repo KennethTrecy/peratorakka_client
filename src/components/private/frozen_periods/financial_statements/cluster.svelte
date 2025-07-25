@@ -26,6 +26,7 @@ import Flex from "$/layout/flex.svelte"
 import GridCell from "$/layout/grid_cell.svelte"
 import IncomeStatement from "%/frozen_periods/financial_statements/income_statement.svelte"
 import TrialBalance from "%/frozen_periods/financial_statements/trial_balance.svelte"
+	import mergeUniqueElements from "$/utility/merge_unique_elements";
 
 let {
 	viewedCurrency,
@@ -301,6 +302,81 @@ let allowedRealFlowCalculations = $derived(realFlowCalculations.map(
 		? lastNameComparison
 		: left.account.name.localeCompare(right.account.name)
 }))
+let allowedRealOpenedSummaryCalculations = $derived(realAdjustedSummaryCalculations.map(
+	calculation => {
+		const frozenAccountIndex = allowedFrozenAccounts.findIndex(
+			account => account.hash === calculation.frozen_account_hash
+		)
+
+		if (frozenAccountIndex === -1) return null
+
+		const frozenAccount = allowedFrozenAccounts[frozenAccountIndex]
+		const accountIndex = allowedAccounts.findIndex(
+			account => account.id === frozenAccount.account_id
+		)
+
+		if (accountIndex === -1) return null
+
+		const account = allowedAccounts[accountIndex]
+		const isAccountNormallyDebited = normalDebitAccountKinds.indexOf(account.kind) > -1
+		const resolvedAmount = calculation.opened_amount
+
+		if (resolvedAmount === "0") return null
+
+		const exchangeRate = $derived(resolvedExchangeRates[account.currency_id] ?? {
+			"source": {
+				"currency_id": account.currency_id,
+				"value": "1"
+			},
+			"destination": {
+				"currency_id": account.currency_id,
+				"value": "1"
+			},
+			"updated_at": (new Date()).toDateString()
+		})
+		const [ isNegative, shownAmount ] = makeCleanShownAmount(
+			precisionFormats,
+			currencies,
+			exchangeRate,
+			statementCurrency,
+			viewedCurrency,
+			resolvedAmount
+		)
+		const shouldDebitResolvedAmount = (
+			isAccountNormallyDebited
+			&& !isNegative
+		) || (
+			!isAccountNormallyDebited
+			&& isNegative
+		)
+
+		return {
+			account,
+			"debitAmount": shouldDebitResolvedAmount ? shownAmount : "",
+			"creditAmount": shouldDebitResolvedAmount ? "" : shownAmount
+		} as SimplifiedSummaryCalculation
+	}
+).filter<SimplifiedSummaryCalculation>(calculation => !!calculation))
+let balancedSummaryCalculations = $derived(mergeUniqueElements(
+	allowedRealUnadjustedSummaryCalculations,
+	allowedRealOpenedSummaryCalculations, // Use opened summary calculation if unchanged
+	calculation => calculation.account.id
+).sort((left, right) => {
+	const leftAccountKindImportance = ACCOUNT_KIND_AGGREGATED_LIST_PRIOITY[left.account.kind]
+	const rightAccountKindImportance = ACCOUNT_KIND_AGGREGATED_LIST_PRIOITY[right.account.kind]
+	if (leftAccountKindImportance < rightAccountKindImportance) return -1
+	if (leftAccountKindImportance > rightAccountKindImportance) return 1
+
+	const leftAccountName = left.account.name
+	const rightAccountName = right.account.name
+	const lastName = leftAccountName.split(" ")[leftAccountName.split(" ").length - 1]
+	const rightLastName = rightAccountName.split(" ")[rightAccountName.split(" ").length - 1]
+	const lastNameComparison = lastName.localeCompare(rightLastName)
+
+	return lastNameComparison !== 0
+		? lastNameComparison
+		: left.account.name.localeCompare(right.account.name)
+}))
 let hasAcceptableCashFlowActivities = $derived(cashFlowActivities.length > 0)
 </script>
 
@@ -313,7 +389,7 @@ let hasAcceptableCashFlowActivities = $derived(cashFlowActivities.length > 0)
 			{viewedCurrency}
 			{precisionFormats}
 			{currencies}
-			data={allowedRealUnadjustedSummaryCalculations}/>
+			data={balancedSummaryCalculations}/>
 	</Flex>
 </GridCell>
 <GridCell kind="pair">
