@@ -59,6 +59,23 @@ describe("Separate numeric parts function behavior", () => {
 		expect(result).toStrictEqual([ "PHP 1", ".4", "00", ""])
 	})
 
+	it("can separate positive values with no hidden pre-zero decimal places", async () => {
+		const data = "PHP 1.02"
+
+		const result = topicFunction(data)
+
+		expect(result).toStrictEqual([ "PHP 1", ".02", "", "" ])
+	})
+
+
+	it("can separate positive values with some hidden post-non-zero decimal places", async () => {
+		const data = "PHP 1.02-"
+
+		const result = topicFunction(data)
+
+		expect(result).toStrictEqual([ "PHP 1", ".02", "0", "" ])
+	})
+
 	it("can separate zero whole with no zero decimal places", async () => {
 		const data = "PHP 0"
 
@@ -99,6 +116,23 @@ describe("Separate numeric parts function behavior", () => {
 		expect(result).toStrictEqual([ "PHP 0", "", ".00", "" ])
 	})
 
+	it("can separate zero values with no hidden pre-zero decimal places", async () => {
+		const data = "PHP 0.02"
+
+		const result = topicFunction(data)
+
+		expect(result).toStrictEqual([ "PHP 0", ".02", "", "" ])
+	})
+
+
+	it("can separate zero values with some hidden post-non-zero decimal places", async () => {
+		const data = "PHP 0.02-"
+
+		const result = topicFunction(data)
+
+		expect(result).toStrictEqual([ "PHP 0", ".02", "0", "" ])
+	})
+
 	it("can separate negative whole with no zero decimal places", async () => {
 		const data = "(PHP 1)"
 
@@ -112,7 +146,7 @@ describe("Separate numeric parts function behavior", () => {
 
 		const result = topicFunction(data)
 
-		expect(result).toStrictEqual([ "(PHP 1", ".00", "", ")" ])
+		expect(result).toStrictEqual([ "(PHP 1", ".00)", "", "" ])
 	})
 
 	it("can separate negative values with some hidden zero decimal places", async () => {
@@ -137,5 +171,22 @@ describe("Separate numeric parts function behavior", () => {
 		const result = topicFunction(data)
 
 		expect(result).toStrictEqual([ "(PHP 1", "", ".00", ")" ])
+	})
+
+	it("can separate negative values with no hidden pre-zero decimal places", async () => {
+		const data = "(PHP 1.02)"
+
+		const result = topicFunction(data)
+
+		expect(result).toStrictEqual([ "(PHP 1", ".02)", "", "" ])
+	})
+
+
+	it("can separate negative values with some hidden post-non-zero decimal places", async () => {
+		const data = "(PHP 1.02-)"
+
+		const result = topicFunction(data)
+
+		expect(result).toStrictEqual([ "(PHP 1", ".02", "0", ")" ])
 	})
 })
