@@ -1,6 +1,7 @@
 <script lang="ts">
 import type { DataTableCellKind } from "+/component"
 
+import AmountDisplay from "$/utility/amount_display.svelte"
 import DataTableCell from "$/catalog/data_table_cell.svelte"
 
 let {
@@ -12,13 +13,11 @@ let {
 }: {
 	kind?: DataTableCellKind
 	rawDebitExistence: boolean[]
-	rawDebit: any[]
+	rawDebit: string[]
 	rawCreditExistence: boolean[]
-	rawCredit: any[]
+	rawCredit: string[]
 } = $props()
 
-let debits = $derived(kind === "normal" ? (rawDebit as string[]) : (rawDebit as number[]))
-let credits = $derived(kind === "normal" ? (rawCredit as string[]) : (rawCredit as number[]))
 let debitClasses = $derived([
 	"browser-default",
 	"debit",
@@ -35,16 +34,28 @@ let creditClasses = $derived([
 
 <DataTableCell {kind}>
 	<ul class={debitClasses}>
-		{#each debits as debit, i}
+		{#each rawDebit as debit, i}
 			<li data-exists={rawDebitExistence[i]}>
-				{debit}
+				{#if rawDebit.length > 2}
+					<AmountDisplay shownAmount={debit}/>
+				{:else if kind === "numeric"}
+					{debit.replace(".-", "").replaceAll("-", "")}
+				{:else}
+					{debit}
+				{/if}
 			</li>
 		{/each}
 	</ul>
 	<ul class={creditClasses}>
-		{#each credits as credit, i}
+		{#each rawCredit as credit, i}
 			<li data-exists={rawCreditExistence[i]}>
-				{credit}
+				{#if rawCredit.length > 2}
+					<AmountDisplay shownAmount={credit}/>
+				{:else if kind === "numeric"}
+					{credit.replace(".-", "").replaceAll("-", "")}
+				{:else}
+					{credit}
+				{/if}
 			</li>
 		{/each}
 	</ul>
