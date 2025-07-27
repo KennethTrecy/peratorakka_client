@@ -7,6 +7,7 @@ import { temporaryAccountKinds } from "#/entity"
 
 import makeCleanShownAmount from "$/utility/make_clean_shown_amount"
 
+import AmountDisplay from "$/utility/amount_display.svelte"
 import DataTableCell from "$/catalog/data_table_cell.svelte"
 import DataTableHeader from "$/catalog/data_table_header.svelte"
 import QuarternaryHeading from "$/typography/quarternary_heading.svelte"
@@ -69,7 +70,11 @@ let friendlyCreditedNetAmount = $derived(friendlyNetAmountInfo[0] ? "" : friendl
 	{/snippet}
 	{#snippet table_footer_cells()}
 		<DataTableHeader scope="row">Net Total</DataTableHeader>
-		<DataTableCell kind="numeric">{friendlyDebitedNetAmount}</DataTableCell>
-		<DataTableCell kind="numeric">{friendlyCreditedNetAmount}</DataTableCell>
+		<DataTableCell kind="numeric">
+			<AmountDisplay shownAmount={friendlyDebitedNetAmount}/>
+		</DataTableCell>
+		<DataTableCell kind="numeric">
+			<AmountDisplay shownAmount={friendlyCreditedNetAmount}/>
+		</DataTableCell>
 	{/snippet}
 </UnitDataTable>

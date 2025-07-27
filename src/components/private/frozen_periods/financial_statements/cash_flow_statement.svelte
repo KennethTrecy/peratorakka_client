@@ -9,6 +9,7 @@ import type {
 
 import makeShownAmount from "$/utility/make_shown_amount"
 
+import AmountDisplay from "$/utility/amount_display.svelte"
 import TotalAmountRow
 	from "%/frozen_periods/financial_statements/cash_flow_statement/total_amount_row.svelte"
 import CategorizedSection
@@ -111,6 +112,8 @@ let shownCashFlowSubtotals = $derived(statement.cash_flow_statement.subtotals.ma
 	{/snippet}
 	{#snippet table_footer_cells()}
 		<DataTableHeader scope="row" columnSpan={2}>Difference</DataTableHeader>
-		<DataTableCell kind="numeric">{friendlyLiquidAmountDifference}</DataTableCell>
+		<DataTableCell kind="numeric">
+			<AmountDisplay shownAmount={friendlyLiquidAmountDifference}/>
+		</DataTableCell>
 	{/snippet}
 </UnitDataTable>
