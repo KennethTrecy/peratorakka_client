@@ -41,7 +41,7 @@ let supportText = $derived(typeof precisionFormat === "undefined"
 	: `Selected precision format may ${
 		precisionFormat.minimum_presentational_precision === 0
 		&& precisionFormat.maximum_presentational_precision === 0
-		? "Selected precision format would not shown any decimal places."
+		? "not shown any decimal places."
 		: `show ${
 			precisionFormat.minimum_presentational_precision === 0
 				? ""
