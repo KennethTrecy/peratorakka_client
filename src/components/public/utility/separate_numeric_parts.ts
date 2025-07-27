@@ -12,17 +12,29 @@ export default function separateNumericParts(shownAmount: string): [
 	const visibleDecimalPart = (
 		!hasDecimalPoint || hasPurelyInvisibleDecimalPoint
 			? ""
-			: `.${decimalPart.slice(0, decimalPart.lastIndexOf("0") + 1)}`
+			: decimalPart.slice(
+				0,
+				(
+					decimalPart.lastIndexOf("0") > -1
+						? decimalPart.lastIndexOf("0")
+						: (
+							decimalPart.indexOf("-") > -1
+								? decimalPart.indexOf("-") - 1
+								: decimalPart.length - 1
+						)
+				) + 1
+			)
 	)
-	const invisbleDecimalPart = (hasPurelyInvisibleDecimalPoint ? "." : "" ) + decimalPart.slice(
-		visibleDecimalPart.length + (hasPurelyInvisibleDecimalPoint ? 0 : -1),
+	const invisbleDecimalPart = decimalPart.slice(
+		visibleDecimalPart.length,
 		decimalPart.lastIndexOf("-") + 1
 	).replaceAll("-", "0")
-	const postDecimalPart = decimalPart.slice(
-		visibleDecimalPart.length
-		+ invisbleDecimalPart.length
-		+ (hasDecimalPoint ? -1 : 0)
-	)
+	const postDecimalPart = decimalPart.slice(visibleDecimalPart.length + invisbleDecimalPart.length)
 
-	return [ wholePart, visibleDecimalPart, invisbleDecimalPart, postDecimalPart ]
+	return [
+		wholePart,
+		(hasDecimalPoint && !hasPurelyInvisibleDecimalPoint ? "." : "")+visibleDecimalPart,
+		(hasDecimalPoint && hasPurelyInvisibleDecimalPoint ? "." : "")+invisbleDecimalPart,
+		postDecimalPart
+	]
 }
