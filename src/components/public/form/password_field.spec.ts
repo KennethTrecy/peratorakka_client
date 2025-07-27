@@ -2,7 +2,7 @@
 
 import { describe, it, expect } from "vitest"
 import userEvent from "@testing-library/user-event"
-import { act, render, cleanup } from "@testing-library/svelte"
+import { render, cleanup } from "@testing-library/svelte/svelte5"
 
 import Component from "./password_field.svelte"
 
@@ -21,7 +21,7 @@ describe("Password field behavior", () => {
 		}
 		const { container } = render(Component, props)
 
-		const paragraph = container.querySelector("span")
+		const paragraph = container.querySelector("div.supporting-text")
 
 		expect(paragraph).toBeNull()
 
@@ -43,7 +43,7 @@ describe("Password field behavior", () => {
 		}
 		const { container } = render(Component, props)
 
-		const paragraph = container.querySelector("span")
+		const paragraph = container.querySelector("div.supporting-text")
 
 		expect(paragraph).not.toBeNull()
 

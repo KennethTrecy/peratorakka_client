@@ -1,7 +1,7 @@
 // @vitest-environment jsdom
 
 import { describe, it, expect } from "vitest"
-import { render, cleanup } from "@testing-library/svelte"
+import { render, cleanup } from "@testing-library/svelte/svelte5"
 
 import type { Currency } from "@/types/entity"
 
@@ -34,7 +34,8 @@ describe("Collection behavior", () => {
 			collectiveName,
 			isConnecting,
 			data,
-			"progressRate": 1
+			"progressRate": 1,
+			"empty_collection_description": () => "sample"
 		})
 
 		const progress = container.querySelector(".mdc-linear-progress--closed")
