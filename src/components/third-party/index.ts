@@ -39,9 +39,29 @@ export function makeRawFormattedAmount(
 	const maximumFractionDigits = precisionFormat?.maximum_presentational_precision
 		?? DEFAULT_MAXIMUM_FRACTION_DIGITS
 
-	return (new Fraction(amount))
+	const untrimmedAmount = (
+		+(new Fraction(amount))
 		.round(maximumFractionDigits)
 		.toString(maximumFractionDigits)
+	).toLocaleString("en-US", {
+		"useGrouping": "true",
+		"minimumFractionDigits": minimumFractionDigits,
+		"maximumFractionDigits": maximumFractionDigits
+	}).replaceAll(",", " ")
+
+	const trimmedAmount = untrimmedAmount.split(".")
+	const whole = trimmedAmount[0]
+	let rawFraction = trimmedAmount[1] ?? ""
+	rawFraction = `${rawFraction}${
+		Array(Math.max(maximumFractionDigits - rawFraction.length, 0)).fill("-").join("")
+	}`
+	rawFraction = rawFraction.length === 0
+		? ""
+		: `.${rawFraction}`
+
+	const formattedAmount = `${whole}${rawFraction}`
+
+	return formattedAmount
 }
 
 export function addAmount(addend: string, adder: string): string {
