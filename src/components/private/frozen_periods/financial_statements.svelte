@@ -81,11 +81,11 @@ let exchangeRates = $derived<ExchangeRateInfo[]>(
 )
 
 let startedAt = $derived(
-	(completeFrozenPeriodInfo?.frozen_period.started_at ?? "----------")
+	(completeFrozenPeriodInfo?.frozen_period?.started_at ?? "----------")
 	.slice(0, "YYYY-MM-DD".length)
 )
 let finishedAt = $derived(
-	(completeFrozenPeriodInfo?.frozen_period.finished_at ?? "----------")
+	(completeFrozenPeriodInfo?.frozen_period?.finished_at ?? "----------")
 	.slice(0, "YYYY-MM-DD".length)
 )
 
@@ -347,16 +347,18 @@ $effect(() => {
 			untrack(() => {
 				selectedStatement = null
 
-				requestForRecalculation({
-					"body": JSON.stringify({
-						"frozen_period": {
-							"started_at": `${startedAt} 00:00:00`,
-							"finished_at": `${finishedAt} 11:59:59`,
-							"source_currency_id": `${ANY_CURRENCY.id}` ? null : +selectedCurrencyID,
-							"target_currency_id": viewedCurrency.id
-						}
+				if (completeFrozenPeriodInfo !== null) {
+					requestForRecalculation({
+						"body": JSON.stringify({
+							"frozen_period": {
+								"started_at": `${startedAt} 00:00:00`,
+								"finished_at": `${finishedAt} 11:59:59`,
+								"source_currency_id": `${ANY_CURRENCY.id}` ? null : +selectedCurrencyID,
+								"target_currency_id": viewedCurrency.id
+							}
+						})
 					})
-				})
+				}
 			})
 		}
 	}
