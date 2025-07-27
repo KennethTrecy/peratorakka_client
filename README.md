@@ -15,8 +15,8 @@ The server may be implemented in different programming language as long as it
 has compatible API.
 
 Screenshots of this project can be found in [author's post] and in
-[announcements]. Currently, there is a public client available to access by
-common people. The public client can be found on
+[announcements]. Currently, there is a public client available to be accessed
+by common people. The public client can be found on
 `https://peratorakka-client.pages.dev/`. Just connect to the default public
 server found in the client and use `test@example.com` as the email and
 `12345678` as the password. To anyone who uses the public Peratorakka client,
