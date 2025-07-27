@@ -9,12 +9,14 @@ export default function findLightestPath(
 	let lastPath: ExchangeRateInfo[] = []
 
 	for(const path of paths) {
+		const weight = weighPath(path, currentTime)
+
 		if (lastPath.length === 0) {
 			lastPath = path
+			lastWeight = weight
 			continue
 		}
 
-		const weight = weighPath(path, currentTime)
 		if (weight < lastWeight) {
 			lastWeight = weight
 			lastPath = path
