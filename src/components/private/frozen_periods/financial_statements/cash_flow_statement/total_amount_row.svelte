@@ -13,12 +13,20 @@ let {
 	shownAmount: string
 	hasEmptyTrailingRow?: boolean
 } = $props()
+
+let isNegative = $derived(shownAmount.indexOf(")") > -1)
 </script>
 
 <DataTableRow>
 	<DataTableHeader scope="row" columnSpan={2}>{rowName}</DataTableHeader>
-	<DataTableCell kind="numeric"><AmountDisplay {shownAmount}/></DataTableCell>
+	<DataTableCell kind="numeric"><AmountDisplay {shownAmount}/>{#if isNegative}<span aria-hidden="true">)</span>{/if}</DataTableCell>
 </DataTableRow>
 {#if hasEmptyTrailingRow}
 	<DataTableRow/>
 {/if}
+
+<style>
+span {
+	color: transparent;
+}
+</style>
