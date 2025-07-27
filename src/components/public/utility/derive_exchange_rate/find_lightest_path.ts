@@ -34,7 +34,7 @@ export default function findLightestPath(
 			timestampsInCurrentPath.sort().reverse()
 
 			// Get path with latest timestamp
-			if (timestampsInCurrentPath[0] > timestampsInLastPath[0]) {
+			if (timestampsInCurrentPath[0].getTime() > timestampsInLastPath[0].getTime()) {
 				lastPath = path
 			}
 		}
