@@ -20,6 +20,7 @@ let {
 	viewedCurrency,
 	precisionFormats,
 	currencies,
+	emptyAmount,
 	data
 }: {
 	statement: FinancialStatementGroup
@@ -28,6 +29,7 @@ let {
 	viewedCurrency: Currency
 	precisionFormats: PrecisionFormat[]
 	currencies: Currency[]
+	emptyAmount: string
 	data: SimplifiedSummaryCalculation[]
 } = $props()
 
@@ -103,7 +105,9 @@ let friendlyCreditedNetAmount = $derived(friendlyNetAmountInfo[0] ? "" : friendl
 	{/snippet}
 	{#snippet table_rows()}
 		{#each assetCalculations as calculation(calculation.account.id)}
-			<TrialRow data={calculation}/>
+			{#if calculation.debitAmount !== emptyAmount && calculation.creditAmount !== emptyAmount}
+				<TrialRow data={calculation}/>
+			{/if}
 		{/each}
 		<CustomTrialRow
 			rowName="Total Assets"
@@ -111,7 +115,9 @@ let friendlyCreditedNetAmount = $derived(friendlyNetAmountInfo[0] ? "" : friendl
 			shownCreditAmount={friendlyCreditedTotalAsset}
 			hasEmptyTrailingRow={true}/>
 		{#each liabilityCalculations as calculation(calculation.account.id)}
-			<TrialRow data={calculation}/>
+			{#if calculation.debitAmount !== emptyAmount && calculation.creditAmount !== emptyAmount}
+				<TrialRow data={calculation}/>
+			{/if}
 		{/each}
 		<CustomTrialRow
 			rowName="Total Liabilities"
@@ -119,7 +125,9 @@ let friendlyCreditedNetAmount = $derived(friendlyNetAmountInfo[0] ? "" : friendl
 			shownCreditAmount={friendlyCreditedTotalLiabilities}
 			hasEmptyTrailingRow={true}/>
 		{#each equityCalculations as calculation(calculation.account.id)}
-			<TrialRow data={calculation}/>
+			{#if calculation.debitAmount !== emptyAmount && calculation.creditAmount !== emptyAmount}
+				<TrialRow data={calculation}/>
+			{/if}
 		{/each}
 		<CustomTrialRow
 			rowName="Net Income"

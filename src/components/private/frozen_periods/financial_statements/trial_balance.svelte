@@ -5,6 +5,7 @@ import type { SimplifiedSummaryCalculation, TrialBalanceKind } from "+/component
 
 import makeShownAmount from "$/utility/make_shown_amount"
 
+import AmountDisplay from "$/utility/amount_display.svelte"
 import DataTableCell from "$/catalog/data_table_cell.svelte"
 import DataTableHeader from "$/catalog/data_table_header.svelte"
 import QuarternaryHeading from "$/typography/quarternary_heading.svelte"
@@ -19,6 +20,7 @@ let {
 	viewedCurrency,
 	precisionFormats,
 	currencies,
+	emptyAmount,
 	data
 }: {
 	kind: TrialBalanceKind
@@ -28,6 +30,7 @@ let {
 	viewedCurrency: Currency
 	precisionFormats: PrecisionFormat[]
 	currencies: Currency[]
+	emptyAmount: string
 	data: SimplifiedSummaryCalculation[]
 } = $props()
 
@@ -69,12 +72,18 @@ let friendlyTotalCreditAmount = $derived(makeShownAmount(
 	{/snippet}
 	{#snippet table_rows()}
 		{#each data as calculation(calculation.account.id)}
-			<TrialRow data={calculation}/>
+			{#if calculation.debitAmount !== emptyAmount && calculation.creditAmount !== emptyAmount}
+				<TrialRow data={calculation}/>
+			{/if}
 		{/each}
 	{/snippet}
 	{#snippet table_footer_cells()}
 		<DataTableHeader scope="row">Total</DataTableHeader>
-		<DataTableCell kind="numeric">{friendlyTotalDebitAmount}</DataTableCell>
-		<DataTableCell kind="numeric">{friendlyTotalCreditAmount}</DataTableCell>
+		<DataTableCell kind="numeric">
+			<AmountDisplay shownAmount={friendlyTotalDebitAmount}/>
+		</DataTableCell>
+		<DataTableCell kind="numeric">
+			<AmountDisplay shownAmount={friendlyTotalCreditAmount}/>
+		</DataTableCell>
 	{/snippet}
 </UnitDataTable>

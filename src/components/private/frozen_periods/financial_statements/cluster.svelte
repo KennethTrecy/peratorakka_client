@@ -108,8 +108,6 @@ let allowedRealAdjustedSummaryCalculations = $derived(realAdjustedSummaryCalcula
 		const isAccountNormallyDebited = normalDebitAccountKinds.indexOf(account.kind) > -1
 		const resolvedAmount = calculation.closed_amount
 
-		if (resolvedAmount === "0") return null
-
 		const exchangeRate = $derived(resolvedExchangeRates[account.currency_id] ?? {
 			"source": {
 				"currency_id": account.currency_id,
@@ -185,8 +183,6 @@ let allowedRealUnadjustedSummaryCalculations = $derived(realUnadjustedSummaryCal
 				? calculation.credit_amount
 				: calculation.debit_amount
 		)
-
-		if (resolvedAmount === "0") return null
 
 		const exchangeRate = $derived(resolvedExchangeRates[account.currency_id] ?? {
 			"source": {
@@ -321,8 +317,6 @@ let allowedRealOpenedSummaryCalculations = $derived(realAdjustedSummaryCalculati
 		const isAccountNormallyDebited = normalDebitAccountKinds.indexOf(account.kind) > -1
 		const resolvedAmount = calculation.opened_amount
 
-		if (resolvedAmount === "0") return null
-
 		const exchangeRate = $derived(resolvedExchangeRates[account.currency_id] ?? {
 			"source": {
 				"currency_id": account.currency_id,
@@ -389,6 +383,7 @@ let hasAcceptableCashFlowActivities = $derived(cashFlowActivities.length > 0)
 			{viewedCurrency}
 			{precisionFormats}
 			{currencies}
+			{emptyAmount}
 			data={balancedSummaryCalculations}/>
 	</Flex>
 </GridCell>
@@ -415,8 +410,8 @@ let hasAcceptableCashFlowActivities = $derived(cashFlowActivities.length > 0)
 				{viewedCurrency}
 				{precisionFormats}
 				{currencies}
-				{emptyAmount}
 				{cashFlowActivities}
+				{emptyAmount}
 				data={allowedRealFlowCalculations}/>
 		{:else}
 			<ElementalParagraph>
@@ -436,6 +431,7 @@ let hasAcceptableCashFlowActivities = $derived(cashFlowActivities.length > 0)
 			{viewedCurrency}
 			{precisionFormats}
 			{currencies}
+			{emptyAmount}
 			data={allowedRealUnadjustedSummaryCalculations}/>
 	</Flex>
 </GridCell>
@@ -449,6 +445,7 @@ let hasAcceptableCashFlowActivities = $derived(cashFlowActivities.length > 0)
 			{viewedCurrency}
 			{precisionFormats}
 			{currencies}
+			{emptyAmount}
 			data={allowedRealAdjustedSummaryCalculations}/>
 	</Flex>
 </GridCell>
