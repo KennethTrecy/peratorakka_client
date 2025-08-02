@@ -144,10 +144,10 @@ function updateAtomAutomatically(atom: CompleteFinancialEntryAtomInput, index: n
 	newCompleteAtomInputs[index] = JSON.parse(JSON.stringify(atom))
 
 	if (hasSimpleAtomicPair) {
-		newCompleteAtomInputs[1] = {
-			...newCompleteAtomInputs[1],
+		newCompleteAtomInputs[index * -1 + 1] = {
+			...newCompleteAtomInputs[index * -1 + 1],
 			"input": {
-				...newCompleteAtomInputs[1].input,
+				...newCompleteAtomInputs[index * -1 + 1].input,
 				"numerical_value": atom.input.numerical_value
 			}
 		}
@@ -162,8 +162,8 @@ function updateAtomAutomatically(atom: CompleteFinancialEntryAtomInput, index: n
 	<AtomContainer
 		{disabled}
 		bind:atom={
-			() => hasSimpleAtomicPair ? completeAtomInputs[0] : atom,
-			atomInput => updateAtomAutomatically(atomInput, hasSimpleAtomicPair ? 0 : index)
+			() => atom,
+			atomInput => updateAtomAutomatically(atomInput, index)
 		}
 		IDPrefix={`${IDPrefix}_${index}`}
 		{isConnecting}
