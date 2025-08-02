@@ -76,6 +76,17 @@ describe("Separate numeric parts function behavior", () => {
 		expect(result).toStrictEqual([ "PHP 1", ".02", "0", "" ])
 	})
 
+	it(
+		"can separate positive values with some multiple hidden post-non-zero decimal places",
+		async () => {
+			const data = "PHP 1.0208-"
+
+			const result = topicFunction(data)
+
+			expect(result).toStrictEqual([ "PHP 1", ".0208", "0", "" ])
+		}
+	)
+
 	it("can separate zero whole with no zero decimal places", async () => {
 		const data = "PHP 0"
 
