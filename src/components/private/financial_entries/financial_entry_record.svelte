@@ -70,7 +70,7 @@ const forceDisabledFields: (keyof FinancialEntry)[] = [
 ]
 
 let isArchived = $derived(checkArchivedState(data))
-let IDPrefix = $derived(`old_modifier_${data.id}`)
+let IDPrefix = $derived(`old_financial_entry_${data.id}`)
 let formID = $derived(`${IDPrefix}_update_form`)
 let chosenModifier = $derived(modifiers.find(
 	modifier => `${modifier.id}` === modifierID
@@ -160,6 +160,7 @@ let debitAtoms = $derived(completeFinancialEntryAtoms.filter(
 let creditAtoms = $derived(completeFinancialEntryAtoms.filter(
 	atom => atom.modifier_atom.kind === REAL_CREDIT_MODIFIER_ATOM_KIND
 ))
+
 let debitExistence = $derived(debitAtoms.reduce(
 	(resolvedNames: boolean[], atom: CompleteFinancialEntryAtom) => [
 		...resolvedNames,
