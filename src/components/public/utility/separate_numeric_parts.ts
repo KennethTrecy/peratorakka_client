@@ -9,7 +9,7 @@ export default function separateNumericParts(shownAmount: string): [
 	const parts = hasDecimalPoint ? shownAmount.split(".") : [ shownAmount ]
 	const wholePart = parts[0]
 	const decimalPart = parts[1] ?? ""
-	const filledDecimalIndex = Math.max(decimalPart.search(/[^0]/), 0)
+	const filledDecimalIndex = Math.max(decimalPart.search(/[^0]$/), 0)
 	const visibleDecimalPart = (
 		!hasDecimalPoint || hasPurelyInvisibleDecimalPoint
 			? ""
