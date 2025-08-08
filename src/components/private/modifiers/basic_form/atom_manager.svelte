@@ -64,7 +64,7 @@ let atomCount = $derived(atoms.length)
 let transformAccount = $derived(makeAccountTransformer(currencies))
 </script>
 
-{#each atoms as atom, index}
+{#each atoms as atom, index (`${index}_${atom.kind}_${atom.account_id}`)}
 	<AtomContainer
 		{accounts}
 		{cashFlowActivities}
@@ -77,9 +77,9 @@ let transformAccount = $derived(makeAccountTransformer(currencies))
 		{isConnecting}
 		{errors}
 		{transformAccount}
-		remove={removeAtom}
-		up={moveAtomUp}
-		down={moveAtomDown}/>
+		remove={(event: MouseEvent) => (event.stopPropagation(), removeAtom(index))}
+		up={(event: MouseEvent) => (event.stopPropagation(), moveAtomUp(index))}
+		down={(event: MouseEvent) => (event.stopPropagation(), moveAtomDown(index))}/>
 {/each}
 
 {#if atomCount === 0}

@@ -100,17 +100,14 @@ function addAtom() {
 		? REAL_CREDIT_MODIFIER_ATOM_KIND
 		: REAL_DEBIT_MODIFIER_ATOM_KIND
 
-	const defaultAccountID = accounts[0].id
-	const accountInfo = accounts.find(
-		account => account.id === defaultAccountID
-	) as Account
-	const isLiquidAsset = accountInfo.kind === LIQUID_ASSET_ACCOUNT_KIND
+	const defaultAccount = accounts[0]
+	const isLiquidAsset = defaultAccount.kind === LIQUID_ASSET_ACCOUNT_KIND
 	const defaultCashFlowActivityID = isLiquidAsset
 		? null
 		: cashFlowActivities[0].id
 
 	atoms = [ ...atoms, {
-		"account_id": defaultAccountID,
+		"account_id": defaultAccount.id,
 		"cash_flow_activity_id": defaultCashFlowActivityID,
 		"kind": nextAtomKind
 	} ]
