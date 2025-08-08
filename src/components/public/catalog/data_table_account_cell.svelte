@@ -36,10 +36,10 @@ let creditClasses = $derived([
 	<ul class={debitClasses}>
 		{#each rawDebit as debit, i}
 			<li data-exists={rawDebitExistence[i]}>
-				{#if rawDebit.length > 2}
+				{#if kind === "numeric" && debit.length > 0}
 					<AmountDisplay shownAmount={debit}/>
-				{:else if kind === "numeric"}
-					{debit.replace(".-", "").replaceAll("-", "")}
+				{:else if debit.length === 0}
+					&nbsp;
 				{:else}
 					{debit}
 				{/if}
@@ -49,10 +49,10 @@ let creditClasses = $derived([
 	<ul class={creditClasses}>
 		{#each rawCredit as credit, i}
 			<li data-exists={rawCreditExistence[i]}>
-				{#if rawCredit.length > 2}
+				{#if kind === "numeric" && credit.length > 0}
 					<AmountDisplay shownAmount={credit}/>
-				{:else if kind === "numeric"}
-					{credit.replace(".-", "").replaceAll("-", "")}
+				{:else if credit.length === 0}
+					&nbsp;
 				{:else}
 					{credit}
 				{/if}
