@@ -1,6 +1,8 @@
 import {
 	acceptableAccountKinds,
 	accountKinds,
+	acceptableValuationMethods,
+	valuationMethods,
 	acceptableModifierKinds,
 	modifierKinds,
 	acceptableModifierActions,
@@ -48,6 +50,13 @@ export interface Currency extends RestorableEntity {
 	code: string
 }
 
+export interface ItemDetail extends RestorableEntity {
+	precision_format_id: number
+	name: string
+	unit: string
+	description: string
+}
+
 export interface CashFlowActivity extends RestorableEntity {
 	name: string
 	description: string
@@ -62,6 +71,22 @@ export interface Account extends RestorableEntity {
 	name: string
 	description: string
 	kind: AccountKind
+}
+
+type ValuationMethod = typeof valuationMethods[number]
+
+export type AcceptableValuationMethod = typeof acceptableValuationMethods[number]
+
+interface CoreItemConfigurationInput {
+	id?: number
+	item_detail_id: number
+	valuation_method: ValuationMethod
+}
+
+export type ItemConfigurationInput = CoreItemConfigurationInput
+
+export type ItemConfiguration = Entity & CoreItemConfigurationInput & {
+	account_id: number
 }
 
 type ModifierKind = typeof modifierKinds[number]
@@ -124,19 +149,15 @@ export type FinancialEntryAtom = Entity & CoreFinancialEntryAtomInput & {
 	financial_entry_id: number
 }
 
-export interface CompleteFinancialEntryAtomInput {
-	modifier_atom: ModifierAtom
-	account: Account
-	currency: Currency
-	input: FinancialEntryAtomInput
-}
-
 export interface CompleteFinancialEntryAtom {
 	modifier_atom: ModifierAtom
 	cash_flow_activity: CashFlowActivity|null
 	account: Account
+	item_configuration: ItemConfiguration|null
+	item_detail: ItemDetail|null
+	item_detail_precision_format: PrecisionFormat|null
 	currency: Currency
-	precision_format: PrecisionFormat
+	currency_precision_format: PrecisionFormat
 	financial_entry_atom: FinancialEntryAtom
 }
 
