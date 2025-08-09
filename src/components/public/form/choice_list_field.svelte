@@ -32,7 +32,9 @@ let {
 	choiceConverter: (choice: any) => ChoiceInfo
 } = $props()
 
-let choices = $derived(rawChoices.map(choiceConverter))
+// Note: Choices were encoded to prevent rerendering on arrays which have the same values
+let encodedChoices = $derived(JSON.stringify(rawChoices.map(choiceConverter)))
+let choices = $derived(JSON.parse(encodedChoices) as ChoiceInfo[])
 let selectedLabelIndex = $derived(choices.findIndex(choice => choice.data === value))
 let selectedLabel = $derived(selectedLabelIndex === -1
 	? UNKNOWN_OPTION_LABEL
