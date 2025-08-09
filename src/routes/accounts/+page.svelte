@@ -69,12 +69,14 @@ function processCreatedResourceObject(document: Record<string, unknown>): unknow
 	description = ""
 	configuration = null
 
-	const { account, "item_configuration": newItemConfiguration } = document
+	const { account } = document
 
-	itemConfigurations = [
-		...itemConfigurations,
-		newItemConfiguration as ItemConfiguration
-	]
+	if (document.item_configuration) {
+		itemConfigurations = [
+			...itemConfigurations,
+			document.item_configuration as ItemConfiguration
+		]
+	}
 
 	return account
 }
