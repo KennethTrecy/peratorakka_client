@@ -20,7 +20,7 @@ let {
 <UnitDataTable>
 	{#snippet table_headers()}
 		<DataTableHeader scope="column">Account</DataTableHeader>
-		<DataTableHeader scope="column">Quantity</DataTableHeader>
+		<DataTableHeader scope="column" kind="numeric">Total Quantity</DataTableHeader>
 		<DataTableHeader scope="column" kind="numeric">Total Cost</DataTableHeader>
 	{/snippet}
 	{#snippet table_rows()}
