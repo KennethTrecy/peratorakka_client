@@ -9,12 +9,15 @@ import type {
 import type {
 	PrecisionFormat,
 	Currency,
+	ItemDetail,
 	CashFlowActivity,
 	Account,
+	ItemConfiguration,
 	FrozenAccount,
 	RealAdjustedSummaryCalculation,
 	RealUnadjustedSummaryCalculation,
-	RealFlowCalculation
+	RealFlowCalculation,
+	ItemCalculation
 } from "+/entity"
 
 import { onDestroy } from "svelte"
@@ -54,11 +57,17 @@ let currencies = $derived<Currency[]>(
 	[...(completeFrozenPeriodInfo?.currencies ?? [])]
 	.sort((a, b) => a.created_at.localeCompare(b.created_at))
 )
+let itemDetails = $derived<ItemDetail[]>(
+	completeFrozenPeriodInfo?.item_details ?? []
+)
 let cashFlowActivities = $derived<CashFlowActivity[]>(
 	completeFrozenPeriodInfo?.cash_flow_activities ?? []
 )
 let accounts = $derived<Account[]>(
 	completeFrozenPeriodInfo?.accounts ?? []
+)
+let itemConfigurations = $derived<ItemConfiguration[]>(
+	completeFrozenPeriodInfo?.item_configurations ?? []
 )
 let frozenAccounts = $derived<FrozenAccount[]>(
 	completeFrozenPeriodInfo?.frozen_accounts ?? []
@@ -71,6 +80,9 @@ let realUnadjustedSummaryCalculations = $derived<RealUnadjustedSummaryCalculatio
 )
 let realFlowCalculations = $derived<RealFlowCalculation[]>(
 	completeFrozenPeriodInfo?.real_flow_calculations ?? []
+)
+let itemCalculations = $derived<ItemCalculation[]>(
+	completeFrozenPeriodInfo?.item_calculations ?? []
 )
 let statements = $derived<FinancialStatementGroup[]>(
 	completeFrozenPeriodInfo !== null ? completeFrozenPeriodInfo["@meta"].statements
@@ -422,12 +434,15 @@ function display(newCompleteFrozenPeriodInfo: CompleteFrozenPeriodInfo) {
 					{resolvedExchangeRates}
 					{precisionFormats}
 					{currencies}
+					{itemDetails}
 					{cashFlowActivities}
 					{accounts}
+					{itemConfigurations}
 					{frozenAccounts}
 					{realAdjustedSummaryCalculations}
 					{realUnadjustedSummaryCalculations}
-					{realFlowCalculations}/>
+					{realFlowCalculations}
+					{itemCalculations}/>
 			{/if}
 		{/snippet}
 	</CatalogBase>
