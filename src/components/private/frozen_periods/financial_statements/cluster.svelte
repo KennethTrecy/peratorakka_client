@@ -1,24 +1,32 @@
 <script lang="ts">
 import type { FinancialStatementGroup, ExchangeRateInfo } from "+/rest"
-import type { SimplifiedSummaryCalculation, SimplifiedFlowCalculation } from "+/component"
+import type {
+	SimplifiedSummaryCalculation,
+	SimplifiedFlowCalculation,
+	SimplifiedItemCalculation
+} from "+/component"
 import type {
 	PrecisionFormat,
 	Currency,
+	ItemDetail,
 	CashFlowActivity,
 	Account,
+	ItemConfiguration,
 	FrozenAccount,
 	RealAdjustedSummaryCalculation,
 	RealUnadjustedSummaryCalculation,
-	RealFlowCalculation
+	RealFlowCalculation,
+	ItemCalculation
 } from "+/entity"
 
 import { ANY_CURRENCY } from "#/component"
 import { ACCOUNT_KIND_AGGREGATED_LIST_PRIOITY, normalDebitAccountKinds } from "#/entity"
 
-import { subtractAmount } from "!/index"
+import { addAmount, subtractAmount } from "!/index"
 import makeShownAmount from "$/utility/make_shown_amount"
 import makeCleanShownAmount from "$/utility/make_clean_shown_amount"
 import mergeUniqueElements from "$/utility/merge_unique_elements"
+import formatQuantity from "$/utility/format_quantity"
 
 import BalanceSheet from "%/frozen_periods/financial_statements/balance_sheet.svelte"
 import CashFlowStatement from "%/frozen_periods/financial_statements/cash_flow_statement.svelte"
@@ -34,24 +42,30 @@ let {
 	resolvedExchangeRates,
 	precisionFormats,
 	currencies,
+	itemDetails,
 	cashFlowActivities,
 	accounts,
+	itemConfigurations,
 	frozenAccounts,
 	realAdjustedSummaryCalculations,
 	realUnadjustedSummaryCalculations,
-	realFlowCalculations
+	realFlowCalculations,
+	itemCalculations
 }: {
 	viewedCurrency: Currency
 	statement: FinancialStatementGroup
 	resolvedExchangeRates: Record<string, ExchangeRateInfo>
 	precisionFormats: PrecisionFormat[]
 	currencies: Currency[]
+	itemDetails: ItemDetail[]
 	cashFlowActivities: CashFlowActivity[]
 	accounts: Account[]
+	itemConfigurations: ItemConfiguration[]
 	frozenAccounts: FrozenAccount[]
 	realAdjustedSummaryCalculations: RealAdjustedSummaryCalculation[]
 	realUnadjustedSummaryCalculations: RealUnadjustedSummaryCalculation[]
 	realFlowCalculations: RealFlowCalculation[]
+	itemCalculations: ItemCalculation[]
 } = $props()
 
 let statementCurrency = $derived(currencies.find(
@@ -255,6 +269,107 @@ let allowedRealFlowCalculations = $derived(realFlowCalculations.map(
 		} as SimplifiedFlowCalculation
 	}
 ).filter<SimplifiedFlowCalculation>(calculation => !!calculation)
+.sort((left, right) => sortAccounts(left.account, right.account)))
+let allowedItemCalculations = $derived(itemCalculations.map(
+	calculation => {
+		const frozenAccountIndex = allowedFrozenAccounts.findIndex(
+			account => account.hash === calculation.frozen_account_hash
+		)
+
+		if (frozenAccountIndex === -1) return null
+
+		const frozenAccount = allowedFrozenAccounts[frozenAccountIndex]
+		const accountIndex = allowedAccounts.findIndex(
+			account => account.id === frozenAccount.account_id
+		)
+
+		if (accountIndex === -1) return null
+
+		const account = allowedAccounts[accountIndex]
+
+		return {
+			account,
+			"totalRemainingCost": calculation.remaining_cost,
+			"totalRemainingQuantity": calculation.remaining_quantity
+		} as SimplifiedItemCalculation
+	}
+).filter<SimplifiedItemCalculation>(calculation => !!calculation)
+.reduce((summarizedItemCalculations, currentItemCalculation) => {
+	const index = summarizedItemCalculations.findIndex(summarizedItemCalculation => {
+		return summarizedItemCalculation.account.id === currentItemCalculation.account.id
+	})
+
+	if (index === -1) {
+		return [
+			...summarizedItemCalculations,
+			currentItemCalculation
+		]
+	} else {
+		const newCalculation = summarizedItemCalculations[index]
+		newCalculation.totalRemainingCost = addAmount(
+			newCalculation.totalRemainingCost,
+			currentItemCalculation.totalRemainingCost
+		)
+		newCalculation.totalRemainingQuantity = addAmount(
+			newCalculation.totalRemainingQuantity,
+			currentItemCalculation.totalRemainingQuantity
+		)
+		summarizedItemCalculations[index] = newCalculation
+	}
+
+	return summarizedItemCalculations
+}, [] as SimplifiedItemCalculation[])
+.map(calculation => {
+	const account = calculation.account
+
+	const itemConfigurationIndex = itemConfigurations.findIndex(itemConfiguration => {
+		return itemConfiguration.account_id === account.id
+	})
+
+	if (itemConfigurationIndex === -1) return null
+
+	const itemConfiguration = itemConfigurations[itemConfigurationIndex]
+
+	const shownItemDetail = itemDetails.find(
+		itemDetail => itemDetail.id === itemConfiguration.item_detail_id
+	)
+
+	const quantityPrecisionFormat = precisionFormats.find(
+		precisionFormat => precisionFormat.id === shownItemDetail?.precision_format_id
+	)
+
+	const exchangeRate = resolvedExchangeRates[account.currency_id] ?? {
+		"source": {
+			"currency_id": account.currency_id,
+			"value": "1"
+		},
+		"destination": {
+			"currency_id": account.currency_id,
+			"value": "1"
+		},
+		"updated_at": (new Date()).toDateString()
+	}
+	const shownAmount = makeShownAmount(
+		precisionFormats,
+		currencies,
+		exchangeRate,
+		statementCurrency,
+		viewedCurrency,
+		calculation.totalRemainingCost
+	)
+
+	const shownQuantity = formatQuantity(
+		quantityPrecisionFormat,
+		shownItemDetail,
+		calculation.totalRemainingQuantity
+	)
+
+	return {
+		account,
+		"totalRemainingCost": shownAmount,
+		"totalRemainingQuantity": shownQuantity
+	} as SimplifiedItemCalculation
+}).filter<SimplifiedItemCalculation>(calculation => !!calculation)
 .sort((left, right) => sortAccounts(left.account, right.account)))
 let allowedRealOpenedSummaryCalculations = $derived(realAdjustedSummaryCalculations.map(
 	calculation => {
