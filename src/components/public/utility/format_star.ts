@@ -6,7 +6,7 @@ import {
 	PERCENTAGE_FORMULA_OUTPUT_FORMAT
 } from "#/entity"
 
-import { makeFormattedAmount, makeRawFormattedAmount } from "!/index"
+import { makeFormattedAmount, makeRawFormattedNumber } from "!/index"
 import cleanValue from "$/utility/clean_value"
 import dashValue from "$/utility/dash_value"
 
@@ -25,7 +25,7 @@ export default function formatStar(
 			cleanAmount
 		))
 	} else if (outputFormat === PERCENTAGE_FORMULA_OUTPUT_FORMAT) {
-		return dashValue(isNegative, `${makeRawFormattedAmount(
+		return dashValue(isNegative, `${makeRawFormattedNumber(
 			associatedPrecisionFormat ?? undefined,
 			cleanAmount
 		)}%`)

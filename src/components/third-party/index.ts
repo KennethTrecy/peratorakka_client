@@ -19,18 +19,22 @@ export function makeFormattedAmount(
 	currency: Currency | undefined,
 	amount: string
 ): string {
-	const emptyAmount = makeRawFormattedAmount(precisionFormat, "0")
-	const formattedAmount = makeRawFormattedAmount(precisionFormat, amount)
-	const isInfinitesimalAmount = emptyAmount === formattedAmount
-
-	return `${currency?.code ?? "---"} ${
-		isInfinitesimalAmount
-			? amount
-			: formattedAmount
-	}`
+	return `${currency?.code ?? "---"} ${makeFormattedNumber(precisionFormat, amount)}`
 }
 
-export function makeRawFormattedAmount(
+export function makeFormattedNumber(
+	precisionFormat: PrecisionFormat | undefined,
+	amount: string
+): string {
+	const emptyAmount = makeRawFormattedNumber(precisionFormat, "0")
+	const formattedAmount = makeRawFormattedNumber(precisionFormat, amount)
+
+	return emptyAmount === formattedAmount
+		? amount
+		: formattedAmount
+}
+
+export function makeRawFormattedNumber(
 	precisionFormat: PrecisionFormat | undefined,
 	amount: string
 ): string {
