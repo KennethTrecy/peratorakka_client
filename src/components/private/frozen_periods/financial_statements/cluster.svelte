@@ -34,6 +34,7 @@ import ElementalParagraph from "$/typography/elemental_paragraph.svelte"
 import Flex from "$/layout/flex.svelte"
 import GridCell from "$/layout/grid_cell.svelte"
 import IncomeStatement from "%/frozen_periods/financial_statements/income_statement.svelte"
+import Inventory from "%/frozen_periods/financial_statements/inventory.svelte"
 import TrialBalance from "%/frozen_periods/financial_statements/trial_balance.svelte"
 
 let {
@@ -474,28 +475,56 @@ function sortAccounts(left: Account, right: Account) {
 			data={allowedRealUnadjustedSummaryCalculations}/>
 	</Flex>
 </GridCell>
-<GridCell kind="padder"/>
-<GridCell kind="wide">
-	<Flex direction="column" mustPad={false}>
-		{#if hasAcceptableCashFlowActivities}
-			<CashFlowStatement
-				{statement}
-				{statementExchangeRate}
-				{statementCurrency}
-				{viewedCurrency}
-				{precisionFormats}
-				{currencies}
-				{cashFlowActivities}
-				{emptyAmount}
-				data={allowedRealFlowCalculations}/>
-		{:else}
-			<ElementalParagraph>
-				Note: There are no accounts that belongs to cash flows activities. At least one account must belong to a cash flow activity.
-			</ElementalParagraph>
-		{/if}
-	</Flex>
-</GridCell>
-<GridCell kind="padder"/>
+{#if allowedItemCalculations.length > 0}
+	<GridCell kind="pair">
+		<Flex direction="column" mustPad={false}>
+			{#if hasAcceptableCashFlowActivities}
+				<CashFlowStatement
+					{statement}
+					{statementExchangeRate}
+					{statementCurrency}
+					{viewedCurrency}
+					{precisionFormats}
+					{currencies}
+					{cashFlowActivities}
+					{emptyAmount}
+					data={allowedRealFlowCalculations}/>
+			{:else}
+				<ElementalParagraph>
+					Note: There are no accounts that belongs to cash flows activities. At least one account must belong to a cash flow activity.
+				</ElementalParagraph>
+			{/if}
+		</Flex>
+	</GridCell>
+	<GridCell kind="pair">
+		<Flex direction="column" mustPad={false}>
+			<Inventory data={allowedItemCalculations}/>
+		</Flex>
+	</GridCell>
+{:else}
+	<GridCell kind="padder"/>
+	<GridCell kind="wide">
+		<Flex direction="column" mustPad={false}>
+			{#if hasAcceptableCashFlowActivities}
+				<CashFlowStatement
+					{statement}
+					{statementExchangeRate}
+					{statementCurrency}
+					{viewedCurrency}
+					{precisionFormats}
+					{currencies}
+					{cashFlowActivities}
+					{emptyAmount}
+					data={allowedRealFlowCalculations}/>
+			{:else}
+				<ElementalParagraph>
+					Note: There are no accounts that belongs to cash flows activities. At least one account must belong to a cash flow activity.
+				</ElementalParagraph>
+			{/if}
+		</Flex>
+	</GridCell>
+	<GridCell kind="padder"/>
+{/if}
 <GridCell kind="pair">
 	<Flex direction="column" mustPad={false}>
 		<TrialBalance
