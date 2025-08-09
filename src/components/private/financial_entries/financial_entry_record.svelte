@@ -114,7 +114,7 @@ let associatedFinancialEntryAtoms = $derived(subdata.filter(
 	atom => atom.financial_entry_id === data.id
 ))
 $effect(() => {
-	if (untrack(() => atoms).length !== associatedFinancialEntryAtoms.length) {
+	if (JSON.stringify(untrack(() => atoms)) !== JSON.stringify(associatedFinancialEntryAtoms)) {
 		untrack(() => {
 			atoms = associatedFinancialEntryAtoms
 		})
