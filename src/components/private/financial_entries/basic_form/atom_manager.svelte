@@ -68,7 +68,7 @@ let oldInputMethods = $derived(atoms.reduce((previousMethods, currentAtom) => ({
 	...previousMethods,
 	[currentAtom.modifier_atom_id]: typeof previousMethods[
 		`${currentAtom.modifier_atom_id}`
-	] !== undefined ? ([
+	] !== "undefined" ? ([
 		[ null, FINANCIAL_ENTRY_INPUT_PRICE_AND_TOTAL, FINANCIAL_ENTRY_INPUT_TOTAL_AND_QUANTITY ],
 		[ FINANCIAL_ENTRY_INPUT_PRICE_AND_TOTAL, null, FINANCIAL_ENTRY_INPUT_PRICE_AND_QUANTITY ],
 		[ FINANCIAL_ENTRY_INPUT_TOTAL_AND_QUANTITY, FINANCIAL_ENTRY_INPUT_PRICE_AND_QUANTITY, null ]
@@ -104,13 +104,13 @@ let expectedFinancialEntryAtomInputs = $derived(
 			const requiredCurrency = currencies.find(
 				currency => currency.id === requiredAccount.currency_id
 			) ?? UNKNOWN_CURRENCY
-			const knownMethod = oldInputMethods[`${currentAtom.id}`] ?? (
+			const knownMethod = oldInputMethods[currentAtom.id] ?? (
 				currentAtom.kind === REAL_DEBITEM_MODIFIER_ATOM_KIND
 				|| currentAtom.kind === REAL_CREDITEM_MODIFIER_ATOM_KIND
 				? FINANCIAL_ENTRY_INPUT_QUANTITY_ONLY : (
 					requiredAccount.kind === ITEMIZED_ASSET_ACCOUNT_KIND
-					? FINANCIAL_ENTRY_INPUT_TOTAL_AND_QUANTITY
-					: FINANCIAL_ENTRY_INPUT_TOTAL_ONLY
+						? FINANCIAL_ENTRY_INPUT_PRICE_AND_QUANTITY
+						: FINANCIAL_ENTRY_INPUT_TOTAL_ONLY
 				)
 			)
 
