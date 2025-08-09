@@ -1,7 +1,7 @@
 import Fraction from "fraction.js"
 import { Chart as ChartJS } from "chart.js"
 
-import type { PrecisionFormat, Currency } from "+/entity"
+import type { PrecisionFormat, Currency, ItemDetail } from "+/entity"
 
 import { DEFAULT_MINIMUM_FRACTION_DIGITS, DEFAULT_MAXIMUM_FRACTION_DIGITS } from "#/component"
 import { DARK_MODE } from "#/theme"
@@ -20,6 +20,14 @@ export function makeFormattedAmount(
 	amount: string
 ): string {
 	return `${currency?.code ?? "---"} ${makeFormattedNumber(precisionFormat, amount)}`
+}
+
+export function makeFormattedQuantity(
+	precisionFormat: PrecisionFormat | undefined,
+	itemDetail: ItemDetail | undefined,
+	amount: string
+): string {
+	return `${makeFormattedNumber(precisionFormat, amount)} ${itemDetail?.unit ?? "---"}`
 }
 
 export function makeFormattedNumber(
