@@ -53,7 +53,6 @@ function deriveID(resource: unknown): string {
 	return `${(resource as Modifier).id}`
 }
 
-let currencyID: string = $state(UNKNOWN_OPTION)
 let name: string = $state("")
 let description: string = $state("")
 let kind = $state<AcceptableModifierKind>(acceptableModifierKinds[0] as AcceptableModifierKind)
@@ -65,7 +64,6 @@ let atoms = $state<ModifierAtomInput[]>([])
 function makeNewResourceObject(): Record<string, unknown> {
 	return {
 		"modifier": {
-			"currency_id": parseInt(currencyID),
 			name,
 			description,
 			kind,
@@ -78,11 +76,10 @@ function makeNewResourceObject(): Record<string, unknown> {
 }
 
 function processCreatedResourceObject(document: Record<string, unknown>): unknown {
-	currencyID = UNKNOWN_OPTION
 	name = ""
 	description = ""
 	kind = acceptableModifierKinds[0]
-	action = acceptableModifierActions[0]
+	atoms = []
 
 	const defaultAccountID = accounts[0].id
 	const accountInfo = accounts.find(
