@@ -432,7 +432,7 @@ let hasAcceptableCashFlowActivities = $derived(cashFlowActivities.length > 0)
 			{precisionFormats}
 			{currencies}
 			{emptyAmount}
-			data={allowedRealUnadjustedSummaryCalculations}/>
+			data={balancedSummaryCalculations}/>
 	</Flex>
 </GridCell>
 <GridCell kind="pair">
