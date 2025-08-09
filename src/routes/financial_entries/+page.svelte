@@ -3,7 +3,9 @@ import type { ContextBundle } from "+/component"
 import type {
 	PrecisionFormat,
 	Currency,
+	ItemDetail,
 	Account,
+	ItemConfiguration,
 	CashFlowActivity,
 	Modifier,
 	ModifierAtom,
@@ -46,7 +48,9 @@ assertAuthentication(globalContext, {
 
 let precisionFormats = $state<PrecisionFormat[]>([])
 let currencies = $state<Currency[]>([])
+let itemDetails = $state<ItemDetail[]>([])
 let accounts = $state<Account[]>([])
+let itemConfigurations = $state<ItemConfiguration[]>([])
 let cashFlowActivities = $state<CashFlowActivity[]>([])
 let modifiers = $state<Modifier[]>([])
 let modifierAtoms = $state<ModifierAtom[]>([])
@@ -156,8 +160,28 @@ let existingCashFlowActivities = $derived(cashFlowActivities.filter(
 			"partialPath": "/api/v2/accounts",
 			"mainSortCriterion": "name",
 			"resourceKey": "accounts",
+			"additionalPathParameters": [
+				[ "relationship", "item_configurations" ]
+			],
 			"getResources": () => accounts,
-			"setResources": newResources => { accounts = newResources as Account[] }
+			"setResources": newResources => { accounts = newResources as Account[] },
+			"getLinkedResources": () => [
+				{
+					"resourceKey": "item_configurations",
+					"resources": itemConfigurations,
+					"keyGenerator": element => (element as ItemConfiguration).account_id
+				}
+			],
+			"setLinkedResources": newResources => {
+				itemConfigurations = newResources[0] as unknown as ItemConfiguration[]
+			}
+		},
+		{
+			"partialPath": "/api/v2/item_details",
+			"mainSortCriterion": "name",
+			"resourceKey": "item_details",
+			"getResources": () => itemDetails,
+			"setResources": newResources => { itemDetails = newResources as ItemDetail[] }
 		},
 		{
 			"partialPath": "/api/v2/currencies",
@@ -285,8 +309,10 @@ let existingCashFlowActivities = $derived(cashFlowActivities.filter(
 							<FinancialEntryRecord
 								{precisionFormats}
 								{currencies}
+								{itemDetails}
 								{cashFlowActivities}
 								{accounts}
+								{itemConfigurations}
 								{modifiers}
 								{modifierAtoms}
 								{modifierAtomActivities}
