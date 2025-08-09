@@ -108,7 +108,7 @@ let allowedRealAdjustedSummaryCalculations = $derived(realAdjustedSummaryCalcula
 		const isAccountNormallyDebited = normalDebitAccountKinds.indexOf(account.kind) > -1
 		const resolvedAmount = calculation.closed_amount
 
-		const exchangeRate = $derived(resolvedExchangeRates[account.currency_id] ?? {
+		const exchangeRate = resolvedExchangeRates[account.currency_id] ?? {
 			"source": {
 				"currency_id": account.currency_id,
 				"value": "1"
@@ -118,7 +118,7 @@ let allowedRealAdjustedSummaryCalculations = $derived(realAdjustedSummaryCalcula
 				"value": "1"
 			},
 			"updated_at": (new Date()).toDateString()
-		})
+		}
 		const [ isNegative, shownAmount ] = makeCleanShownAmount(
 			precisionFormats,
 			currencies,
@@ -170,7 +170,7 @@ let allowedRealUnadjustedSummaryCalculations = $derived(realUnadjustedSummaryCal
 				: calculation.debit_amount
 		)
 
-		const exchangeRate = $derived(resolvedExchangeRates[account.currency_id] ?? {
+		const exchangeRate = resolvedExchangeRates[account.currency_id] ?? {
 			"source": {
 				"currency_id": account.currency_id,
 				"value": "1"
@@ -180,7 +180,7 @@ let allowedRealUnadjustedSummaryCalculations = $derived(realUnadjustedSummaryCal
 				"value": "1"
 			},
 			"updated_at": (new Date()).toDateString()
-		})
+		}
 		const [ isNegative, shownAmount ] = makeCleanShownAmount(
 			precisionFormats,
 			currencies,
@@ -228,7 +228,7 @@ let allowedRealFlowCalculations = $derived(realFlowCalculations.map(
 		if (cashFlowActivityIndex === -1) return null
 		const cashFlowActivity = cashFlowActivities[cashFlowActivityIndex]
 
-		const exchangeRate = $derived(resolvedExchangeRates[account.currency_id] ?? {
+		const exchangeRate = resolvedExchangeRates[account.currency_id] ?? {
 			"source": {
 				"currency_id": account.currency_id,
 				"value": "1"
@@ -238,7 +238,7 @@ let allowedRealFlowCalculations = $derived(realFlowCalculations.map(
 				"value": "1"
 			},
 			"updated_at": (new Date()).toDateString()
-		})
+		}
 		const shownAmount = makeShownAmount(
 			precisionFormats,
 			currencies,
@@ -275,7 +275,7 @@ let allowedRealOpenedSummaryCalculations = $derived(realAdjustedSummaryCalculati
 		const isAccountNormallyDebited = normalDebitAccountKinds.indexOf(account.kind) > -1
 		const resolvedAmount = calculation.opened_amount
 
-		const exchangeRate = $derived(resolvedExchangeRates[account.currency_id] ?? {
+		const exchangeRate = resolvedExchangeRates[account.currency_id] ?? {
 			"source": {
 				"currency_id": account.currency_id,
 				"value": "1"
@@ -285,7 +285,7 @@ let allowedRealOpenedSummaryCalculations = $derived(realAdjustedSummaryCalculati
 				"value": "1"
 			},
 			"updated_at": (new Date()).toDateString()
-		})
+		}
 		const [ isNegative, shownAmount ] = makeCleanShownAmount(
 			precisionFormats,
 			currencies,
