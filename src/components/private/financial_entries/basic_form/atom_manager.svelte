@@ -11,6 +11,8 @@ import type { CompleteFinancialEntryAtomInput, FinancialEntryAtomInputMethod } f
 
 import { untrack } from "svelte"
 
+import { divideAmount, multiplyAmount } from "!/index"
+
 import {
 	UNKNOWN_ACCOUNT,
 	UNKNOWN_CURRENCY,
@@ -236,7 +238,13 @@ let monetaryAtomInputs = $derived(completeAtomInputs.filter(
 	atom => (
 		atom.modifier_atom.kind === REAL_DEBIT_MODIFIER_ATOM_KIND
 		|| atom.modifier_atom.kind === REAL_CREDIT_MODIFIER_ATOM_KIND
-	) && atom.input.filter(input => input.kind === TOTAL_FINANCIAL_ENTRY_ATOM_KIND).length === 1
+	) && (
+		atom.input.filter(input => input.kind === TOTAL_FINANCIAL_ENTRY_ATOM_KIND).length === 1
+		|| (
+			atom.input.filter(input => input.kind === QUANTITY_FINANCIAL_ENTRY_ATOM_KIND).length === 1
+			&& atom.input.filter(input => input.kind === PRICE_FINANCIAL_ENTRY_ATOM_KIND).length === 1
+		)
+	)
 ).map(atom => [ atom.modifier_atom.kind, atom.currency.id ]))
 let hasSimpleAtomicPair = $derived(
 	monetaryAtomInputs.length === 2
@@ -258,6 +266,15 @@ function updateAtomAutomatically(atom: CompleteFinancialEntryAtomInput, index: n
 		const totalValue = atom.input.find(
 			input => input.kind === TOTAL_FINANCIAL_ENTRY_ATOM_KIND
 		)?.numerical_value ?? "0"
+		const quantityValue = atom.input.find(
+			input => input.kind === QUANTITY_FINANCIAL_ENTRY_ATOM_KIND
+		)?.numerical_value ?? "0"
+		const priceValue = atom.input.find(
+			input => input.kind === PRICE_FINANCIAL_ENTRY_ATOM_KIND
+		)?.numerical_value ?? "0"
+		const derivedTotalValue = totalValue === "0" && quantityValue !== ""
+			? multiplyAmount(quantityValue  || "0", priceValue || "0")
+			: totalValue
 
 		if (index === debitIndex) {
 			newCompleteAtomInputs[creditIndex] = {
@@ -266,7 +283,19 @@ function updateAtomAutomatically(atom: CompleteFinancialEntryAtomInput, index: n
 					if (input.kind === TOTAL_FINANCIAL_ENTRY_ATOM_KIND) {
 						return {
 							...input,
-							"numerical_value": totalValue
+							"numerical_value": derivedTotalValue
+						}
+					} else if (input.kind === PRICE_FINANCIAL_ENTRY_ATOM_KIND) {
+						const quantityValue = newCompleteAtomInputs[creditIndex].input.find(
+							input => input.kind === QUANTITY_FINANCIAL_ENTRY_ATOM_KIND
+						)?.numerical_value ?? "0"
+						const derivedPriceValue = priceValue === "0" && quantityValue !== "0"
+							? divideAmount(totalValue || "0", quantityValue || "0")
+							: priceValue
+
+						return {
+							...input,
+							"numerical_value": derivedPriceValue
 						}
 					}
 					return input
@@ -279,7 +308,19 @@ function updateAtomAutomatically(atom: CompleteFinancialEntryAtomInput, index: n
 					if (input.kind === TOTAL_FINANCIAL_ENTRY_ATOM_KIND) {
 						return {
 							...input,
-							"numerical_value": totalValue
+							"numerical_value": derivedTotalValue
+						}
+					} else if (input.kind === PRICE_FINANCIAL_ENTRY_ATOM_KIND) {
+						const quantityValue = newCompleteAtomInputs[debitIndex].input.find(
+							input => input.kind === QUANTITY_FINANCIAL_ENTRY_ATOM_KIND
+						)?.numerical_value ?? "0"
+						const derivedPriceValue = priceValue === "0" && quantityValue !== "0"
+							? divideAmount(totalValue || "0", quantityValue || "0")
+							: priceValue
+
+						return {
+							...input,
+							"numerical_value": derivedPriceValue
 						}
 					}
 
