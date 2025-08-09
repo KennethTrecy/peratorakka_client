@@ -424,6 +424,7 @@ let updateErrors = $derived(restorableItemOptions.updateErrors)
 			{#snippet mini_edit_form({ isConnecting, errors, confirmEdit, cancelEdit })}
 				<BasicForm id={formID} {isConnecting} {errors} onsubmit={confirmEdit}>
 					{#snippet fields()}
+						{@render modifierField()}
 						{@render remarksField()}
 					{/snippet}
 					{#snippet button_group()}
