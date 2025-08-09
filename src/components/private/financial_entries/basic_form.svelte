@@ -57,7 +57,9 @@ let {
 	} ]>
 } = $props()
 
-let currentAction = $state(RECORD_MODIFIER_ACTION)
+let currentAction = $state(
+	modifiers.find(modifier => `${modifier.id}` === modifierID)?.action ?? RECORD_MODIFIER_ACTION
+)
 let oldAction = $state(RECORD_MODIFIER_ACTION)
 let availableModifiers = $derived(modifiers.filter(modifier => modifier.deleted_at === null))
 let availableModifierActions = $derived(Array.from(new Set(
@@ -71,9 +73,15 @@ let modifier = $derived(filteredModifiers.find(
 ) ?? UNKNOWN_MODIFIER)
 
 $effect(() => {
-	if (oldAction !== modifier.action && filteredModifiers.length > 0) {
+	if (oldAction !== modifier.action) {
 		untrack(() => {
 			oldAction = currentAction
+		})
+	}
+})
+$effect(() => {
+	if (filteredModifiers.length > 0) {
+		untrack(() => {
 			modifierID = `${filteredModifiers[0].id}`
 		})
 	}
