@@ -3,13 +3,16 @@ import type { ContextBundle } from "+/component"
 import type {
 	PrecisionFormat,
 	Currency,
+	ItemDetail,
 	Account,
+	ItemConfiguration,
 	CashFlowActivity,
 	FrozenPeriod,
 	FrozenAccount,
 	RealAdjustedSummaryCalculation,
 	RealUnadjustedSummaryCalculation,
-	RealFlowCalculation
+	RealFlowCalculation,
+	ItemCalculation
 } from "+/entity"
 
 import { SEARCH_MODES, SORT_ORDERS, ACCEPTABLE_CONSTELLATION_KINDS } from "#/rest"
@@ -113,13 +116,16 @@ export interface CompleteFrozenPeriodInfo {
 	}
 	precision_formats: PrecisionFormat[]
 	currencies: Currency[]
+	item_details: ItemDetail[]
 	accounts: Account[]
+	item_configurations: ItemConfiguration[]
 	cash_flow_activities: CashFlowActivity[]
 	frozen_period: FrozenPeriod
 	frozen_accounts: FrozenAccount[]
 	real_adjusted_summary_calculations: RealAdjustedSummaryCalculation[]
 	real_unadjusted_summary_calculations: RealUnadjustedSummaryCalculation[]
 	real_flow_calculations: RealFlowCalculation[]
+	item_calculations: ItemCalculation[]
 }
 
 export type SearchMode = typeof SEARCH_MODES[number]
