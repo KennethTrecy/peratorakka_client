@@ -4,7 +4,9 @@ import type {
 	PrecisionFormat,
 	Currency,
 	CashFlowActivity,
+	ItemDetail,
 	Account,
+	ItemConfiguration,
 	Modifier,
 	ModifierAtom,
 	ModifierAtomActivity,
@@ -21,7 +23,7 @@ import { REAL_CREDIT_MODIFIER_ATOM_KIND, REAL_DEBIT_MODIFIER_ATOM_KIND } from "#
 
 import checkArchivedState from "$/utility/check_archived_state"
 import convertSnakeCaseToProperCase from "$/utility/convert_snake_case_to_proper_case"
-import formatAmount from "$/utility/format_amount"
+import formatNumber from "%/financial_entries/format_number"
 import makeRestorableItemOptions from "$/rest/make_restorable_item_options"
 
 import BasicForm from "$/form/basic_form.svelte"
@@ -39,7 +41,9 @@ import WeakenedTertiaryHeading from "$/typography/weakened_tertiary_heading.svel
 let {
 	precisionFormats,
 	currencies,
+	itemDetails,
 	accounts,
+	itemConfigurations,
 	cashFlowActivities,
 	modifiers,
 	modifierAtoms,
@@ -51,7 +55,9 @@ let {
 	precisionFormats: PrecisionFormat[]
 	currencies: Currency[]
 	cashFlowActivities: CashFlowActivity[]
+	itemDetails: ItemDetail[]
 	accounts: Account[]
+	itemConfigurations: ItemConfiguration[]
 	modifiers: Modifier[]
 	modifierAtoms: ModifierAtom[]
 	modifierAtomActivities: ModifierAtomActivity[]
@@ -73,7 +79,7 @@ let isArchived = $derived(checkArchivedState(data))
 let IDPrefix = $derived(`old_financial_entry_${data.id}`)
 let formID = $derived(`${IDPrefix}_update_form`)
 let chosenModifier = $derived(modifiers.find(
-	modifier => `${modifier.id}` === modifierID
+	modifier => modifier.id === data.modifier_id
 ) ?? UNKNOWN_MODIFIER)
 let friendlyAction = $derived(convertSnakeCaseToProperCase(chosenModifier?.action ?? "unknown"))
 let label = $derived(`${chosenModifier?.name ?? UNKNOWN_OPTION}${
@@ -128,24 +134,37 @@ let completeFinancialEntryAtoms = $derived(associatedFinancialEntryAtoms.reduce(
 
 		if (typeof requiredAccount === "undefined") return resolvedAtoms
 
+		const requiredItemConfiguration = itemConfigurations.find(
+			configuration => configuration.account_id === requiredAccount.id
+		) ?? null
+		const requiredItemDetail = itemDetails.find(
+			itemDetail => itemDetail.id === requiredItemConfiguration?.item_detail_id
+		) ?? null
+		const requiredItemDetailPrecisionFormat = precisionFormats.find(
+			format => format.id === requiredItemDetail?.precision_format_id
+		) ?? null
+
 		const requiredCurrency = requiredCurrencies.find(
 			currency => currency.id === requiredAccount.currency_id
 		)
 
 		if (typeof requiredCurrency === "undefined") return resolvedAtoms
 
-		const requiredPrecisionFormat = precisionFormats.find(
+		const requiredCurrencyPrecisionFormat = precisionFormats.find(
 			format => format.id === requiredCurrency.precision_format_id
 		)
 
-		if (typeof requiredPrecisionFormat === "undefined") return resolvedAtoms
+		if (typeof requiredCurrencyPrecisionFormat === "undefined") return resolvedAtoms
 
 		return [
 			...resolvedAtoms,
 			{
-				"precision_format": requiredPrecisionFormat,
+				"currency_precision_format": requiredCurrencyPrecisionFormat,
 				"currency": requiredCurrency,
+				"item_detail_precision_format": requiredItemDetailPrecisionFormat,
+				"item_detail": requiredItemDetail,
 				"account": requiredAccount,
+				"item_configuration": requiredItemConfiguration,
 				"cash_flow_activity": requiredCashFlowActivity,
 				"modifier_atom": requiredModifierAtom,
 				"financial_entry_atom": financialEntryAtom
@@ -162,61 +181,127 @@ let creditAtoms = $derived(completeFinancialEntryAtoms.filter(
 ))
 
 let debitExistence = $derived(debitAtoms.reduce(
-	(resolvedNames: boolean[], atom: CompleteFinancialEntryAtom) => [
-		...resolvedNames,
-		atom.account.deleted_at === null,
-		...(atom.cash_flow_activity ? [ atom.cash_flow_activity.deleted_at === null ] : [])
-	],
-	[]
-))
+	(
+		resolvedNames: [ CompleteFinancialEntryAtom|null, boolean[][] ],
+		atom: CompleteFinancialEntryAtom
+	) => [
+		atom,
+		(resolvedNames[0] === null || resolvedNames[0].account.id !== atom.account.id ? [
+			...resolvedNames[1],
+			atom.account.deleted_at === null,
+			...(atom.cash_flow_activity ? [ atom.cash_flow_activity.deleted_at === null ] : [])
+		] : resolvedNames[1])
+	] as [ CompleteFinancialEntryAtom, boolean[][] ],
+	[ null, [] ]
+)[1].flat())
 let creditExistence = $derived(creditAtoms.reduce(
-	(resolvedNames: boolean[], atom: CompleteFinancialEntryAtom) => [
-		...resolvedNames,
-		atom.account.deleted_at === null,
-		...(atom.cash_flow_activity ? [ atom.cash_flow_activity.deleted_at === null ] : [])
-	],
-	[]
-))
+	(
+		resolvedNames: [ CompleteFinancialEntryAtom|null, boolean[][] ],
+		atom: CompleteFinancialEntryAtom
+	) => [
+		atom,
+		(resolvedNames[0] === null || resolvedNames[0].account.id !== atom.account.id ? [
+			...resolvedNames[1],
+			atom.account.deleted_at === null,
+			...(atom.cash_flow_activity ? [ atom.cash_flow_activity.deleted_at === null ] : [])
+		] : resolvedNames[1])
+	] as [ CompleteFinancialEntryAtom, boolean[][] ],
+	[ null, [] ]
+)[1].flat())
 let debitNames = $derived(debitAtoms.reduce(
-	(resolvedNames: string[], atom: CompleteFinancialEntryAtom) => [
-		...resolvedNames,
-		atom.account.name,
-		...(atom.cash_flow_activity ? [ `(${atom.cash_flow_activity.name})` ] : [])
-	],
-	[]
-))
+	(
+		resolvedNames: [ CompleteFinancialEntryAtom|null, string[][] ],
+		atom: CompleteFinancialEntryAtom
+	) => [
+		atom,
+		(resolvedNames[0] === null || resolvedNames[0].account.id !== atom.account.id ? [
+			...resolvedNames[1],
+			atom.account.name,
+			...(atom.cash_flow_activity ? [ `(${atom.cash_flow_activity.name})` ] : [])
+		] : resolvedNames[1])
+	] as [ CompleteFinancialEntryAtom, string[][] ],
+	[ null, [] ]
+)[1].flat())
 let creditNames = $derived(creditAtoms.reduce(
-	(resolvedNames: string[], atom: CompleteFinancialEntryAtom) => [
-		...resolvedNames,
-		atom.account.name,
-		...(atom.cash_flow_activity ? [ `(${atom.cash_flow_activity.name})` ] : [])
-	],
-	[]
-))
+	(
+		resolvedNames: [ CompleteFinancialEntryAtom|null, string[][] ],
+		atom: CompleteFinancialEntryAtom
+	) => [
+		atom,
+		(resolvedNames[0] === null || resolvedNames[0].account.id !== atom.account.id ? [
+			...resolvedNames[1],
+			atom.account.name,
+			...(atom.cash_flow_activity ? [ `(${atom.cash_flow_activity.name})` ] : [])
+		] : resolvedNames[1])
+	] as [ CompleteFinancialEntryAtom, string[][] ],
+	[ null, [] ]
+)[1].flat())
 let debitAmounts = $derived(debitAtoms.reduce(
-	(resolvedAmounts: string[], atom: CompleteFinancialEntryAtom) => [
-		...resolvedAmounts,
-		formatAmount(
-			atom.precision_format,
-			atom.currency,
-			atom.financial_entry_atom.numerical_value
-		),
-		...(atom.cash_flow_activity ? [ "" ] : [])
-	],
-	[]
-))
+	(
+		resolvedNames: [ CompleteFinancialEntryAtom|null, string[][] ],
+		atom: CompleteFinancialEntryAtom
+	) => [
+		atom,
+		(resolvedNames[0] === null || resolvedNames[0].account.id !== atom.account.id ? [
+			...resolvedNames[1],
+			formatNumber(
+				atom.currency_precision_format,
+				atom.currency,
+				atom.item_detail_precision_format as PrecisionFormat,
+				atom.item_detail as ItemDetail,
+				atom.financial_entry_atom.kind,
+				atom.financial_entry_atom.numerical_value
+			),
+			...(atom.cash_flow_activity ? [ "" ] : [])
+		] : (
+			atom.cash_flow_activity ? [
+				...resolvedNames[1].slice(0, -1),
+				formatNumber(
+					atom.currency_precision_format,
+					atom.currency,
+					atom.item_detail_precision_format as PrecisionFormat,
+					atom.item_detail as ItemDetail,
+					atom.financial_entry_atom.kind,
+					atom.financial_entry_atom.numerical_value
+				)
+			] : resolvedNames[1]
+		))
+	] as [ CompleteFinancialEntryAtom, string[][] ],
+	[ null, [] ]
+)[1].flat())
 let creditAmounts = $derived(creditAtoms.reduce(
-	(resolvedAmounts: string[], atom: CompleteFinancialEntryAtom) => [
-		...resolvedAmounts,
-		formatAmount(
-			atom.precision_format,
-			atom.currency,
-			atom.financial_entry_atom.numerical_value
-		),
-		...(atom.cash_flow_activity ? [ "" ] : [])
-	],
-	[]
-))
+	(
+		resolvedNames: [ CompleteFinancialEntryAtom|null, string[][] ],
+		atom: CompleteFinancialEntryAtom
+	) => [
+		atom,
+		(resolvedNames[0] === null || resolvedNames[0].account.id !== atom.account.id ? [
+			...resolvedNames[1],
+			formatNumber(
+				atom.currency_precision_format,
+				atom.currency,
+				atom.item_detail_precision_format as PrecisionFormat,
+				atom.item_detail as ItemDetail,
+				atom.financial_entry_atom.kind,
+				atom.financial_entry_atom.numerical_value
+			),
+			...(atom.cash_flow_activity ? [ "" ] : [])
+		] : (
+			atom.cash_flow_activity ? [
+				...resolvedNames[1].slice(0, -1),
+				formatNumber(
+					atom.currency_precision_format,
+					atom.currency,
+					atom.item_detail_precision_format as PrecisionFormat,
+					atom.item_detail as ItemDetail,
+					atom.financial_entry_atom.kind,
+					atom.financial_entry_atom.numerical_value
+				)
+			] : resolvedNames[1]
+		))
+	] as [ CompleteFinancialEntryAtom, string[][] ],
+	[ null, [] ]
+)[1].flat())
 
 let restorableItemOptions = $derived(makeRestorableItemOptions(
 	`/api/v2/financial_entries/${data.id}`,
