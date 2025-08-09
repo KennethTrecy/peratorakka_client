@@ -2,8 +2,8 @@
 import type { GeneralError } from "+/rest"
 import type { CompleteFinancialEntryAtomInput } from "+/component"
 
-import SoleFieldset from "%/financial_entries/basic_form/sole_fieldset.svelte"
-import CompoundFieldset from "%/financial_entries/basic_form/compound_fieldset.svelte"
+import GeneralField from "%/financial_entries/basic_form/general_field.svelte"
+import GeneralFieldset from "%/financial_entries/basic_form/general_fieldset.svelte"
 
 let {
 	atom = $bindable(),
@@ -20,18 +20,12 @@ let {
 } = $props()
 </script>
 
-{#if atom.input.length === 1}
-	<SoleFieldset
+<GeneralFieldset {atom}>
+	<GeneralField
 		bind:atom={atom}
+		inputIndex={0}
 		{IDPrefix}
 		{disabled}
 		{isConnecting}
 		{errors}/>
-{:else}
-	<CompoundFieldset
-		bind:atom={atom}
-		{IDPrefix}
-		{disabled}
-		{isConnecting}
-		{errors}/>
-{/if}
+</GeneralFieldset>
