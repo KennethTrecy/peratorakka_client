@@ -62,8 +62,8 @@ export default function makeShellContext(globalContext: ContextBundle): ContextB
 				} : null,
 				hasTokenCurrently && hasUserCurrently ? {
 					"type": "group",
-					"icon": "money",
-					"label": "Monetary Formats",
+					"icon": "numbers",
+					"label": "Numeric Formats",
 					"items": [
 						{
 							"type": "item",
@@ -76,6 +76,12 @@ export default function makeShellContext(globalContext: ContextBundle): ContextB
 							"link": "/currencies",
 							"icon": "universal_currency_alt",
 							"label": "Currencies"
+						},
+						{
+							"type": "item",
+							"link": "/item_details",
+							"icon": "measuring_tape",
+							"label": "Item Details"
 						}
 					]
 				} : null,
