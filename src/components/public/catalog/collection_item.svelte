@@ -78,8 +78,8 @@ function startReading() {
 }
 
 function startEditing() {
-	status = "editing"
 	resetDraft()
+	status = "editing"
 }
 
 function confirmDeletion() {
