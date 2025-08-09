@@ -18,6 +18,7 @@ import { ACCOUNT_KIND_AGGREGATED_LIST_PRIOITY, normalDebitAccountKinds } from "#
 import { subtractAmount } from "!/index"
 import makeShownAmount from "$/utility/make_shown_amount"
 import makeCleanShownAmount from "$/utility/make_clean_shown_amount"
+import mergeUniqueElements from "$/utility/merge_unique_elements"
 
 import BalanceSheet from "%/frozen_periods/financial_statements/balance_sheet.svelte"
 import CashFlowStatement from "%/frozen_periods/financial_statements/cash_flow_statement.svelte"
@@ -26,7 +27,6 @@ import Flex from "$/layout/flex.svelte"
 import GridCell from "$/layout/grid_cell.svelte"
 import IncomeStatement from "%/frozen_periods/financial_statements/income_statement.svelte"
 import TrialBalance from "%/frozen_periods/financial_statements/trial_balance.svelte"
-	import mergeUniqueElements from "$/utility/merge_unique_elements";
 
 let {
 	viewedCurrency,

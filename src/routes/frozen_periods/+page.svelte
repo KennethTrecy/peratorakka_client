@@ -4,7 +4,7 @@ import type { ContextBundle } from "+/component"
 import type { CompleteFrozenPeriodInfo } from "+/rest"
 
 import { writable } from "svelte/store"
-import { getContext, untrack } from "svelte"
+import { getContext } from "svelte"
 import { afterNavigate, beforeNavigate, goto } from "$app/navigation"
 
 import { GLOBAL_CONTEXT } from "#/contexts"
