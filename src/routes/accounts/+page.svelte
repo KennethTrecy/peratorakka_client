@@ -1,6 +1,13 @@
 <script lang="ts">
 import type { ContextBundle } from "+/component"
-import type { Currency, Account, AcceptableAccountKind } from "+/entity"
+import type {
+	Currency,
+	Account,
+	AcceptableAccountKind,
+	ItemConfigurationInput,
+	ItemConfiguration,
+	ItemDetail
+} from "+/entity"
 
 import { getContext } from "svelte"
 import { afterNavigate, beforeNavigate, goto } from "$app/navigation"
@@ -10,6 +17,7 @@ import { UNKNOWN_OPTION } from "#/component"
 import { acceptableAccountKinds } from "#/entity"
 
 import assertAuthentication from "$/page_requirement/assert_authentication"
+import mergeUniqueResources from "$/utility/merge_unique_resources"
 
 import BasicForm from "%/accounts/basic_form.svelte"
 import CompleteResourcePage from "$/layout/complete_resource_page.svelte"
@@ -26,15 +34,18 @@ assertAuthentication(globalContext, {
 })
 
 let currencies = $state<Currency[]>([])
+let itemDetails = $state<ItemDetail[]>([])
+let itemConfigurations = $state<ItemConfiguration[]>([])
 
 function deriveID(resource: unknown): string {
 	return `${(resource as Account).id}`
 }
 
-let currencyID: string = $state(UNKNOWN_OPTION)
-let name: string = $state("")
-let description: string = $state("")
-let kind: AcceptableAccountKind = $state(acceptableAccountKinds[0])
+let currencyID = $state<string>(UNKNOWN_OPTION)
+let name = $state<string>("")
+let description = $state<string>("")
+let kind = $state<AcceptableAccountKind>(acceptableAccountKinds[0])
+let configuration = $state<ItemConfigurationInput|null>(null)
 
 function makeNewResourceObject(): Record<string, unknown> {
 	return {
@@ -42,7 +53,12 @@ function makeNewResourceObject(): Record<string, unknown> {
 			"currency_id": parseInt(currencyID),
 			name,
 			description,
-			kind
+			kind,
+			...(configuration === null ? {} : {
+				"@relationship": {
+					"item_configuration": configuration
+				}
+			})
 		}
 	}
 }
@@ -51,9 +67,23 @@ function processCreatedResourceObject(document: Record<string, unknown>): unknow
 	currencyID = UNKNOWN_OPTION
 	name = ""
 	description = ""
+	configuration = null
 
-	const { account } = document
+	const { account, "item_configuration": newItemConfiguration } = document
+
+	itemConfigurations = [
+		...itemConfigurations,
+		newItemConfiguration as ItemConfiguration
+	]
+
 	return account
+}
+
+function processListResourceObject(document: Record<string, unknown>): void {
+	itemConfigurations = mergeUniqueResources(
+		itemConfigurations,
+		document["item_configurations"] as ItemConfiguration[]
+	)
 }
 
 let existingCurrencies = $derived(currencies.filter(
@@ -73,6 +103,9 @@ let existingCurrencies = $derived(currencies.filter(
 		"updated_at",
 		"deleted_at"
 	]}
+	additionalListParameters={[
+		[ "relationship", "item_configurations" ]
+	]}
 	dependencies={[ existingCurrencies ]}
 	dependencyInfos={[
 		{
@@ -81,11 +114,19 @@ let existingCurrencies = $derived(currencies.filter(
 			"resourceKey": "currencies",
 			"getResources": () => currencies,
 			"setResources": newResources => { currencies = newResources as Currency[] }
+		},
+		{
+			"partialPath": "/api/v2/item_details",
+			"mainSortCriterion": "name",
+			"resourceKey": "item_details",
+			"getResources": () => itemDetails,
+			"setResources": newResources => { itemDetails = newResources as ItemDetail[] }
 		}
 	]}
 	{deriveID}
 	{makeNewResourceObject}
-	{processCreatedResourceObject}>
+	{processCreatedResourceObject}
+	{processListResourceObject}>
 	{#snippet general_description()}
 		<TextContainer>
 			<ElementalParagraph>
@@ -103,10 +144,12 @@ let existingCurrencies = $derived(currencies.filter(
 	{#snippet form({ IDPrefix, isConnecting, errors, onsubmit, button_group })}
 		<BasicForm
 			currencies={existingCurrencies}
+			{itemDetails}
 			bind:currencyID={currencyID}
 			bind:name={name}
 			bind:description={description}
 			bind:kind={kind}
+			bind:configuration={configuration}
 			{isConnecting}
 			{IDPrefix}
 			{errors}
@@ -132,10 +175,12 @@ let existingCurrencies = $derived(currencies.filter(
 		{#each resources as entity, i((entity as Account).id)}
 			<Card
 				{currencies}
+				{itemDetails}
 				bind:data={
 					() => entity as Account,
 					updatedResource => updateResource(updatedResource, i)
 				}
+				bind:subdata={itemConfigurations}
 				remove={removeResource}/>
 		{/each}
 	{/snippet}
