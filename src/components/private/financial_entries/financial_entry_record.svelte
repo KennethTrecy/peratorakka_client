@@ -71,6 +71,14 @@ let transactedAt = $state(data.transacted_at.slice(0, "YYYY-MM-DD".length))
 let remarks = $state(data.remarks)
 let atoms = $state<FinancialEntryAtomInput[]>([])
 
+function refresh(): string {
+	modifierID = `${data.modifier_id}`
+	transactedAt = data.transacted_at.slice(0, "YYYY-MM-DD".length)
+	remarks = data.remarks
+
+	return ""
+}
+
 const forceDisabledFields: (keyof FinancialEntry)[] = [
 	"modifier_id"
 ]
@@ -431,6 +439,7 @@ let updateErrors = $derived(restorableItemOptions.updateErrors)
 						<EditActionCardButtonPair
 							disabled={isConnecting}
 							{cancelEdit}/>
+						{refresh()}
 					{/snippet}
 				</BasicForm>
 			{/snippet}
