@@ -91,7 +91,10 @@ function makeNewResourceObject(): Record<string, unknown> {
 
 function processCreatedResourceObject(document: Record<string, unknown>): unknown {
 	remarks = ""
-	atoms = []
+	atoms = atoms.map(atom => ({
+		...atom,
+		"numerical_value": "0"
+	}))
 
 	const {
 		financial_entry,
