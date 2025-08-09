@@ -18,4 +18,14 @@ let { tag, children }: {
 	--md-sys-color-primary: var(--input-color);
 	color: var(--input-color);
 }
+
+fieldset {
+	display: flex;
+	flex-flow: row wrap;
+	gap: 0.5rem;
+
+	> .input-field {
+		flex: 1 0 100%;
+	}
+}
 </style>
