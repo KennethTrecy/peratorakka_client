@@ -8,7 +8,10 @@ import type {
 	ModifierAtom,
 	RestorableEntity
 } from "+/entity"
-import type { acceptableFinancialEntryInputMethods } from "#/component"
+import type {
+	acceptableFinancialEntryInputMethods,
+	compoundFinancialEntryInputMethods
+} from "#/component"
 
 export type ItemStatus =
 	| "reading"
@@ -146,6 +149,9 @@ export interface SimplifiedItemCalculation extends SimplifiedCalculation {
 }
 
 export type FinancialEntryAtomInputMethod = typeof acceptableFinancialEntryInputMethods[number]
+
+export type CompoundFinancialEntryAtomInputMethod
+	= typeof compoundFinancialEntryInputMethods[number]
 
 export interface CompleteFinancialEntryAtomInput {
 	modifier_atom: ModifierAtom
