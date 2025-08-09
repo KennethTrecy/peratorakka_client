@@ -141,22 +141,8 @@ let allowedRealAdjustedSummaryCalculations = $derived(realAdjustedSummaryCalcula
 			"creditAmount": shouldDebitResolvedAmount ? "" : shownAmount
 		} as SimplifiedSummaryCalculation
 	}
-).filter<SimplifiedSummaryCalculation>(calculation => !!calculation).sort((left, right) => {
-	const leftAccountKindImportance = ACCOUNT_KIND_AGGREGATED_LIST_PRIOITY[left.account.kind]
-	const rightAccountKindImportance = ACCOUNT_KIND_AGGREGATED_LIST_PRIOITY[right.account.kind]
-	if (leftAccountKindImportance < rightAccountKindImportance) return -1
-	if (leftAccountKindImportance > rightAccountKindImportance) return 1
-
-	const leftAccountName = left.account.name
-	const rightAccountName = right.account.name
-	const lastName = leftAccountName.split(" ")[leftAccountName.split(" ").length - 1]
-	const rightLastName = rightAccountName.split(" ")[rightAccountName.split(" ").length - 1]
-	const lastNameComparison = lastName.localeCompare(rightLastName)
-
-	return lastNameComparison !== 0
-		? lastNameComparison
-		: left.account.name.localeCompare(right.account.name)
-}))
+).filter<SimplifiedSummaryCalculation>(calculation => !!calculation)
+.sort((left, right) => sortAccounts(left.account, right.account)))
 let allowedRealUnadjustedSummaryCalculations = $derived(realUnadjustedSummaryCalculations.map(
 	calculation => {
 		const frozenAccountIndex = allowedFrozenAccounts.findIndex(
@@ -217,22 +203,8 @@ let allowedRealUnadjustedSummaryCalculations = $derived(realUnadjustedSummaryCal
 			"creditAmount": shouldDebitResolvedAmount ? "" : shownAmount
 		} as SimplifiedSummaryCalculation
 	}
-).filter<SimplifiedSummaryCalculation>(calculation => !!calculation).sort((left, right) => {
-	const leftAccountKindImportance = ACCOUNT_KIND_AGGREGATED_LIST_PRIOITY[left.account.kind]
-	const rightAccountKindImportance = ACCOUNT_KIND_AGGREGATED_LIST_PRIOITY[right.account.kind]
-	if (leftAccountKindImportance < rightAccountKindImportance) return -1
-	if (leftAccountKindImportance > rightAccountKindImportance) return 1
-
-	const leftAccountName = left.account.name
-	const rightAccountName = right.account.name
-	const lastName = leftAccountName.split(" ")[leftAccountName.split(" ").length - 1]
-	const rightLastName = rightAccountName.split(" ")[rightAccountName.split(" ").length - 1]
-	const lastNameComparison = lastName.localeCompare(rightLastName)
-
-	return lastNameComparison !== 0
-		? lastNameComparison
-		: left.account.name.localeCompare(right.account.name)
-}))
+).filter<SimplifiedSummaryCalculation>(calculation => !!calculation)
+.sort((left, right) => sortAccounts(left.account, right.account)))
 let allowedRealFlowCalculations = $derived(realFlowCalculations.map(
 	calculation => {
 		const frozenAccountIndex = allowedFrozenAccounts.findIndex(
@@ -282,22 +254,8 @@ let allowedRealFlowCalculations = $derived(realFlowCalculations.map(
 			"amount": shownAmount
 		} as SimplifiedFlowCalculation
 	}
-).filter<SimplifiedFlowCalculation>(calculation => !!calculation).sort((left, right) => {
-	const leftAccountKindImportance = ACCOUNT_KIND_AGGREGATED_LIST_PRIOITY[left.account.kind]
-	const rightAccountKindImportance = ACCOUNT_KIND_AGGREGATED_LIST_PRIOITY[right.account.kind]
-	if (leftAccountKindImportance < rightAccountKindImportance) return -1
-	if (leftAccountKindImportance > rightAccountKindImportance) return 1
-
-	const leftAccountName = left.account.name
-	const rightAccountName = right.account.name
-	const lastName = leftAccountName.split(" ")[leftAccountName.split(" ").length - 1]
-	const rightLastName = rightAccountName.split(" ")[rightAccountName.split(" ").length - 1]
-	const lastNameComparison = lastName.localeCompare(rightLastName)
-
-	return lastNameComparison !== 0
-		? lastNameComparison
-		: left.account.name.localeCompare(right.account.name)
-}))
+).filter<SimplifiedFlowCalculation>(calculation => !!calculation)
+.sort((left, right) => sortAccounts(left.account, right.account)))
 let allowedRealOpenedSummaryCalculations = $derived(realAdjustedSummaryCalculations.map(
 	calculation => {
 		const frozenAccountIndex = allowedFrozenAccounts.findIndex(
@@ -355,23 +313,25 @@ let balancedSummaryCalculations = $derived(mergeUniqueElements(
 	allowedRealUnadjustedSummaryCalculations,
 	allowedRealOpenedSummaryCalculations, // Use opened summary calculation if unchanged
 	calculation => calculation.account.id
-).sort((left, right) => {
-	const leftAccountKindImportance = ACCOUNT_KIND_AGGREGATED_LIST_PRIOITY[left.account.kind]
-	const rightAccountKindImportance = ACCOUNT_KIND_AGGREGATED_LIST_PRIOITY[right.account.kind]
+).sort((left, right) => sortAccounts(left.account, right.account)))
+let hasAcceptableCashFlowActivities = $derived(cashFlowActivities.length > 0)
+
+function sortAccounts(left: Account, right: Account) {
+	const leftAccountKindImportance = ACCOUNT_KIND_AGGREGATED_LIST_PRIOITY[left.kind]
+	const rightAccountKindImportance = ACCOUNT_KIND_AGGREGATED_LIST_PRIOITY[right.kind]
 	if (leftAccountKindImportance < rightAccountKindImportance) return -1
 	if (leftAccountKindImportance > rightAccountKindImportance) return 1
 
-	const leftAccountName = left.account.name
-	const rightAccountName = right.account.name
+	const leftAccountName = left.name
+	const rightAccountName = right.name
 	const lastName = leftAccountName.split(" ")[leftAccountName.split(" ").length - 1]
 	const rightLastName = rightAccountName.split(" ")[rightAccountName.split(" ").length - 1]
 	const lastNameComparison = lastName.localeCompare(rightLastName)
 
 	return lastNameComparison !== 0
 		? lastNameComparison
-		: left.account.name.localeCompare(right.account.name)
-}))
-let hasAcceptableCashFlowActivities = $derived(cashFlowActivities.length > 0)
+		: left.name.localeCompare(right.name)
+}
 </script>
 
 <GridCell kind="pair">
