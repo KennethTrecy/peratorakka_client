@@ -190,6 +190,12 @@ export interface RealFlowCalculation extends Entity {
 	net_amount: string
 }
 
+export interface ItemCalculation extends Entity {
+	frozen_account_hash: string
+	remaining_cost: string
+	remaining_quantity: string
+}
+
 export interface Collection extends RestorableEntity {
 	name: string
 	description: string
