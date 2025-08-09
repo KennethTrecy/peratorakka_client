@@ -163,6 +163,12 @@ export const FINANCIAL_ENTRY_INPUT_TOTAL_AND_QUANTITY = "total_and_quantity"
 export const FINANCIAL_ENTRY_INPUT_PRICE_AND_QUANTITY = "price_and_quantity"
 export const FINANCIAL_ENTRY_INPUT_PRICE_AND_TOTAL = "price_and_total"
 
+export const compoundFinancialEntryInputMethods = [
+	FINANCIAL_ENTRY_INPUT_TOTAL_AND_QUANTITY,
+	FINANCIAL_ENTRY_INPUT_PRICE_AND_QUANTITY,
+	FINANCIAL_ENTRY_INPUT_PRICE_AND_TOTAL
+] as const
+
 export const acceptableFinancialEntryInputMethods = [
 	FINANCIAL_ENTRY_INPUT_TOTAL_ONLY,
 	FINANCIAL_ENTRY_INPUT_PRICE_ONLY,
