@@ -1,11 +1,11 @@
 import type { ContextBundle, ResourceDependencyInfo, HighResourceDependencyInfo } from "+/component"
-import type { GeneralError } from "+/rest"
+import type { GeneralError, SearchMode } from "+/rest"
 import type { Readable } from "svelte/store"
 import type { RestorableEntity } from "+/entity"
 
 import { get, writable, derived } from "svelte/store"
 
-import { SEARCH_WITH_DELETED, MAXIMUM_PAGINATED_LIST_LENGTH } from "#/rest"
+import { MAXIMUM_PAGINATED_LIST_LENGTH } from "#/rest"
 
 import { isHighResourceDependencyInfo } from "+/component"
 import makeJSONRequester from "$/rest/make_json_requester"
@@ -15,6 +15,7 @@ import mergeUniqueElements from "$/utility/merge_unique_elements"
 export default async function loadAllDependencies<T extends RestorableEntity>(
 	globalContext: ContextBundle,
 	dependencyInfos: (ResourceDependencyInfo<T>|HighResourceDependencyInfo<T>)[],
+	searchMode: SearchMode,
 	actions: {
 		updateProgressRate: (rate: number) => void
 		updateErrors: (errors: GeneralError[]) => void
@@ -28,7 +29,7 @@ export default async function loadAllDependencies<T extends RestorableEntity>(
 	for(const dependencyInfo of dependencyInfos) {
 		const partialDependencyPath = dependencyInfo.partialPath
 		const dependencyPathParameters = [
-			[ "filter[search_mode]", SEARCH_WITH_DELETED ],
+			[ "filter[search_mode]", searchMode ],
 			[ "sort[0][0]", dependencyInfo.mainSortCriterion ],
 			[ "sort[0][1]", "ascending" ],
 			[ "page[limit]", MAXIMUM_PAGINATED_LIST_LENGTH ]

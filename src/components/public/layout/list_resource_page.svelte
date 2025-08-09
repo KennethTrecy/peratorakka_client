@@ -9,7 +9,12 @@ import { onMount, getContext, untrack } from "svelte"
 import { afterNavigate, beforeNavigate, goto } from "$app/navigation"
 
 import { GLOBAL_CONTEXT } from "#/contexts"
-import { SEARCH_NORMALLY, ASCENDING_ORDER, MAXIMUM_PAGINATED_LIST_LENGTH } from "#/rest"
+import {
+	SEARCH_NORMALLY,
+	SEARCH_ONLY_DELETED,
+	ASCENDING_ORDER,
+	MAXIMUM_PAGINATED_LIST_LENGTH
+} from "#/rest"
 
 import assertAuthentication from "$/page_requirement/assert_authentication"
 import loadAllDependencies from "$/rest/load_all_dependencies"
@@ -170,7 +175,7 @@ async function loadList() {
 	isRequestingDependencies = true
 
 	if (dependencyInfos.length > 0) {
-		await loadAllDependencies(globalContext, dependencyInfos, {
+		await loadAllDependencies(globalContext, dependencyInfos, SEARCH_NORMALLY, {
 			"updateProgressRate": newProgressRate => { progressRate = newProgressRate },
 			"updateErrors": newErrors => { dependencyErrors.set(newErrors) }
 		})
@@ -181,6 +186,13 @@ async function loadList() {
 	isRequestingDependencies = false
 
 	await reloadResources()
+
+	if (dependencyInfos.length > 0) {
+		await loadAllDependencies(globalContext, dependencyInfos, SEARCH_ONLY_DELETED, {
+			"updateProgressRate": () => {},
+			"updateErrors": newErrors => { dependencyErrors.set(newErrors) }
+		})
+	}
 }
 
 onMount(loadList)
