@@ -24,8 +24,9 @@ fieldset {
 	flex-flow: row wrap;
 	gap: 0.5rem;
 
-	> .input-field {
+	> :global(.input-field) {
 		flex: 1 0 100%;
+		width: 100%;
 	}
 }
 </style>
