@@ -140,6 +140,11 @@ export interface SimplifiedFlowCalculation extends SimplifiedCalculation {
 	amount: string
 }
 
+export interface SimplifiedItemCalculation extends SimplifiedCalculation {
+	totalRemainingCost: string
+	totalRemainingQuantity: string
+}
+
 export type FinancialEntryAtomInputMethod = typeof acceptableFinancialEntryInputMethods[number]
 
 export interface CompleteFinancialEntryAtomInput {
