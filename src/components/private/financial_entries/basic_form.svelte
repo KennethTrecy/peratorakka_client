@@ -10,9 +10,13 @@ import type {
 	FinancialEntryAtomInput
 } from "+/entity"
 
+import { untrack } from "svelte"
+
 import { UNKNOWN_MODIFIER } from "#/component"
+import { RECORD_MODIFIER_ACTION } from "#/entity"
 
 import transformModifier from "$/form/choice_info_transformer/transform_modifier"
+import transformString from "$/form/choice_info_transformer/transform_string"
 
 import AtomManager from "%/financial_entries/basic_form/atom_manager.svelte"
 import ChoiceListField from "$/form/choice_list_field.svelte"
@@ -53,19 +57,44 @@ let {
 	} ]>
 } = $props()
 
+let currentAction = $state(RECORD_MODIFIER_ACTION)
+let oldAction = $state(RECORD_MODIFIER_ACTION)
 let availableModifiers = $derived(modifiers.filter(modifier => modifier.deleted_at === null))
-let modifier = $derived(modifiers.find(
+let availableModifierActions = $derived(Array.from(new Set(
+	availableModifiers.map(modifier => modifier.action)
+)))
+let filteredModifiers = $derived(availableModifiers.filter(
+	modifier => modifier.action === currentAction
+))
+let modifier = $derived(filteredModifiers.find(
 	modifier => `${modifier.id}` === modifierID
 ) ?? UNKNOWN_MODIFIER)
+
+$effect(() => {
+	if (oldAction !== modifier.action && filteredModifiers.length > 0) {
+		untrack(() => {
+			oldAction = currentAction
+			modifierID = `${filteredModifiers[0].id}`
+		})
+	}
+})
 </script>
 
 {#snippet modifierField()}
+	<ChoiceListField
+		fieldName="Action"
+		disabled={isConnecting || forceDisabledFields.includes("modifier_id")}
+		bind:value={currentAction}
+		rawChoices={availableModifierActions}
+		choiceConverter={transformString}
+		{IDPrefix}
+		{errors}/>
 	<ChoiceListField
 		fieldName="Modifier"
 		errorFieldID="modifier_id"
 		disabled={isConnecting || forceDisabledFields.includes("modifier_id")}
 		bind:value={modifierID}
-		rawChoices={availableModifiers}
+		rawChoices={filteredModifiers}
 		choiceConverter={transformModifier}
 		{IDPrefix}
 		{errors}/>
