@@ -177,3 +177,21 @@ export const acceptableFinancialEntryInputMethods = [
 	FINANCIAL_ENTRY_INPUT_PRICE_AND_QUANTITY,
 	FINANCIAL_ENTRY_INPUT_PRICE_AND_TOTAL
 ] as const
+
+export const CENSORSHIP_OBSECURED_ACCOUNT_ONLY = "censored_obsecured_account_only"
+export const CENSORSHIP_OBSECURED_AMOUNT_ONLY = "censored_obsecured_amount_only"
+export const CENSORSHIP_OBSECURED_QUANTITY_ONLY = "censored_obsecured_quantity_only"
+export const CENSORSHIP_OBSECURED_AFFECTED_NUMBERS = "censored_obsecured_affected_numbers"
+export const CENSORSHIP_OBSECURED_ACCOUNT_AND_AFFECTED_NUMBERS
+	= "censored_obsecured_account_and_affected_numbers"
+export const CENSORSHIP_HIDE_ACCOUNT_AND_AFFECTED_NUMBERS
+	= "censored_hide_account_and_affected_numbers"
+
+export const censorshipVariants = [
+	CENSORSHIP_OBSECURED_ACCOUNT_ONLY,
+	CENSORSHIP_OBSECURED_AMOUNT_ONLY,
+	CENSORSHIP_OBSECURED_QUANTITY_ONLY,
+	CENSORSHIP_OBSECURED_AFFECTED_NUMBERS,
+	CENSORSHIP_OBSECURED_ACCOUNT_AND_AFFECTED_NUMBERS,
+	CENSORSHIP_HIDE_ACCOUNT_AND_AFFECTED_NUMBERS
+] as const
