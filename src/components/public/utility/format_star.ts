@@ -17,19 +17,24 @@ export default function formatStar(
 	star: Star
 ): string {
 	const [ isNegative, cleanAmount ] = cleanValue(star.display_value)
+	let formattedNumber = ""
 
 	if (outputFormat === CURRENCY_FORMULA_OUTPUT_FORMAT) {
-		return dashValue(isNegative, makeFormattedAmount(
+		formattedNumber = dashValue(isNegative, makeFormattedAmount(
 			associatedPrecisionFormat ?? undefined,
 			currency ?? undefined,
 			cleanAmount
 		))
 	} else if (outputFormat === PERCENTAGE_FORMULA_OUTPUT_FORMAT) {
-		return dashValue(isNegative, `${makeRawFormattedNumber(
+		formattedNumber = dashValue(isNegative, `${makeRawFormattedNumber(
 			associatedPrecisionFormat ?? undefined,
 			cleanAmount
 		)}%`)
+	} else {
+		formattedNumber = dashValue(isNegative, cleanAmount)
 	}
 
-	return dashValue(isNegative, cleanAmount)
+	formattedNumber = formattedNumber.replaceAll(/-+$/g, "")
+
+	return formattedNumber
 }
