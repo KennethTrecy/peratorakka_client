@@ -94,7 +94,7 @@ let reducedConstellations = $derived(constellations.filter(
 		{refresh}>
 		{#snippet resource_info()}
 			<ShortParagraph>
-				{name} for {timeTags[constellation.stars.length - 1]}. {#if hasMultipleTimes}Previous values can be seen below.{/if}
+				{constellationName} of {name} for {timeTags[constellation.stars.length - 1]}. {#if hasMultipleTimes}Previous values can be seen below.{/if}
 			</ShortParagraph>
 			{#if hasMultipleTimes}
 				<UnitDataTable>
