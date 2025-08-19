@@ -28,7 +28,7 @@ let resolvedScope = $derived<"row"|"col">(scope === "column" ? "col" : "row")
 let role = $derived(scope === "column" ? "columnheader" : null)
 
 let element = $state<HTMLElement>()
-let title = $derived(element?.innerHTML ?? "Loading...")
+let title = $derived((element?.innerHTML ?? "Loading...").replace("<!---->", ""))
 </script>
 
 <th
