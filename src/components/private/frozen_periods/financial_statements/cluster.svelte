@@ -1,6 +1,7 @@
 <script lang="ts">
 import type { FinancialStatementGroup, ExchangeRateInfo } from "+/rest"
 import type {
+	CensoredAccount,
 	SimplifiedSummaryCalculation,
 	SimplifiedFlowCalculation,
 	SimplifiedItemCalculation
@@ -23,10 +24,15 @@ import { ANY_CURRENCY } from "#/component"
 import { ACCOUNT_KIND_AGGREGATED_LIST_PRIOITY, normalDebitAccountKinds } from "#/entity"
 
 import { addAmount, subtractAmount } from "!/index"
+import censorFlowCalculations from "%/frozen_periods/financial_statements/censor_flow_calculations"
+import censorItemCalculations from "%/frozen_periods/financial_statements/censor_item_calculations"
+import censorStatementGroup from "%/frozen_periods/financial_statements/censor_statement_group"
+import censorSummaryCalculations
+	from "%/frozen_periods/financial_statements/censor_summary_calculations"
+import formatQuantity from "$/utility/format_quantity"
 import makeShownAmount from "$/utility/make_shown_amount"
 import makeCleanShownAmount from "$/utility/make_clean_shown_amount"
 import mergeUniqueElements from "$/utility/merge_unique_elements"
-import formatQuantity from "$/utility/format_quantity"
 
 import BalanceSheet from "%/frozen_periods/financial_statements/balance_sheet.svelte"
 import CashFlowStatement from "%/frozen_periods/financial_statements/cash_flow_statement.svelte"
@@ -45,6 +51,7 @@ let {
 	currencies,
 	itemDetails,
 	cashFlowActivities,
+	censoredAccounts,
 	accounts,
 	itemConfigurations,
 	frozenAccounts,
@@ -60,6 +67,7 @@ let {
 	currencies: Currency[]
 	itemDetails: ItemDetail[]
 	cashFlowActivities: CashFlowActivity[]
+	censoredAccounts: CensoredAccount[]
 	accounts: Account[]
 	itemConfigurations: ItemConfiguration[]
 	frozenAccounts: FrozenAccount[]
@@ -80,7 +88,6 @@ let allowedAccountIDs = $derived(allowedAccounts.map(account => account.id))
 let allowedFrozenAccounts = $derived(frozenAccounts.filter(
 	account => allowedAccountIDs.indexOf(account.account_id) > -1)
 )
-
 let statementExchangeRate = $derived((
 	mustShowAnyCurrency
 		? resolvedExchangeRates[viewedCurrency.id]
@@ -96,6 +103,7 @@ let statementExchangeRate = $derived((
 	},
 	"updated_at": (new Date()).toDateString()
 })
+
 let emptyAmount = $derived(makeShownAmount(
 	precisionFormats,
 	currencies,
@@ -104,8 +112,9 @@ let emptyAmount = $derived(makeShownAmount(
 	viewedCurrency,
 	"0"
 ))
-let allowedRealAdjustedSummaryCalculations = $derived(realAdjustedSummaryCalculations.map(
-	calculation => {
+let allowedRealAdjustedSummaryCalculations = $derived(censorSummaryCalculations(
+	censoredAccounts,
+	realAdjustedSummaryCalculations.map(calculation => {
 		const frozenAccountIndex = allowedFrozenAccounts.findIndex(
 			account => account.hash === calculation.frozen_account_hash
 		)
@@ -155,11 +164,13 @@ let allowedRealAdjustedSummaryCalculations = $derived(realAdjustedSummaryCalcula
 			"debitAmount": shouldDebitResolvedAmount ? shownAmount : "",
 			"creditAmount": shouldDebitResolvedAmount ? "" : shownAmount
 		} as SimplifiedSummaryCalculation
-	}
-).filter<SimplifiedSummaryCalculation>(calculation => !!calculation)
-.sort((left, right) => sortAccounts(left.account, right.account)))
-let allowedRealUnadjustedSummaryCalculations = $derived(realUnadjustedSummaryCalculations.map(
-	calculation => {
+	})
+	.filter<SimplifiedSummaryCalculation>(calculation => !!calculation)
+	.sort((left, right) => sortAccounts(left.account, right.account))
+))
+let allowedRealUnadjustedSummaryCalculations = $derived(censorSummaryCalculations(
+	censoredAccounts,
+	realUnadjustedSummaryCalculations.map(calculation => {
 		const frozenAccountIndex = allowedFrozenAccounts.findIndex(
 			account => account.hash === calculation.frozen_account_hash
 		)
@@ -217,10 +228,11 @@ let allowedRealUnadjustedSummaryCalculations = $derived(realUnadjustedSummaryCal
 			"debitAmount": shouldDebitResolvedAmount ? shownAmount : "",
 			"creditAmount": shouldDebitResolvedAmount ? "" : shownAmount
 		} as SimplifiedSummaryCalculation
-	}
-).filter<SimplifiedSummaryCalculation>(calculation => !!calculation)
-.sort((left, right) => sortAccounts(left.account, right.account)))
-let allowedRealFlowCalculations = $derived(realFlowCalculations.map(
+	})
+	.filter<SimplifiedSummaryCalculation>(calculation => !!calculation)
+	.sort((left, right) => sortAccounts(left.account, right.account))
+))
+let allowedUncensoredRealFlowCalculations = $derived(realFlowCalculations.map(
 	calculation => {
 		const frozenAccountIndex = allowedFrozenAccounts.findIndex(
 			account => account.hash === calculation.frozen_account_hash
@@ -271,8 +283,13 @@ let allowedRealFlowCalculations = $derived(realFlowCalculations.map(
 	}
 ).filter<SimplifiedFlowCalculation>(calculation => !!calculation)
 .sort((left, right) => sortAccounts(left.account, right.account)))
-let allowedItemCalculations = $derived(itemCalculations.map(
-	calculation => {
+let allowedRealFlowCalculations = $derived(censorFlowCalculations(
+	censoredAccounts,
+	allowedUncensoredRealFlowCalculations
+))
+let allowedItemCalculations = $derived(censorItemCalculations(
+	censoredAccounts,
+	itemCalculations.map(calculation => {
 		const frozenAccountIndex = allowedFrozenAccounts.findIndex(
 			account => account.hash === calculation.frozen_account_hash
 		)
@@ -293,87 +310,90 @@ let allowedItemCalculations = $derived(itemCalculations.map(
 			"totalRemainingCost": calculation.remaining_cost,
 			"totalRemainingQuantity": calculation.remaining_quantity
 		} as SimplifiedItemCalculation
-	}
-).filter<SimplifiedItemCalculation>(calculation => !!calculation)
-.reduce((summarizedItemCalculations, currentItemCalculation) => {
-	const index = summarizedItemCalculations.findIndex(summarizedItemCalculation => {
-		return summarizedItemCalculation.account.id === currentItemCalculation.account.id
 	})
+	.filter<SimplifiedItemCalculation>(calculation => !!calculation)
+	.reduce((summarizedItemCalculations, currentItemCalculation) => {
+		const index = summarizedItemCalculations.findIndex(summarizedItemCalculation => {
+			return summarizedItemCalculation.account.id === currentItemCalculation.account.id
+		})
 
-	if (index === -1) {
-		return [
-			...summarizedItemCalculations,
-			currentItemCalculation
-		]
-	} else {
-		const newCalculation = summarizedItemCalculations[index]
-		newCalculation.totalRemainingCost = addAmount(
-			newCalculation.totalRemainingCost,
-			currentItemCalculation.totalRemainingCost
+		if (index === -1) {
+			return [
+				...summarizedItemCalculations,
+				currentItemCalculation
+			]
+		} else {
+			const newCalculation = summarizedItemCalculations[index]
+			newCalculation.totalRemainingCost = addAmount(
+				newCalculation.totalRemainingCost,
+				currentItemCalculation.totalRemainingCost
+			)
+			newCalculation.totalRemainingQuantity = addAmount(
+				newCalculation.totalRemainingQuantity,
+				currentItemCalculation.totalRemainingQuantity
+			)
+			summarizedItemCalculations[index] = newCalculation
+		}
+
+		return summarizedItemCalculations
+	}, [] as SimplifiedItemCalculation[])
+	.map(calculation => {
+		const account = calculation.account
+
+		const itemConfigurationIndex = itemConfigurations.findIndex(itemConfiguration => {
+			return itemConfiguration.account_id === account.id
+		})
+
+		if (itemConfigurationIndex === -1) return null
+
+		const itemConfiguration = itemConfigurations[itemConfigurationIndex]
+
+		const shownItemDetail = itemDetails.find(
+			itemDetail => itemDetail.id === itemConfiguration.item_detail_id
 		)
-		newCalculation.totalRemainingQuantity = addAmount(
-			newCalculation.totalRemainingQuantity,
-			currentItemCalculation.totalRemainingQuantity
+
+		const quantityPrecisionFormat = precisionFormats.find(
+			precisionFormat => precisionFormat.id === shownItemDetail?.precision_format_id
 		)
-		summarizedItemCalculations[index] = newCalculation
-	}
 
-	return summarizedItemCalculations
-}, [] as SimplifiedItemCalculation[])
-.map(calculation => {
-	const account = calculation.account
+		const exchangeRate = resolvedExchangeRates[account.currency_id] ?? {
+			"source": {
+				"currency_id": account.currency_id,
+				"value": "1"
+			},
+			"destination": {
+				"currency_id": account.currency_id,
+				"value": "1"
+			},
+			"updated_at": (new Date()).toDateString()
+		}
+		const shownAmount = makeShownAmount(
+			precisionFormats,
+			currencies,
+			exchangeRate,
+			statementCurrency,
+			viewedCurrency,
+			calculation.totalRemainingCost
+		)
 
-	const itemConfigurationIndex = itemConfigurations.findIndex(itemConfiguration => {
-		return itemConfiguration.account_id === account.id
+		const shownQuantity = formatQuantity(
+			quantityPrecisionFormat,
+			shownItemDetail,
+			calculation.totalRemainingQuantity
+		)
+
+		return {
+			account,
+			"totalRemainingCost": shownAmount,
+			"totalRemainingQuantity": shownQuantity
+		} as SimplifiedItemCalculation
 	})
-
-	if (itemConfigurationIndex === -1) return null
-
-	const itemConfiguration = itemConfigurations[itemConfigurationIndex]
-
-	const shownItemDetail = itemDetails.find(
-		itemDetail => itemDetail.id === itemConfiguration.item_detail_id
-	)
-
-	const quantityPrecisionFormat = precisionFormats.find(
-		precisionFormat => precisionFormat.id === shownItemDetail?.precision_format_id
-	)
-
-	const exchangeRate = resolvedExchangeRates[account.currency_id] ?? {
-		"source": {
-			"currency_id": account.currency_id,
-			"value": "1"
-		},
-		"destination": {
-			"currency_id": account.currency_id,
-			"value": "1"
-		},
-		"updated_at": (new Date()).toDateString()
-	}
-	const shownAmount = makeShownAmount(
-		precisionFormats,
-		currencies,
-		exchangeRate,
-		statementCurrency,
-		viewedCurrency,
-		calculation.totalRemainingCost
-	)
-
-	const shownQuantity = formatQuantity(
-		quantityPrecisionFormat,
-		shownItemDetail,
-		calculation.totalRemainingQuantity
-	)
-
-	return {
-		account,
-		"totalRemainingCost": shownAmount,
-		"totalRemainingQuantity": shownQuantity
-	} as SimplifiedItemCalculation
-}).filter<SimplifiedItemCalculation>(calculation => !!calculation)
-.sort((left, right) => sortAccounts(left.account, right.account)))
-let allowedRealOpenedSummaryCalculations = $derived(realAdjustedSummaryCalculations.map(
-	calculation => {
+	.filter<SimplifiedItemCalculation>(calculation => !!calculation)
+	.sort((left, right) => sortAccounts(left.account, right.account))
+))
+let allowedRealOpenedSummaryCalculations = $derived(censorSummaryCalculations(
+	censoredAccounts,
+	realAdjustedSummaryCalculations.map(calculation => {
 		const frozenAccountIndex = allowedFrozenAccounts.findIndex(
 			account => account.hash === calculation.frozen_account_hash
 		)
@@ -423,14 +443,20 @@ let allowedRealOpenedSummaryCalculations = $derived(realAdjustedSummaryCalculati
 			"debitAmount": shouldDebitResolvedAmount ? shownAmount : "",
 			"creditAmount": shouldDebitResolvedAmount ? "" : shownAmount
 		} as SimplifiedSummaryCalculation
-	}
-).filter<SimplifiedSummaryCalculation>(calculation => !!calculation))
+	})
+	.filter<SimplifiedSummaryCalculation>(calculation => !!calculation)
+))
 let balancedSummaryCalculations = $derived(mergeUniqueElements(
 	allowedRealUnadjustedSummaryCalculations,
 	allowedRealOpenedSummaryCalculations, // Use opened summary calculation if unchanged
 	calculation => calculation.account.id
 ).sort((left, right) => sortAccounts(left.account, right.account)))
 let hasAcceptableCashFlowActivities = $derived(cashFlowActivities.length > 0)
+let censoredStatement = $derived(censorStatementGroup(
+	censoredAccounts,
+	allowedUncensoredRealFlowCalculations,
+	statement
+))
 
 function sortAccounts(left: Account, right: Account) {
 	const leftAccountKindImportance = ACCOUNT_KIND_AGGREGATED_LIST_PRIOITY[left.kind]
@@ -453,7 +479,7 @@ function sortAccounts(left: Account, right: Account) {
 <GridCell kind="pair">
 	<Flex direction="column" mustPad={false}>
 		<BalanceSheet
-			{statement}
+			statement={censoredStatement}
 			{statementExchangeRate}
 			{statementCurrency}
 			{viewedCurrency}
@@ -466,7 +492,7 @@ function sortAccounts(left: Account, right: Account) {
 <GridCell kind="pair">
 	<Flex direction="column" mustPad={false}>
 		<IncomeStatement
-			{statement}
+			statement={censoredStatement}
 			{statementExchangeRate}
 			{statementCurrency}
 			{viewedCurrency}
@@ -480,7 +506,7 @@ function sortAccounts(left: Account, right: Account) {
 		<Flex direction="column" mustPad={false}>
 			{#if hasAcceptableCashFlowActivities}
 				<CashFlowStatement
-					{statement}
+					statement={censoredStatement}
 					{statementExchangeRate}
 					{statementCurrency}
 					{viewedCurrency}
@@ -507,7 +533,7 @@ function sortAccounts(left: Account, right: Account) {
 		<Flex direction="column" mustPad={false}>
 			{#if hasAcceptableCashFlowActivities}
 				<CashFlowStatement
-					{statement}
+					statement={censoredStatement}
 					{statementExchangeRate}
 					{statementCurrency}
 					{viewedCurrency}
@@ -529,7 +555,7 @@ function sortAccounts(left: Account, right: Account) {
 	<Flex direction="column" mustPad={false}>
 		<TrialBalance
 			kind="unadjusted"
-			{statement}
+			statement={censoredStatement}
 			{statementExchangeRate}
 			{statementCurrency}
 			{viewedCurrency}
@@ -543,7 +569,7 @@ function sortAccounts(left: Account, right: Account) {
 	<Flex direction="column" mustPad={false}>
 		<TrialBalance
 			kind="adjusted"
-			{statement}
+			statement={censoredStatement}
 			{statementExchangeRate}
 			{statementCurrency}
 			{viewedCurrency}
