@@ -1,5 +1,6 @@
 <script lang="ts">
 import type { Writable } from "svelte/store"
+import type { AutocolorsOptions, ColorsDescriptor } from "chartjs-plugin-autocolors"
 import type { PrecisionFormat, Currency, Formula, NumericalToolConfiguration } from "+/entity"
 import type {
 	GeneralError,
@@ -7,7 +8,6 @@ import type {
 	AcceptableConstellationKind,
 	Constellation
 } from "+/rest"
-import type { AutocolorsOptions } from "chartjs-plugin-autocolors"
 
 import autocolors from "chartjs-plugin-autocolors"
 import { Pie } from "svelte5-chartjs"
@@ -85,8 +85,10 @@ let constellationCollection = $derived(ACCEPTABLE_CONSTELLATION_KINDS.map(kind =
 	kind,
 	"group": constellationGroups[kind] ?? []
 })).filter(collection => collection.group.length > 0))
+
 let constellationInfo = $derived(constellationCollection.map(collection => {
 	const labels = collection.group.map(constellation => constellation.name)
+	let knownColors = {} as Record<string, ColorsDescriptor>
 	return {
 		"name": collection.kind,
 		"chartInfo": {
@@ -102,7 +104,16 @@ let constellationInfo = $derived(constellationCollection.map(collection => {
 			"animation": false,
 			"plugins": {
 				"autocolors": {
-					"mode": "data" as AutocolorsOptions["mode"]
+					"mode": "data" as AutocolorsOptions["mode"],
+					// @ts-ignore
+					"customize": context => {
+						const key = `color_${context.dataIndex}`
+						if (typeof knownColors[key] === "undefined") {
+							knownColors[key] = context.colors
+						}
+
+						return knownColors[key]
+					}
 				},
 				"tooltip": {
 					"callbacks": {
