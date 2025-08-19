@@ -19,7 +19,7 @@ export function makeFormattedAmount(
 	currency: Currency | undefined,
 	amount: string
 ): string {
-	return `${currency?.code ?? "---"} ${makeFormattedNumber(precisionFormat, amount)}`
+	return `${currency?.code ?? "---"} ${makeRawFormattedNumber(precisionFormat, amount)}`
 }
 
 export function makeFormattedQuantity(
@@ -27,19 +27,7 @@ export function makeFormattedQuantity(
 	itemDetail: ItemDetail | undefined,
 	amount: string
 ): string {
-	return `${makeFormattedNumber(precisionFormat, amount)} ${itemDetail?.unit ?? "---"}`
-}
-
-export function makeFormattedNumber(
-	precisionFormat: PrecisionFormat | undefined,
-	amount: string
-): string {
-	const emptyAmount = makeRawFormattedNumber(precisionFormat, "0")
-	const formattedAmount = makeRawFormattedNumber(precisionFormat, amount)
-
-	return emptyAmount === formattedAmount
-		? amount
-		: formattedAmount
+	return `${makeRawFormattedNumber(precisionFormat, amount)} ${itemDetail?.unit ?? "---"}`
 }
 
 export function makeRawFormattedNumber(
