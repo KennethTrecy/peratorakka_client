@@ -250,7 +250,8 @@ let debitAmounts = $derived(debitAtoms.reduce(
 				atom.item_detail_precision_format as PrecisionFormat,
 				atom.item_detail as ItemDetail,
 				atom.financial_entry_atom.kind,
-				atom.financial_entry_atom.numerical_value
+				atom.financial_entry_atom["@meta"]?.displayed_numerical_value
+					?? atom.financial_entry_atom.numerical_value
 			),
 			...(atom.cash_flow_activity ? [ "" ] : [])
 		] : (
@@ -262,7 +263,8 @@ let debitAmounts = $derived(debitAtoms.reduce(
 					atom.item_detail_precision_format as PrecisionFormat,
 					atom.item_detail as ItemDetail,
 					atom.financial_entry_atom.kind,
-					atom.financial_entry_atom.numerical_value
+					atom.financial_entry_atom["@meta"]?.displayed_numerical_value
+						?? atom.financial_entry_atom.numerical_value
 				)
 			] : resolvedNames[1]
 		))
@@ -283,7 +285,8 @@ let creditAmounts = $derived(creditAtoms.reduce(
 				atom.item_detail_precision_format as PrecisionFormat,
 				atom.item_detail as ItemDetail,
 				atom.financial_entry_atom.kind,
-				atom.financial_entry_atom.numerical_value
+				atom.financial_entry_atom["@meta"]?.displayed_numerical_value
+					?? atom.financial_entry_atom.numerical_value
 			),
 			...(atom.cash_flow_activity ? [ "" ] : [])
 		] : (
@@ -295,7 +298,8 @@ let creditAmounts = $derived(creditAtoms.reduce(
 					atom.item_detail_precision_format as PrecisionFormat,
 					atom.item_detail as ItemDetail,
 					atom.financial_entry_atom.kind,
-					atom.financial_entry_atom.numerical_value
+					atom.financial_entry_atom["@meta"]?.displayed_numerical_value
+						?? atom.financial_entry_atom.numerical_value
 				)
 			] : resolvedNames[1]
 		))
@@ -317,7 +321,10 @@ let restorableItemOptions = $derived(makeRestorableItemOptions(
 			subdata = subdata.map(atom => {
 				if (atom.financial_entry_id === data.id) {
 					return {
-						...atom,
+						"id": atom.id,
+						"financial_entry_id": atom.financial_entry_id,
+						"kind": atom.kind,
+						"modifier_atom_id": atom.modifier_atom_id,
 						"numerical_value": atoms.find(
 							completeAtom => completeAtom.id === atom.id
 						)?.numerical_value ?? atom.numerical_value
