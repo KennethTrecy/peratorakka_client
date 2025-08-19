@@ -158,7 +158,11 @@ export interface CompleteFinancialEntryAtom {
 	item_detail_precision_format: PrecisionFormat|null
 	currency: Currency
 	currency_precision_format: PrecisionFormat
-	financial_entry_atom: FinancialEntryAtom
+	financial_entry_atom: FinancialEntryAtom & {
+		"@meta"?: {
+			displayed_numerical_value: string
+		}
+	}
 }
 
 export interface FrozenPeriod extends Entity {
