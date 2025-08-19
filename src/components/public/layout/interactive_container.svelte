@@ -19,9 +19,6 @@ let { text, widget }: {
 </div>
 
 <style lang="scss">
-@use "sass:map";
-@use "@material/layout-grid/variables";
-
 .interactive_container {
 	$text_container_width: 70ch;
 	$gap: 1rem;
