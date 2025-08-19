@@ -10,6 +10,7 @@ import type {
 } from "+/entity"
 import type {
 	acceptableFinancialEntryInputMethods,
+	censorshipVariants,
 	compoundFinancialEntryInputMethods
 } from "#/component"
 
@@ -160,3 +161,7 @@ export interface CompleteFinancialEntryAtomInput {
 	method: FinancialEntryAtomInputMethod
 	input: FinancialEntryAtomInput[]
 }
+
+export type CensorshipVariant = typeof censorshipVariants[number]
+
+export type CensoredAccount = [ Account, CensorshipVariant ]
