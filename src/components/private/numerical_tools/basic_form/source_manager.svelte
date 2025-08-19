@@ -54,7 +54,7 @@ let sourceCount = $derived(sources.length)
 	</ShortParagraph>
 {/if}
 
-{#each sources as source, index}
+{#each sources as source, index (`${index}_${source.type}_${JSON.stringify(source)}`)}
 	<SourceContainer
 		{isConnecting}
 		index={index}

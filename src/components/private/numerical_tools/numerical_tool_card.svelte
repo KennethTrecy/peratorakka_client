@@ -202,17 +202,17 @@ function isAcceptableExchangeRateBasis(data: string): data is AcceptableExchange
 		</BasicForm>
 	{/snippet}
 	{#snippet delete_confirmation_message()}
-		<ShortParagraph >
+		<ShortParagraph>
 			Deleting this numerical tool may prevent related data from being shown temporarily.
 		</ShortParagraph>
 	{/snippet}
 	{#snippet restore_confirmation_message()}
-		<ShortParagraph >
+		<ShortParagraph>
 			Restoring this numerical tool may show related data.
 		</ShortParagraph>
 	{/snippet}
 	{#snippet force_delete_confirmation_message()}
-		<ShortParagraph >
+		<ShortParagraph>
 			Deleting this numerical tool may prevent related data from being shown permanently.
 		</ShortParagraph>
 	{/snippet}
