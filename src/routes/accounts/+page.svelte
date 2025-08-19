@@ -66,7 +66,6 @@ function makeNewResourceObject(): Record<string, unknown> {
 function processCreatedResourceObject(document: Record<string, unknown>): unknown {
 	name = ""
 	description = ""
-	configuration = null
 
 	const { account } = document
 
