@@ -1,5 +1,6 @@
 <script lang="ts">
-import { untrack, type Snippet } from "svelte"
+import type { Snippet } from "svelte"
+import type { CensoredAccount } from "+/component"
 import type {
 	FinancialStatementGroup,
 	ExchangeRateInfo,
@@ -20,7 +21,7 @@ import type {
 	ItemCalculation
 } from "+/entity"
 
-import { onDestroy } from "svelte"
+import { untrack, onDestroy } from "svelte"
 
 import { ANY_CURRENCY } from "#/component"
 
@@ -37,10 +38,14 @@ import Cluster from "%/frozen_periods/financial_statements/cluster.svelte"
 import TertiaryHeading from "$/typography/tertiary_heading.svelte"
 
 let {
+	collectiveName,
+	censoredAccounts,
 	isConnecting,
 	errors,
 	children
 }: {
+	collectiveName: string
+	censoredAccounts: CensoredAccount[]
 	isConnecting: boolean
 	errors: GeneralError[]
 	children: Snippet<[{
@@ -393,12 +398,12 @@ function display(newCompleteFrozenPeriodInfo: CompleteFrozenPeriodInfo) {
 
 {#snippet financialStatementCluster()}
 	<CatalogBase
-		collectiveName="Financial Statements"
+		{collectiveName}
 		isConnecting={isConnecting || $isConnectingForRecalculation}
 		{data}
 		progressRate={0}>
 		{#snippet name()}
-			<TertiaryHeading>Financial Statements</TertiaryHeading>
+			<TertiaryHeading>{collectiveName}</TertiaryHeading>
 		{/snippet}
 		{#snippet filled_collection_description()}
 			{#if hasGoodDependencies && selectedStatement}
@@ -436,6 +441,7 @@ function display(newCompleteFrozenPeriodInfo: CompleteFrozenPeriodInfo) {
 					{currencies}
 					{itemDetails}
 					{cashFlowActivities}
+					{censoredAccounts}
 					{accounts}
 					{itemConfigurations}
 					{frozenAccounts}
