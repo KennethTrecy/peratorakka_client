@@ -1,14 +1,14 @@
 <script lang="ts">
 import type { Snippet } from "svelte"
 import type { ContextBundle, ResourceDependencyInfo, HighResourceDependencyInfo } from "+/component"
-import type { GeneralError, SortOrder } from "+/rest"
+import type { GeneralError, SearchMode, SortOrder } from "+/rest"
 import type { RestorableEntity } from "+/entity"
 
 import { getContext } from "svelte"
 import { afterNavigate, beforeNavigate, goto } from "$app/navigation"
 
 import { GLOBAL_CONTEXT } from "#/contexts"
-import { ASCENDING_ORDER } from "#/rest"
+import { ASCENDING_ORDER, SEARCH_NORMALLY } from "#/rest"
 
 import assertAuthentication from "$/page_requirement/assert_authentication"
 import makeJSONRequester from "$/rest/make_json_requester"
@@ -28,6 +28,7 @@ let {
 	createTitle,
 	listTitle,
 	collectiveName,
+	defaultSearchMode = SEARCH_NORMALLY,
 	defaultSortCriterion,
 	defaultSortOrder = ASCENDING_ORDER,
 	availableSortCriteria,
@@ -52,6 +53,7 @@ let {
 	createTitle: string
 	listTitle: string
 	collectiveName: string
+	defaultSearchMode?: SearchMode|null
 	defaultSortCriterion: string
 	defaultSortOrder?: SortOrder
 	availableSortCriteria: string[]
@@ -76,7 +78,10 @@ let {
 		}
 	]>
 	requirement?: Snippet
-	create_grid_cell_rear?: Snippet
+	create_grid_cell_rear?: Snippet<[ {
+		isRequestingDependencies: boolean
+		hasLoadedAllDependencies: boolean
+	} ]>
 	custom_list_specifiers?: Snippet<[ {
 		isConnecting: boolean,
 		errors: GeneralError[]
@@ -154,6 +159,7 @@ async function createResource(addResource: (resource: unknown) => void) {
 	{pageTitle}
 	{listTitle}
 	{collectiveName}
+	{defaultSearchMode}
 	{defaultSortCriterion}
 	{defaultSortOrder}
 	{availableSortCriteria}
@@ -206,6 +212,9 @@ async function createResource(addResource: (resource: unknown) => void) {
 				{/snippet}
 			</InteractiveContainer>
 		</GridCell>
-		{@render create_grid_cell_rear?.()}
+		{@render create_grid_cell_rear?.({
+			isRequestingDependencies,
+			hasLoadedAllDependencies
+		})}
 	{/snippet}
 </ListResourcePage>
