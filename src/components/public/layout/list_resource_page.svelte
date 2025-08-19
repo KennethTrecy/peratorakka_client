@@ -33,6 +33,7 @@ let {
 	pageTitle,
 	listTitle,
 	collectiveName,
+	defaultSearchMode = SEARCH_NORMALLY,
 	defaultSortCriterion,
 	defaultSortOrder = ASCENDING_ORDER,
 	availableSortCriteria,
@@ -52,6 +53,7 @@ let {
 	pageTitle: string
 	listTitle: string
 	collectiveName: string
+	defaultSearchMode?: SearchMode|null
 	defaultSortCriterion: string
 	defaultSortOrder?: SortOrder
 	availableSortCriteria: string[]
@@ -98,14 +100,17 @@ assertAuthentication(globalContext, {
 let isRequestingDependencies = $state(true)
 let resources: unknown[] = $state([])
 
-let searchMode: SearchMode = $state<SearchMode>(SEARCH_NORMALLY)
-let sortCriterion: string = $state(defaultSortCriterion)
-let sortOrder: SortOrder = $state(defaultSortOrder)
-let lastOffset: number = $state(0)
+let searchMode = $state<SearchMode|null>(defaultSearchMode)
+let sortCriterion = $state<string>(defaultSortCriterion)
+let sortOrder = $state<SortOrder>(defaultSortOrder)
+let lastOffset = $state<number>(0)
 
 const partialPath = `/api/v2/${collectiveName}`
 let parameters: [string, string][] = $derived([
-	[ "filter[search_mode]", searchMode as string ],
+	...(searchMode === null
+		? [] as [string, string][]
+		: [ [ "filter[search_mode]", searchMode as string ] ] as [string, string][]
+	),
 	[ "sort[0][0]", sortCriterion ],
 	[ "sort[0][1]", sortOrder as string ],
 	...additionalListParameters
