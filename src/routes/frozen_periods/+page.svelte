@@ -1,6 +1,6 @@
 <script lang="ts">
-import type { FrozenPeriod } from "+/entity"
-import type { ContextBundle } from "+/component"
+import type { Account, Currency, FrozenPeriod, PrecisionFormat } from "+/entity"
+import type { CensoredAccount, ContextBundle } from "+/component"
 import type { CompleteFrozenPeriodInfo } from "+/rest"
 
 import { writable } from "svelte/store"
@@ -14,18 +14,19 @@ import makeDateFieldValue from "$/utility/make_date_field_value"
 import assertAuthentication from "$/page_requirement/assert_authentication"
 import makeJSONRequester from "$/rest/make_json_requester"
 
-import DataTableHeader from "$/catalog/data_table_header.svelte"
-import DataTableRecordHeader from "$/catalog/data_table_record_headers.svelte"
-import FrozenPeriodRecord from "%/frozen_periods/frozen_period_record.svelte"
 import BasicForm from "%/frozen_periods/basic_form.svelte"
 import CompleteResourcePage from "$/layout/complete_resource_page.svelte"
+import CensorLayer from "%/frozen_periods/censor_layer.svelte"
+import DataTableHeader from "$/catalog/data_table_header.svelte"
+import DataTableRecordHeader from "$/catalog/data_table_record_headers.svelte"
 import ElementalParagraph from "$/typography/elemental_paragraph.svelte"
+import FinancialStatements from "%/frozen_periods/financial_statements.svelte"
+import FrozenPeriodRecord from "%/frozen_periods/frozen_period_record.svelte"
 import Flex from "$/layout/flex.svelte"
 import GridCell from "$/layout/grid_cell.svelte"
 import TextContainer from "$/typography/text_container.svelte"
-import UnitDataTable from "$/catalog/unit_data_table.svelte"
-import FinancialStatements from "%/frozen_periods/financial_statements.svelte"
 import TextCardButton from "$/button/card/text.svelte"
+import UnitDataTable from "$/catalog/unit_data_table.svelte"
 
 const globalContext = getContext(GLOBAL_CONTEXT) as ContextBundle
 
@@ -34,6 +35,10 @@ assertAuthentication(globalContext, {
 	beforeNavigate,
 	goto
 })
+
+let currencies = $state<Currency[]>([])
+let accounts = $state<Account[]>([])
+let censoredAccounts = $state<CensoredAccount[]>([])
 
 function deriveID(resource: unknown): string {
 	return `${(resource as FrozenPeriod).id}`
@@ -157,12 +162,20 @@ async function checkFrozenPeriod(
 	<title>Frozen Periods</title>
 </svelte:head>
 
-<FinancialStatements isConnecting={$isConnecting} errors={$errors}>
+<FinancialStatements
+	collectiveName="Audited Financial Statements"
+	{censoredAccounts}
+	isConnecting={$isConnecting}
+	errors={$errors}>
 	{#snippet children({
 		"financialStatementCluster": checkFinancialStatementCluster,
 		"display": checkDisplay
 	})}
-		<FinancialStatements isConnecting={$isConnectingToDryRunCreate} errors={$dryRunCreateErrors}>
+		<FinancialStatements
+			collectiveName="Unaudited Financial Statements"
+			{censoredAccounts}
+			isConnecting={$isConnectingToDryRunCreate}
+			errors={$dryRunCreateErrors}>
 			{#snippet children({
 				"financialStatementCluster": dryRunFinancialStatementCluster,
 				"display": dryRunDisplay
@@ -172,11 +185,29 @@ async function checkFrozenPeriod(
 					createTitle="Add Frozen Periods"
 					listTitle="Frozen Periods"
 					collectiveName="frozen_periods"
+					defaultSearchMode={null}
 					defaultSortCriterion="started_at"
 					defaultSortOrder={DESCENDING_ORDER}
 					availableSortCriteria={[
 						"started_at",
 						"finished_at"
+					]}
+					dependencies={[ currencies, accounts ]}
+					dependencyInfos={[
+						{
+							"partialPath": "/api/v2/accounts",
+							"mainSortCriterion": "name",
+							"resourceKey": "accounts",
+							"getResources": () => accounts,
+							"setResources": newResources => { accounts = newResources as Account[] }
+						},
+						{
+							"partialPath": "/api/v2/currencies",
+							"mainSortCriterion": "name",
+							"resourceKey": "currencies",
+							"getResources": () => currencies,
+							"setResources": newResources => { currencies = newResources as Currency[] }
+						}
 					]}
 					{deriveID}
 					{makeNewResourceObject}
@@ -221,7 +252,16 @@ async function checkFrozenPeriod(
 							creating financial entries.
 						</ElementalParagraph>
 					{/snippet}
-					{#snippet create_grid_cell_rear()}
+					{#snippet create_grid_cell_rear({
+						isRequestingDependencies,
+						hasLoadedAllDependencies
+					})}
+						<CensorLayer
+							{currencies}
+							{accounts}
+							bind:censoredAccounts={censoredAccounts}
+							{isRequestingDependencies}
+							{hasLoadedAllDependencies}/>
 						{#if hasAttemptedDryRun || $isConnectingToDryRunCreate}
 							{@render dryRunFinancialStatementCluster()}
 						{/if}
