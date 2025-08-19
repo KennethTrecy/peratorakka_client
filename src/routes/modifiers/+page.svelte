@@ -139,9 +139,9 @@ let existingCashFlowActivities = $derived(cashFlowActivities.filter(
 </script>
 
 <CompleteResourcePage
-pageTitle="Modifiers"
-createTitle="Add Modifier"
-listTitle="Available Modifiers"
+	pageTitle="Modifiers"
+	createTitle="Add Modifier"
+	listTitle="Available Modifiers"
 	collectiveName="modifiers"
 	defaultSortCriterion="name"
 	availableSortCriteria={[
