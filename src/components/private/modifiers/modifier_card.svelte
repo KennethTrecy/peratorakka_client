@@ -15,7 +15,8 @@ import {
 	acceptableModifierKinds,
 	acceptableModifierActions,
 	REAL_DEBIT_MODIFIER_ATOM_KIND,
-	REAL_CREDIT_MODIFIER_ATOM_KIND
+	REAL_CREDIT_MODIFIER_ATOM_KIND,
+	REAL_EMERGENT_MODIFIER_ATOM_KIND
 } from "#/entity"
 
 import checkArchivedState from "$/utility/check_archived_state"
@@ -77,6 +78,9 @@ let friendlyKind = $derived(data.kind)
 let resolvedDescription = $derived(description || "None")
 let debitAtoms = $derived(atomInputs.filter(atom => atom.kind === REAL_DEBIT_MODIFIER_ATOM_KIND))
 let creditAtoms = $derived(atomInputs.filter(atom => atom.kind === REAL_CREDIT_MODIFIER_ATOM_KIND))
+let emergentAtoms = $derived(atomInputs.filter(
+	atom => atom.kind === REAL_EMERGENT_MODIFIER_ATOM_KIND
+))
 
 let friendlyDebitAtoms = $derived(debitAtoms.map(atom => {
 	const account = accounts.find(account => account.id === atom.account_id)
@@ -90,6 +94,16 @@ let friendlyDebitAtoms = $derived(debitAtoms.map(atom => {
 	return `“${account?.name ?? "Unknown Account"}”${friendlyCashFlowActivity}`
 }).join(", "))
 let friendlyCreditAtoms = $derived(creditAtoms.map(atom => {
+	const account = accounts.find(account => account.id === atom.account_id)
+	const cashFlowActivity = cashFlowActivities.find(
+		cashFlowActivity => cashFlowActivity.id === atom.cash_flow_activity_id
+	)
+	const friendlyCashFlowActivity = typeof cashFlowActivity === "undefined"
+		? ""
+		: ` (as part of “${cashFlowActivity.name}”)`
+	return `“${account?.name ?? "Unknown Account"}”${friendlyCashFlowActivity}`
+}).join(", "))
+let friendlyEmergentAtoms = $derived(emergentAtoms.map(atom => {
 	const account = accounts.find(account => account.id === atom.account_id)
 	const cashFlowActivity = cashFlowActivities.find(
 		cashFlowActivity => cashFlowActivity.id === atom.cash_flow_activity_id
@@ -198,7 +212,7 @@ function isAcceptableAction(action: string): action is AcceptableModifierAction 
 			<ShortParagraph>
 				The {friendlyKind} {friendlyAction} modifier
 				debits {friendlyDebitAtoms}
-				and credits {friendlyCreditAtoms}.
+				and credits {friendlyCreditAtoms}.{#if friendlyEmergentAtoms !== ""} It also creates {friendlyEmergentAtoms} after proper calculation.{/if}
 			</ShortParagraph>
 		</Flex>
 	{/snippet}
