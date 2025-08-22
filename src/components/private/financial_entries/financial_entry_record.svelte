@@ -19,7 +19,12 @@ import type {
 import { untrack } from "svelte"
 
 import { UNKNOWN_OPTION, UNKNOWN_MODIFIER } from "#/component"
-import { REAL_CREDIT_MODIFIER_ATOM_KIND, REAL_DEBIT_MODIFIER_ATOM_KIND } from "#/entity"
+import {
+	normalDebitAccountKinds,
+	REAL_CREDIT_MODIFIER_ATOM_KIND,
+	REAL_DEBIT_MODIFIER_ATOM_KIND,
+	REAL_EMERGENT_MODIFIER_ATOM_KIND
+} from "#/entity"
 
 import checkArchivedState from "$/utility/check_archived_state"
 import convertSnakeCaseToProperCase from "$/utility/convert_snake_case_to_proper_case"
@@ -174,11 +179,35 @@ let completeFinancialEntryAtoms = $derived(associatedFinancialEntryAtoms.reduce(
 	[]
 ))
 let debitAtoms = $derived(completeFinancialEntryAtoms.filter(
-	atom => atom.modifier_atom.kind === REAL_DEBIT_MODIFIER_ATOM_KIND
-))
+	atom => atom.modifier_atom.kind === REAL_DEBIT_MODIFIER_ATOM_KIND || (
+		atom.modifier_atom.kind === REAL_EMERGENT_MODIFIER_ATOM_KIND
+		&& (
+			normalDebitAccountKinds.includes(atom.account.kind)
+			=== !atom.financial_entry_atom.numerical_value.startsWith("-")
+		)
+	)
+).map(atom => ({
+	...atom,
+	"financial_entry_atom": {
+		...atom.financial_entry_atom,
+		"numerical_value": atom.financial_entry_atom.numerical_value.replace(/^-/, "")
+	}
+})))
 let creditAtoms = $derived(completeFinancialEntryAtoms.filter(
-	atom => atom.modifier_atom.kind === REAL_CREDIT_MODIFIER_ATOM_KIND
-))
+	atom => atom.modifier_atom.kind === REAL_CREDIT_MODIFIER_ATOM_KIND || (
+		atom.modifier_atom.kind === REAL_EMERGENT_MODIFIER_ATOM_KIND
+		&& (
+			!normalDebitAccountKinds.includes(atom.account.kind)
+			=== !atom.financial_entry_atom.numerical_value.startsWith("-")
+		)
+	)
+).map(atom => ({
+	...atom,
+	"financial_entry_atom": {
+		...atom.financial_entry_atom,
+		"numerical_value": atom.financial_entry_atom.numerical_value.replace(/^-/, "")
+	}
+})))
 
 let debitExistence = $derived(debitAtoms.reduce(
 	(
