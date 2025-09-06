@@ -17,7 +17,7 @@ import { UNKNOWN_OPTION } from "#/component"
 import { acceptableAccountKinds } from "#/entity"
 
 import assertAuthentication from "$/page_requirement/assert_authentication"
-import mergeUniqueResources from "$/utility/merge_unique_resources"
+import mergeUniqueElements from "$/utility/merge_unique_elements"
 
 import BasicForm from "%/accounts/basic_form.svelte"
 import CompleteResourcePage from "$/layout/complete_resource_page.svelte"
@@ -80,9 +80,10 @@ function processCreatedResourceObject(document: Record<string, unknown>): unknow
 }
 
 function processListResourceObject(document: Record<string, unknown>): void {
-	itemConfigurations = mergeUniqueResources(
+	itemConfigurations = mergeUniqueElements(
 		itemConfigurations,
-		document["item_configurations"] as ItemConfiguration[]
+		document["item_configurations"] as ItemConfiguration[],
+		(element: ItemConfiguration) => `${element.item_detail_id}_${element.account_id}`
 	)
 }
 
