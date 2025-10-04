@@ -305,6 +305,10 @@ function informLastOffset() {
 			{addResources}
 			{processListResourceObject}
 			{informLastOffset}/>
-		{@render list_grid_cell_rear?.()}
 	</InnerGrid>
+	{#if list_grid_cell_rear}
+		<InnerGrid>
+			{@render list_grid_cell_rear()}
+		</InnerGrid>
+	{/if}
 </ArticleGrid>
