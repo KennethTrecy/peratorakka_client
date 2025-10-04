@@ -24,7 +24,7 @@ import { ANY_ACCOUNT, ANY_MODIFIER, UNKNOWN_OPTION } from "#/component"
 
 import assertAuthentication from "$/page_requirement/assert_authentication"
 import makeDateFieldValue from "$/utility/make_date_field_value"
-import mergeUniqueResources from "$/utility/merge_unique_resources"
+import mergeUniqueElements from "$/utility/merge_unique_elements"
 
 import DataTableHeader from "$/catalog/data_table_header.svelte"
 import DataTableRecordHeader from "$/catalog/data_table_record_headers.svelte"
@@ -101,17 +101,19 @@ function processCreatedResourceObject(document: Record<string, unknown>): unknow
 		"financial_entry_atoms": newFinancialEntryAtoms
 	} = document
 
-	financialEntryAtoms = mergeUniqueResources(
+	financialEntryAtoms = mergeUniqueElements(
 		financialEntryAtoms,
-		newFinancialEntryAtoms as FinancialEntryAtom[]
+		newFinancialEntryAtoms as FinancialEntryAtom[],
+		element => element.id || `${element.financial_entry_id}_${element.modifier_atom_id}`
 	)
 	return financial_entry
 }
 
 function processListResourceObject(document: Record<string, unknown>): void {
-	financialEntryAtoms = mergeUniqueResources(
+	financialEntryAtoms = mergeUniqueElements(
 		financialEntryAtoms,
-		document["financial_entry_atoms"] as FinancialEntryAtom[]
+		document["financial_entry_atoms"] as FinancialEntryAtom[],
+		element => element.id || `${element.financial_entry_id}_${element.modifier_atom_id}`
 	)
 }
 
