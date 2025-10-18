@@ -17,9 +17,6 @@ const configuration = {
 			"!/*": resolve("./src/components/third-party"),
 			"@/*": resolve("./src"),
 			"~/*": resolve("./t")
-		},
-		"csrf": {
-			"checkOrigin": false
 		}
 	},
 
