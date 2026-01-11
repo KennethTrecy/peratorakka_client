@@ -16,7 +16,7 @@ let {
 	isConnecting: boolean
 	progressRate: number
 	collectiveName: string
-	data: unknown[];
+	data: unknown[]
 	list_specifier?: Snippet
 	filled_collection_description: Snippet
 	empty_collection_description: Snippet

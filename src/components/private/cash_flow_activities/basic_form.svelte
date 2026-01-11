@@ -20,7 +20,7 @@ let {
 	IDPrefix: string
 	name: string
 	description: string
-	forceDisabledFields?: (keyof CashFlowActivity)[];
+	forceDisabledFields?: (keyof CashFlowActivity)[]
 	isConnecting: boolean
 	errors: GeneralError[]
 	id?: string|null

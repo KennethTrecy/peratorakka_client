@@ -9,7 +9,7 @@ import UnitDataTable from "$/catalog/unit_data_table.svelte"
 		isConnecting: boolean
 		progressRate: number
 		collectiveName: string
-		data: unknown[];
+		data: unknown[]
 		filled_collection_description?: Snippet
 		empty_collection_description?: Snippet
 		list_specifier?: Snippet

@@ -39,7 +39,7 @@ let {
 	transactedAt: string
 	atoms: FinancialEntryAtomInput[]
 	remarks: string
-	forceDisabledFields?: (keyof FinancialEntry|"atoms")[];
+	forceDisabledFields?: (keyof FinancialEntry|"atoms")[]
 	isConnecting: boolean
 	errors: GeneralError[]
 	id?: string|null

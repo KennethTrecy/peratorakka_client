@@ -75,7 +75,7 @@ let {
 	exchangeRateBasis: AcceptableExchangeRateBasis
 	order: number
 	notes: string
-	sources: AcceptableSource[];
+	sources: AcceptableSource[]
 	forceDisabledFields?: (keyof NumericalTool)[]
 	isConnecting: boolean
 	errors: GeneralError[]
