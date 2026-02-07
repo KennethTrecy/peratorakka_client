@@ -24,7 +24,7 @@ let {
 	data
 }: {
 	kind: TrialBalanceKind
-	statement: FinancialStatementGroup
+	statement: FinancialStatementGroup<string>
 	statementExchangeRate: ExchangeRateInfo
 	statementCurrency: Currency
 	viewedCurrency: Currency
@@ -61,6 +61,8 @@ let friendlyTotalCreditAmount = $derived(makeShownAmount(
 	viewedCurrency,
 	totalCreditAmount
 ))
+let debitTitle = $derived(`Exact value is ${friendlyTotalDebitAmount[1]}`)
+let creditTitle = $derived(`Exact value is ${friendlyTotalCreditAmount[1]}`)
 </script>
 
 <QuarternaryHeading>{headingAdjective} Trial Balance</QuarternaryHeading>
@@ -79,11 +81,11 @@ let friendlyTotalCreditAmount = $derived(makeShownAmount(
 	{/snippet}
 	{#snippet table_footer_cells()}
 		<DataTableHeader scope="row">Total</DataTableHeader>
-		<DataTableCell kind="numeric">
-			<AmountDisplay shownAmount={friendlyTotalDebitAmount}/>
+		<DataTableCell kind="numeric" title={debitTitle}>
+			<AmountDisplay shownAmount={friendlyTotalDebitAmount[0]}/>
 		</DataTableCell>
-		<DataTableCell kind="numeric">
-			<AmountDisplay shownAmount={friendlyTotalCreditAmount}/>
+		<DataTableCell kind="numeric" title={creditTitle}>
+			<AmountDisplay shownAmount={friendlyTotalCreditAmount[1]}/>
 		</DataTableCell>
 	{/snippet}
 </UnitDataTable>
