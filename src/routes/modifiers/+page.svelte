@@ -112,7 +112,7 @@ function processCreatedResourceObject(document: Record<string, unknown>): unknow
 	modifierAtoms = mergeUniqueResources(modifierAtoms, newModifierAtoms as ModifierAtom[])
 	modifierAtomActivities = mergeUniqueElements(
 		modifierAtomActivities,
-		newModifierAtomActivities as ModifierAtomActivity[],
+		(newModifierAtomActivities ?? []) as ModifierAtomActivity[],
 		element => `${element.modifier_atom_id}_${element.cash_flow_activity_id}`
 	)
 	return modifier
