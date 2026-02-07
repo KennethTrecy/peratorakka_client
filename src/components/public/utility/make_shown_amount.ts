@@ -1,5 +1,5 @@
 import type { PrecisionFormat, Currency } from "+/entity"
-import type { ExchangeRateInfo } from "+/rest"
+import type { ExchangeRateInfo, RawAndFormattedFormats } from "+/rest"
 
 import prepareShownAmount from "$/utility/prepare_shown_amount"
 import formatAmount from "$/utility/format_amount"
@@ -11,7 +11,7 @@ export default function makeShownAmount(
 	statementCurrency: Currency,
 	viewedCurrency: Currency,
 	amount: string
-): string {
+): RawAndFormattedFormats {
 	const [
 		precisionFormat,
 		shownCurrency,
@@ -25,5 +25,8 @@ export default function makeShownAmount(
 		amount
 	)
 
-	return formatAmount(precisionFormat, shownCurrency, convertedAmount)
+	return [
+		convertedAmount,
+		formatAmount(precisionFormat, shownCurrency, convertedAmount)
+	]
 }
