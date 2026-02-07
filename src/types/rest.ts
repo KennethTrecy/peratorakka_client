@@ -61,9 +61,9 @@ export interface RequesterInfo extends RequesterDependencies {
 	send: (requestInfo: Partial<RequestInit>) => Promise<void>
 }
 
-export type RawAndFormattedFormats = [ string, string ]
+export type ApproximateAndExactFormats = [ string, string ]
 
-export interface TrialBalance<T extends string|RawAndFormattedFormats> {
+export interface TrialBalance<T extends string|ApproximateAndExactFormats> {
 	debit_total: T
 	credit_total: T
 }
@@ -74,13 +74,13 @@ export interface ProxyRequest {
 	body: Record<string, any>|null
 }
 
-export interface CashFlowActivitySubtotal<T extends string|RawAndFormattedFormats> {
+export interface CashFlowActivitySubtotal<T extends string|ApproximateAndExactFormats> {
 	cash_flow_activity_id: number
 	subtotal: T
 	net_income: T
 }
 
-export interface FinancialStatementGroup<T extends string|RawAndFormattedFormats> {
+export interface FinancialStatementGroup<T extends string|ApproximateAndExactFormats> {
 	currency_id: number
 	unadjusted_trial_balance: TrialBalance<T>
 	income_statement: {
