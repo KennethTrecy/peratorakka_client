@@ -25,15 +25,15 @@ import censorNumber from "%/frozen_periods/financial_statements/censor_number"
 export default function censorStatementGroup(
 	censoredAccounts: CensoredAccount[],
 	flowCalculations: SimplifiedFlowCalculation[],
-	data: FinancialStatementGroup
-): FinancialStatementGroup {
+	data: FinancialStatementGroup<string>
+): FinancialStatementGroup<string> {
 	let mustCensorUnadjustedTrialBalances = false
 	let mustCensorAdjustedTrialBalances = false
 	let mustCensorAssetTotals = false
 	let mustCensorLiabilityTotals = false
 	let mustCensorEquityTotals = false
 	let mustCensorIncomeStatementTotals = false
-	const newFinancialStatementGroup = JSON.parse(JSON.stringify(data)) as FinancialStatementGroup
+	const newFinancialStatementGroup = JSON.parse(JSON.stringify(data)) as FinancialStatementGroup<string>
 	const affectedNetIncomeCashFlowActivityIDs = [] as number[]
 	const affectedSubtotalCashFlowActivityIDs = [] as number[]
 
