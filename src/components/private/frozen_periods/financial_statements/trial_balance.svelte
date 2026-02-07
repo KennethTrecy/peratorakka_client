@@ -85,7 +85,7 @@ let creditTitle = $derived(`Exact value is ${friendlyTotalCreditAmount[1]}`)
 			<AmountDisplay shownAmount={friendlyTotalDebitAmount[0]}/>
 		</DataTableCell>
 		<DataTableCell kind="numeric" title={creditTitle}>
-			<AmountDisplay shownAmount={friendlyTotalCreditAmount[1]}/>
+			<AmountDisplay shownAmount={friendlyTotalCreditAmount[0]}/>
 		</DataTableCell>
 	{/snippet}
 </UnitDataTable>
