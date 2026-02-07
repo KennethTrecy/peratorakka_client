@@ -27,10 +27,14 @@ let {
 		{#each data as calculation(calculation.account.id)}
 			<DataTableRow>
 				<DataTableHeader scope="row">{calculation.account.name}</DataTableHeader>
-				<DataTableCell kind="numeric">
+				<DataTableCell
+					kind="numeric"
+					title={`Exact value is ${calculation.rawTotalRemainingQuantity}`}>
 					<AmountDisplay shownAmount={calculation.totalRemainingQuantity}/>
 				</DataTableCell>
-				<DataTableCell kind="numeric">
+				<DataTableCell
+					kind="numeric"
+					title={`Exact value is ${calculation.rawTotalRemainingCost}`}>
 					<AmountDisplay shownAmount={calculation.totalRemainingCost}/>
 				</DataTableCell>
 			</DataTableRow>
