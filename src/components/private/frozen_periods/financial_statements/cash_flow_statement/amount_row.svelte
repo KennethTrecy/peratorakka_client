@@ -9,16 +9,19 @@ let {
 	categoryNameRowSpan,
 	accountName,
 	shownAmount,
+	exactAmount,
 	hasEmptyTrailingRow = false
 }: {
 	categoryName: string
 	categoryNameRowSpan: number
 	accountName: string
 	shownAmount: string
+	exactAmount: string
 	hasEmptyTrailingRow?: boolean
 } = $props()
 
 let mustSpan = $derived(categoryNameRowSpan > 0)
+let title = $derived(`Exact value is ${exactAmount}`)
 </script>
 
 <DataTableRow>
@@ -26,7 +29,7 @@ let mustSpan = $derived(categoryNameRowSpan > 0)
 		<DataTableHeader scope="row" rowSpan={categoryNameRowSpan}>{categoryName}</DataTableHeader>
 	{/if}
 	<DataTableCell>{accountName}</DataTableCell>
-	<DataTableCell kind="numeric"><AmountDisplay {shownAmount}/></DataTableCell>
+	<DataTableCell kind="numeric" {title}><AmountDisplay {shownAmount}/></DataTableCell>
 </DataTableRow>
 {#if hasEmptyTrailingRow}
 	<DataTableRow/>
