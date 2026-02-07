@@ -23,7 +23,7 @@ let {
 	currencies,
 	data
 }: {
-	statement: FinancialStatementGroup
+	statement: FinancialStatementGroup<string>
 	statementExchangeRate: ExchangeRateInfo
 	statementCurrency: Currency
 	viewedCurrency: Currency
@@ -32,6 +32,7 @@ let {
 	data: SimplifiedSummaryCalculation[]
 } = $props()
 
+const emptyShownAmount = [ "", "" ]
 let allowedCalculations = $derived(data.filter(calculation => (
 	temporaryAccountKinds.indexOf(calculation.account.kind) > -1
 )))
@@ -49,8 +50,27 @@ let friendlyNetAmountInfo = $derived(makeCleanShownAmount(
 	viewedCurrency,
 	statement.income_statement.net_total
 ))
-let friendlyDebitedNetAmount = $derived(friendlyNetAmountInfo[0] ? friendlyNetAmountInfo[1] : "")
-let friendlyCreditedNetAmount = $derived(friendlyNetAmountInfo[0] ? "" : friendlyNetAmountInfo[1])
+let friendlyDebitedNetAmount = $derived(
+	friendlyNetAmountInfo[0]
+		? friendlyNetAmountInfo[1]
+		: emptyShownAmount
+)
+let friendlyCreditedNetAmount = $derived(
+	friendlyNetAmountInfo[0]
+		? emptyShownAmount
+		: friendlyNetAmountInfo[1]
+)
+
+let debitTitle = $derived(
+	friendlyDebitedNetAmount[1] !== "0"
+		? `Exact value is ${friendlyDebitedNetAmount[1]}`
+		: undefined
+)
+let creditTitle = $derived(
+	friendlyCreditedNetAmount[1] !== ""
+		? `Exact value is ${friendlyCreditedNetAmount[1]}`
+		: undefined
+)
 </script>
 
 <QuarternaryHeading>Income Statement</QuarternaryHeading>
@@ -70,11 +90,11 @@ let friendlyCreditedNetAmount = $derived(friendlyNetAmountInfo[0] ? "" : friendl
 	{/snippet}
 	{#snippet table_footer_cells()}
 		<DataTableHeader scope="row">Net Total</DataTableHeader>
-		<DataTableCell kind="numeric">
-			<AmountDisplay shownAmount={friendlyDebitedNetAmount}/>
+		<DataTableCell kind="numeric" title={debitTitle}>
+			<AmountDisplay shownAmount={friendlyDebitedNetAmount[0]}/>
 		</DataTableCell>
-		<DataTableCell kind="numeric">
-			<AmountDisplay shownAmount={friendlyCreditedNetAmount}/>
+		<DataTableCell kind="numeric" title={creditTitle}>
+			<AmountDisplay shownAmount={friendlyCreditedNetAmount[0]}/>
 		</DataTableCell>
 	{/snippet}
 </UnitDataTable>
