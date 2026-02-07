@@ -75,6 +75,8 @@ let modifierID = $state(UNKNOWN_OPTION)
 let transactedAt = $state(currentTransactedDate)
 let remarks = $state("")
 let atoms = $state<FinancialEntryAtomInput[]>([])
+let mustRetainRemarksAfterValidSubmission = $state(false)
+let mustForwardDateAfterValidSubmission = $state(false)
 
 function makeNewResourceObject(): Record<string, unknown> {
 	return {
@@ -259,6 +261,8 @@ let existingCashFlowActivities = $derived(cashFlowActivities.filter(
 			bind:transactedAt={transactedAt}
 			bind:atoms={atoms}
 			bind:remarks={remarks}
+			bind:mustRetainRemarksAfterSuValidbmission={mustRetainRemarksAfterValidSubmission}
+			bind:mustForwardDateAfterValidSubmission={mustForwardDateAfterValidSubmission}
 			{isConnecting}
 			{IDPrefix}
 			{errors}

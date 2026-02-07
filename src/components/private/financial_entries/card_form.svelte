@@ -12,6 +12,7 @@ import type {
 
 import BasicSkeletonForm from "%/financial_entries/basic_form.svelte"
 import BasicForm from "$/form/basic_form.svelte"
+import CheckboxField from "$/form/checkbox_field.svelte"
 
 let {
 	IDPrefix,
@@ -23,6 +24,8 @@ let {
 	transactedAt = $bindable(),
 	atoms = $bindable(),
 	remarks = $bindable(),
+	mustRetainRemarksAfterValidSubmission = $bindable(),
+	mustForwardDateAfterValidSubmission = $bindable(),
 	forceDisabledFields = [],
 	isConnecting,
 	errors,
@@ -39,6 +42,8 @@ let {
 	transactedAt: string
 	atoms: FinancialEntryAtomInput[]
 	remarks: string
+	mustRetainRemarksAfterValidSubmission: boolean
+	mustForwardDateAfterValidSubmission: boolean
 	forceDisabledFields?: (keyof FinancialEntry|"atoms")[]
 	isConnecting: boolean
 	errors: GeneralError[]
@@ -68,6 +73,18 @@ let {
 				{@render transactedAtField()}
 				{@render remarksField()}
 				{@render atomsField()}
+				<CheckboxField
+					fieldName="Must retain remarks after valid submission"
+					disabled={isConnecting}
+					bind:value={mustRetainRemarksAfterValidSubmission}
+					{IDPrefix}
+					{errors}/>
+				<CheckboxField
+					fieldName="Must forward date after valid submission"
+					disabled={isConnecting}
+					bind:value={mustForwardDateAfterValidSubmission}
+					{IDPrefix}
+					{errors}/>
 			{/snippet}
 		</BasicForm>
 	{/snippet}
