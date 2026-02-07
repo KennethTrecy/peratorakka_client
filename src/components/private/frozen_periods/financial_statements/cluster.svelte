@@ -61,7 +61,7 @@ let {
 	itemCalculations
 }: {
 	viewedCurrency: Currency
-	statement: FinancialStatementGroup
+	statement: FinancialStatementGroup<string>
 	resolvedExchangeRates: Record<string, ExchangeRateInfo>
 	precisionFormats: PrecisionFormat[]
 	currencies: Currency[]
@@ -278,7 +278,8 @@ let allowedUncensoredRealFlowCalculations = $derived(realFlowCalculations.map(
 		return {
 			cashFlowActivity,
 			account,
-			"amount": shownAmount
+			"amount": shownAmount[0],
+			"rawAmount": shownAmount[1]
 		} as SimplifiedFlowCalculation
 	}
 ).filter<SimplifiedFlowCalculation>(calculation => !!calculation)
@@ -384,8 +385,10 @@ let allowedItemCalculations = $derived(censorItemCalculations(
 
 		return {
 			account,
-			"totalRemainingCost": shownAmount,
-			"totalRemainingQuantity": shownQuantity
+			"totalRemainingCost": shownAmount[0],
+			"totalRemainingQuantity": shownQuantity,
+			"rawTotalRemainingCost": shownAmount[1],
+			"rawTotalRemainingQuantity": calculation.totalRemainingQuantity
 		} as SimplifiedItemCalculation
 	})
 	.filter<SimplifiedItemCalculation>(calculation => !!calculation)
@@ -485,7 +488,7 @@ function sortAccounts(left: Account, right: Account) {
 			{viewedCurrency}
 			{precisionFormats}
 			{currencies}
-			{emptyAmount}
+			emptyAmount={emptyAmount[0]}
 			data={balancedSummaryCalculations}/>
 	</Flex>
 </GridCell>
@@ -513,7 +516,7 @@ function sortAccounts(left: Account, right: Account) {
 					{precisionFormats}
 					{currencies}
 					{cashFlowActivities}
-					{emptyAmount}
+					emptyAmount={emptyAmount[0]}
 					data={allowedRealFlowCalculations}/>
 			{:else}
 				<ElementalParagraph>
@@ -540,7 +543,7 @@ function sortAccounts(left: Account, right: Account) {
 					{precisionFormats}
 					{currencies}
 					{cashFlowActivities}
-					{emptyAmount}
+					emptyAmount={emptyAmount[0]}
 					data={allowedRealFlowCalculations}/>
 			{:else}
 				<ElementalParagraph>
@@ -561,7 +564,7 @@ function sortAccounts(left: Account, right: Account) {
 			{viewedCurrency}
 			{precisionFormats}
 			{currencies}
-			{emptyAmount}
+			emptyAmount={emptyAmount[0]}
 			data={balancedSummaryCalculations}/>
 	</Flex>
 </GridCell>
@@ -575,7 +578,7 @@ function sortAccounts(left: Account, right: Account) {
 			{viewedCurrency}
 			{precisionFormats}
 			{currencies}
-			{emptyAmount}
+			emptyAmount={emptyAmount[0]}
 			data={allowedRealAdjustedSummaryCalculations}/>
 	</Flex>
 </GridCell>

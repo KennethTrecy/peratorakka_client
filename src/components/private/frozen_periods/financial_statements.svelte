@@ -89,7 +89,7 @@ let realFlowCalculations = $derived<RealFlowCalculation[]>(
 let itemCalculations = $derived<ItemCalculation[]>(
 	completeFrozenPeriodInfo?.item_calculations ?? []
 )
-let statements = $derived<FinancialStatementGroup[]>(
+let statements = $derived<FinancialStatementGroup<string>[]>(
 	completeFrozenPeriodInfo !== null ? completeFrozenPeriodInfo["@meta"].statements
 	: []
 )
@@ -181,7 +181,7 @@ let resolvedExchangeRates = $derived<Record<string, ExchangeRateInfo>>(currencie
 	{}
 ))
 
-let selectedStatement: FinancialStatementGroup|null = $state(null)
+let selectedStatement: FinancialStatementGroup<string>|null = $state(null)
 const {
 	"isConnecting": isConnectingForRecalculation,
 	"errors": errorsForRecalculation,
@@ -353,7 +353,7 @@ $effect(() => {
 						"debit_total": "0",
 						"credit_total": "0"
 					}
-				} as FinancialStatementGroup))
+				} as FinancialStatementGroup<string>))
 				: statements.find(
 					statement => `${statement.currency_id}` === selectedCurrencyID
 				) ?? null
