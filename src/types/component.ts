@@ -137,16 +137,21 @@ interface SimplifiedCalculation {
 export interface SimplifiedSummaryCalculation extends SimplifiedCalculation {
 	debitAmount: string
 	creditAmount: string
+	rawDebitAmount: string
+	rawCreditAmount: string
 }
 
 export interface SimplifiedFlowCalculation extends SimplifiedCalculation {
 	cashFlowActivity: CashFlowActivity
 	amount: string
+	rawAmount: string
 }
 
 export interface SimplifiedItemCalculation extends SimplifiedCalculation {
 	totalRemainingCost: string
 	totalRemainingQuantity: string
+	rawTotalRemainingCost: string
+	rawTotalRemainingQuantity: string
 }
 
 export type FinancialEntryAtomInputMethod = typeof acceptableFinancialEntryInputMethods[number]
