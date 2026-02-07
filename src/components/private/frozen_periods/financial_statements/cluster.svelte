@@ -161,8 +161,10 @@ let allowedRealAdjustedSummaryCalculations = $derived(censorSummaryCalculations(
 
 		return {
 			account,
-			"debitAmount": shouldDebitResolvedAmount ? shownAmount : "",
-			"creditAmount": shouldDebitResolvedAmount ? "" : shownAmount
+			"debitAmount": shouldDebitResolvedAmount ? shownAmount[0] : "",
+			"creditAmount": shouldDebitResolvedAmount ? "" : shownAmount[0],
+			"rawDebitAmount": shouldDebitResolvedAmount ? shownAmount[1] : "",
+			"rawCreditAmount": shouldDebitResolvedAmount ? "" : shownAmount[1]
 		} as SimplifiedSummaryCalculation
 	})
 	.filter<SimplifiedSummaryCalculation>(calculation => !!calculation)
@@ -225,8 +227,10 @@ let allowedRealUnadjustedSummaryCalculations = $derived(censorSummaryCalculation
 
 		return {
 			account,
-			"debitAmount": shouldDebitResolvedAmount ? shownAmount : "",
-			"creditAmount": shouldDebitResolvedAmount ? "" : shownAmount
+			"debitAmount": shouldDebitResolvedAmount ? shownAmount[0] : "",
+			"creditAmount": shouldDebitResolvedAmount ? "" : shownAmount[0],
+			"rawDebitAmount": shouldDebitResolvedAmount ? shownAmount[1] : "",
+			"rawCreditAmount": shouldDebitResolvedAmount ? "" : shownAmount[1]
 		} as SimplifiedSummaryCalculation
 	})
 	.filter<SimplifiedSummaryCalculation>(calculation => !!calculation)
@@ -443,8 +447,10 @@ let allowedRealOpenedSummaryCalculations = $derived(censorSummaryCalculations(
 
 		return {
 			account,
-			"debitAmount": shouldDebitResolvedAmount ? shownAmount : "",
-			"creditAmount": shouldDebitResolvedAmount ? "" : shownAmount
+			"debitAmount": shouldDebitResolvedAmount ? shownAmount[0] : "",
+			"creditAmount": shouldDebitResolvedAmount ? "" : shownAmount[0],
+			"rawDebitAmount": shouldDebitResolvedAmount ? shownAmount[1] : "",
+			"rawCreditAmount": shouldDebitResolvedAmount ? "" : shownAmount[1]
 		} as SimplifiedSummaryCalculation
 	})
 	.filter<SimplifiedSummaryCalculation>(calculation => !!calculation)
@@ -488,7 +494,7 @@ function sortAccounts(left: Account, right: Account) {
 			{viewedCurrency}
 			{precisionFormats}
 			{currencies}
-			emptyAmount={emptyAmount[0]}
+			{emptyAmount}
 			data={balancedSummaryCalculations}/>
 	</Flex>
 </GridCell>

@@ -1,6 +1,6 @@
 <script lang="ts">
 import type { PrecisionFormat, Currency } from "+/entity"
-import type { FinancialStatementGroup, ExchangeRateInfo } from "+/rest"
+import type { FinancialStatementGroup, ExchangeRateInfo, ApproximateAndExactFormats } from "+/rest"
 import type { SimplifiedSummaryCalculation } from "+/component"
 
 import { assetAccountKinds, EQUITY_ACCOUNT_KIND, LIABILITY_ACCOUNT_KIND } from "#/entity"
@@ -23,16 +23,17 @@ let {
 	emptyAmount,
 	data
 }: {
-	statement: FinancialStatementGroup
+	statement: FinancialStatementGroup<string>
 	statementExchangeRate: ExchangeRateInfo
 	statementCurrency: Currency
 	viewedCurrency: Currency
 	precisionFormats: PrecisionFormat[]
 	currencies: Currency[]
-	emptyAmount: string
+	emptyAmount: ApproximateAndExactFormats
 	data: SimplifiedSummaryCalculation[]
 } = $props()
 
+const emptyShownAmount = [ "", "" ]
 let assetCalculations = $derived(data.filter(
 	calculation => assetAccountKinds.indexOf(calculation.account.kind) > -1
 ))
@@ -51,10 +52,10 @@ let friendlyTotalAssetInfo = $derived(makeCleanShownAmount(
 	statement.balance_sheet.total_assets
 ))
 let friendlyDebitedTotalAsset = $derived(
-	friendlyTotalAssetInfo[0] ? "" : friendlyTotalAssetInfo[1]
+	friendlyTotalAssetInfo[0] ? emptyShownAmount : friendlyTotalAssetInfo[1]
 )
 let friendlyCreditedTotalAsset = $derived(
-	friendlyTotalAssetInfo[0] ? friendlyTotalAssetInfo[1] : ""
+	friendlyTotalAssetInfo[0] ? friendlyTotalAssetInfo[1] : emptyShownAmount
 )
 let friendlyTotalLiabilities = $derived(makeCleanShownAmount(
 	precisionFormats,
@@ -65,10 +66,10 @@ let friendlyTotalLiabilities = $derived(makeCleanShownAmount(
 	statement.balance_sheet.total_liabilities
 ))
 let friendlyDebitedTotalLiabilities = $derived(
-	friendlyTotalLiabilities[0] ? friendlyTotalLiabilities[1] : ""
+	friendlyTotalLiabilities[0] ? friendlyTotalLiabilities[1] : emptyShownAmount
 )
 let friendlyCreditedTotalLiabilities = $derived(
-	friendlyTotalLiabilities[0] ? "" : friendlyTotalLiabilities[1]
+	friendlyTotalLiabilities[0] ? emptyShownAmount : friendlyTotalLiabilities[1]
 )
 let friendlyTotalEquities = $derived(makeCleanShownAmount(
 	precisionFormats,
@@ -79,10 +80,10 @@ let friendlyTotalEquities = $derived(makeCleanShownAmount(
 	statement.balance_sheet.total_equities
 ))
 let friendlyDebitedTotalEquities = $derived(
-	friendlyTotalEquities[0] ? friendlyTotalEquities[1] : ""
+	friendlyTotalEquities[0] ? friendlyTotalEquities[1] : emptyShownAmount
 )
 let friendlyCreditedTotalEquities = $derived(
-	friendlyTotalEquities[0] ? "" : friendlyTotalEquities[1]
+	friendlyTotalEquities[0] ? emptyShownAmount : friendlyTotalEquities[1]
 )
 let friendlyNetAmountInfo = $derived(makeCleanShownAmount(
 	precisionFormats,
@@ -92,8 +93,16 @@ let friendlyNetAmountInfo = $derived(makeCleanShownAmount(
 	viewedCurrency,
 	statement.income_statement.net_total
 ))
-let friendlyDebitedNetAmount = $derived(friendlyNetAmountInfo[0] ? friendlyNetAmountInfo[1] : "")
-let friendlyCreditedNetAmount = $derived(friendlyNetAmountInfo[0] ? "" : friendlyNetAmountInfo[1])
+let friendlyDebitedNetAmount = $derived(
+	friendlyNetAmountInfo[0]
+		? friendlyNetAmountInfo[1]
+		: emptyShownAmount
+)
+let friendlyCreditedNetAmount = $derived(
+	friendlyNetAmountInfo[0]
+		? emptyShownAmount
+		: friendlyNetAmountInfo[1]
+)
 </script>
 
 <QuarternaryHeading>Balance Sheet</QuarternaryHeading>
@@ -105,37 +114,54 @@ let friendlyCreditedNetAmount = $derived(friendlyNetAmountInfo[0] ? "" : friendl
 	{/snippet}
 	{#snippet table_rows()}
 		{#each assetCalculations as calculation(calculation.account.id)}
-			{#if calculation.debitAmount !== emptyAmount && calculation.creditAmount !== emptyAmount}
+			{#if (
+				calculation.debitAmount !== emptyAmount[0]
+				&& calculation.creditAmount !== emptyAmount[0]
+			)}
 				<TrialRow data={calculation}/>
 			{/if}
 		{/each}
 		<CustomTrialRow
 			rowName="Total Assets"
-			shownDebitAmount={friendlyDebitedTotalAsset}
-			shownCreditAmount={friendlyCreditedTotalAsset}
+			shownDebitAmount={friendlyDebitedTotalAsset[0]}
+			shownCreditAmount={friendlyCreditedTotalAsset[0]}
+			exactDebitAmount={friendlyDebitedTotalAsset[1]}
+			exactCreditAmount={friendlyCreditedTotalAsset[1]}
 			hasEmptyTrailingRow={true}/>
 		{#each liabilityCalculations as calculation(calculation.account.id)}
-			{#if calculation.debitAmount !== emptyAmount && calculation.creditAmount !== emptyAmount}
+			{#if (
+				calculation.debitAmount !== emptyAmount[0]
+				&& calculation.creditAmount !== emptyAmount[0]
+			)}
 				<TrialRow data={calculation}/>
 			{/if}
 		{/each}
 		<CustomTrialRow
 			rowName="Total Liabilities"
-			shownDebitAmount={friendlyDebitedTotalLiabilities}
-			shownCreditAmount={friendlyCreditedTotalLiabilities}
+			shownDebitAmount={friendlyDebitedTotalLiabilities[0]}
+			shownCreditAmount={friendlyCreditedTotalLiabilities[0]}
+			exactDebitAmount={friendlyDebitedTotalLiabilities[1]}
+			exactCreditAmount={friendlyCreditedTotalLiabilities[1]}
 			hasEmptyTrailingRow={true}/>
 		{#each equityCalculations as calculation(calculation.account.id)}
-			{#if calculation.debitAmount !== emptyAmount && calculation.creditAmount !== emptyAmount}
+			{#if (
+				calculation.debitAmount !== emptyAmount[0]
+				&& calculation.creditAmount !== emptyAmount[0]
+			)}
 				<TrialRow data={calculation}/>
 			{/if}
 		{/each}
 		<CustomTrialRow
 			rowName="Net Income"
-			shownDebitAmount={friendlyDebitedNetAmount}
-			shownCreditAmount={friendlyCreditedNetAmount}/>
+			shownDebitAmount={friendlyDebitedNetAmount[0]}
+			shownCreditAmount={friendlyCreditedNetAmount[0]}
+			exactDebitAmount={friendlyDebitedNetAmount[1]}
+			exactCreditAmount={friendlyCreditedNetAmount[1]}/>
 		<CustomTrialRow
 			rowName="Total Equities"
-			shownDebitAmount={friendlyDebitedTotalEquities}
-			shownCreditAmount={friendlyCreditedTotalEquities}/>
+			shownDebitAmount={friendlyDebitedTotalEquities[0]}
+			shownCreditAmount={friendlyCreditedTotalEquities[0]}
+			exactDebitAmount={friendlyDebitedTotalEquities[1]}
+			exactCreditAmount={friendlyCreditedTotalEquities[1]}/>
 	{/snippet}
 </UnitDataTable>
