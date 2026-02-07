@@ -1,5 +1,5 @@
 import type { PrecisionFormat, Currency } from "+/entity"
-import type { ExchangeRateInfo } from "+/rest"
+import type { ApproximateAndExactFormats, ExchangeRateInfo } from "+/rest"
 
 import cleanValue from "$/utility/clean_value"
 import { formatAmount as formatAmountStrictly } from "!/index"
@@ -12,7 +12,7 @@ export default function makeCleanShownAmount(
 	statementCurrency: Currency,
 	viewedCurrency: Currency,
 	amount: string
-): [ boolean, string ] {
+): [ boolean, ApproximateAndExactFormats ] {
 	const [
 		precisionFormat,
 		shownCurrency,
@@ -28,5 +28,11 @@ export default function makeCleanShownAmount(
 
 	const [ isNegative, cleanAmount ] = cleanValue(convertedAmount)
 
-	return [ isNegative, formatAmountStrictly(precisionFormat, shownCurrency, cleanAmount) ]
+	return [
+		isNegative,
+		[
+			formatAmountStrictly(precisionFormat, shownCurrency, cleanAmount),
+			convertedAmount
+		]
+	]
 }
