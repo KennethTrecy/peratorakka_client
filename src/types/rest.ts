@@ -61,9 +61,11 @@ export interface RequesterInfo extends RequesterDependencies {
 	send: (requestInfo: Partial<RequestInit>) => Promise<void>
 }
 
-export interface TrialBalance {
-	debit_total: string
-	credit_total: string
+export type RawAndFormattedFormats = [ string, string ]
+
+export interface TrialBalance<T extends string|RawAndFormattedFormats> {
+	debit_total: T
+	credit_total: T
 }
 
 export interface ProxyRequest {
@@ -72,30 +74,30 @@ export interface ProxyRequest {
 	body: Record<string, any>|null
 }
 
-export interface CashFlowActivitySubtotal {
+export interface CashFlowActivitySubtotal<T extends string|RawAndFormattedFormats> {
 	cash_flow_activity_id: number
-	subtotal: string
-	net_income: string
+	subtotal: T
+	net_income: T
 }
 
-export interface FinancialStatementGroup {
+export interface FinancialStatementGroup<T extends string|RawAndFormattedFormats> {
 	currency_id: number
-	unadjusted_trial_balance: TrialBalance
+	unadjusted_trial_balance: TrialBalance<T>
 	income_statement: {
-		net_total: string
+		net_total: T
 	}
 	balance_sheet: {
-		total_assets: string
-		total_liabilities: string
-		total_equities: string
+		total_assets: T
+		total_liabilities: T
+		total_equities: T
 	}
 	cash_flow_statement: {
-		opened_real_liquid_amount: string
-		closed_real_liquid_amount: string
-		real_liquid_amount_difference: string
-		subtotals: CashFlowActivitySubtotal[]
+		opened_real_liquid_amount: T
+		closed_real_liquid_amount: T
+		real_liquid_amount_difference: T
+		subtotals: CashFlowActivitySubtotal<T>[]
 	}
-	adjusted_trial_balance: TrialBalance
+	adjusted_trial_balance: TrialBalance<T>
 }
 
 interface CurrencyInfo {
@@ -111,7 +113,7 @@ export interface ExchangeRateInfo {
 
 export interface CompleteFrozenPeriodInfo {
 	"@meta": {
-		statements: FinancialStatementGroup[]
+		statements: FinancialStatementGroup<string>[]
 		exchange_rates: ExchangeRateInfo[]
 	}
 	precision_formats: PrecisionFormat[]
