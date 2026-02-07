@@ -5,12 +5,14 @@ import type { DataTableCellKind, DataTableCellStatus } from "+/component"
 let {
 	kind = "normal",
 	status = "present",
+	title = undefined,
 	columnSpan = 1,
 	rowSpan = 1,
 	children
 }: {
 	kind?: DataTableCellKind
 	status?: DataTableCellStatus
+	title?: string
 	columnSpan?: number
 	rowSpan?: number
 	children?: Snippet
@@ -24,7 +26,7 @@ let rowClasses = $derived([,
 ].filter(Boolean).join(" "))
 </script>
 
-<td class={rowClasses} colspan={columnSpan} rowspan={rowSpan}>
+<td class={rowClasses} colspan={columnSpan} rowspan={rowSpan} {title}>
 	{@render children?.()}
 </td>
 
