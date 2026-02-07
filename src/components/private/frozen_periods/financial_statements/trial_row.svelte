@@ -11,4 +11,6 @@ let { data }: {
 <CustomTrialRow
 	rowName={data.account.name}
 	shownDebitAmount={data.debitAmount}
-	shownCreditAmount={data.creditAmount}/>
+	shownCreditAmount={data.creditAmount}
+	exactDebitAmount={data.rawDebitAmount}
+	exactCreditAmount={data.rawCreditAmount}/>
