@@ -30,7 +30,7 @@ let {
 	cashFlowActivities,
 	data
 }: {
-	statement: FinancialStatementGroup
+	statement: FinancialStatementGroup<string>
 	statementExchangeRate: ExchangeRateInfo
 	statementCurrency: Currency
 	viewedCurrency: Currency
@@ -86,6 +86,7 @@ let shownCashFlowSubtotals = $derived(statement.cash_flow_statement.subtotals.ma
 		)
 	})
 ))
+let title = $derived(`Exact value is ${friendlyLiquidAmountDifference[1]}`)
 </script>
 
 <QuarternaryHeading>Cash Flow Statement</QuarternaryHeading>
@@ -105,15 +106,17 @@ let shownCashFlowSubtotals = $derived(statement.cash_flow_statement.subtotals.ma
 		{/each}
 		<TotalAmountRow
 			rowName="Opened Liquid Balance"
-			shownAmount={friendlyOpenedLiquidAmount}/>
+			shownAmount={friendlyOpenedLiquidAmount[0]}
+			exactAmount={friendlyOpenedLiquidAmount[1]}/>
 		<TotalAmountRow
 			rowName="Closed Liquid Balance"
-			shownAmount={friendlyClosedLiquidAmount}/>
+			shownAmount={friendlyClosedLiquidAmount[0]}
+			exactAmount={friendlyClosedLiquidAmount[1]}/>
 	{/snippet}
 	{#snippet table_footer_cells()}
 		<DataTableHeader scope="row" columnSpan={2}>Difference</DataTableHeader>
-		<DataTableCell kind="numeric">
-			<AmountDisplay shownAmount={friendlyLiquidAmountDifference}/>
+		<DataTableCell kind="numeric" {title}>
+			<AmountDisplay shownAmount={friendlyLiquidAmountDifference[0]}/>
 		</DataTableCell>
 	{/snippet}
 </UnitDataTable>
