@@ -8,24 +8,39 @@ let {
 	rowName,
 	shownDebitAmount,
 	shownCreditAmount,
+	exactDebitAmount,
+	exactCreditAmount,
 	hasEmptyTrailingRow = false
 }: {
 	rowName: string
 	shownDebitAmount: string
 	shownCreditAmount: string
+	exactDebitAmount: string
+	exactCreditAmount: string
 	hasEmptyTrailingRow?: boolean
 } = $props()
 
 let isPossiblyDebitAccount = $derived(shownDebitAmount !== "")
 let isPossiblyCreditAccount = $derived(shownCreditAmount !== "")
 let hasFilled = $derived(isPossiblyDebitAccount || isPossiblyCreditAccount)
+
+let debitTitle = $derived(
+	exactDebitAmount !== ""
+		? `Exact value is ${exactDebitAmount}`
+		: undefined
+)
+let creditTitle = $derived(
+	exactCreditAmount !== ""
+		? `Exact value is ${exactCreditAmount}`
+		: undefined
+)
 </script>
 
 {#if hasFilled}
 	<DataTableRow>
 		<DataTableHeader scope="row">{rowName}</DataTableHeader>
-		<DataTableCell kind="numeric"><AmountDisplay shownAmount={shownDebitAmount}/></DataTableCell>
-		<DataTableCell kind="numeric"><AmountDisplay shownAmount={shownCreditAmount}/></DataTableCell>
+		<DataTableCell kind="numeric" title={debitTitle}><AmountDisplay shownAmount={shownDebitAmount}/></DataTableCell>
+		<DataTableCell kind="numeric" title={creditTitle}><AmountDisplay shownAmount={shownCreditAmount}/></DataTableCell>
 	</DataTableRow>
 	{#if hasEmptyTrailingRow}
 		<DataTableRow>
