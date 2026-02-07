@@ -92,7 +92,14 @@ function makeNewResourceObject(): Record<string, unknown> {
 }
 
 function processCreatedResourceObject(document: Record<string, unknown>): unknown {
-	remarks = ""
+	if (!mustRetainRemarksAfterValidSubmission) {
+		remarks = ""
+	}
+	if (mustForwardDateAfterValidSubmission) {
+		const rawTransactedAt = new Date(transactedAt)
+		rawTransactedAt.setDate(rawTransactedAt.getDate() + 1)
+		transactedAt = makeDateFieldValue(rawTransactedAt)
+	}
 	atoms = atoms.map(atom => ({
 		...atom,
 		"numerical_value": "0"
@@ -261,7 +268,7 @@ let existingCashFlowActivities = $derived(cashFlowActivities.filter(
 			bind:transactedAt={transactedAt}
 			bind:atoms={atoms}
 			bind:remarks={remarks}
-			bind:mustRetainRemarksAfterSuValidbmission={mustRetainRemarksAfterValidSubmission}
+			bind:mustRetainRemarksAfterValidSubmission={mustRetainRemarksAfterValidSubmission}
 			bind:mustForwardDateAfterValidSubmission={mustForwardDateAfterValidSubmission}
 			{isConnecting}
 			{IDPrefix}
