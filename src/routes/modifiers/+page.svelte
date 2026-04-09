@@ -16,7 +16,6 @@ import { getContext } from "svelte"
 import { afterNavigate, beforeNavigate, goto } from "$app/navigation"
 
 import { GLOBAL_CONTEXT } from "#/contexts"
-import { UNKNOWN_OPTION } from "#/component"
 import {
 	acceptableModifierKinds,
 	acceptableModifierActions,
