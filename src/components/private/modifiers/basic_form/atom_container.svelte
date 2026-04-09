@@ -8,8 +8,6 @@ import type {
 	ModifierAtomInput
 } from "+/entity"
 
-import { untrack } from "svelte"
-
 import { UNKNOWN_ACCOUNT } from "#/component"
 import {
 	MODIFIER_ACTION_COMBINATIONS,
@@ -71,17 +69,13 @@ let isLiquidAsset = $derived(accountKind === LIQUID_ASSET_ACCOUNT_KIND)
 let isCloseAction = $derived(action === CLOSE_MODIFIER_ACTION)
 let isCashFlowActivityProhibited = $derived(isLiquidAsset || isCloseAction)
 let hasAllowedAccounts = $derived(allowedAccounts.length > 0)
-let isAllowedAccountKind = $derived(allowedAccountKinds.indexOf(accountKind) > -1)
-let isAllowedModifierAtomKind = $derived(allowedModifierAtomKinds.indexOf(atom.kind) > -1)
 </script>
 
 <GeneralFieldContainer tag="fieldset">
 	<AtomFieldset
-		{isAllowedModifierAtomKind}
 		{allowedModifierAtomKinds}
 		{hasAllowedAccounts}
 		{allowedAccounts}
-		{isAllowedAccountKind}
 		{allowedAccountKinds}
 		{isCashFlowActivityProhibited}
 		{cashFlowActivities}
