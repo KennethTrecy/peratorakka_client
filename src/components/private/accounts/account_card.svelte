@@ -10,7 +10,7 @@ import type {
 
 import { untrack } from "svelte"
 
-import { acceptableAccountKinds, WEIGHTED_AVERAGE_VALUATION_METHOD } from "#/entity"
+import { acceptableAccountKinds, FIFO_VALUATION_METHOD, WEIGHTED_AVERAGE_VALUATION_METHOD } from "#/entity"
 
 import checkArchivedState from "$/utility/check_archived_state"
 import convertSnakeCaseToProperCase from "$/utility/convert_snake_case_to_proper_case"
@@ -73,9 +73,14 @@ let associatedItemDetail = $derived(itemDetails.find(
 ) ?? null)
 let friendlyValuationMethod = $derived(
 	hasItemConfigurations
-	&& associatedItemConfigurations[0].valuation_method === WEIGHTED_AVERAGE_VALUATION_METHOD
+	&& (associatedItemConfigurations[0].valuation_method === WEIGHTED_AVERAGE_VALUATION_METHOD
 		? "weighted average"
-		: ""
+		: (
+			associatedItemConfigurations[0].valuation_method === FIFO_VALUATION_METHOD
+				? "first-in first-out"
+				: ""
+		)
+	)
 )
 
 let restorableItemOptions = $derived(makeRestorableItemOptions(
