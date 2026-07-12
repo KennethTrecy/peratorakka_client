@@ -61,7 +61,7 @@ export const LIFO_VALUATION_METHOD = "lifo"
 
 export const acceptableValuationMethods = [
 	WEIGHTED_AVERAGE_VALUATION_METHOD,
-	// FIFO_VALUATION_METHOD,
+	FIFO_VALUATION_METHOD,
 	// LIFO_VALUATION_METHOD
 ] as const
 
