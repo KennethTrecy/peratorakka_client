@@ -47,7 +47,7 @@ onDestroy(globalContext.unsubscribeWatchedGlobalStates as () => void)
 	</main>
 	<footer>
 		<p>
-			Copyright © 2025 by Kenneth Trecy Tobias.
+			Copyright © 2026 by Kenneth Trecy Tobias.
 		</p>
 	</footer>
 </div>
